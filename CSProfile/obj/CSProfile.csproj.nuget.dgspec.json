@@ -1,0 +1,59 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\user\\Desktop\\Items\\Files\\Codes\\BSMods\\CSProfile\\CSProfile\\CSProfile.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\user\\Desktop\\Items\\Files\\Codes\\BSMods\\CSProfile\\CSProfile\\CSProfile.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\user\\Desktop\\Items\\Files\\Codes\\BSMods\\CSProfile\\CSProfile\\CSProfile.csproj",
+        "projectName": "CSProfile",
+        "projectPath": "C:\\Users\\user\\Desktop\\Items\\Files\\Codes\\BSMods\\CSProfile\\CSProfile\\CSProfile.csproj",
+        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\user\\Desktop\\Items\\Files\\Codes\\BSMods\\CSProfile\\CSProfile\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "configFilePaths": [
+          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "dependencies": {
+            "BeatSaberModdingTools.Tasks": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.0.0-beta1, )"
+            }
+          }
+        }
+      },
+      "runtimes": {
+        "win": {
+          "#import": []
+        },
+        "win-x64": {
+          "#import": []
+        },
+        "win-x86": {
+          "#import": []
+        }
+      }
+    }
+  }
+}

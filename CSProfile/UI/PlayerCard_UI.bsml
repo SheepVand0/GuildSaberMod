@@ -1,0 +1,46 @@
+﻿<bg bg="round-rect-panel" background-color="darkblue" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
+	>
+  <grid cell-size-x='20' spacing-x='15' cell-size-y='20' horizontal-fit='PreferredSize' size-delta-y='100' size-delta-x='50' vertical-fit='PreferredSize'>
+      <horizontal child-control-width="true" child-expand-width="true" spacing="10" >
+        <vertical child-align="MiddleLeft">
+          <text text="~playerName" id="playerNameText" underlined="true"/>
+          <vertical child-control-height="true" child-expand-height="true">
+            <horizontal child-align="MiddleLeft" horizontal-fit="PreferredSize" child-control-width="true" child-expand-width="true">
+              <text text="Level:" font-size="2" align="MidlineLeft"/>
+              <text text="~playerGlobalLevel" font-size="2" align="MidlineLeft"/>
+            </horizontal>
+            <horizontal horizontal-fit="PreferredSize" child-control-width="true" child-expand-width="true">
+              <text text="Passes:" align="MidlineLeft" font-size="2"/>
+              <text text="~playerNumberOfPasses" align="MidlineLeft" font-size="2"/>
+            </horizontal>
+            <horizontal>
+              <text text="#" font-size="3" align="MidlineLeft"/>
+              <text text="~playerRank" font-size="3" id="playerRankText" align="MidlineLeft"/>
+            </horizontal>
+            <text text="______" font-size="3"></text>
+          </vertical>
+        </vertical>
+        <grid cell-size-x="17" cell-size-y="17" child-align="MiddleCenter">
+          <clickable-image pref-height="1" pref-width="1" preserve-aspect="false" src="~playerImageSrc" />
+        </grid>
+        
+      </horizontal>
+      <horizontal>
+        <macro.for-each items="firstLineLevels">
+          <vertical child-control-height="true" child-expand-height="true">
+            <text text="~levelName" font-size="2"></text>
+            <text text="~level" font-size="2"></text>
+          </vertical>
+        </macro.for-each>
+      </horizontal>
+      <horizontal child-control-width="true" child-expand-width="true">
+        <macro.for-each items="secondLineLevels">
+          <vertical child-control-height="true" child-expand-height="true">
+            <text text="~levelName" font-size="2"></text>
+            <text text="~level" font-size="2"></text>
+          </vertical>
+        </macro.for-each>
+      </horizontal>
+  </grid>
+</bg>
