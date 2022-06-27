@@ -1036,11 +1036,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\Desktop\\Items\\Files\\Codes\\BSMods\\CSProfile\\CSProfile\\CSProfile.csproj",
+      "projectUniqueName": "C:\\Users\\user\\Documents\\GitHub\\GuildSaberProfile\\CSProfile\\CSProfile.csproj",
       "projectName": "CSProfile",
-      "projectPath": "C:\\Users\\user\\Desktop\\Items\\Files\\Codes\\BSMods\\CSProfile\\CSProfile\\CSProfile.csproj",
+      "projectPath": "C:\\Users\\user\\Documents\\GitHub\\GuildSaberProfile\\CSProfile\\CSProfile.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\Desktop\\Items\\Files\\Codes\\BSMods\\CSProfile\\CSProfile\\obj\\",
+      "outputPath": "C:\\Users\\user\\Documents\\GitHub\\GuildSaberProfile\\CSProfile\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [

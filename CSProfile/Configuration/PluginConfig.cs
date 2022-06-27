@@ -1,6 +1,8 @@
-﻿/*
+﻿
 using System.Runtime.CompilerServices;
 using IPA.Config.Stores;
+using UnityEngine;
+using Newtonsoft.Json;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
 namespace CSProfile.Configuration
@@ -8,7 +10,19 @@ namespace CSProfile.Configuration
     internal class PluginConfig
     {
         public static PluginConfig Instance { get; set; }
-        public virtual int IntValue { get; set; } = 42; // Must be 'virtual' if you want BSIPA to detect a value change and save the config automatically.
+
+        [JsonProperty("showCard")]
+        public virtual bool m_showCard { get; set; } = true;
+        [JsonProperty("cardPos")]
+        public virtual Vector3 m_cardPosition { get; set; } = new Vector3(0,3,5);
+        [JsonProperty("cardRot")]
+        public virtual Quaternion m_cardRotation { get; set; } = Quaternion.Euler(0,0,0);
+        [JsonProperty("cardHandleVisible")]
+        public virtual bool m_cardHandleVisible { get; set; } = false;
+        [JsonProperty("showDetailsLevels")]
+        public virtual bool m_showDetaislLevels { get; set; } = false;
+        [JsonProperty("ShowPlayTime")]
+        public virtual bool m_showPlayTime { get; set; } = true;
 
         /// <summary>
         /// This is called whenever BSIPA reads the config from disk (including when file changes are detected).
@@ -35,4 +49,3 @@ namespace CSProfile.Configuration
         }
     }
 }
-*/

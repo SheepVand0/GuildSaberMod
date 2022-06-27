@@ -152,7 +152,10 @@
     <Compile Include="Configuration\PluginConfig.cs" />
     <Compile Include="CSProfileController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Time\OptimizedDateTime.cs" />
+    <Compile Include="Time\TimeManager.cs" />
     <Compile Include="UI\PlayerCard_UI.cs" />
+    <Compile Include="UI\Settings\SettingTabViewController.cs" />
     <Compile Include="Utils\Color.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -162,6 +165,7 @@
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
     <None Include="CSProfile.csproj.user" Condition="Exists('CSProfile.csproj.user')" />
     <EmbeddedResource Include="UI\PlayerCard_UI.bsml" />
+    <EmbeddedResource Include="UI\Settings\SettingTabViewController.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">

@@ -12,6 +12,8 @@ using BS_Utils.Utilities;
 using CSProfile.API;
 using BSDiscordRanking.Formats.API;
 using CSProfile.UI;
+using CSProfile.UI.Settings;
+using BeatSaberMarkupLanguage.GameplaySetup;
 using IPALogger = IPA.Logging.Logger;
 
 namespace CSProfile
@@ -27,6 +29,10 @@ namespace CSProfile
         public static string m_notDefined = "Undefined";
 
         public static PlayerCard_UI m_playerCard = null;
+
+        public SettingTabViewController m_tabViewController = new SettingTabViewController();
+
+        public static bool m_cardLoaded = false;
 
         [Init]
         /// <summary>
@@ -45,14 +51,14 @@ namespace CSProfile
 
         #region BSIPA Config
         //Uncomment to use BSIPA's config
-        /*
+        
         [Init]
-        public void InitWithConfig(Config conf)
+        public void InitWithConfig(IPA.Config.Config conf)
         {
             Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
             Log.Debug("Config loaded");
         }
-        */
+        
         #endregion
 
         [OnStart]
@@ -61,29 +67,45 @@ namespace CSProfile
             Log.Debug("OnApplicationStart");
             new GameObject("CSProfileController").AddComponent<CSProfileController>();
 
+            GameplaySetup.instance.AddTab("Player Card", "CSProfile.UI.Settings.SettingTabViewController.bsml", m_tabViewController);
+
             BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
         }
 
         private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO obj)
         {
-            var l_playerId = Authentification.GetPlayerIdFromSteam();
-            if (l_playerId != m_notDefined)
+            
+        }
+
+        public void CreateCard()
+        {
+            if (m_cardLoaded == false)
             {
-                m_currentPlayerId = l_playerId;
-                PlayerApiReworkOutput l_outputPlayer = CSApi.GetPlayerByScoreSaberId(Plugin.m_currentPlayerId);
-
-                Plugin.Log.Info($"R{l_outputPlayer.ProfileColor.R}");
-                Plugin.Log.Info($"G{l_outputPlayer.ProfileColor.G}");
-                Plugin.Log.Info($"B{l_outputPlayer.ProfileColor.B}");
-
-                List<CustomApiPlayerCategory> l_playerCat = l_outputPlayer.CategoryData;
-                for (int l_i = 0; l_i < l_outputPlayer.CategoryData.Count; l_i++)
+                var l_playerId = Authentification.GetPlayerIdFromSteam();
+                if (l_playerId != m_notDefined)
                 {
-                    Plugin.Log.Info($"Level for {l_playerCat[l_i].Category.Normalize()} : {l_playerCat[l_i].Level}");
-                }
+                    m_currentPlayerId = l_playerId;
+                    PlayerApiReworkOutput l_outputPlayer = CSApi.GetPlayerByScoreSaberId(Plugin.m_currentPlayerId);
 
-                m_playerCard = new PlayerCard_UI(l_outputPlayer);
+                    Plugin.Log.Info($"R{l_outputPlayer.ProfileColor.R}");
+                    Plugin.Log.Info($"G{l_outputPlayer.ProfileColor.G}");
+                    Plugin.Log.Info($"B{l_outputPlayer.ProfileColor.B}");
+
+                    List<CustomApiPlayerCategory> l_playerCat = l_outputPlayer.CategoryData;
+                    for (int l_i = 0; l_i < l_outputPlayer.CategoryData.Count; l_i++)
+                    {
+                        Plugin.Log.Info($"Level for {l_playerCat[l_i].Category.Normalize()} : {l_playerCat[l_i].Level}");
+                    }
+
+                    m_playerCard = new PlayerCard_UI(l_outputPlayer);
+                    m_cardLoaded = true;
+                }
             }
+        }
+
+        public void DestroyCard()
+        {
+
         }
 
         [OnExit]
