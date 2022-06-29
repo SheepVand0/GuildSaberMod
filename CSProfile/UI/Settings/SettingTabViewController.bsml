@@ -6,5 +6,6 @@
     <toggle-setting text='Show card handle : ' value='showCardHandle' apply-on-change='true'></toggle-setting>
     <toggle-setting text='Show detailed levels : ' value='detailLevels' apply-on-change='true'></toggle-setting>
     <toggle-setting text='Show play time' value='showPlayTime' apply-on-change='true'></toggle-setting>
+    <button align='Center' text='Refresh' on-click='refreshCard'></button>
   </settings-container>
 </bg>

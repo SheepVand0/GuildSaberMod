@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using CSProfile.UI;
+using CSProfile.UI.Card;
 
 namespace CSProfile.Time
 {

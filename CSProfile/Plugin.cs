@@ -11,10 +11,12 @@ using ScoreSaberSharp;
 using BS_Utils.Utilities;
 using CSProfile.API;
 using BSDiscordRanking.Formats.API;
-using CSProfile.UI;
+using CSProfile.UI.Card;
 using CSProfile.UI.Settings;
 using BeatSaberMarkupLanguage.GameplaySetup;
+using System.Threading.Tasks;
 using IPALogger = IPA.Logging.Logger;
+using HarmonyLib;
 
 namespace CSProfile
 {
@@ -33,6 +35,8 @@ namespace CSProfile
         public SettingTabViewController m_tabViewController = new SettingTabViewController();
 
         public static bool m_cardLoaded = false;
+
+        Harmony m_harmony = new Harmony("SheepVand.BeatSaber.CSProfile");
 
         [Init]
         /// <summary>
@@ -57,6 +61,8 @@ namespace CSProfile
         {
             Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
             Log.Debug("Config loaded");
+
+            m_harmony.PatchAll();
         }
         
         #endregion
@@ -74,10 +80,10 @@ namespace CSProfile
 
         private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO obj)
         {
-            
+            CreateCard();
         }
 
-        public void CreateCard()
+        public static void CreateCard()
         {
             if (m_cardLoaded == false)
             {
@@ -87,32 +93,24 @@ namespace CSProfile
                     m_currentPlayerId = l_playerId;
                     PlayerApiReworkOutput l_outputPlayer = CSApi.GetPlayerByScoreSaberId(Plugin.m_currentPlayerId);
 
-                    Plugin.Log.Info($"R{l_outputPlayer.ProfileColor.R}");
-                    Plugin.Log.Info($"G{l_outputPlayer.ProfileColor.G}");
-                    Plugin.Log.Info($"B{l_outputPlayer.ProfileColor.B}");
-
-                    List<CustomApiPlayerCategory> l_playerCat = l_outputPlayer.CategoryData;
-                    for (int l_i = 0; l_i < l_outputPlayer.CategoryData.Count; l_i++)
-                    {
-                        Plugin.Log.Info($"Level for {l_playerCat[l_i].Category.Normalize()} : {l_playerCat[l_i].Level}");
-                    }
-
                     m_playerCard = new PlayerCard_UI(l_outputPlayer);
                     m_cardLoaded = true;
                 }
             }
         }
 
-        public void DestroyCard()
+        public static void DestroyCard()
         {
-
+            m_playerCard.Destroy();
+            m_playerCard = null;
+            m_cardLoaded = false;
         }
 
         [OnExit]
         public void OnApplicationQuit()
         {
             Log.Debug("OnApplicationQuit");
-
+            m_harmony.UnpatchSelf();
         }
     }
 }

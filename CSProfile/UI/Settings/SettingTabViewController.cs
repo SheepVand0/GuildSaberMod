@@ -5,6 +5,7 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using System;
 using System.Collections.Generic;
 using CSProfile.Configuration;
+using System.Threading.Tasks;
 
 namespace CSProfile.UI.Settings
 {
@@ -35,8 +36,15 @@ namespace CSProfile.UI.Settings
         [UIValue("showPlayTime")]
         protected bool showPlayTime
         {
-            get => PluginConfig.Instance.m_showDetaislLevels;
-            set => PluginConfig.Instance.m_showDetaislLevels = value;
+            get => PluginConfig.Instance.m_showPlayTime;
+            set => PluginConfig.Instance.m_showPlayTime = value;
+        }
+
+        [UIAction("refreshCard")]
+        protected void RefreshCard()
+        {
+            Plugin.DestroyCard();
+            Plugin.CreateCard();
         }
 
         [UIAction("#post-parse")]

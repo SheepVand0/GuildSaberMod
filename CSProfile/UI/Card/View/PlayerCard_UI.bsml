@@ -1,9 +1,10 @@
-﻿<bg bg="round-rect-panel" bg-color="~playerColor" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+﻿<bg bg='round-rect-panel' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
-  <grid cell-size-x='30' cell-size-y='40' horizontal-fit='PreferredSize' child-align='MiddleLeft' vertical-fit='PreferredSize'>
-     <vertical child-control-height='true' child-expand-height='true' spacing='2' child-align="MiddleLeft">
-      <horizontal child-control-width="true" child-expand-width="true" spacing="7" child-align="MiddleLeft">
+  <bg bg='panel-top-gradient' id='neonBackground'>
+  <grid id='elemGrid' cell-size-x='40' cell-size-y='40' horizontal-fit='PreferredSize' child-align='MiddleLeft' vertical-fit='PreferredSize'>
+     <horizontal child-control-width='true' child-expand-width='true' spacing='7' child-align="MiddleLeft">
+      <horizontal child-control-width="true" child-expand-width="true" spacing="5" child-align="MiddleLeft">
         <vertical child-control-height="true" child-expand-height="true">
           <text text="~playerName" id="playerNameText" underlined="true"/>
           <vertical child-control-height="true" child-expand-height="true">
@@ -21,6 +22,7 @@
             </horizontal>
             <text text="______" font-size="3"></text>
           </vertical>
+          <text font-size="2" id="playTimeText" text="00:00:00" align="MidlineRight"></text>
         </vertical>
         <grid cell-size-x="15" cell-size-y="15" child-align="MiddleCenter">
           <clickable-image pref-height="1" pref-width="1" preserve-aspect="false" src="~playerImageSrc" event-click="showPlayerSS"/>
@@ -32,8 +34,8 @@
           </vertical>
         </modal>
       </horizontal>
-        <vertical id="detailsLevelsLayout">
-          <horizontal child-control-width="true" child-expand-width="true" spacing="2">
+        <vertical id="detailsLevelsLayout" vertical-fit="PreferredSize" child-control-width="true" child-expand-width="true">
+          <horizontal child-control-width="true" child-expand-width="true" spacing="5">
             <macro.for-each items="firstLineLevels">
               <vertical child-control-height="true" child-expand-height="true">
                 <text text="~levelName" font-size="2"></text>
@@ -41,17 +43,16 @@
               </vertical>
             </macro.for-each>
           </horizontal>
-          <horizontal child-control-width="true" child-expand-width="true">
+          <horizontal child-control-width="true" child-expand-width="true"  spacing="4">
             <macro.for-each items="secondLineLevels">
-              <vertical child-control-height="true" child-expand-height="true" spacing="4">
+              <vertical child-control-height="true" child-expand-height="true">
                 <text text="~levelName" font-size="2"></text>
                 <text text="~level" font-size="2"></text>
               </vertical>
             </macro.for-each>
           </horizontal>
        </vertical>
-      
-     </vertical>
-    <text font-size="1" id="playTimeText" text="~playTime" align="MidlineRight"></text>
+     </horizontal>
   </grid>
+  </bg>
 </bg>
