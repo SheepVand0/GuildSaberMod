@@ -90,14 +90,14 @@ namespace CSProfile.UI.Card
             Plugin.Log.Info("________________________________");
             ImageView l_currentImageView = m_neonBackground.GetComponentInChildren<ImageView>();
 
-            l_currentImageView.SetField("_skew", 0.02f);
+            l_currentImageView.SetField("_skew", 0);
             l_currentImageView.overrideSprite = null;
             l_currentImageView.SetImage("#RoundRect10BorderFade");
 
             UnityEngine.Color l_divideColor = l_currentImageView.color;
-            l_currentImageView.color0 = l_beforePlayerColor.ColorWithAlpha(0.4f);
-            l_currentImageView.color1 = l_newPlayerColor.ColorWithAlpha(0.4f);
-            l_currentImageView.color = l_playerColor.ColorWithAlpha(1);
+            l_currentImageView.color0 = l_beforePlayerColor.ColorWithAlpha(1f);
+            l_currentImageView.color1 = l_newPlayerColor.ColorWithAlpha(1f);
+            l_currentImageView.color = l_playerColor.ColorWithAlpha(0.4f);
 
             l_currentImageView.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.BakedEmissive;
 
