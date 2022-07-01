@@ -1,117 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.Components.Settings;
-using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.ViewControllers;
 using BeatSaberMarkupLanguage.FloatingScreen;
-using HMUI;
 using CSProfile.API;
-using BSDiscordRanking.Formats.API;
-using UnityEngine;
-using UnityEngine.UI;
-using CSProfile.Utils;
 using CSProfile.Configuration;
-using TMPro;
-using CSProfile.Time;
-using IPA.Utilities;
+using HMUI;
+using UnityEngine;
 
+namespace CSProfile.UI.Card;
 
-namespace CSProfile.UI.Card
+public class PlayerLevelUI
 {
-    public class PlayerLevelUI
-    {
-        public string levelName = "Vibro/Tech/Streams/Jumps/Shitpost";
-        public string level = "31";
+    public string Level = "31";
+    public string LevelName = "Vibro/Tech/Streams/Jumps/Shitpost";
 
-        public PlayerLevelUI(string p_levelName, string p_level)
+    public PlayerLevelUI(string p_LevelName, string p_Level)
+    {
+        LevelName = p_LevelName;
+        Level = p_Level;
+    }
+}
+
+public class PlayerCard_UI
+{
+
+    public PlayerCardViewController CardViewController;
+
+    public FloatingScreen FloatingScreen;
+
+    public PlayerCard_UI(PlayerApiReworkOutput p_Player)
+    {
+        Plugin.Log.Info("Loading Player Card");
+
+        //if (m_CardViewController == null)
+        CardViewController = BeatSaberUI.CreateViewController<PlayerCardViewController>();
+
+        FloatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40, 40f), true, PluginConfig.Instance.CardPosition, PluginConfig.Instance.CardRotation);
+        FloatingScreen.HighlightHandle = true;
+        FloatingScreen.HandleSide = FloatingScreen.Side.Right;
+        FloatingScreen.HandleReleased += OnCardHandleReleased;
+
+        CardViewController.SetReferences(p_Player, FloatingScreen);
+
+        CardViewController.FirstLineLevels = new List<PlayerLevelUI>
         {
-            levelName = p_levelName;
-            level = p_level;
-        }
+            new PlayerLevelUI("Streams : ", p_Player.CategoryData[0].Level.ToString()),
+            new PlayerLevelUI("Vibro : ", p_Player.CategoryData[1].Level.ToString()),
+            new PlayerLevelUI("Tech : ", p_Player.CategoryData[2].Level.ToString())
+        };
+
+        CardViewController.SecondLineLevels = new List<PlayerLevelUI>
+        {
+            new PlayerLevelUI("Jumps : ", p_Player.CategoryData[3].Level.ToString()),
+            new PlayerLevelUI("Shitpost : ", p_Player.CategoryData[4].Level.ToString())
+        };
+
+        FloatingScreen.SetRootViewController(CardViewController, ViewController.AnimationType.None);
+
+        Object.DontDestroyOnLoad(FloatingScreen);
+        Object.DontDestroyOnLoad(CardViewController);
+
+        Plugin.Log.Info("Done Loading Player Card");
+        UpdateAll();
+    }
+    public void UpdateCardHandleVisibility()
+    {
+        if (FloatingScreen == null) return;
+
+        FloatingScreen.ShowHandle = PluginConfig.Instance.CardHandleVisible;
+        FloatingScreen.UpdateHandle();
     }
 
-    public partial class PlayerCard_UI
+    public void UpdateAll()
     {
-
-        public FloatingScreen _floatingScreen;
-
-        public PlayerCardViewController _cardViewController;
-        public void UpdateCardHandleVisibility()
-        {
-            if (_floatingScreen != null)
-            {
-                _floatingScreen.ShowHandle = PluginConfig.Instance.m_cardHandleVisible;
-                _floatingScreen.UpdateHandle();
-            }
-        }
-
-        public PlayerCard_UI(PlayerApiReworkOutput p_player)
-        {
-            Plugin.Log.Info("Loading Player Card");
-
-            if (_cardViewController == null)
-                _cardViewController = BeatSaberUI.CreateViewController<PlayerCardViewController>();
-
-            _floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40, 40f), true, PluginConfig.Instance.m_cardPosition, PluginConfig.Instance.m_cardRotation);
-            _floatingScreen.HighlightHandle = true;
-            _floatingScreen.HandleSide = FloatingScreen.Side.Right;
-            _floatingScreen.HandleReleased += OnCardHandleReleased;
-
-            _cardViewController.SetReferences(p_player, _floatingScreen);
-            _cardViewController.firstLineLevels = new List<PlayerLevelUI>() {
-                new PlayerLevelUI("Streams : ", p_player.CategoryData[0].Level.ToString()),
-                new PlayerLevelUI("Vibro : ", p_player.CategoryData[1].Level.ToString()),
-                new PlayerLevelUI("Tech : ", p_player.CategoryData[2].Level.ToString()),
-            };
-
-            _cardViewController.secondLineLevels = new List<PlayerLevelUI>() {
-                new PlayerLevelUI("Jumps : ", p_player.CategoryData[3].Level.ToString()),
-                new PlayerLevelUI("Shitpost : ", p_player.CategoryData[4].Level.ToString()),
-            };
-
-            _floatingScreen.SetRootViewController(_cardViewController, HMUI.ViewController.AnimationType.None);
-
-            GameObject.DontDestroyOnLoad(_floatingScreen);
-            GameObject.DontDestroyOnLoad(_cardViewController);
-
-            UpdateAll();
-        }
-
-        public void UpdateAll()
-        {
-            _cardViewController.UpdateLevelsDetails();
-            UpdateCardHandleVisibility();
-            UpdateCardVisibility();
-        }
-
-        private void OnCardHandleReleased(object sender, FloatingScreenHandleEventArgs e)
-        {
-            PluginConfig.Instance.m_cardPosition = e.Position;
-            PluginConfig.Instance.m_cardRotation = e.Rotation;
-        }
-
-        public void UpdateCardVisibility()
-        {
-            _floatingScreen.gameObject.SetActive(PluginConfig.Instance.m_showCard);
-        }
-
-        public void Destroy()
-        {
-            GameObject.Destroy(_floatingScreen.gameObject);
-            GameObject.Destroy(_cardViewController.gameObject);
-        }
+        CardViewController.UpdateLevelsDetails();
+        UpdateCardHandleVisibility();
+        UpdateCardVisibility();
     }
 
-    public partial class PlayerCard_UI
+    public void OnCardHandleReleased(object p_Sender, FloatingScreenHandleEventArgs p_EventArgs)
     {
-
+        PluginConfig.Instance.CardPosition = p_EventArgs.Position;
+        PluginConfig.Instance.CardRotation = p_EventArgs.Rotation;
     }
 
-    
+    public void UpdateCardVisibility()
+    {
+        FloatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCard);
+    }
+
+    public void Destroy()
+    {
+        Object.Destroy(FloatingScreen.gameObject);
+        Object.Destroy(CardViewController.gameObject);
+    }
 }

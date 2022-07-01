@@ -1,21 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\user\\Documents\\GitHub\\GuildSaberProfile\\CSProfile\\CSProfile.csproj": {}
+    "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\CSProfile.csproj": {}
   },
   "projects": {
-    "C:\\Users\\user\\Documents\\GitHub\\GuildSaberProfile\\CSProfile\\CSProfile.csproj": {
+    "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\CSProfile.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\user\\Documents\\GitHub\\GuildSaberProfile\\CSProfile\\CSProfile.csproj",
+        "projectUniqueName": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\CSProfile.csproj",
         "projectName": "CSProfile",
-        "projectPath": "C:\\Users\\user\\Documents\\GitHub\\GuildSaberProfile\\CSProfile\\CSProfile.csproj",
-        "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\user\\Documents\\GitHub\\GuildSaberProfile\\CSProfile\\obj\\",
+        "projectPath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\CSProfile.csproj",
+        "packagesPath": "C:\\Users\\jaune\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [
-          "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\jaune\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

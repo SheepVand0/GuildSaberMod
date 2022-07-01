@@ -1,39 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net;
 using System.Net.Http;
-using BSDiscordRanking.Formats.API;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace CSProfile.API
+namespace CSProfile.API;
+
+public static class CSApi
 {
-    public static class CSApi
+    public static PlayerApiReworkOutput GetPlayerByScoreSaberId(string p_ID)
     {
+        PlayerApiReworkOutput l_ResultPlayer = new PlayerApiReworkOutput();
+        using HttpClient l_Client = new HttpClient();
 
-        public static PlayerApiReworkOutput GetPlayerByScoreSaberId(string p_id)
+        try
         {
-            PlayerApiReworkOutput l_resultPlayer = new PlayerApiReworkOutput();
-            using HttpClient l_client = new HttpClient();
+            Task<string> l_Result = l_Client.GetStringAsync($"http://api.bsdr.fdom.eu/player/data/{p_ID}");
+            l_Result.Wait();
+            l_ResultPlayer = JsonConvert.DeserializeObject<PlayerApiReworkOutput>(l_Result.Result);
 
-            try
+        }
+        catch (AggregateException l_AggregateException)
+        {
+            if (l_AggregateException.InnerException is HttpRequestException l_HttpRequestException)
             {
-                Task<string> l_result = l_client.GetStringAsync($"http://api.bsdr.fdom.eu/player/data/{p_id}");
-                l_result.Wait();
-                l_resultPlayer = JsonConvert.DeserializeObject<PlayerApiReworkOutput>(l_result.Result);
-
-            } catch (System.AggregateException l_AggregateException)
-            {
-                if (l_AggregateException.InnerException is HttpRequestException l_httpRequestException)
-                {
-                    Plugin.Log.Info("Error during getting Player data");
-                }
+                Plugin.Log.Info("Error during getting Player data");
             }
-
-            return l_resultPlayer;
         }
 
+        return l_ResultPlayer;
     }
 }

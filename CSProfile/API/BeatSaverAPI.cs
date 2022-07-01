@@ -1,30 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CSProfile;
 using Newtonsoft.Json;
 
-namespace GuildSaber.APIFormats.Input { }
+namespace CSProfile.API;
 
 internal static class BeatSaverAPI
 {
-    public static BeatSaverFormat? FetchBeatMapByKey(string p_Key)
+    public static BeatSaverFormat FetchBeatMapByKey(string p_Key)
     {
         BeatSaverFormat l_BeatSaverFormat = null;
         using HttpClient l_HttpClient = new HttpClient();
 
-            try
+        try
+        {
+            Task<string> l_Response = l_HttpClient.GetStringAsync($"https://api.beatsaver.com/maps/id/{p_Key}");
+            l_Response.Wait();
+            l_BeatSaverFormat = JsonConvert.DeserializeObject<BeatSaverFormat>(l_Response.Result);
+        }
+        catch (AggregateException l_AggregateException)
+        {
+            if (l_AggregateException.InnerException is HttpRequestException l_HttpRequestException)
             {
-                Task<string> l_Response = l_HttpClient.GetStringAsync($"https://api.beatsaver.com/maps/id/{p_Key}");
-                l_Response.Wait();
-                l_BeatSaverFormat = JsonConvert.DeserializeObject<BeatSaverFormat>(l_Response.Result);
-            }
-            catch (System.AggregateException l_AggregateException)
-            {
-                if (l_AggregateException.InnerException is HttpRequestException l_HttpRequestException)
-                {
                 /*switch (l_HttpRequestException.StatusCode)
                 {
                     case HttpStatusCode.NotFound:
@@ -40,22 +38,22 @@ internal static class BeatSaverAPI
                         Plugin.Log.Info("InternalServerError");
                         return null;
                 }*/
-                    Plugin.Log.Error($"FetchBeatMap: Error during getting map, key : {p_Key}");
-                }
-                else
-                {
-                    Plugin.Log.Error($"FetchBeatMap: Unhandled exception)" + l_AggregateException.InnerException);
-                }
-            
+                Plugin.Log.Error($"FetchBeatMap: Error during getting map, key : {p_Key}");
+            }
+            else
+            {
+                Plugin.Log.Error("FetchBeatMap: Unhandled exception)" + l_AggregateException.InnerException);
+            }
+
 
         }
 
-            return l_BeatSaverFormat;
-        }
+        return l_BeatSaverFormat;
+    }
 
-    public static BeatSaverFormat? FetchBeatMapByHash(string p_Hash)
+    public static BeatSaverFormat FetchBeatMapByHash(string p_Hash)
     {
-        BeatSaverFormat? l_BeatSaverFormat = null;
+        BeatSaverFormat l_BeatSaverFormat = null;
         using HttpClient l_HttpClient = new HttpClient();
         try
         {
@@ -63,7 +61,7 @@ internal static class BeatSaverAPI
             l_Response.Wait();
             l_BeatSaverFormat = JsonConvert.DeserializeObject<BeatSaverFormat>(l_Response.Result);
         }
-        catch (System.AggregateException l_AggregateException)
+        catch (AggregateException l_AggregateException)
         {
             if (l_AggregateException.InnerException is HttpRequestException l_HttpRequestException)
             {
@@ -92,22 +90,17 @@ internal static class BeatSaverAPI
         return l_BeatSaverFormat;
     }
 
-    public static UInt32 StringToDifficulty(string p_Input)
+    public static uint StringToDifficulty(string p_Input)
     {
-        switch (p_Input)
+        return p_Input switch
         {
-            case "Easy":
-                return 1;
-            case "Normal":
-                return 3;
-            case "Hard":
-                return 5;
-            case "Expert":
-                return 7;
-            case "ExpertPlus":
-                return 9;
-        }
-        return 0;
+            "Easy" => 1,
+            "Normal" => 3,
+            "Hard" => 5,
+            "Expert" => 7,
+            "ExpertPlus" => 9,
+            _ => 0
+        };
     }
 }
 

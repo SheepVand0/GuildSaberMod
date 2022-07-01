@@ -1,11 +1,11 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
   <settings-container child-control-height='true' child-expand-height='true'>
-    <toggle-setting text='Show card' value='showCard' apply-on-change='true'></toggle-setting>
-    <toggle-setting text='Show card handle : ' value='showCardHandle' apply-on-change='true'></toggle-setting>
-    <toggle-setting text='Show detailed levels : ' value='detailLevels' apply-on-change='true'></toggle-setting>
-    <toggle-setting text='Show play time' value='showPlayTime' apply-on-change='true'></toggle-setting>
-    <button align='Center' text='Refresh' on-click='refreshCard'></button>
+    <toggle-setting text='Show card' value='ShowCard' apply-on-change='true'></toggle-setting>
+    <toggle-setting text='Show card handle : ' value='ShowCardHandle' apply-on-change='true'></toggle-setting>
+    <toggle-setting text='Show detailed levels : ' value='DetailLevels' apply-on-change='true'></toggle-setting>
+    <toggle-setting text='Show play time' value='ShowPlayTime' apply-on-change='true'></toggle-setting>
+    <button align='Center' text='Refresh' on-click='RefreshCard'></button>
   </settings-container>
 </bg>

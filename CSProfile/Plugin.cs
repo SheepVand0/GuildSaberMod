@@ -1,116 +1,102 @@
-﻿using IPA;
-using IPA.Config;
-using IPA.Config.Stores;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using ScoreSaberSharp;
+﻿using BeatSaberMarkupLanguage.GameplaySetup;
 using BS_Utils.Utilities;
 using CSProfile.API;
-using BSDiscordRanking.Formats.API;
+using CSProfile.Configuration;
 using CSProfile.UI.Card;
 using CSProfile.UI.Settings;
-using BeatSaberMarkupLanguage.GameplaySetup;
-using System.Threading.Tasks;
-using IPALogger = IPA.Logging.Logger;
 using HarmonyLib;
+using IPA;
+using IPA.Config.Stores;
+using UnityEngine;
+using Config = IPA.Config.Config;
+using IPALogger = IPA.Logging.Logger;
 
-namespace CSProfile
+namespace CSProfile;
+
+[Plugin(RuntimeOptions.SingleStartInit)]
+public class Plugin
 {
-    [Plugin(RuntimeOptions.SingleStartInit)]
-    public class Plugin
+
+    public const string NOT_DEFINED = "Undefined";
+
+    public static PlayerCard_UI PlayerCard;
+
+    private static bool s_CardLoaded;
+
+    private readonly Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.CSProfile");
+
+    private readonly SettingTabViewController m_TabViewController = new SettingTabViewController();
+    private static Plugin Instance { get; set; }
+    internal static IPALogger Log { get; private set; }
+
+    [Init]
+    /// <summary>
+    /// Called when the plugin is first loaded by IPA (either when the game starts or when the plugin is enabled if it starts disabled).
+    /// [Init] methods that use a Constructor or called before regular methods like InitWithConfig.
+    /// Only use [Init] with one Constructor.
+    /// </summary>
+    public void Init(IPALogger p_Logger)
     {
-        internal static Plugin Instance { get; private set; }
-        internal static IPALogger Log { get; private set; }
+        Instance = this;
+        Log = p_Logger;
+        Log.Info("CSProfile initialized.");
+    }
 
-        public static string m_currentPlayerId = "";
+    #region BSIPA Config
 
-        public static string m_notDefined = "Undefined";
+    //Uncomment to use BSIPA's config
 
-        public static PlayerCard_UI m_playerCard = null;
+    [Init]
+    public void InitWithConfig(Config p_Conf)
+    {
+        PluginConfig.Instance = p_Conf.Generated<PluginConfig>();
+        Log.Debug("Config loaded");
 
-        public SettingTabViewController m_tabViewController = new SettingTabViewController();
+        m_Harmony.PatchAll();
+    }
 
-        public static bool m_cardLoaded = false;
+    #endregion
 
-        Harmony m_harmony = new Harmony("SheepVand.BeatSaber.CSProfile");
+    [OnStart]
+    public void OnApplicationStart()
+    {
+        Log.Debug("OnApplicationStart");
+        new GameObject("CSProfileController").AddComponent<CSProfileController>();
 
-        [Init]
-        /// <summary>
-        /// Called when the plugin is first loaded by IPA (either when the game starts or when the plugin is enabled if it starts disabled).
-        /// [Init] methods that use a Constructor or called before regular methods like InitWithConfig.
-        /// Only use [Init] with one Constructor.
-        /// </summary>
-        public void Init(IPALogger logger)
-        {
-            Instance = this;
-            Log = logger;
-            Log.Info("CSProfile initialized.");
+        GameplaySetup.instance.AddTab("Player Card", "CSProfile.UI.Settings.SettingTabViewController.bsml", m_TabViewController);
 
+        BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
+    }
 
-        }
+    private static void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
+    {
+        CreateCard();
+    }
 
-        #region BSIPA Config
-        //Uncomment to use BSIPA's config
-        
-        [Init]
-        public void InitWithConfig(IPA.Config.Config conf)
-        {
-            Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
-            Log.Debug("Config loaded");
+    public static void CreateCard()
+    {
+        if (s_CardLoaded) return;
 
-            m_harmony.PatchAll();
-        }
-        
-        #endregion
+        string l_PlayerId = Authentication.GetPlayerIdFromSteam();
+        if (l_PlayerId == NOT_DEFINED) return;
 
-        [OnStart]
-        public void OnApplicationStart()
-        {
-            Log.Debug("OnApplicationStart");
-            new GameObject("CSProfileController").AddComponent<CSProfileController>();
+        PlayerApiReworkOutput l_OutputPlayer = CSApi.GetPlayerByScoreSaberId(l_PlayerId);
 
-            GameplaySetup.instance.AddTab("Player Card", "CSProfile.UI.Settings.SettingTabViewController.bsml", m_tabViewController);
+        PlayerCard = new PlayerCard_UI(l_OutputPlayer);
+        s_CardLoaded = true;
+    }
 
-            BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
-        }
+    public static void DestroyCard()
+    {
+        PlayerCard.Destroy();
+        PlayerCard = null;
+        s_CardLoaded = false;
+    }
 
-        private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO obj)
-        {
-            CreateCard();
-        }
-
-        public static void CreateCard()
-        {
-            if (m_cardLoaded == false)
-            {
-                var l_playerId = Authentification.GetPlayerIdFromSteam();
-                if (l_playerId != m_notDefined)
-                {
-                    m_currentPlayerId = l_playerId;
-                    PlayerApiReworkOutput l_outputPlayer = CSApi.GetPlayerByScoreSaberId(Plugin.m_currentPlayerId);
-
-                    m_playerCard = new PlayerCard_UI(l_outputPlayer);
-                    m_cardLoaded = true;
-                }
-            }
-        }
-
-        public static void DestroyCard()
-        {
-            m_playerCard.Destroy();
-            m_playerCard = null;
-            m_cardLoaded = false;
-        }
-
-        [OnExit]
-        public void OnApplicationQuit()
-        {
-            Log.Debug("OnApplicationQuit");
-            m_harmony.UnpatchSelf();
-        }
+    [OnExit]
+    public void OnApplicationQuit()
+    {
+        Log.Debug("OnApplicationQuit");
+        m_Harmony.UnpatchSelf();
     }
 }

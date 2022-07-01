@@ -1,23 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
-namespace CSProfile.Utils
+namespace CSProfile.Utils;
+
+public class Color
 {
-    public class Color
+
+    public int B;
+
+    public int G;
+    public int R;
+
+    public Color32 ToUnityColor()
     {
-        public int R;
-
-        public int G;
-
-        public int B;
-
-        public UnityEngine.Color32 ToUnityColor()
-        {
-            return new UnityEngine.Color32(Convert.ToByte(R), Convert.ToByte(G), Convert.ToByte(B), 155);
-        }
+        return new Color32(Convert.ToByte(R), Convert.ToByte(G), Convert.ToByte(B), 155);
     }
 }
