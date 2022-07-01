@@ -52,7 +52,7 @@ namespace CSProfile
 
         #region BSIPA Config
         //Uncomment to use BSIPA's config
-        
+
         [Init]
         public void InitWithConfig(IPA.Config.Config conf)
         {
@@ -61,7 +61,7 @@ namespace CSProfile
 
             m_Harmony.PatchAll();
         }
-        
+
         #endregion
 
         [OnStart]
@@ -86,7 +86,7 @@ namespace CSProfile
 
             var l_playerId = Authentification.GetPlayerIdFromSteam();
             if (l_playerId == NOT_DEFINED) return;
-                
+
             PlayerApiReworkOutput l_outputPlayer = CSApi.GetPlayerByScoreSaberId(l_playerId);
 
             PlayerCard = new PlayerCard_UI(l_outputPlayer);

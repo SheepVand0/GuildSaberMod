@@ -30,51 +30,37 @@ namespace CSProfile.UI.Card
     [ViewDefinition("CSProfile.UI.Card.View.PlayerCard_UI.bsml")]
     public partial class PlayerCardViewController : BSMLAutomaticViewController
     {
-        
-        PlayerApiReworkOutput m_PlayerInfo = new PlayerApiReworkOutput();
-
-        public List<PlayerLevelUI> FirstLineLevels = new List<PlayerLevelUI>();
-
-        public List<PlayerLevelUI> SecondLineLevels = new List<PlayerLevelUI>();
-
         public TimeManager m_TimeManager;
 
         public FloatingScreen m_CardScreen;
-        public string playerName { 
-            get => m_PlayerInfo.Name;
-            set { } 
-        }
-        public string playerGlobalLevel { 
-            get => m_PlayerInfo.Level.ToString(); 
-            set { } 
-        }
-        public string playerImageSrc { 
-            get => m_PlayerInfo.ProfilePicture;
-            set { } 
-        }
-        public string playerNumberOfPasses
+        public string PlayerName { get { return m_PlayerInfo.Name; } set { } }
+        public string PlayerGlobalLevel { get { return m_PlayerInfo.Level.ToString(); } set { } }
+        public string PlayerImageSrc { get { return m_PlayerInfo.ProfilePicture; } set { } }
+        public string PlayerNumberOfPasses
         {
             get
             {
-                m_numberOfPasses = 0;
+                m_NumberOfPasses = 0;
                 for (int l_i = 0; l_i < m_PlayerInfo.CategoryData.Count; l_i++)
-                    m_numberOfPasses = m_numberOfPasses + m_PlayerInfo.CategoryData[l_i].NumberOfPass;
-                playerNumberOfPasses = m_numberOfPasses.ToString();
-                return m_numberOfPasses.ToString();
+                    m_NumberOfPasses = m_NumberOfPasses + m_PlayerInfo.CategoryData[l_i].NumberOfPass;
+                PlayerNumberOfPasses = m_NumberOfPasses.ToString();
+                return m_NumberOfPasses.ToString();
             }
             set { }
         }
 
-        int m_numberOfPasses = 0;
+        public List<PlayerLevelUI> Levels = new List<PlayerLevelUI>();
+
+        PlayerApiReworkOutput m_PlayerInfo = new PlayerApiReworkOutput();
+
+        int m_NumberOfPasses = 0;
 
         [UIComponent("playerNameText")] public TextMeshProUGUI m_playerNameText = null;
         [UIComponent("playerRankText")] TextMeshProUGUI m_playerRankText = null;
         [UIComponent("playTimeText")] TextMeshProUGUI m_playTimeText = null;
-        [UIComponent("detailsLevelsLayout")] VerticalLayoutGroup m_detailsLevelsLayout = null;
+        [UIComponent("detailsLevelsLayout")] GridLayoutGroup m_detailsLevelsLayout = null;
         [UIComponent("neonBackground")] Transform m_neonBackground = null;
         [UIComponent("elemGrid")] GridLayoutGroup m_elementsGrid = null;
-
-        //PlayerCard Functions
 
         #region Main Card Info and style Loading
         [UIAction("#post-parse")]
@@ -120,18 +106,21 @@ namespace CSProfile.UI.Card
             if (m_CardScreen == null)
                 return;
 
+            float l_LevelsSize = Levels.Count;
             if (PluginConfig.Instance.m_showDetaislLevels == true)
             {
+
                 //When the details levels is visible
-                m_CardScreen.ScreenSize = new Vector2(64, 28);
-                m_elementsGrid.cellSize = new Vector2(49, 40);
+
+                m_CardScreen.ScreenSize = new Vector2(62+m_PlayerInfo.Name.Length+l_LevelsSize, 28+(l_LevelsSize/3));
+                m_elementsGrid.cellSize = new Vector2(46+m_PlayerInfo.Name.Length+l_LevelsSize, 40);
                 m_elementsGrid.spacing = new Vector2(7, 7);
             }
             else
             {
                 //When the detaisl levels is hidden
-                m_CardScreen.ScreenSize = new Vector2(38, 28);
-                m_elementsGrid.cellSize = new Vector2(30, 40);
+                m_CardScreen.ScreenSize = new Vector2(33+m_PlayerInfo.Name.Length, 28);
+                m_elementsGrid.cellSize = new Vector2(25+m_PlayerInfo.Name.Length, 40);
                 m_elementsGrid.spacing = new Vector2(1, 7);
             }
         }
@@ -151,5 +140,4 @@ namespace CSProfile.UI.Card
         #endregion
     }
     #endregion
-
 }

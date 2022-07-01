@@ -54,41 +54,40 @@ namespace CSProfile.Time
             #region Recalcul time
             if (m_Seconds >= 60)
             {
-
                 m_Minutes = m_Minutes + (int)(m_Seconds / 60);
                 m_Seconds = 0;
-
-                if (m_Minutes >= 60)
-                {
-                    m_Hours = m_Hours + m_Minutes / 60;
-                    m_Minutes = 0;
-
-                    if (m_Hours >= 24)
-                    {
-                        m_Day = m_Day + m_Hours / 24;
-                        m_Hours = 0;
-
-                        if (m_Day >= GetCurrentMonthDayCount())
-                        {
-                            m_Month = m_Month + (m_Day / GetCurrentMonthDayCount());
-                            m_Day = 0;
-
-                            if (m_Month >= 12)
-                            {
-                                m_Year = m_Year + (m_Month / 12);
-                                m_Month = 0;
-                            }
-                        }
-                    }
-                }
             }
+
+            if (m_Minutes >= 60)
+            {
+                m_Hours = m_Hours + m_Minutes / 60;
+                m_Minutes = 0;
+            }
+
+            if (m_Hours >= 24)
+            {
+                m_Day = m_Day + m_Hours / 24;
+                m_Hours = 0;
+            }
+
+            if (m_Day >= GetCurrentMonthDayCount())
+            {
+                m_Month = m_Month + (m_Day / GetCurrentMonthDayCount());
+                m_Day = 0;
+            }
+
+            if (m_Month >= 12)
+            {
+                m_Year = m_Year + (m_Month / 12);
+                m_Month = 0;
+            }
+
             #endregion
             return l_shouldUpdate;
-
         }
         public int GetCurrentMonthDayCount()
         {
-            return daysInMonth[m_Month - 1];
+            return daysInMonth[m_Month];
         }
     }
 }
