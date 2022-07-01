@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.Components.Settings;
-using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.ViewControllers;
 using BeatSaberMarkupLanguage.FloatingScreen;
-using HMUI;
-using CSProfile.API;
 using BSDiscordRanking.Formats.API;
 using UnityEngine;
 using UnityEngine.UI;
@@ -38,7 +27,6 @@ namespace CSProfile.UI.Card
 
     public partial class PlayerCard_UI
     {
-
         public FloatingScreen _floatingScreen;
 
         public PlayerCardViewController _cardViewController;

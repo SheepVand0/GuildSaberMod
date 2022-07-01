@@ -19,7 +19,6 @@ namespace CSProfile.API
             }
 
             CSteamID l_steamIdBase = SteamUser.GetSteamID();
-            AccountID_t l_steamAccountId = l_steamIdBase.GetAccountID();
 
             string l_steamId = l_steamIdBase.ToString();
 

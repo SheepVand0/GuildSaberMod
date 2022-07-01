@@ -1,7 +1,7 @@
 ﻿<bg bg='round-rect-panel' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' 
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
-  <bg bg='panel-top-gradient' id='neonBackground'>
+<bg bg='panel-top-gradient' id='neonBackground'>
   <grid id='elemGrid' cell-size-x='40' cell-size-y='40' horizontal-fit='PreferredSize' child-align='MiddleLeft' vertical-fit='PreferredSize'>
      <horizontal child-control-width='true' child-expand-width='true' spacing='7' child-align="MiddleLeft">
       <horizontal child-control-width="true" child-expand-width="true" spacing="5" child-align="MiddleLeft">
@@ -53,6 +53,6 @@
           </horizontal>
        </vertical>
      </horizontal>
-  </grid>
+    </grid>
   </bg>
 </bg>
