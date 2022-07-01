@@ -23,20 +23,17 @@ namespace CSProfile
     [Plugin(RuntimeOptions.SingleStartInit)]
     public class Plugin
     {
+        public static string NOT_DEFINED = "Undefined";
+
+        public static PlayerCard_UI PlayerCard = null;
+
+        public SettingTabViewController m_TabViewController = new SettingTabViewController();
+
+        public static bool s_CardLoaded = false;
         internal static Plugin Instance { get; private set; }
         internal static IPALogger Log { get; private set; }
 
-        public static string m_currentPlayerId = "";
-
-        public static string m_notDefined = "Undefined";
-
-        public static PlayerCard_UI m_playerCard = null;
-
-        public SettingTabViewController m_tabViewController = new SettingTabViewController();
-
-        public static bool m_cardLoaded = false;
-
-        Harmony m_harmony = new Harmony("SheepVand.BeatSaber.CSProfile");
+        Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.CSProfile");
 
         [Init]
         /// <summary>
@@ -62,7 +59,7 @@ namespace CSProfile
             Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
             Log.Debug("Config loaded");
 
-            m_harmony.PatchAll();
+            m_Harmony.PatchAll();
         }
         
         #endregion
@@ -73,7 +70,7 @@ namespace CSProfile
             Log.Debug("OnApplicationStart");
             new GameObject("CSProfileController").AddComponent<CSProfileController>();
 
-            GameplaySetup.instance.AddTab("Player Card", "CSProfile.UI.Settings.SettingTabViewController.bsml", m_tabViewController);
+            GameplaySetup.instance.AddTab("Player Card", "CSProfile.UI.Settings.SettingTabViewController.bsml", m_TabViewController);
 
             BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
         }
@@ -85,32 +82,30 @@ namespace CSProfile
 
         public static void CreateCard()
         {
-            if (m_cardLoaded == false)
-            {
-                var l_playerId = Authentification.GetPlayerIdFromSteam();
-                if (l_playerId != m_notDefined)
-                {
-                    m_currentPlayerId = l_playerId;
-                    PlayerApiReworkOutput l_outputPlayer = CSApi.GetPlayerByScoreSaberId(Plugin.m_currentPlayerId);
+            if (s_CardLoaded) return;
 
-                    m_playerCard = new PlayerCard_UI(l_outputPlayer);
-                    m_cardLoaded = true;
-                }
-            }
+            var l_playerId = Authentification.GetPlayerIdFromSteam();
+            if (l_playerId == NOT_DEFINED) return;
+                
+            PlayerApiReworkOutput l_outputPlayer = CSApi.GetPlayerByScoreSaberId(l_playerId);
+
+            PlayerCard = new PlayerCard_UI(l_outputPlayer);
+            s_CardLoaded = true;
+
         }
 
         public static void DestroyCard()
         {
-            m_playerCard.Destroy();
-            m_playerCard = null;
-            m_cardLoaded = false;
+            PlayerCard.Destroy();
+            PlayerCard = null;
+            s_CardLoaded = false;
         }
 
         [OnExit]
         public void OnApplicationQuit()
         {
             Log.Debug("OnApplicationQuit");
-            m_harmony.UnpatchSelf();
+            m_Harmony.UnpatchSelf();
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Steamworks;
 
+<<<<<<< Updated upstream
 namespace CSProfile.API
 {
     public static class Authentification
@@ -19,18 +20,26 @@ namespace CSProfile.API
             }
 
             CSteamID l_steamIdBase = SteamUser.GetSteamID();
+=======
+namespace CSProfile.API;
+>>>>>>> Stashed changes
 
-            string l_steamId = l_steamIdBase.ToString();
+public static class Authentification
+{ 
+    public static string GetPlayerIdFromSteam()
+    {
+       if (!SteamManager.Initialized)
+       {
+           Plugin.Log.Error("Steam Manager not initialized");
+           return Plugin.NOT_DEFINED;
+       }
 
-            if (l_steamId == "")
-            {
-                return Plugin.m_notDefined;
-            } else
-            {
-                Plugin.Log.Info($"Player Id : {l_steamId}");
-                return l_steamId;
-            }
-        }
+       CSteamID l_steamIdBase = SteamUser.GetSteamID();
+       string l_steamId = l_steamIdBase.ToString();
 
+       if (string.IsNullOrEmpty(l_steamId)) return Plugin.NOT_DEFINED;    
+         Plugin.Log.Info($"Player Id : {l_steamId}");
+         return l_steamId;    
     }
 }
+

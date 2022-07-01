@@ -1,61 +1,57 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using CSProfile;
 using Newtonsoft.Json;
+using CSProfile;
 
-namespace GuildSaber.APIFormats.Input { }
+namespace GuildSaber.APIFormats.Input;
 
 internal static class BeatSaverAPI
 {
-    public static BeatSaverFormat? FetchBeatMapByKey(string p_Key)
+    public static BeatSaverFormat FetchBeatMapByKey(string p_Key)
     {
         BeatSaverFormat l_BeatSaverFormat = null;
         using HttpClient l_HttpClient = new HttpClient();
-
-            try
+        try
+        {
+            Task<string> l_Response = l_HttpClient.GetStringAsync($"https://api.beatsaver.com/maps/id/{p_Key}");
+            l_Response.Wait();
+            l_BeatSaverFormat = JsonConvert.DeserializeObject<BeatSaverFormat>(l_Response.Result);
+        }
+        catch (System.AggregateException l_AggregateException)
+        {
+            if (l_AggregateException.InnerException is HttpRequestException l_HttpRequestException)
             {
-                Task<string> l_Response = l_HttpClient.GetStringAsync($"https://api.beatsaver.com/maps/id/{p_Key}");
-                l_Response.Wait();
-                l_BeatSaverFormat = JsonConvert.DeserializeObject<BeatSaverFormat>(l_Response.Result);
-            }
-            catch (System.AggregateException l_AggregateException)
-            {
-                if (l_AggregateException.InnerException is HttpRequestException l_HttpRequestException)
-                {
                 /*switch (l_HttpRequestException.StatusCode)
                 {
                     case HttpStatusCode.NotFound:
-                        Plugin.Log.Info("The Map do not exist");
+                        Logs.Info.Log("The Map do not exist");
                         return null;
-                    case HttpStatusCode.TooManyRequest:
-                        Plugin.Log.Info("The bot got rate-limited on BeatSaver, Try later");
+                    case HttpStatusCode.TooManyRequests:
+                        Logs.Info.Log("The bot got rate-limited on BeatSaver, Try later");
                         return null;
                     case HttpStatusCode.BadGateway:
-                        Plugin.Log.Info("Server BadGateway");
+                        Logs.Info.Log("Server BadGateway");
                         return null;
                     case HttpStatusCode.InternalServerError:
-                        Plugin.Log.Info("InternalServerError");
+                        Logs.Info.Log("InternalServerError");
                         return null;
                 }*/
-                    Plugin.Log.Error($"FetchBeatMap: Error during getting map, key : {p_Key}");
-                }
-                else
-                {
-                    Plugin.Log.Error($"FetchBeatMap: Unhandled exception)" + l_AggregateException.InnerException);
-                }
-            
-
+            }
+            else
+            {
+                Plugin.Log.Error($"FetchBeatMap: Unhandled exception) {l_AggregateException.InnerException}");
+            }
         }
 
-            return l_BeatSaverFormat;
-        }
+        return l_BeatSaverFormat;
+    }
 
-    public static BeatSaverFormat? FetchBeatMapByHash(string p_Hash)
+    public static BeatSaverFormat FetchBeatMapByHash(string p_Hash)
     {
-        BeatSaverFormat? l_BeatSaverFormat = null;
+        BeatSaverFormat l_BeatSaverFormat = null;
         using HttpClient l_HttpClient = new HttpClient();
         try
         {
@@ -70,16 +66,16 @@ internal static class BeatSaverAPI
                 /*switch (l_HttpRequestException.StatusCode)
                 {
                     case HttpStatusCode.NotFound:
-                        Plugin.Log.Info("The Map do not exist");
+                        Logs.Info.Log("The Map do not exist");
                         return null;
                     case HttpStatusCode.TooManyRequests:
-                        Plugin.Log.Info("The bot got rate-limited on BeatSaver, Try later");
+                        Logs.Info.Log("The bot got rate-limited on BeatSaver, Try later");
                         return null;
                     case HttpStatusCode.BadGateway:
-                        Plugin.Log.Info("Server BadGateway");
+                        Logs.Info.Log("Server BadGateway");
                         return null;
                     case HttpStatusCode.InternalServerError:
-                        Plugin.Log.Info("InternalServerError");
+                        Logs.Info.Log("InternalServerError");
                         return null;
                 }*/
             }

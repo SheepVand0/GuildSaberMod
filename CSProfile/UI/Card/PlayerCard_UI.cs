@@ -32,11 +32,9 @@ namespace CSProfile.UI.Card
         public PlayerCardViewController _cardViewController;
         public void UpdateCardHandleVisibility()
         {
-            if (_floatingScreen != null)
-            {
-                _floatingScreen.ShowHandle = PluginConfig.Instance.m_cardHandleVisible;
-                _floatingScreen.UpdateHandle();
-            }
+            if (_floatingScreen == null) return;
+            _floatingScreen.ShowHandle = PluginConfig.Instance.m_cardHandleVisible;
+            _floatingScreen.UpdateHandle();
         }
 
         public PlayerCard_UI(PlayerApiReworkOutput p_player)
@@ -52,13 +50,13 @@ namespace CSProfile.UI.Card
             _floatingScreen.HandleReleased += OnCardHandleReleased;
 
             _cardViewController.SetReferences(p_player, _floatingScreen);
-            _cardViewController.firstLineLevels = new List<PlayerLevelUI>() {
+            _cardViewController.FirstLineLevels = new List<PlayerLevelUI>() {
                 new PlayerLevelUI("Streams : ", p_player.CategoryData[0].Level.ToString()),
                 new PlayerLevelUI("Vibro : ", p_player.CategoryData[1].Level.ToString()),
                 new PlayerLevelUI("Tech : ", p_player.CategoryData[2].Level.ToString()),
             };
 
-            _cardViewController.secondLineLevels = new List<PlayerLevelUI>() {
+            _cardViewController.SecondLineLevels = new List<PlayerLevelUI>() {
                 new PlayerLevelUI("Jumps : ", p_player.CategoryData[3].Level.ToString()),
                 new PlayerLevelUI("Shitpost : ", p_player.CategoryData[4].Level.ToString()),
             };
@@ -95,11 +93,4 @@ namespace CSProfile.UI.Card
             GameObject.Destroy(_cardViewController.gameObject);
         }
     }
-
-    public partial class PlayerCard_UI
-    {
-
-    }
-
-    
 }

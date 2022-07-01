@@ -16,21 +16,21 @@ namespace CSProfile.UI.Settings
         protected bool showCard
         {
             get => PluginConfig.Instance.m_showCard;
-            set { PluginConfig.Instance.m_showCard = value; Plugin.m_playerCard.UpdateCardVisibility(); }
+            set { PluginConfig.Instance.m_showCard = value; Plugin.PlayerCard.UpdateCardVisibility(); }
         }
 
         [UIValue("showCardHandle")]
         protected bool showCardHandle
         {
             get => PluginConfig.Instance.m_cardHandleVisible;
-            set { PluginConfig.Instance.m_cardHandleVisible = value; Plugin.m_playerCard.UpdateCardHandleVisibility(); }
+            set { PluginConfig.Instance.m_cardHandleVisible = value; Plugin.PlayerCard.UpdateCardHandleVisibility(); }
         }
 
         [UIValue("detailLevels")]
         protected bool ShowDetailedLevels
         {
             get => PluginConfig.Instance.m_showDetaislLevels;
-            set { PluginConfig.Instance.m_showDetaislLevels = value; Plugin.m_playerCard._cardViewController.UpdateLevelsDetails(); }
+            set { PluginConfig.Instance.m_showDetaislLevels = value; Plugin.PlayerCard._cardViewController.UpdateLevelsDetails(); }
         }
 
         [UIValue("showPlayTime")]
