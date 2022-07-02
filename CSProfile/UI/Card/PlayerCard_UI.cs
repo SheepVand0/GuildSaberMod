@@ -27,7 +27,7 @@ namespace CSProfile.UI.Card
         public void UpdateCardHandleVisibility()
         {
             if (_floatingScreen == null) return;
-            _floatingScreen.ShowHandle = PluginConfig.Instance.m_cardHandleVisible;
+            _floatingScreen.ShowHandle = PluginConfig.Instance.CardHandleVisible;
             _floatingScreen.UpdateHandle();
         }
 
@@ -38,7 +38,7 @@ namespace CSProfile.UI.Card
             if (_cardViewController == null)
                 _cardViewController = BeatSaberUI.CreateViewController<PlayerCardViewController>();
 
-            _floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40f, 40f), true, PluginConfig.Instance.m_cardPosition, PluginConfig.Instance.m_cardRotation);
+            _floatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40f, 40f), true, PluginConfig.Instance.CardPosition, PluginConfig.Instance.CardRotation);
             _floatingScreen.HighlightHandle = true;
             _floatingScreen.HandleSide = FloatingScreen.Side.Right;
             _floatingScreen.HandleReleased += OnCardHandleReleased;
@@ -67,13 +67,13 @@ namespace CSProfile.UI.Card
 
         private void OnCardHandleReleased(object sender, FloatingScreenHandleEventArgs e)
         {
-            PluginConfig.Instance.m_cardPosition = e.Position;
-            PluginConfig.Instance.m_cardRotation = e.Rotation;
+            PluginConfig.Instance.CardPosition = e.Position;
+            PluginConfig.Instance.CardRotation = e.Rotation;
         }
 
         public void UpdateCardVisibility()
         {
-            _floatingScreen.gameObject.SetActive(PluginConfig.Instance.m_showCard);
+            _floatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCard);
         }
 
         public void Destroy()

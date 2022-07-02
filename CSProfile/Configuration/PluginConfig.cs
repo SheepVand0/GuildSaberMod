@@ -12,17 +12,17 @@ namespace CSProfile.Configuration
         public static PluginConfig Instance { get; set; }
 
         [JsonProperty("showCard")]
-        public virtual bool m_showCard { get; set; } = true;
+        public virtual bool ShowCard { get; set; } = true;
         [JsonProperty("cardPos")]
-        public virtual Vector3 m_cardPosition { get; set; } = new Vector3(0,3,5);
+        public virtual Vector3 CardPosition { get; set; } = new Vector3(2.05f,2.77f,3.82f);
         [JsonProperty("cardRot")]
-        public virtual Quaternion m_cardRotation { get; set; } = Quaternion.Euler(0,0,0);
+        public virtual Quaternion CardRotation { get; set; } = Quaternion.Euler(346.4417f,33.06f,358.6063f);
         [JsonProperty("cardHandleVisible")]
-        public virtual bool m_cardHandleVisible { get; set; } = false;
+        public virtual bool CardHandleVisible { get; set; } = false;
         [JsonProperty("showDetailsLevels")]
-        public virtual bool m_showDetaislLevels { get; set; } = false;
+        public virtual bool ShowDetaislLevels { get; set; } = false;
         [JsonProperty("ShowPlayTime")]
-        public virtual bool m_showPlayTime { get; set; } = true;
+        public virtual bool ShowPlayTime { get; set; } = true;
 
         /// <summary>
         /// This is called whenever BSIPA reads the config from disk (including when file changes are detected).

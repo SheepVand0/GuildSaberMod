@@ -101,13 +101,13 @@ namespace CSProfile.UI.Card
         #region Card Updates
         public void UpdateLevelsDetails()
         {
-            m_detailsLevelsLayout.gameObject.SetActive(PluginConfig.Instance.m_showDetaislLevels);
+            m_detailsLevelsLayout.gameObject.SetActive(PluginConfig.Instance.ShowDetaislLevels);
 
             if (m_CardScreen == null)
                 return;
 
             float l_LevelsSize = Levels.Count;
-            if (PluginConfig.Instance.m_showDetaislLevels == true)
+            if (PluginConfig.Instance.ShowDetaislLevels == true)
             {
 
                 //When the details levels is visible
@@ -127,7 +127,7 @@ namespace CSProfile.UI.Card
 
         public void UpdateTime(OptimizedDateTime p_time)
         {
-            m_playTimeText.text = PluginConfig.Instance.m_showPlayTime ? String.Join(":", p_time.m_Hours.ToString("00"), p_time.m_Minutes.ToString("00"), p_time.m_Seconds.ToString("00")) : " ";
+            m_playTimeText.text = PluginConfig.Instance.ShowPlayTime ? String.Join(":", p_time.m_Hours.ToString("00"), p_time.m_Minutes.ToString("00"), p_time.m_Seconds.ToString("00")) : " ";
         }
         #endregion
 

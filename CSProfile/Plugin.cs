@@ -70,7 +70,7 @@ namespace CSProfile
             Log.Debug("OnApplicationStart");
             new GameObject("CSProfileController").AddComponent<CSProfileController>();
 
-            GameplaySetup.instance.AddTab("Player Card", "CSProfile.UI.Settings.SettingTabViewController.bsml", m_TabViewController);
+            GameplaySetup.instance.AddTab("CSProfile", "CSProfile.UI.Settings.SettingTabViewController.bsml", m_TabViewController);
 
             BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
         }
