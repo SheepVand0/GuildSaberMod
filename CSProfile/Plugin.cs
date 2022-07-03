@@ -91,7 +91,6 @@ namespace CSProfile
 
             PlayerCard = new PlayerCard_UI(l_outputPlayer);
             s_CardLoaded = true;
-
         }
 
         public static void DestroyCard()

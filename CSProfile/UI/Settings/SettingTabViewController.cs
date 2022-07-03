@@ -12,35 +12,35 @@ namespace CSProfile.UI.Settings
     public class SettingTabViewController
     {
 
-        [UIValue("showCard")]
+        [UIValue("ShowCard")]
         protected bool showCard
         {
             get => PluginConfig.Instance.ShowCard;
             set { PluginConfig.Instance.ShowCard = value; Plugin.PlayerCard.UpdateCardVisibility(); }
         }
 
-        [UIValue("showCardHandle")]
+        [UIValue("ShowCardHandle")]
         protected bool showCardHandle
         {
             get => PluginConfig.Instance.CardHandleVisible;
             set { PluginConfig.Instance.CardHandleVisible = value; Plugin.PlayerCard.UpdateCardHandleVisibility(); }
         }
 
-        [UIValue("detailLevels")]
+        [UIValue("DetailLevels")]
         protected bool ShowDetailedLevels
         {
             get => PluginConfig.Instance.ShowDetaislLevels;
-            set { PluginConfig.Instance.ShowDetaislLevels = value; Plugin.PlayerCard._cardViewController.UpdateLevelsDetails(); }
+            set { PluginConfig.Instance.ShowDetaislLevels = value; Plugin.PlayerCard._CardViewController.UpdateLevelsDetails(); }
         }
 
-        [UIValue("showPlayTime")]
+        [UIValue("ShowPlayTime")]
         protected bool showPlayTime
         {
             get => PluginConfig.Instance.ShowPlayTime;
             set => PluginConfig.Instance.ShowPlayTime = value;
         }
 
-        [UIAction("refreshCard")]
+        [UIAction("RefreshCard")]
         protected void RefreshCard()
         {
             Plugin.DestroyCard();

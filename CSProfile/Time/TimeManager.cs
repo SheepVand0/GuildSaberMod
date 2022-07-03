@@ -14,32 +14,32 @@ namespace CSProfile.Time
     /// </summary>
 	public class TimeManager : MonoBehaviour
     {
-        PlayerCardViewController m_cardControllerRef = null;
+        PlayerCardViewController m_CardControllerRef = null;
 
-        public OptimizedDateTime m_time = new OptimizedDateTime();
+        public OptimizedDateTime m_Time = new OptimizedDateTime();
 
         public void Awake()
         {
-            m_time.Init(0, 0, 0, 0, 0, 0);
+            m_Time.Init(0, 0, 0, 0, 0, 0);
         }
 
         public void Update()
         {
-            if (m_cardControllerRef == null)
+            if (m_CardControllerRef == null)
             {
                 Plugin.Log.Error("Controller ref is null");
                 return;
             }
 
-            if (m_time.AddSecondAndUpdateclock(UnityEngine.Time.deltaTime) == true) {
-                m_cardControllerRef.UpdateTime(m_time);
+            if (m_Time.AddSecondAndUpdateclock(UnityEngine.Time.deltaTime) == true) {
+                m_CardControllerRef.UpdateTime(m_Time);
             }
         }
 
         public void SetPlayerCardViewControllerRef(PlayerCardViewController p_ref)
         {
             if (p_ref != null) 
-                m_cardControllerRef = p_ref;
+                m_CardControllerRef = p_ref;
         }
     }
 }

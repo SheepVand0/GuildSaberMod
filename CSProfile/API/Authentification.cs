@@ -17,11 +17,11 @@ public static class Authentification
             return Plugin.NOT_DEFINED;
         }
 
-        CSteamID l_steamIdBase = SteamUser.GetSteamID();
-        string l_steamId = l_steamIdBase.ToString();
+        CSteamID l_SteamIdBase = SteamUser.GetSteamID();
+        string l_SteamId = l_SteamIdBase.ToString();
 
-        if (string.IsNullOrEmpty(l_steamId)) return Plugin.NOT_DEFINED;
-        Plugin.Log.Info($"Player Id : {l_steamId}");
-        return l_steamId;
+        if (string.IsNullOrEmpty(l_SteamId)) return Plugin.NOT_DEFINED;
+        Plugin.Log.Info($"Player Id : {l_SteamId}");
+        return l_SteamId;
     }
 }

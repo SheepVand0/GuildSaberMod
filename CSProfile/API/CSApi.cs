@@ -15,14 +15,14 @@ namespace CSProfile.API
 
         public static PlayerApiReworkOutput GetPlayerByScoreSaberId(string p_id)
         {
-            PlayerApiReworkOutput l_resultPlayer = new PlayerApiReworkOutput();
-            using HttpClient l_client = new HttpClient();
+            PlayerApiReworkOutput l_ResultPlayer = new PlayerApiReworkOutput();
+            using HttpClient l_Client = new HttpClient();
 
             try
             {
-                Task<string> l_result = l_client.GetStringAsync($"http://api.bsdr.fdom.eu/player/data/{p_id}");
-                l_result.Wait();
-                l_resultPlayer = JsonConvert.DeserializeObject<PlayerApiReworkOutput>(l_result.Result);
+                Task<string> l_Result = l_Client.GetStringAsync($"http://api.bsdr.fdom.eu/player/data/{p_id}");
+                l_Result.Wait();
+                l_ResultPlayer = JsonConvert.DeserializeObject<PlayerApiReworkOutput>(l_Result.Result);
 
             } catch (System.AggregateException l_AggregateException)
             {
@@ -32,7 +32,7 @@ namespace CSProfile.API
                 }
             }
 
-            return l_resultPlayer;
+            return l_ResultPlayer;
         }
 
     }
