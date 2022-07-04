@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <BeatSaberDir>C:\Users\user\Desktop\BsLegacy_Bs1.22.0\Beat Saber</BeatSaberDir>
   </PropertyGroup>

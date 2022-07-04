@@ -112,7 +112,7 @@ namespace CSProfile.UI.Card
 
                 //When the details levels is visible
 
-                m_CardScreen.ScreenSize = new Vector2((62+m_PlayerInfo.Name.Length+l_LevelsSize)*1.02f, 28+(l_LevelsSize/3));
+                m_CardScreen.ScreenSize = new Vector2((62+m_PlayerInfo.Name.Length+l_LevelsSize)*1.02f, (28+l_LevelsSize)*0.72f);
                 m_ElementsGrid.cellSize = new Vector2((46+m_PlayerInfo.Name.Length+l_LevelsSize)*1.17f, 40);
                 m_ElementsGrid.spacing = new Vector2(7, 7);
             }
