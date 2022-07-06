@@ -20,7 +20,7 @@ namespace CSProfile.Time
 
         public void Awake()
         {
-            m_Time.Init(0, 0, 0, 0, 0, 0);
+            m_Time.Init(0, 0, 0, 0, 59, 30);
         }
 
         public void Update()
@@ -38,7 +38,7 @@ namespace CSProfile.Time
 
         public void SetPlayerCardViewControllerRef(PlayerCardViewController p_ref)
         {
-            if (p_ref != null) 
+            if (p_ref != null)
                 m_CardControllerRef = p_ref;
         }
     }

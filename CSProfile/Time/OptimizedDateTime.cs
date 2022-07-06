@@ -56,32 +56,31 @@ namespace CSProfile.Time
             {
                 m_Minutes = m_Minutes + (int)(m_Seconds / 60);
                 m_Seconds = 0;
-            }
 
-            if (m_Minutes >= 60)
-            {
+                if (!(m_Minutes >= 60))
+                    return l_shouldUpdate;
+
                 m_Hours = m_Hours + m_Minutes / 60;
                 m_Minutes = 0;
-            }
 
-            if (m_Hours >= 24)
-            {
+                if (!(m_Hours >= 24))
+                    return l_shouldUpdate;
+
                 m_Day = m_Day + m_Hours / 24;
                 m_Hours = 0;
-            }
 
-            if (m_Day >= GetCurrentMonthDayCount())
-            {
+                if (!(m_Day >= GetCurrentMonthDayCount()))
+                    return l_shouldUpdate;
+
                 m_Month = m_Month + (m_Day / GetCurrentMonthDayCount());
                 m_Day = 0;
-            }
 
-            if (m_Month >= 12)
-            {
+                if (!(m_Month >= 12))
+                    return l_shouldUpdate;
+
                 m_Year = m_Year + (m_Month / 12);
                 m_Month = 0;
             }
-
             #endregion
             return l_shouldUpdate;
         }
