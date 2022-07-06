@@ -46,9 +46,9 @@ namespace CSProfile.UI.Card
             _CardViewController.SetReferences(p_player, _FloatingScreen);
 
 
-            bool m_useMass = false;
+            bool l_UseALot = false;
 
-            if (m_useMass == false)
+            if (l_UseALot == false)
             {
                 foreach (var l_category in p_player.CategoryData)
                 {

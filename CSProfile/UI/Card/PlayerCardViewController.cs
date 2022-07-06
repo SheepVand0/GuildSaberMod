@@ -110,9 +110,9 @@ namespace CSProfile.UI.Card
             if (PluginConfig.Instance.ShowDetaislLevels == true)
             {
                 //When the details levels is visible
-                m_CardScreen.ScreenSize = new Vector2((62+m_PlayerInfo.Name.Length+l_LevelsSize)*0.8f, (28+l_LevelsSize)*0.85f);
-                m_ElementsGrid.cellSize = new Vector2((35+m_PlayerInfo.Name.Length+l_LevelsSize), 40);
-                m_DetailsLevelsLayout.cellSize = new Vector2(7, 5.5f - (l_LevelsSize*0.4f));
+                m_CardScreen.ScreenSize = new Vector2((62+m_PlayerInfo.Name.Length+l_LevelsSize)*0.8f, 28+(l_LevelsSize*0.4f));
+                m_ElementsGrid.cellSize = new Vector2(35+m_PlayerInfo.Name.Length+(l_LevelsSize*0.9f), 40);
+                m_DetailsLevelsLayout.cellSize = new Vector2(7, 10.5f - (l_LevelsSize*0.1f));
                 m_ElementsGrid.spacing = new Vector2(7, 7);
             }
             else
