@@ -45,58 +45,22 @@ namespace CSProfile.UI.Card
 
             _CardViewController.SetReferences(p_player, _FloatingScreen);
 
-            foreach (var l_category in p_player.CategoryData)
-            {
-                _CardViewController.Levels.Add(new PlayerLevelUI(l_category.Category, l_category.Level.ToString()));
-            }
 
-           /* _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));*/
+            bool m_useMass = false;
+
+            if (m_useMass == false)
+            {
+                foreach (var l_category in p_player.CategoryData)
+                {
+                    _CardViewController.Levels.Add(new PlayerLevelUI(l_category.Category, l_category.Level.ToString()));
+                }
+            } else
+            {
+               for (int l_i = 0;l_i < 50;l_i++)
+               {
+                   _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
+               }
+            }
 
             _FloatingScreen.SetRootViewController(_CardViewController, HMUI.ViewController.AnimationType.None);
 
