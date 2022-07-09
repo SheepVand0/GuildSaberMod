@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace CSProfile.Time
 {
@@ -14,7 +10,7 @@ namespace CSProfile.Time
         public int m_Hours;
         public int m_Minutes;
         public float m_Seconds;
-        List<int> m_DaysInMonth = new List<int>()
+        private readonly List<int> m_DaysInMonth = new List<int>()
             {
                 31,
                 28,
@@ -40,53 +36,48 @@ namespace CSProfile.Time
             m_Seconds = p_Seconds;
         }
 
-        public bool AddSecondAndUpdateclock(float p_value)
+        public bool AddSecondAndUpdateClock(float p_value)
         {
-            bool l_ShouldUpdate = false;
-
-            if (m_Seconds + p_value > (int)m_Seconds + 1)
-            {
-                l_ShouldUpdate = true;
-            }
+            bool l_ShouldUpdate = m_Seconds + p_value > (int)m_Seconds + 1;
 
             m_Seconds = m_Seconds + p_value;
 
             #region Recalcul time
-            if (m_Seconds >= 60)
-            {
-                m_Minutes = m_Minutes + (int)(m_Seconds / 60);
-                m_Seconds = 0;
+            if (!(m_Seconds >= 60)) return l_ShouldUpdate;
 
-                if (!(m_Minutes >= 60))
-                    return l_ShouldUpdate;
+            m_Minutes = m_Minutes + (int)(m_Seconds / 60);
+            m_Seconds = 0;
 
-                m_Hours = m_Hours + m_Minutes / 60;
-                m_Minutes = 0;
+            if (!(m_Minutes >= 60))
+                return l_ShouldUpdate;
 
-                if (!(m_Hours >= 24))
-                    return l_ShouldUpdate;
+            m_Hours = m_Hours + m_Minutes / 60;
+            m_Minutes = 0;
 
-                m_Day = m_Day + m_Hours / 24;
-                m_Hours = 0;
+            if (!(m_Hours >= 24))
+                return l_ShouldUpdate;
 
-                if (!(m_Day >= GetCurrentMonthDayCount()))
-                    return l_ShouldUpdate;
+            m_Day = m_Day + m_Hours / 24;
+            m_Hours = 0;
 
-                m_Month = m_Month + (m_Day / GetCurrentMonthDayCount());
-                m_Day = 0;
+            if (!(m_Day >= GetCurrentMonthDayCount()))
+                return l_ShouldUpdate;
 
-                if (!(m_Month >= 12))
-                    return l_ShouldUpdate;
+            m_Month = m_Month + (m_Day / GetCurrentMonthDayCount());
+            m_Day = 0;
 
-                m_Year = m_Year + (m_Month / 12);
-                m_Month = 0;
-            }
-            #endregion
+            if (!(m_Month >= 12))
+                return l_ShouldUpdate;
+
+            m_Year = m_Year + (m_Month / 12);
+            m_Month = 0;
+
             return l_ShouldUpdate;
+            #endregion
         }
         public int GetCurrentMonthDayCount()
         {
-            return daysInMonth[m_Month];
+            return m_DaysInMonth[m_Month];
         }
     }
 }

@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
 using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using HMUI;
 using CSProfile.API;
-using BSDiscordRanking.Formats.API;
 using UnityEngine;
 using UnityEngine.UI;
-using CSProfile.Utils;
 using CSProfile.Configuration;
 using TMPro;
 using CSProfile.Time;
@@ -28,7 +20,7 @@ namespace CSProfile.UI.Card
     //PlayerCard variables
     [HotReload(RelativePathToLayout = @"PlayerCard_UI.bsml")]
     [ViewDefinition("CSProfile.UI.Card.View.PlayerCard_UI.bsml")]
-    public partial class PlayerCardViewController : BSMLAutomaticViewController
+    public class PlayerCardViewController : BSMLAutomaticViewController
     {
         public TimeManager m_TimeManager;
 
@@ -42,7 +34,7 @@ namespace CSProfile.UI.Card
             {
                 m_NumberOfPasses = 0;
                 for (int l_i = 0; l_i < m_PlayerInfo.CategoryData.Count; l_i++)
-                    m_NumberOfPasses = m_NumberOfPasses + m_PlayerInfo.CategoryData[l_i].NumberOfPass;
+                    m_NumberOfPasses += m_PlayerInfo.CategoryData[l_i].NumberOfPass;
                 PlayerNumberOfPasses = m_NumberOfPasses.ToString();
                 return m_NumberOfPasses.ToString();
             }
@@ -55,12 +47,12 @@ namespace CSProfile.UI.Card
 
         int m_NumberOfPasses = 0;
 
-        [UIComponent("playerNameText")] public TextMeshProUGUI m_PlayerNameText = null;
-        [UIComponent("playerRankText")] TextMeshProUGUI m_PlayerRankText = null;
-        [UIComponent("playTimeText")] TextMeshProUGUI m_PlayTimeText = null;
-        [UIComponent("detailsLevelsLayout")] GridLayoutGroup m_DetailsLevelsLayout = null;
-        [UIComponent("neonBackground")] Transform m_NeonBackground = null;
-        [UIComponent("elemGrid")] GridLayoutGroup m_ElementsGrid = null;
+        [UIComponent("PlayerNameText")] public TextMeshProUGUI m_PlayerNameText = null;
+        [UIComponent("PlayerRankText")] TextMeshProUGUI m_PlayerRankText = null;
+        [UIComponent("PlayTimeText")] TextMeshProUGUI m_PlayTimeText = null;
+        [UIComponent("DetailsLevelsLayout")] GridLayoutGroup m_DetailsLevelsLayout = null;
+        [UIComponent("NeonBackground")] Transform m_NeonBackground = null;
+        [UIComponent("ElemGrid")] GridLayoutGroup m_ElementsGrid = null;
 
         #region Main Card Info and style Loading
         [UIAction("#post-parse")]
@@ -69,8 +61,10 @@ namespace CSProfile.UI.Card
             m_PlayerRankText.SetText(m_PlayerInfo.RankData[0].Rank.ToString());
 
             UnityEngine.Color l_playerColor = m_PlayerInfo.ProfileColor.ToUnityColor();
-            UnityEngine.Color l_beforePlayerColor = new UnityEngine.Color(l_playerColor.r * 0.8f, l_playerColor.g * 0.8f, l_playerColor.b * 0.8f);
-            UnityEngine.Color l_newPlayerColor = new UnityEngine.Color(l_playerColor.r * 1.2f, l_playerColor.g * 1.2f, l_playerColor.b * 1.2f);
+            UnityEngine.Color l_beforePlayerColor = new Color(l_playerColor.r * 0.8f, l_playerColor.g * 0.8f, l_playerColor.b * 0.8f);
+            UnityEngine.Color l_newPlayerColor = new Color(l_playerColor.r * 1.2f, l_playerColor.g * 1.2f, l_playerColor.b * 1.2f);
+
+            Plugin.Log.Info(l_playerColor.ToString());
 
             m_PlayerNameText.enableVertexGradient = true;
             m_PlayerRankText.enableVertexGradient = true;
@@ -101,13 +95,13 @@ namespace CSProfile.UI.Card
         #region Card Updates
         public void UpdateLevelsDetails()
         {
-            m_DetailsLevelsLayout.gameObject.SetActive(PluginConfig.Instance.ShowDetaislLevels);
+            m_DetailsLevelsLayout.gameObject.SetActive(PluginConfig.Instance.ShowDetailsLevels);
 
             if (m_CardScreen == null)
                 return;
 
             float l_LevelsSize = Levels.Count;
-            if (PluginConfig.Instance.ShowDetaislLevels == true)
+            if (PluginConfig.Instance.ShowDetailsLevels == true)
             {
                 //When the details levels is visible
                 m_CardScreen.ScreenSize = new Vector2((62+m_PlayerInfo.Name.Length+l_LevelsSize)*0.8f, 28+(l_LevelsSize*0.4f));
@@ -117,7 +111,7 @@ namespace CSProfile.UI.Card
             }
             else
             {
-                //When the detaisl levels is hidden
+                //When the details levels is hidden
                 m_CardScreen.ScreenSize = new Vector2(33+m_PlayerInfo.Name.Length, 28);
                 m_ElementsGrid.cellSize = new Vector2(25+m_PlayerInfo.Name.Length, 40);
                 m_ElementsGrid.spacing = new Vector2(1, 7);

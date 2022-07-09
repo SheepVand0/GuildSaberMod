@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using BSDiscordRanking.Formats.API;
 
-namespace BSDiscordRanking.Formats.Player
+namespace CSProfile.API
 {
     public class PlayerStatsFormat
     {

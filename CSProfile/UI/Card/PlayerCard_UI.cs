@@ -1,6 +1,6 @@
 ﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.FloatingScreen;
-using BSDiscordRanking.Formats.API;
+using CSProfile.API;
 using UnityEngine;
 using CSProfile.Configuration;
 
@@ -19,7 +19,7 @@ namespace CSProfile.UI.Card
         }
     }
 
-    public partial class PlayerCard_UI
+    public class PlayerCard_UI
     {
         public FloatingScreen _FloatingScreen;
 
@@ -31,28 +31,27 @@ namespace CSProfile.UI.Card
             _FloatingScreen.UpdateHandle();
         }
 
-        public PlayerCard_UI(PlayerApiReworkOutput p_player)
+        public PlayerCard_UI(PlayerApiReworkOutput p_Player)
         {
             Plugin.Log.Info("Loading Player Card");
 
-            if (_CardViewController == null)
-                _CardViewController = BeatSaberUI.CreateViewController<PlayerCardViewController>();
+            _CardViewController = BeatSaberUI.CreateViewController<PlayerCardViewController>();
 
             _FloatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40f, 40f), true, PluginConfig.Instance.CardPosition, PluginConfig.Instance.CardRotation);
             _FloatingScreen.HighlightHandle = true;
             _FloatingScreen.HandleSide = FloatingScreen.Side.Right;
             _FloatingScreen.HandleReleased += OnCardHandleReleased;
 
-            _CardViewController.SetReferences(p_player, _FloatingScreen);
+            _CardViewController.SetReferences(p_Player, _FloatingScreen);
 
 
             bool l_UseALot = false;
 
             if (l_UseALot == false)
             {
-                foreach (var l_category in p_player.CategoryData)
+                foreach (var l_Category in p_Player.CategoryData)
                 {
-                    _CardViewController.Levels.Add(new PlayerLevelUI(l_category.Category, l_category.Level.ToString()));
+                    _CardViewController.Levels.Add(new PlayerLevelUI(l_Category.Category, l_Category.Level.ToString()));
                 }
             } else
             {
@@ -77,10 +76,10 @@ namespace CSProfile.UI.Card
             UpdateCardVisibility();
         }
 
-        private void OnCardHandleReleased(object sender, FloatingScreenHandleEventArgs e)
+        private void OnCardHandleReleased(object p_Sender, FloatingScreenHandleEventArgs p_Event)
         {
-            PluginConfig.Instance.CardPosition = e.Position;
-            PluginConfig.Instance.CardRotation = e.Rotation;
+            PluginConfig.Instance.CardPosition = p_Event.Position;
+            PluginConfig.Instance.CardRotation = p_Event.Rotation;
         }
 
         public void UpdateCardVisibility()

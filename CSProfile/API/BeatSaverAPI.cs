@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using CSProfile;
 
-namespace GuildSaber.APIFormats.Input;
+namespace CSProfile.API;
 
 internal static class BeatSaverAPI
 {

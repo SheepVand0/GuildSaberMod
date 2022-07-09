@@ -20,7 +20,7 @@ namespace CSProfile.Time
 
         public void Awake()
         {
-            m_Time.Init(0, 0, 0, 0, 59, 30);
+            m_Time.Init(0, 0, 0, 0, 0, 0);
         }
 
         public void Update()
@@ -31,7 +31,7 @@ namespace CSProfile.Time
                 return;
             }
 
-            if (m_Time.AddSecondAndUpdateclock(UnityEngine.Time.deltaTime) == true) {
+            if (m_Time.AddSecondAndUpdateClock(UnityEngine.Time.deltaTime) == true) {
                 m_CardControllerRef.UpdateTime(m_Time);
             }
         }

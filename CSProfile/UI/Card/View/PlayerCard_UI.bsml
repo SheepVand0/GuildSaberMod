@@ -1,12 +1,12 @@
 ﻿<bg bg='round-rect-panel' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
-<bg bg='panel-top-gradient' id='neonBackground'>
-	<grid id='elemGrid' cell-size-x='35' cell-size-y='40' horizontal-fit='PreferredSize' child-align='MiddleLeft' vertical-fit='PreferredSize'>
+<bg bg='panel-top-gradient' id='NeonBackground'>
+	<grid id='ElemGrid' cell-size-x='35' cell-size-y='40' horizontal-fit='PreferredSize' child-align='MiddleLeft' vertical-fit='PreferredSize'>
 		<horizontal child-control-width='true' child-expand-width='true' spacing='7' child-align="MiddleLeft">
 			<horizontal child-control-width="true" child-expand-width="true" spacing="4" child-align="MiddleLeft">
 				<vertical child-control-height="true" child-expand-height="true" child-align="MiddleLeft">
-					<text text="~PlayerName" id="playerNameText" underlined="true"/>
+					<text text="~PlayerName" id="PlayerNameText" underlined="true"/>
 					<vertical child-control-height="true" child-expand-height="true">
 						<horizontal child-align="MiddleLeft" horizontal-fit="PreferredSize" child-control-width="true" child-expand-width="true">
 							<text text="Level:" font-size="2" align="MidlineLeft"/>
@@ -18,28 +18,22 @@
 						</horizontal>
 						<horizontal>
 							<text text="#" font-size="3" align="MidlineLeft"/>
-							<text font-size="3" id="playerRankText" align="MidlineLeft"/>
+							<text font-size="3" id="PlayerRankText" align="MidlineLeft"/>
 						</horizontal>
 						<text text="______" font-size="3"></text>
 					</vertical>
-					<text font-size="2" id="playTimeText" text="00:00:00" align="MidlineRight"></text>
+					<text font-size="2" id="PlayTimeText" text="00:00:00" align="MidlineRight"></text>
 				</vertical>
 				<grid cell-size-x="15" cell-size-y="15" child-align="MiddleCenter">
-					<clickable-image pref-height="1" pref-width="1" preserve-aspect="false" src="~PlayerImageSrc" event-click="showPlayerSS"/>
+					<clickable-image pref-height="1" pref-width="1" preserve-aspect="false" src="~PlayerImageSrc"/>
 				</grid>
-				<modal show-event="showPlayerSS" size-delta-x="30" size-delta-y="35" hide-event="hidePlayerSS">
-					<vertical>
-						<image src="~PlayerImageSrc"></image>
-						<button text="close" event-click="hidePlayerSS"></button>
-					</vertical>
-				</modal>
 			</horizontal>
-			<grid id="detailsLevelsLayout" vertical-fit="MinSize" horizontal-fit="PreferredSize" cell-size-x="7" cell-size-y="5.5">
+			<grid id="DetailsLevelsLayout" vertical-fit="MinSize" horizontal-fit="PreferredSize" cell-size-x="7" cell-size-y="5.5">
 				<!--child-control-width="true" child-expand-width="true"-->
 				<macro.for-each items="Levels">
 					<vertical vertical-fit="PreferredSize" child-control-height="true" child-expand-height="true">
-						<text text="~LevelName" font-size="2"></text>
-						<text text="~Level" font-size="2"></text>
+						<text text="~LevelName" font-size="2"/>
+						<text text="~Level" font-size="2"/>
 					</vertical>
 				</macro.for-each>
 			</grid>

@@ -1,7 +1,7 @@
-﻿using GuildSaber.APIFormats.Input;
+﻿using CSProfile.API;
 using System.Collections.Generic;
 
-namespace BSDiscordRanking.Formats.API
+namespace CSProfile.API
 {
     public class PlayerCollection
     {

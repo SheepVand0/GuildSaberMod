@@ -1,20 +1,11 @@
 ﻿using IPA;
-using IPA.Config;
 using IPA.Config.Stores;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using ScoreSaberSharp;
 using BS_Utils.Utilities;
 using CSProfile.API;
-using BSDiscordRanking.Formats.API;
 using CSProfile.UI.Card;
 using CSProfile.UI.Settings;
 using BeatSaberMarkupLanguage.GameplaySetup;
-using System.Threading.Tasks;
 using IPALogger = IPA.Logging.Logger;
 using HarmonyLib;
 
@@ -23,7 +14,7 @@ namespace CSProfile
     [Plugin(RuntimeOptions.SingleStartInit)]
     public class Plugin
     {
-        public static string NOT_DEFINED = "Undefined";
+        public const string NOT_DEFINED = "Undefined";
 
         public static PlayerCard_UI PlayerCard = null;
 
@@ -33,7 +24,7 @@ namespace CSProfile
         internal static Plugin Instance { get; private set; }
         internal static IPALogger Log { get; private set; }
 
-        Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.CSProfile");
+        //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.CSProfile");
 
         [Init]
         /// <summary>
@@ -59,7 +50,7 @@ namespace CSProfile
             Configuration.PluginConfig.Instance = conf.Generated<Configuration.PluginConfig>();
             Log.Debug("Config loaded");
 
-            m_Harmony.PatchAll();
+            //m_Harmony.PatchAll();
         }
 
         #endregion
@@ -84,7 +75,7 @@ namespace CSProfile
         {
             if (s_CardLoaded) return;
 
-            var l_playerId = Authentification.GetPlayerIdFromSteam();
+            var l_playerId = Authentication.GetPlayerIdFromSteam();
             if (l_playerId == NOT_DEFINED) return;
 
             PlayerApiReworkOutput l_outputPlayer = CSApi.GetPlayerByScoreSaberId(l_playerId);
@@ -104,7 +95,7 @@ namespace CSProfile
         public void OnApplicationQuit()
         {
             Log.Debug("OnApplicationQuit");
-            m_Harmony.UnpatchSelf();
+            //m_Harmony.UnpatchSelf();
         }
     }
 }

@@ -148,7 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\ApiOutputs.cs" />
-    <Compile Include="API\Authentification.cs" />
+    <Compile Include="API\Authentication.cs" />
     <Compile Include="API\BeatSaverAPI.cs" />
     <Compile Include="API\CSApi.cs" />
     <Compile Include="API\PlayerApiReworkOutput.cs" />

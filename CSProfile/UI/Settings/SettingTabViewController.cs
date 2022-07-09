@@ -1,11 +1,6 @@
-﻿using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.ViewControllers;
-using System;
-using System.Collections.Generic;
+﻿using BeatSaberMarkupLanguage.Attributes;
 using CSProfile.Configuration;
-using System.Threading.Tasks;
+using CSProfile.Time;
 
 namespace CSProfile.UI.Settings
 {
@@ -29,8 +24,8 @@ namespace CSProfile.UI.Settings
         [UIValue("DetailLevels")]
         protected bool ShowDetailedLevels
         {
-            get => PluginConfig.Instance.ShowDetaislLevels;
-            set { PluginConfig.Instance.ShowDetaislLevels = value; Plugin.PlayerCard._CardViewController.UpdateLevelsDetails(); }
+            get => PluginConfig.Instance.ShowDetailsLevels;
+            set { PluginConfig.Instance.ShowDetailsLevels = value; Plugin.PlayerCard._CardViewController.UpdateLevelsDetails(); }
         }
 
         [UIValue("ShowPlayTime")]
@@ -43,8 +38,10 @@ namespace CSProfile.UI.Settings
         [UIAction("RefreshCard")]
         protected void RefreshCard()
         {
+            OptimizedDateTime l_CurrentTime = Plugin.PlayerCard._CardViewController.GetComponent<TimeManager>().m_Time;
             Plugin.DestroyCard();
             Plugin.CreateCard();
+            Plugin.PlayerCard._CardViewController.GetComponent<TimeManager>().m_Time = l_CurrentTime;
         }
 
         [UIAction("#post-parse")]
