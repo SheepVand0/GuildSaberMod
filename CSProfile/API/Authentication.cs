@@ -17,6 +17,6 @@ public static class Authentication
 
         if (string.IsNullOrEmpty(l_SteamId)) return Plugin.NOT_DEFINED;
         //Plugin.Log.Info($"Player Id : {l_SteamId}");
-        return "76561198984693953";
+        return l_SteamId;
     }
 }
