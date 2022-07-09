@@ -1,27 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5aade194-a0dd-4ba1-adf3-7ba083ac670c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.CSProfile/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CSProfile/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.CSProfile/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CSProfile/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile.sln.DotSettings" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile.sln.DotSettings" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/API/ApiOutputs.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/ApiOutputs.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/API/BeatSaverAPI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/BeatSaverAPI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/API/CSApi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/CSApi.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/API/PlayerApiReworkOutput.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/PlayerApiReworkOutput.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/API/PlayerStatsFormat.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/PlayerStatsFormat.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/CSProfile.csproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/CSProfile.csproj.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/CSProfileController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/CSProfileController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/Configuration/PluginConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Configuration/PluginConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/Directory.Build.props" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Directory.Build.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/Plugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Plugin.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/Time/OptimizedDateTime.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Time/OptimizedDateTime.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/Time/TimeManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Time/TimeManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/UI/Card/PlayerCardViewController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/UI/Card/PlayerCardViewController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/UI/Card/PlayerCard_UI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/UI/Card/PlayerCard_UI.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/UI/Settings/SettingTabViewController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/UI/Settings/SettingTabViewController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/Utils/Color.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Utils/Color.cs" afterDir="false" />
-    </list>
+    <list default="true" id="5aade194-a0dd-4ba1-adf3-7ba083ac670c" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -48,7 +28,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "rider.run.widget.enabled.cache": "false",
-    "settings.editor.selected.configurable": "preferences.editor",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -73,7 +53,7 @@
       <option name="presentableId" value="Default" />
       <updated>1657376691409</updated>
       <workItem from="1657376695916" duration="1055000" />
-      <workItem from="1657378992434" duration="2280000" />
+      <workItem from="1657378992434" duration="2414000" />
     </task>
     <servers />
   </component>
