@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Http;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -104,6 +104,8 @@ internal static class BeatSaverAPI
     }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class BeatSaverFormat
 {
     public string id { get; set; }
@@ -119,6 +121,8 @@ public class BeatSaverFormat
     public List<Version> versions { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Metadata
 {
     public float bpm { get; set; }
@@ -129,6 +133,8 @@ public class Metadata
     public string songAuthorName { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Stats
 {
     public int plays { get; set; }
@@ -138,6 +144,8 @@ public class Stats
     public float score { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Uploader
 {
     public int id { get; set; }
@@ -146,6 +154,8 @@ public class Uploader
     public string avatar { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Version
 {
     public string hash { get; set; }
@@ -161,6 +171,8 @@ public class Version
     public string previewURL { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Diff
 {
     public float njs { get; set; }
@@ -182,6 +194,8 @@ public class Diff
     public int maxScore { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ParitySummary
 {
     public int errors { get; set; }

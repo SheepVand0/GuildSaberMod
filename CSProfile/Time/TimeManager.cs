@@ -11,24 +11,26 @@ public class TimeManager : MonoBehaviour
 {
     private PlayerCardViewController m_CardControllerRef;
 
-    public OptimizedDateTime m_Time = new OptimizedDateTime();
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    // ReSharper disable once MemberCanBePrivate.Global
+    public OptimizedDateTime Time = new OptimizedDateTime();
 
     public void Awake()
     {
-        m_Time.Init(0, 0, 0, 0, 0, 0);
+        Time.Init(0, 0, 0, 0, 0, 0);
     }
 
     public void Update()
     {
-        if (m_CardControllerRef == null)
+        if (m_CardControllerRef is null)
         {
             Plugin.Log.Error("Controller ref is null");
             return;
         }
 
-        if (m_Time.AddSecondAndUpdateClock(UnityEngine.Time.deltaTime))
+        if (Time.AddSecondAndUpdateClock(UnityEngine.Time.deltaTime))
         {
-            m_CardControllerRef.UpdateTime(m_Time);
+            m_CardControllerRef.UpdateTime(Time);
         }
     }
 

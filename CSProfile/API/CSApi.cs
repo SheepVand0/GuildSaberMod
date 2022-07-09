@@ -21,7 +21,7 @@ public static class CSApi
         }
         catch (AggregateException l_AggregateException)
         {
-            if (l_AggregateException.InnerException is HttpRequestException l_HttpRequestException)
+            if (l_AggregateException.InnerException is HttpRequestException)
             {
                 Plugin.Log.Info("Error during getting Player data");
             }

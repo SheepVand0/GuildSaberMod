@@ -8,7 +8,7 @@ namespace CSProfile;
 /// </summary>
 public class CSProfileController : MonoBehaviour
 {
-    public static CSProfileController Instance { get; private set; }
+    private static CSProfileController Instance { get; set; }
 
     // These methods are automatically called by Unity, you should remove any you aren't using.
 
@@ -33,46 +33,6 @@ public class CSProfileController : MonoBehaviour
     }
 
     /// <summary>
-    ///     Only ever called once on the first frame the script is Enabled. Start is called after any other script's Awake() and before Update().
-    /// </summary>
-    private void Start()
-    {
-
-    }
-
-    /// <summary>
-    ///     Called every frame if the script is enabled.
-    /// </summary>
-    private void Update()
-    {
-
-    }
-
-    /// <summary>
-    ///     Called every frame after every other enabled script's Update().
-    /// </summary>
-    private void LateUpdate()
-    {
-
-    }
-
-    /// <summary>
-    ///     Called when the script becomes enabled and active
-    /// </summary>
-    private void OnEnable()
-    {
-
-    }
-
-    /// <summary>
-    ///     Called when the script becomes disabled or when it is being destroyed.
-    /// </summary>
-    private void OnDisable()
-    {
-
-    }
-
-    /// <summary>
     ///     Called when the script is being destroyed.
     /// </summary>
     private void OnDestroy()
@@ -80,7 +40,6 @@ public class CSProfileController : MonoBehaviour
         Plugin.Log?.Debug($"{name}: OnDestroy()");
         if (Instance == this)
             Instance = null; // This MonoBehaviour is being destroyed, so set the static instance property to null.
-
     }
 
     #endregion

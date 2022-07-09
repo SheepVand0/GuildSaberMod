@@ -1,13 +1,17 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CSProfile.API;
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
 public class PlayerCollection
 {
     public List<ApiPlayer> players { get; set; }
     public Metadata metadata { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiPlayer
 {
     public string id { get; set; }
@@ -26,12 +30,16 @@ public class ApiPlayer
     public ApiScoreStats scoreStats { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiBadge
 {
     public string description { get; set; }
     public string image { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiScoreStats
 {
     public long totalScore { get; set; }
@@ -42,24 +50,32 @@ public class ApiScoreStats
     public int replaysWatched { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiScoreCollection
 {
     public List<ApiScore> scores { get; set; }
     public ApiMetadata metadata { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiPlayerScoreCollection
 {
     public List<ApiPlayerScore> playerScores { get; set; }
     public ApiMetadata metadata { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiPlayerScore
 {
     public ApiScore score { get; set; }
     public ApiLeaderboardInfo leaderboard { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiScore
 {
     public ulong id { get; set; }
@@ -80,12 +96,16 @@ public class ApiScore
     public string timeSet { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiLeaderboardInfoCollection
 {
     public ApiLeaderboardInfo leaderboards { get; set; }
     public Metadata metadata { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiLeaderboardInfo
 {
     public int id { get; set; }
@@ -113,6 +133,8 @@ public class ApiLeaderboardInfo
     public List<ApiDifficulty> difficulties { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiMetadata
 {
     public int total { get; set; }
@@ -120,6 +142,8 @@ public class ApiMetadata
     public int itemsPerPage { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiLeaderboardPlayerInfo
 {
     public string id { get; set; }
@@ -130,6 +154,8 @@ public class ApiLeaderboardPlayerInfo
     public string role { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiDifficulty
 {
     public int leaderboardID { get; set; }
@@ -138,6 +164,8 @@ public class ApiDifficulty
     public string difficultyRaw { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ApiCheck
 {
     public string service { get; set; }

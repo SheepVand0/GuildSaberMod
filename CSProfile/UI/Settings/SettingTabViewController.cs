@@ -35,7 +35,7 @@ public class SettingTabViewController
         set
         {
             PluginConfig.Instance.ShowDetailsLevels = value;
-            Plugin.PlayerCard._CardViewController.UpdateLevelsDetails();
+            Plugin.PlayerCard.CardViewController.UpdateLevelsDetails();
         }
     }
 

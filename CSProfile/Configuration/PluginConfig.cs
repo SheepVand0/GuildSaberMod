@@ -19,7 +19,7 @@ internal class PluginConfig
 
     [JsonProperty("CardHandleVisible")] public virtual bool CardHandleVisible { get; set; }
 
-    [JsonProperty("ShowDetailsLevels")] public virtual bool ShowDetailsLevels { get; set; }
+    [JsonProperty("ShowDetailsLevels")] public virtual bool ShowDetailsLevels { get; set; } = true;
 
     [JsonProperty("ShowPlayTime")] public virtual bool ShowPlayTime { get; set; } = true;
 

@@ -20,10 +20,11 @@ public class Plugin
 
     public static PlayerCard_UI PlayerCard;
 
-    public static bool CardLoaded;
+    private static bool s_CardLoaded;
 
-    public readonly SettingTabViewController TabViewController = new SettingTabViewController();
-    internal static Plugin Instance { get; private set; }
+    private readonly SettingTabViewController m_TabViewController = new SettingTabViewController();
+    // ReSharper disable once UnusedAutoPropertyAccessor.Local
+    private static Plugin Instance { get; set; }
     internal static IPALogger Log { get; private set; }
 
     //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.CSProfile");
@@ -62,7 +63,7 @@ public class Plugin
         Log.Debug("OnApplicationStart");
         new GameObject("CSProfileController").AddComponent<CSProfileController>();
 
-        GameplaySetup.instance.AddTab("CSProfile", "CSProfile.UI.Settings.SettingTabViewController.bsml", TabViewController);
+        GameplaySetup.instance.AddTab("CSProfile", "CSProfile.UI.Settings.SettingTabViewController.bsml", m_TabViewController);
 
         BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
     }
@@ -74,7 +75,7 @@ public class Plugin
 
     public static void CreateCard()
     {
-        if (CardLoaded) return;
+        if (s_CardLoaded) return;
 
         string l_PlayerId = Authentication.GetPlayerIdFromSteam();
         if (l_PlayerId == NOT_DEFINED) return;
@@ -82,14 +83,14 @@ public class Plugin
         PlayerApiReworkOutput l_OutputPlayer = CSApi.GetPlayerByScoreSaberId(l_PlayerId);
 
         PlayerCard = new PlayerCard_UI(l_OutputPlayer);
-        CardLoaded = true;
+        s_CardLoaded = true;
     }
 
     public static void DestroyCard()
     {
         PlayerCard.Destroy();
         PlayerCard = null;
-        CardLoaded = false;
+        s_CardLoaded = false;
     }
 
     [OnExit]

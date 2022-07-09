@@ -2,6 +2,7 @@
 
 namespace CSProfile.API;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class PlayerStatsFormat
 {
     public List<PassedLevel> Levels { get; set; }
@@ -15,6 +16,7 @@ public class PlayerStatsFormat
     public bool IsScanBanned { get; set; }
 }
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Trophy
 {
     public int Plastic { get; set; }
@@ -24,6 +26,7 @@ public class Trophy
     public int Ruby { get; set; }
 }
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class PassedLevel
 {
     public int LevelID { get; set; }
@@ -34,6 +37,7 @@ public class PassedLevel
     public List<CategoryPassed> Categories { get; set; }
 }
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class CategoryPassed
 {
     public string Category { get; set; }

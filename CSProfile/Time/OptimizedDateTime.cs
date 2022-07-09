@@ -77,7 +77,7 @@ public class OptimizedDateTime
 
         return l_ShouldUpdate;
     }
-    public int GetCurrentMonthDayCount()
+    private int GetCurrentMonthDayCount()
     {
         return m_DaysInMonth[Month];
     }

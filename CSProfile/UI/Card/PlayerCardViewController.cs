@@ -92,7 +92,6 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         l_CurrentImageView.overrideSprite = null;
         l_CurrentImageView.SetImage("#RoundRect10BorderFade");
 
-        Color l_DivideColor = l_CurrentImageView.color;
         l_CurrentImageView.color0 = l_BeforePlayerColor.ColorWithAlpha(1f);
         l_CurrentImageView.color1 = l_NewPlayerColor.ColorWithAlpha(1f);
         l_CurrentImageView.color = l_PlayerColor.ColorWithAlpha(1f);
@@ -147,6 +146,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     }
 
     #endregion
+
 }
 
 #endregion
