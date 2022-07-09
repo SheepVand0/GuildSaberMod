@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Net.Http;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
@@ -18,7 +19,7 @@ internal static class BeatSaverAPI
             l_Response.Wait();
             l_BeatSaverFormat = JsonConvert.DeserializeObject<BeatSaverFormat>(l_Response.Result);
         }
-        catch (System.AggregateException l_AggregateException)
+        catch (AggregateException l_AggregateException)
         {
             if (l_AggregateException.InnerException is HttpRequestException l_HttpRequestException)
             {
@@ -37,11 +38,14 @@ internal static class BeatSaverAPI
                         Logs.Info.Log("InternalServerError");
                         return null;
                 }*/
+                Plugin.Log.Error($"FetchBeatMap: Error during getting map, key : {p_Key}");
             }
             else
             {
-                Plugin.Log.Error($"FetchBeatMap: Unhandled exception) {l_AggregateException.InnerException}");
+                Plugin.Log.Error("FetchBeatMap: Unhandled exception)" + l_AggregateException.InnerException);
             }
+
+
         }
 
         return l_BeatSaverFormat;
@@ -57,7 +61,7 @@ internal static class BeatSaverAPI
             l_Response.Wait();
             l_BeatSaverFormat = JsonConvert.DeserializeObject<BeatSaverFormat>(l_Response.Result);
         }
-        catch (System.AggregateException l_AggregateException)
+        catch (AggregateException l_AggregateException)
         {
             if (l_AggregateException.InnerException is HttpRequestException l_HttpRequestException)
             {
@@ -86,25 +90,22 @@ internal static class BeatSaverAPI
         return l_BeatSaverFormat;
     }
 
-    public static UInt32 StringToDifficulty(string p_Input)
+    public static uint StringToDifficulty(string p_Input)
     {
-        switch (p_Input)
+        return p_Input switch
         {
-            case "Easy":
-                return 1;
-            case "Normal":
-                return 3;
-            case "Hard":
-                return 5;
-            case "Expert":
-                return 7;
-            case "ExpertPlus":
-                return 9;
-        }
-        return 0;
+            "Easy" => 1,
+            "Normal" => 3,
+            "Hard" => 5,
+            "Expert" => 7,
+            "ExpertPlus" => 9,
+            _ => 0
+        };
     }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class BeatSaverFormat
 {
     public string id { get; set; }
@@ -120,6 +121,8 @@ public class BeatSaverFormat
     public List<Version> versions { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Metadata
 {
     public float bpm { get; set; }
@@ -130,6 +133,8 @@ public class Metadata
     public string songAuthorName { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Stats
 {
     public int plays { get; set; }
@@ -139,6 +144,8 @@ public class Stats
     public float score { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Uploader
 {
     public int id { get; set; }
@@ -147,6 +154,8 @@ public class Uploader
     public string avatar { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Version
 {
     public string hash { get; set; }
@@ -162,6 +171,8 @@ public class Version
     public string previewURL { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class Diff
 {
     public float njs { get; set; }
@@ -183,6 +194,8 @@ public class Diff
     public int maxScore { get; set; }
 }
 
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+// ReSharper disable once ClassNeverInstantiated.Global
 public class ParitySummary
 {
     public int errors { get; set; }

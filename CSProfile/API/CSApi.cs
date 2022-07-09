@@ -1,33 +1,32 @@
-﻿using System.Threading.Tasks;
+using System;
 using System.Net.Http;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace CSProfile.API
+namespace CSProfile.API;
+
+public static class CSApi
 {
-    public static class CSApi
+    public static PlayerApiReworkOutput GetPlayerByScoreSaberId(string p_ID)
     {
+        PlayerApiReworkOutput l_ResultPlayer = new PlayerApiReworkOutput();
+        using HttpClient l_Client = new HttpClient();
 
-        public static PlayerApiReworkOutput GetPlayerByScoreSaberId(string p_Id)
+        try
         {
-            PlayerApiReworkOutput l_ResultPlayer = new PlayerApiReworkOutput();
-            using HttpClient l_Client = new HttpClient();
+            Task<string> l_Result = l_Client.GetStringAsync($"http://api.bsdr.fdom.eu/player/data/{p_ID}");
+            l_Result.Wait();
+            l_ResultPlayer = JsonConvert.DeserializeObject<PlayerApiReworkOutput>(l_Result.Result);
 
-            try
+        }
+        catch (AggregateException l_AggregateException)
+        {
+            if (l_AggregateException.InnerException is HttpRequestException)
             {
-                Task<string> l_Result = l_Client.GetStringAsync($"http://api.bsdr.fdom.eu/player/data/{p_Id}");
-                l_Result.Wait();
-                l_ResultPlayer = JsonConvert.DeserializeObject<PlayerApiReworkOutput>(l_Result.Result);
-
-            } catch (System.AggregateException l_AggregateException)
-            {
-                if (l_AggregateException.InnerException is HttpRequestException l_HttpRequestException)
-                {
-                    Plugin.Log.Info("Error during getting Player data");
-                }
+                Plugin.Log.Info("Error during getting Player data");
             }
-
-            return l_ResultPlayer;
         }
 
+        return l_ResultPlayer;
     }
 }

@@ -1,10 +1,11 @@
 using System.Collections.Generic;
-using CSProfile.API;
-using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 using CSProfile.Utils;
 
 namespace CSProfile.API;
 
+// ReSharper disable once ClassNeverInstantiated.Global
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public struct PlayerApiReworkOutput
 {
     public string Id { get; set; }
@@ -19,12 +20,14 @@ public struct PlayerApiReworkOutput
     public int Level { get; set; }
     public bool IsMapLeaderboardBanned { get; set; }
     public bool IsScanBanned { get; set; }
-    // ReSharper disable once InconsistentNaming
-    public List<RankData> RankData;
+    // ReSharper disable once CollectionNeverUpdated.Global
+    public List<RankData> RankData { get; set; }
+    // ReSharper disable once CollectionNeverUpdated.Global
     public List<CustomApiPlayerCategory> CategoryData { get; set; }
-
 }
 
+// ReSharper disable once ClassNeverInstantiated.Global
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class RankData
 {
     public string PointsType { get; set; }
@@ -33,6 +36,8 @@ public class RankData
     public int Rank { get; set; }
 }
 
+// ReSharper disable once ClassNeverInstantiated.Global
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
 public class CustomApiPlayerCategory
 {
     private string m_Category;

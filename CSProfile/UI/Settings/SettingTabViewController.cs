@@ -1,53 +1,61 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using CSProfile.Configuration;
-using CSProfile.Time;
 
-namespace CSProfile.UI.Settings
+namespace CSProfile.UI.Settings;
+
+public class SettingTabViewController
 {
-    public class SettingTabViewController
+
+    [UIValue("ShowCard")]
+    protected bool ShowCard
     {
-
-        [UIValue("ShowCard")]
-        protected bool showCard
+        get => PluginConfig.Instance.ShowCard;
+        set
         {
-            get => PluginConfig.Instance.ShowCard;
-            set { PluginConfig.Instance.ShowCard = value; Plugin.PlayerCard.UpdateCardVisibility(); }
+            PluginConfig.Instance.ShowCard = value;
+            Plugin.PlayerCard.UpdateCardVisibility();
         }
+    }
 
-        [UIValue("ShowCardHandle")]
-        protected bool showCardHandle
+    [UIValue("ShowCardHandle")]
+    protected bool ShowCardHandle
+    {
+        get => PluginConfig.Instance.CardHandleVisible;
+        set
         {
-            get => PluginConfig.Instance.CardHandleVisible;
-            set { PluginConfig.Instance.CardHandleVisible = value; Plugin.PlayerCard.UpdateCardHandleVisibility(); }
+            PluginConfig.Instance.CardHandleVisible = value;
+            Plugin.PlayerCard.UpdateCardHandleVisibility();
         }
+    }
 
-        [UIValue("DetailLevels")]
-        protected bool ShowDetailedLevels
+    [UIValue("DetailLevels")]
+    protected bool ShowDetailedLevels
+    {
+        get => PluginConfig.Instance.ShowDetailsLevels;
+        set
         {
-            get => PluginConfig.Instance.ShowDetailsLevels;
-            set { PluginConfig.Instance.ShowDetailsLevels = value; Plugin.PlayerCard._CardViewController.UpdateLevelsDetails(); }
+            PluginConfig.Instance.ShowDetailsLevels = value;
+            Plugin.PlayerCard.CardViewController.UpdateLevelsDetails();
         }
+    }
 
-        [UIValue("ShowPlayTime")]
-        protected bool showPlayTime
-        {
-            get => PluginConfig.Instance.ShowPlayTime;
-            set => PluginConfig.Instance.ShowPlayTime = value;
-        }
+    [UIValue("ShowPlayTime")]
+    protected bool ShowPlayTime
+    {
+        get => PluginConfig.Instance.ShowPlayTime;
+        set => PluginConfig.Instance.ShowPlayTime = value;
+    }
 
-        [UIAction("RefreshCard")]
-        protected void RefreshCard()
-        {
-            OptimizedDateTime l_CurrentTime = Plugin.PlayerCard._CardViewController.GetComponent<TimeManager>().m_Time;
-            Plugin.DestroyCard();
-            Plugin.CreateCard();
-            Plugin.PlayerCard._CardViewController.GetComponent<TimeManager>().m_Time = l_CurrentTime;
-        }
+    [UIAction("RefreshCard")]
+    protected void RefreshCard()
+    {
+        Plugin.DestroyCard();
+        Plugin.CreateCard();
+    }
 
-        [UIAction("#post-parse")]
-        internal void PostParse()
-        {
-            // Code to run after BSML finishes
-        }
+    [UIAction("#post-parse")]
+    internal void PostParse()
+    {
+        // Code to run after BSML finishes
     }
 }
