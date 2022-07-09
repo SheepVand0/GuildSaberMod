@@ -147,7 +147,6 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     }
 
     #endregion
-
 }
 
 #endregion

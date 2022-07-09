@@ -25,21 +25,15 @@
 					<text font-size="2" id="PlayTimeText" text="00:00:00" align="MidlineRight"></text>
 				</vertical>
 				<grid cell-size-x="15" cell-size-y="15" child-align="MiddleCenter">
-					<clickable-image pref-height="1" pref-width="1" preserve-aspect="false" src="~PlayerImageSrc" event-click="showPlayerSS"/>
+					<clickable-image pref-height="1" pref-width="1" preserve-aspect="false" src="~PlayerImageSrc"/>
 				</grid>
-				<modal show-event="showPlayerSS" size-delta-x="30" size-delta-y="35" hide-event="hidePlayerSS">
-					<vertical>
-						<image src="~PlayerImageSrc"></image>
-						<button text="close" event-click="hidePlayerSS"></button>
-					</vertical>
-				</modal>
 			</horizontal>
 			<grid id="DetailsLevelsLayout" vertical-fit="MinSize" horizontal-fit="PreferredSize" cell-size-x="7" cell-size-y="5.5">
 				<!--child-control-width="true" child-expand-width="true"-->
 				<macro.for-each items="Levels">
 					<vertical vertical-fit="PreferredSize" child-control-height="true" child-expand-height="true">
-						<text text="~LevelName" font-size="2"></text>
-						<text text="~Level" font-size="2"></text>
+						<text text="~LevelName" font-size="2"/>
+						<text text="~Level" font-size="2"/>
 					</vertical>
 				</macro.for-each>
 			</grid>

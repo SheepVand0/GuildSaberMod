@@ -1,6 +1,5 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-    xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
-    >
+﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
+	>
   <settings-container child-control-height='true' child-expand-height='true'>
     <toggle-setting text='Show card' value='ShowCard' apply-on-change='true'></toggle-setting>
     <toggle-setting text='Show card handle : ' value='ShowCardHandle' apply-on-change='true'></toggle-setting>

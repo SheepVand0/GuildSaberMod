@@ -4,7 +4,6 @@ namespace CSProfile.API;
 
 public static class Authentication
 {
-
     public static string GetPlayerIdFromSteam()
     {
         if (!SteamManager.Initialized)
