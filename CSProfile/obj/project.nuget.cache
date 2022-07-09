@@ -1,14 +1,8 @@
 {
   "version": 2,
-<<<<<<< Updated upstream
-  "dgSpecHash": "g2gfwq6xFw0sd6uq6Bf4VBYYeXUCyHTXuzwSv58si27zxw6mnF/kDGTs6jsCjjKbJb6ZfwGmKn8n3Q05Cd+BSg==",
-  "success": true,
-  "projectFilePath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\CSProfile.csproj",
-=======
   "dgSpecHash": "PVqxff8FDkiWWwbCkGfwU33un91IXHsJa2VffPOD4ZshKogwhzj4IFCXn7V9KDsb3gGudbjn5K1RQPG6Kc0o5g==",
   "success": true,
   "projectFilePath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile\\CSProfile\\CSProfile.csproj",
->>>>>>> Stashed changes
   "expectedPackageFiles": [
     "C:\\Users\\jaune\\.nuget\\packages\\beatsabermoddingtools.tasks\\2.0.0-beta1\\beatsabermoddingtools.tasks.2.0.0-beta1.nupkg.sha512",
     "C:\\Users\\jaune\\.nuget\\packages\\microsoft.build.framework\\16.5.0\\microsoft.build.framework.16.5.0.nupkg.sha512",

@@ -1036,19 +1036,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-<<<<<<< Updated upstream
-      "projectUniqueName": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\CSProfile.csproj",
-      "projectName": "CSProfile",
-      "projectPath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\CSProfile.csproj",
-      "packagesPath": "C:\\Users\\jaune\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\obj\\",
-=======
       "projectUniqueName": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile\\CSProfile\\CSProfile.csproj",
       "projectName": "CSProfile",
       "projectPath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile\\CSProfile\\CSProfile.csproj",
       "packagesPath": "C:\\Users\\jaune\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile\\CSProfile\\obj\\",
->>>>>>> Stashed changes
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [

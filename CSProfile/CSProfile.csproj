@@ -148,11 +148,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="API\ApiOutputs.cs"/>
-<<<<<<< Updated upstream
-        <Compile Include="API\Authentification.cs"/>
-=======
         <Compile Include="API\Authentication.cs"/>
->>>>>>> Stashed changes
         <Compile Include="API\BeatSaverAPI.cs"/>
         <Compile Include="API\CSApi.cs"/>
         <Compile Include="API\PlayerApiReworkOutput.cs"/>
@@ -186,8 +182,4 @@
     </ItemGroup>
     <ItemGroup/>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
-<<<<<<< Updated upstream
 </Project>
-=======
-</Project>
->>>>>>> Stashed changes

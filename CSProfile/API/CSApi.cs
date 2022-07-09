@@ -7,10 +7,6 @@ namespace CSProfile.API;
 
 public static class CSApi
 {
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
     public static PlayerApiReworkOutput GetPlayerByScoreSaberId(string p_ID)
     {
         PlayerApiReworkOutput l_ResultPlayer = new PlayerApiReworkOutput();

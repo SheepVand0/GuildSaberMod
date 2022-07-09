@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="223828c2-8126-45bf-99b9-9a69548e800a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.vs/CSProfile/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/.vs/CSProfile/v17/.suo" afterDir="false" />
+    <list default="true" id="4e189a1d-cc3c-4009-880b-9e8dd2af86ff" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.vs/CSProfile/FileContentIndex/read.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/CSProfile/config/applicationhost.config" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vs/CSProfile/v17/.suo" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/API/ApiOutputs.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/ApiOutputs.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/API/Authentification.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/Authentification.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/API/Authentication.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/Authentication.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/API/BeatSaverAPI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/BeatSaverAPI.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/API/CSApi.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/CSApi.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/API/PlayerApiReworkOutput.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/PlayerApiReworkOutput.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/API/PlayerStatsFormat.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/PlayerStatsFormat.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/CSProfile.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/CSProfile.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/CSProfile.csproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/CSProfile.csproj.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/CSProfile.csproj.userttt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/CSProfileController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/CSProfileController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/Configuration/PluginConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Configuration/PluginConfig.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/Directory.Build.props" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Directory.Build.props" afterDir="false" />
@@ -45,16 +48,13 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/9939a2d9712f45e89c2970db73b931b658200/b0/8f28cdff/FloatingScreen.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f1e01d7358c94c7e9f4de8fb8f270e1b27a00/c9/2c6d57c6/Screen.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/CSProfile/CSProfileController.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="Toolset" />
-  </component>
-  <component name="ProjectId" id="2BJkQ8jSGlrLqHWRp4sWg2yT8pi" />
+  <component name="ProjectId" id="2Bi6iwWDTifQ10LkLuMCx28AvES" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -65,7 +65,6 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "rider.run.widget.enabled.cache": "false",
-    "settings.editor.selected.configurable": "preferences.sourceCode.C#",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -84,13 +83,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="223828c2-8126-45bf-99b9-9a69548e800a" name="Changes" comment="" />
-      <created>1656631559744</created>
+      <changelist id="4e189a1d-cc3c-4009-880b-9e8dd2af86ff" name="Changes" comment="" />
+      <created>1657376691409</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1656631559744</updated>
-      <workItem from="1656631568566" duration="7317000" />
-      <workItem from="1656639594421" duration="2149000" />
+      <updated>1657376691409</updated>
+      <workItem from="1657376695916" duration="1055000" />
     </task>
     <servers />
   </component>
@@ -112,9 +110,5 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XSLT-Support.FileAssociations.UIState">
-    <expand />
-    <select />
   </component>
 </project>

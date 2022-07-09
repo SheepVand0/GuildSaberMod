@@ -61,27 +61,3 @@ C:\Users\jaune\RiderProjects\GuildSaberProfile\CSProfile\obj\Debug\CSProfile.csp
 C:\Users\jaune\RiderProjects\GuildSaberProfile\CSProfile\obj\Debug\CSProfile.csproj.CopyComplete
 C:\Users\jaune\RiderProjects\GuildSaberProfile\CSProfile\obj\Debug\CSProfile.dll
 C:\Users\jaune\RiderProjects\GuildSaberProfile\CSProfile\obj\Debug\CSProfile.pdb
-<<<<<<< Updated upstream
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\CSProfile.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\CSProfile.pdb
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\Microsoft.Build.Framework.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\Microsoft.Build.Framework.pdb
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\Microsoft.Build.Tasks.Core.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\Microsoft.Build.Tasks.Core.pdb
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\Microsoft.Build.Utilities.Core.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\Microsoft.Build.Utilities.Core.pdb
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\Microsoft.VisualStudio.Setup.Configuration.Interop.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\System.Buffers.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\System.Collections.Immutable.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\System.Memory.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\System.Numerics.Vectors.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\System.Resources.Extensions.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\System.Threading.Tasks.Dataflow.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\obj\Debug\CSProfile.csproj.AssemblyReference.cache
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\obj\Debug\CSProfile.csproj.CoreCompileInputs.cache
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\obj\Debug\CSProfile.csproj.CopyComplete
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\obj\Debug\CSProfile.dll
-C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\obj\Debug\CSProfile.pdb
-=======
->>>>>>> Stashed changes

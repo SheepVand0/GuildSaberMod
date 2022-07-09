@@ -5,9 +5,7 @@ namespace CSProfile.Utils;
 
 public class Color
 {
-
     public int B;
-
     public int G;
     public int R;
 

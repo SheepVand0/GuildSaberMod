@@ -9,17 +9,6 @@ public struct PlayerApiReworkOutput
     public string Name { get; set; }
     public string Country { get; set; }
     public string ProfilePicture { get; set; }
-<<<<<<< Updated upstream
-    public Color ProfileColor { get; set; }
-    public List<ApiBadge> Badges { get; set; }
-    public Trophy Trophy { get; set; }
-    public int Level { get; set; }
-    public bool IsMapLeaderboardBanned { get; set; }
-    public bool IsScanBanned { get; set; }
-    public List<RankData> RankData;
-    public List<CustomApiPlayerCategory> CategoryData { get; set; }
-
-=======
 
     public Color ProfileColor { get; set; }
 
@@ -31,8 +20,6 @@ public struct PlayerApiReworkOutput
     // ReSharper disable once InconsistentNaming
     public List<RankData> RankData;
     public List<CustomApiPlayerCategory> CategoryData { get; set; }
-
->>>>>>> Stashed changes
 }
 
 public class RankData
@@ -56,8 +43,4 @@ public class CustomApiPlayerCategory
     public int NumberOfPass { get; set; }
     public int TotalNumberOfMaps { get; set; }
     public Trophy Trophy { get; set; }
-<<<<<<< Updated upstream
 }
-=======
-}
->>>>>>> Stashed changes
