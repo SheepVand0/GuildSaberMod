@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4e189a1d-cc3c-4009-880b-9e8dd2af86ff" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.vs/CSProfile/FileContentIndex/read.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/CSProfile/config/applicationhost.config" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.vs/CSProfile/v17/.suo" beforeDir="false" />
+    <list default="true" id="5aade194-a0dd-4ba1-adf3-7ba083ac670c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/CSProfile/CSProfile.csproj.userttt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CSProfile/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CSProfile/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/API/ApiOutputs.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/ApiOutputs.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/API/Authentication.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/Authentication.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/API/BeatSaverAPI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/BeatSaverAPI.cs" afterDir="false" />
@@ -12,13 +11,8 @@
       <change beforePath="$PROJECT_DIR$/CSProfile/API/PlayerApiReworkOutput.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/PlayerApiReworkOutput.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/API/PlayerStatsFormat.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/API/PlayerStatsFormat.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/CSProfile.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/CSProfile.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/CSProfile.csproj.user" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/CSProfile.csproj.user" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/CSProfile.csproj.userttt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/CSProfileController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/CSProfileController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/Configuration/PluginConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Configuration/PluginConfig.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/Directory.Build.props" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Directory.Build.props" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/Plugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Plugin.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Properties/AssemblyInfo.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/Time/OptimizedDateTime.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Time/OptimizedDateTime.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/Time/TimeManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Time/TimeManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/UI/Card/PlayerCardViewController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/UI/Card/PlayerCardViewController.cs" afterDir="false" />
@@ -26,21 +20,38 @@
       <change beforePath="$PROJECT_DIR$/CSProfile/UI/Card/View/PlayerCard_UI.bsml" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/UI/Card/View/PlayerCard_UI.bsml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/UI/Settings/SettingTabViewController.bsml" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/UI/Settings/SettingTabViewController.bsml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/UI/Settings/SettingTabViewController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/UI/Settings/SettingTabViewController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/Utils/Color.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Utils/Color.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Artifact/Plugins/CSProfile.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/bin/Debug/Artifact/Plugins/CSProfile.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Artifact/Plugins/CSProfile.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/bin/Debug/Artifact/Plugins/CSProfile.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/CSProfile.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/bin/Debug/CSProfile.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/CSProfile.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/bin/Debug/CSProfile.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/obj/CSProfile.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/obj/CSProfile.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/obj/CSProfile.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/obj/CSProfile.csproj.nuget.g.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.csproj.AssemblyReference.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Artifact/Plugins/CSProfile.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Artifact/Plugins/CSProfile.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/CSProfile.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/CSProfile.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Microsoft.Build.Framework.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Microsoft.Build.Framework.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Microsoft.Build.Tasks.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Microsoft.Build.Tasks.Core.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Microsoft.Build.Utilities.Core.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Microsoft.Build.Utilities.Core.pdb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/Microsoft.VisualStudio.Setup.Configuration.Interop.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/System.Buffers.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/System.Collections.Immutable.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/System.Memory.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/System.Numerics.Vectors.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/System.Resources.Extensions.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/System.Runtime.CompilerServices.Unsafe.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/bin/Debug/System.Threading.Tasks.Dataflow.dll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/CSProfile.csproj.nuget.dgspec.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/CSProfile.csproj.nuget.g.props" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/CSProfile.csproj.nuget.g.targets" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/.NETFramework,Version=v4.8.AssemblyAttributes.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.csproj.AssemblyReference.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.csproj.CopyComplete" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.csproj.FileListAbsolute.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.dll" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.csproj.FileListAbsolute.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/obj/Debug/CSProfile.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CSProfile/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/obj/project.nuget.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/DesignTimeResolveAssemblyReferences.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/project.assets.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/project.nuget.cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/obj/rider.project.restore.info" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +59,9 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/CSProfile/API/ApiOutputs.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/CSProfile/API/BeatSaverAPI.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/CSProfile/API/PlayerApiReworkOutput.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/CSProfile/CSProfileController.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -59,15 +73,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "rider.run.widget.enabled.cache": "false",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;rider.run.widget.enabled.cache&quot;: &quot;false&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
       <option name="allowRunningInParallel" value="false" />
