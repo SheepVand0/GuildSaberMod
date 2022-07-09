@@ -1,6 +1,7 @@
 {
   "format": 1,
   "restore": {
+<<<<<<< Updated upstream
     "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\CSProfile.csproj": {}
   },
   "projects": {
@@ -12,6 +13,19 @@
         "projectPath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\CSProfile.csproj",
         "packagesPath": "C:\\Users\\jaune\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile_edit\\CSProfile\\obj\\",
+=======
+    "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile\\CSProfile\\CSProfile.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile\\CSProfile\\CSProfile.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile\\CSProfile\\CSProfile.csproj",
+        "projectName": "CSProfile",
+        "projectPath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile\\CSProfile\\CSProfile.csproj",
+        "packagesPath": "C:\\Users\\jaune\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\jaune\\RiderProjects\\GuildSaberProfile\\CSProfile\\obj\\",
+>>>>>>> Stashed changes
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [

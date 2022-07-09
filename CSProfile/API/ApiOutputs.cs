@@ -142,4 +142,8 @@ public class ApiCheck
 {
     public string service { get; set; }
     public string version { get; set; }
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes

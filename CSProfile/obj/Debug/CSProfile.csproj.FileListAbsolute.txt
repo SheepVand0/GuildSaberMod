@@ -61,6 +61,7 @@ C:\Users\jaune\RiderProjects\GuildSaberProfile\CSProfile\obj\Debug\CSProfile.csp
 C:\Users\jaune\RiderProjects\GuildSaberProfile\CSProfile\obj\Debug\CSProfile.csproj.CopyComplete
 C:\Users\jaune\RiderProjects\GuildSaberProfile\CSProfile\obj\Debug\CSProfile.dll
 C:\Users\jaune\RiderProjects\GuildSaberProfile\CSProfile\obj\Debug\CSProfile.pdb
+<<<<<<< Updated upstream
 C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\CSProfile.dll
 C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\CSProfile.pdb
 C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\bin\Debug\Microsoft.Build.Framework.dll
@@ -82,3 +83,5 @@ C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\obj\Debug\CSProfil
 C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\obj\Debug\CSProfile.csproj.CopyComplete
 C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\obj\Debug\CSProfile.dll
 C:\Users\jaune\RiderProjects\GuildSaberProfile_edit\CSProfile\obj\Debug\CSProfile.pdb
+=======
+>>>>>>> Stashed changes

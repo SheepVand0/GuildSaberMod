@@ -9,9 +9,15 @@ namespace CSProfile.Time;
 /// </summary>
 public class TimeManager : MonoBehaviour
 {
+<<<<<<< Updated upstream
     public PlayerCardViewController m_CardControllerRef;
 
     public readonly OptimizedDateTime m_Time = new OptimizedDateTime();
+=======
+    private PlayerCardViewController m_CardControllerRef;
+
+    public OptimizedDateTime m_Time = new OptimizedDateTime();
+>>>>>>> Stashed changes
 
     public void Awake()
     {
