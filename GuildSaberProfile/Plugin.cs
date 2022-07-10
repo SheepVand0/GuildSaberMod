@@ -81,10 +81,14 @@ public class Plugin
         PlayerCard.UpdateCardVisibility();
     }
 
-    private static void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
+    private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
     {
         UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
-        m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
+        if (m_TimeManager == null)
+            m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
+
+        if (PlayerCard != null)
+            DestroyCard();
         CreateCard();
     }
 
