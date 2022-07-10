@@ -12,8 +12,8 @@ public class SettingTabViewController
     [UIComponent("ErrorText")] TextMeshProUGUI m_ErrorText = null;
     [UIComponent("ErrorText2")] TextMeshProUGUI m_ErrorText2 = null;
 
-    [UIValue("AvaibleGuilds")]
-    private List<object> AvaibleGuilds = new List<object>() { "CS", "BSCC" };
+    [UIValue("AvailableGuilds")]
+    private List<object> m_AvailableGuilds = new List<object>() { "CS", "BSCC" };
 
     [UIValue("SelectedGuild")]
     protected string SelectedGuild {

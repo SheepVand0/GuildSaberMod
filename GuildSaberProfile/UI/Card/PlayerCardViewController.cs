@@ -41,8 +41,6 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public List<PlayerRankUI> Ranks = new List<PlayerRankUI>();
 
-    private int m_NumberOfPasses;
-
     private PlayerApiReworkOutput m_PlayerInfo;
     [CanBeNull]
     public string PlayerName

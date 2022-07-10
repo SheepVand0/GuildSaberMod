@@ -1,7 +1,7 @@
 ﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
   <settings-container child-control-height='true' child-expand-height='true'>
-	<dropdown-list-setting text='Guild :' value='SelectedGuild' bind-value='true' on-change='UpdateCard' choices='AvaibleGuilds' apply-on-change='true'></dropdown-list-setting>
+	<dropdown-list-setting text='Guild :' value='SelectedGuild' bind-value='true' on-change='UpdateCard' choices='AvailableGuilds' apply-on-change='true'></dropdown-list-setting>
 	<text text='Error during getting data from ' active='false' id='ErrorText' color='red' underlined='true'></text>
 	<text text='Make sure your registered or if your internet is online' active='false' id='ErrorText2' color='red' underlined='false'></text>
     <toggle-setting text='Show card In Menu :' value='ShowCardInMenu' apply-on-change='true'></toggle-setting>
