@@ -1,9 +1,11 @@
 ﻿using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.FloatingScreen;
+using BeatSaberMarkupLanguage.Attributes;
 using CSProfile.API;
 using CSProfile.Configuration;
 using HMUI;
 using UnityEngine;
+using TMPro;
 
 namespace CSProfile.UI.Card;
 
@@ -15,11 +17,51 @@ public class PlayerLevelUI
     // ReSharper disable once MemberCanBePrivate.Global
     // ReSharper disable once MemberInitializerValueIgnored
     public string LevelName = "Vibro/Tech/Streams/Jumps/Shitpost";
+    public int FontSize = 3;
 
-    public PlayerLevelUI(string p_LevelName, string p_Level)
+    public PlayerLevelUI(string p_LevelName, string p_Level, int p_LevelsCount)
     {
         LevelName = p_LevelName;
         Level = p_Level;
+        FontSize = (int)(2 / (p_LevelsCount*0.1f));
+        if (FontSize < 1) FontSize = 2;
+    }
+}
+
+public class PlayerRankUI
+{
+    [UIComponent("PlayerRankText")] TextMeshProUGUI m_PlayerRankText = null;
+    [UIComponent("CategoryText")] TextMeshProUGUI m_CategoryText = null;
+
+    private string m_Category = "";
+    private string m_PlayerRank = "";
+
+    PlayerApiReworkOutput m_Player;
+
+    public PlayerRankUI(PlayerApiReworkOutput p_Player, string p_Category, string p_Rank, string p_Points)
+    {
+        m_Player = p_Player;
+        m_Category = p_Category;
+        m_PlayerRank = p_Rank;
+    }
+
+    [UIAction("#post-parse")]
+    public void PostParse()
+    {
+        m_CategoryText.SetText(m_Category);
+        m_PlayerRankText.SetText(m_PlayerRank);
+        //m_PointsText.SetText(m_Points);
+
+        Color l_PlayerColor = m_Player.ProfileColor.ToUnityColor();
+        Color l_BeforePlayerColor = new Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
+        Color l_NewPlayerColor = new Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
+
+        VertexGradient l_TextGradient = new VertexGradient(l_BeforePlayerColor, l_BeforePlayerColor, l_NewPlayerColor, l_NewPlayerColor);
+
+        m_PlayerRankText.enableVertexGradient = true;
+        m_CategoryText.enableVertexGradient = true;
+        m_PlayerRankText.colorGradient = l_TextGradient;
+        m_CategoryText.colorGradient = l_TextGradient;
     }
 }
 
@@ -43,16 +85,30 @@ public class PlayerCard_UI
 
         CardViewController.SetReferences(p_Player, FloatingScreen);
 
-        foreach (CustomApiPlayerCategory l_Category in p_Player.CategoryData)
+        /// For debug purpose with lots of levels
+        /*bool l_UseALot = true;
+
+        if (!l_UseALot)
+        {*/
+            foreach (CustomApiPlayerCategory l_Category in p_Player.CategoryData)
+            {
+                CardViewController.Levels.Add(new PlayerLevelUI(l_Category.Category, l_Category.Level.ToString(), p_Player.CategoryData.Count));
+            }
+        /*}
+        else
         {
-            CardViewController.Levels.Add(new PlayerLevelUI(l_Category.Category, l_Category.Level.ToString()));
+            for (int l_i = 0; l_i < 50; l_i++)
+            {
+                CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31", 50));
+            }
         }
 
-        /// For debug purpose with lots of levels
-        /*for (int l_I = 0; l_I < 50; l_I++)
+        foreach (var l_RankData in p_Player.RankData)
         {
-            _CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31"));
+            CardViewController.Ranks.Add(new PlayerRankUI(p_Player, l_RankData.PointsName, l_RankData.Rank.ToString(), l_RankData.Points.ToString()));
         }*/
+
+
 
         FloatingScreen.SetRootViewController(CardViewController, ViewController.AnimationType.None);
 

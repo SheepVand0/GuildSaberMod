@@ -30,10 +30,12 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     [UIComponent("DetailsLevelsLayout")] private readonly GridLayoutGroup m_DetailsLevelsLayout = null;
     [UIComponent("ElemGrid")] private readonly GridLayoutGroup m_ElementsGrid = null;
     [UIComponent("NeonBackground")] private readonly Transform m_NeonBackground = null;
-    [UIComponent("PlayerRankText")] private readonly TextMeshProUGUI m_PlayerRankText = null;
+
     [UIComponent("PlayTimeText")] private readonly TextMeshProUGUI m_PlayTimeText = null;
 
     public List<PlayerLevelUI> Levels = new List<PlayerLevelUI>();
+
+    public List<PlayerRankUI> Ranks = new List<PlayerRankUI>();
 
     private int m_NumberOfPasses;
 
@@ -72,19 +74,13 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     [UIAction("#post-parse")]
     public void PostParse()
     {
-        m_PlayerRankText.SetText(m_PlayerInfo.RankData[0].Rank.ToString());
-
         Color l_PlayerColor = m_PlayerInfo.ProfileColor.ToUnityColor();
         Color l_BeforePlayerColor = new Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
         Color l_NewPlayerColor = new Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
 
         m_PlayerNameText.enableVertexGradient = true;
-        m_PlayerRankText.enableVertexGradient = true;
-        m_PlayerNameText.colorGradient = new VertexGradient(l_BeforePlayerColor, l_BeforePlayerColor, l_NewPlayerColor, l_NewPlayerColor);
-        m_PlayerRankText.colorGradient = new VertexGradient(l_BeforePlayerColor, l_BeforePlayerColor, l_NewPlayerColor, l_NewPlayerColor);
 
-        m_TimeManager = gameObject.AddComponent<TimeManager>();
-        m_TimeManager.SetPlayerCardViewControllerRef(this);
+        m_PlayerNameText.colorGradient = new VertexGradient(l_BeforePlayerColor, l_BeforePlayerColor, l_NewPlayerColor, l_NewPlayerColor);
 
         ImageView l_CurrentImageView = m_NeonBackground.GetComponentInChildren<ImageView>();
 
@@ -97,6 +93,9 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         l_CurrentImageView.color = l_PlayerColor.ColorWithAlpha(1f);
 
         l_CurrentImageView.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.BakedEmissive;
+
+        m_TimeManager = gameObject.AddComponent<TimeManager>();
+        m_TimeManager.SetPlayerCardViewControllerRef(this);
 
         Plugin.Log.Info("Card loaded");
     }
@@ -126,9 +125,9 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         if (PluginConfig.Instance.ShowDetailsLevels)
         {
             //When the details levels is visible
-            m_CardScreen.ScreenSize = new Vector2((62 + m_PlayerInfo.Name.Length + l_LevelsSize) * 0.8f, 28 + l_LevelsSize * 0.4f);
-            m_ElementsGrid.cellSize = new Vector2(35 + m_PlayerInfo.Name.Length + l_LevelsSize * 0.9f, 40);
-            m_DetailsLevelsLayout.cellSize = new Vector2(7, 10.5f - l_LevelsSize * 0.1f);
+            m_CardScreen.ScreenSize = new Vector2((68 + m_PlayerInfo.Name.Length + l_LevelsSize)*0.9f, 28 + l_LevelsSize * 0.6f);
+            m_ElementsGrid.cellSize = new Vector2((40 + m_PlayerInfo.Name.Length + l_LevelsSize)*1.1f, 40);
+            m_DetailsLevelsLayout.cellSize = new Vector2(12 - l_LevelsSize*0.1f, 10.5f - l_LevelsSize * 0.1f);
             m_ElementsGrid.spacing = new Vector2(7, 7);
         }
         else
