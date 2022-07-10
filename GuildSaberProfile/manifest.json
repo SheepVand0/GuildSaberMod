@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
   "id": "GuildSaberProfile",
   "name": "GuildSaberProfile",
-  "author": "SheepVand",
+  "author": "SheepVand & Kuurama",
   "version": "0.0.2",
   "description": "",
   "gameVersion": "1.21.0",
