@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5aade194-a0dd-4ba1-adf3-7ba083ac670c" name="Changes" comment="" />
+    <list default="true" id="5aade194-a0dd-4ba1-adf3-7ba083ac670c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.CSProfile/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.CSProfile/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/Configuration/PluginConfig.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Configuration/PluginConfig.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/Plugin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/Plugin.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/UI/Card/PlayerCardViewController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/UI/Card/PlayerCardViewController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/UI/Card/PlayerCard_UI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/UI/Card/PlayerCard_UI.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CSProfile/UI/Settings/SettingTabViewController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/CSProfile/UI/Settings/SettingTabViewController.cs" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -22,16 +29,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "rider.run.widget.enabled.cache": "false",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;rider.run.widget.enabled.cache&quot;: &quot;false&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
       <option name="allowRunningInParallel" value="false" />
@@ -54,6 +61,7 @@
       <updated>1657376691409</updated>
       <workItem from="1657376695916" duration="1055000" />
       <workItem from="1657378992434" duration="2414000" />
+      <workItem from="1657462031296" duration="1056000" />
     </task>
     <servers />
   </component>
