@@ -1,4 +1,5 @@
-﻿using BeatSaberMarkupLanguage;
+﻿using System.Globalization;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.Attributes;
 using CSProfile.API;
@@ -17,6 +18,9 @@ public class PlayerLevelUI
     // ReSharper disable once MemberCanBePrivate.Global
     // ReSharper disable once MemberInitializerValueIgnored
     public string LevelName = "Vibro/Tech/Streams/Jumps/Shitpost";
+    // ReSharper disable once MemberInitializerValueIgnored
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    // ReSharper disable once MemberCanBePrivate.Global
     public int FontSize = 3;
 
     public PlayerLevelUI(string p_LevelName, string p_Level, int p_LevelsCount)
@@ -30,13 +34,20 @@ public class PlayerLevelUI
 
 public class PlayerRankUI
 {
-    [UIComponent("PlayerRankText")] TextMeshProUGUI m_PlayerRankText = null;
-    [UIComponent("CategoryText")] TextMeshProUGUI m_CategoryText = null;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
+    [UIComponent("PlayerRankText")] private TextMeshProUGUI m_PlayerRankText = null;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
+    [UIComponent("CategoryText")] private TextMeshProUGUI m_CategoryText = null;
 
-    private string m_Category = "";
-    private string m_PlayerRank = "";
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
+    // ReSharper disable once MemberInitializerValueIgnored
+    private string m_Category = string.Empty;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
+    // ReSharper disable once MemberInitializerValueIgnored
+    private string m_PlayerRank = string.Empty;
 
-    PlayerApiReworkOutput m_Player;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
+    private PlayerApiReworkOutput m_Player;
 
     public PlayerRankUI(PlayerApiReworkOutput p_Player, string p_Category, string p_Rank, string p_Points)
     {
@@ -103,9 +114,9 @@ public class PlayerCard_UI
             }
         }*/
 
-        foreach (var l_RankData in p_Player.RankData)
+        foreach (RankData l_RankData in p_Player.RankData)
         {
-            CardViewController.Ranks.Add(new PlayerRankUI(p_Player, l_RankData.PointsName, l_RankData.Rank.ToString(), l_RankData.Points.ToString()));
+            CardViewController.Ranks.Add(new PlayerRankUI(p_Player, l_RankData.PointsName, l_RankData.Rank.ToString(), l_RankData.Points.ToString(CultureInfo.CurrentCulture)));
         }
 
         FloatingScreen.SetRootViewController(CardViewController, ViewController.AnimationType.None);
@@ -138,12 +149,12 @@ public class PlayerCard_UI
 
     public void UpdateCardVisibility()
     {
-        switch (Plugin.m_CurrentSceneName) {
+        switch (Plugin.CurrentSceneName) {
             case "MainMenu":
                 FloatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCardInMenu);
                 break;
             case "GameCore":
-                FloatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCardIngame);
+                FloatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCardInGame);
                 break;
             default: return;
         }

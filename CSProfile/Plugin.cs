@@ -25,7 +25,7 @@ public class Plugin
     private readonly SettingTabViewController m_TabViewController = new SettingTabViewController();
     // ReSharper disable once UnusedAutoPropertyAccessor.Local
     private static Plugin Instance { get; set; }
-    public static string m_CurrentSceneName = "";
+    public static string CurrentSceneName = "";
     internal static IPALogger Log { get; private set; }
 
     //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.CSProfile");
@@ -70,15 +70,16 @@ public class Plugin
 
     }
 
-    private void OnSceneChanged(UnityEngine.SceneManagement.Scene p_CurrentScene, UnityEngine.SceneManagement.Scene p_NextScene)
+    private static void OnSceneChanged(UnityEngine.SceneManagement.Scene p_CurrentScene, UnityEngine.SceneManagement.Scene p_NextScene)
     {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         if (p_NextScene == null) return;
 
-        m_CurrentSceneName = p_NextScene.name;
+        CurrentSceneName = p_NextScene.name;
         PlayerCard.UpdateCardVisibility();
     }
 
-    private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
+    private static void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
     {
         UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
         CreateCard();

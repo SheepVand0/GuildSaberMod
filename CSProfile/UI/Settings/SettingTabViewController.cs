@@ -20,8 +20,8 @@ public class SettingTabViewController
     [UIValue("ShowCardInGame")]
     protected bool ShowCardInGame
     {
-        get => PluginConfig.Instance.ShowCardIngame;
-        set => PluginConfig.Instance.ShowCardIngame = value;
+        get => PluginConfig.Instance.ShowCardInGame;
+        set => PluginConfig.Instance.ShowCardInGame = value;
     }
 
     [UIValue("ShowCardHandle")]

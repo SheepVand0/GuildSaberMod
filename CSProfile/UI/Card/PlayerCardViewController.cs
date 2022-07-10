@@ -33,8 +33,11 @@ public class PlayerCardViewController : BSMLAutomaticViewController
 
     [UIComponent("PlayTimeText")] private readonly TextMeshProUGUI m_PlayTimeText = null;
 
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public List<PlayerLevelUI> Levels = new List<PlayerLevelUI>();
 
+    // ReSharper disable once CollectionNeverQueried.Global
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public List<PlayerRankUI> Ranks = new List<PlayerRankUI>();
 
     private int m_NumberOfPasses;
