@@ -11,7 +11,8 @@ internal class PluginConfig
 {
     public static PluginConfig Instance { get; set; }
 
-    [JsonProperty("ShowCard")] public virtual bool ShowCard { get; set; } = true;
+    [JsonProperty("ShowCardInMenu")] public virtual bool ShowCardInMenu { get; set; } = true;
+    [JsonProperty("ShowCardIngame")] public virtual bool ShowCardIngame { get; set; } = false;
 
     [JsonProperty("CardPos")] public virtual Vector3 CardPosition { get; set; } = new Vector3(2.05f, 2.77f, 3.82f);
 

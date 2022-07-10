@@ -25,6 +25,7 @@ public class Plugin
     private readonly SettingTabViewController m_TabViewController = new SettingTabViewController();
     // ReSharper disable once UnusedAutoPropertyAccessor.Local
     private static Plugin Instance { get; set; }
+    public static string m_CurrentSceneName = "";
     internal static IPALogger Log { get; private set; }
 
     //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.CSProfile");
@@ -66,10 +67,20 @@ public class Plugin
         GameplaySetup.instance.AddTab("CSProfile", "CSProfile.UI.Settings.SettingTabViewController.bsml", m_TabViewController);
 
         BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
+
+    }
+
+    private void OnSceneChanged(UnityEngine.SceneManagement.Scene p_CurrentScene, UnityEngine.SceneManagement.Scene p_NextScene)
+    {
+        if (p_NextScene == null) return;
+
+        m_CurrentSceneName = p_NextScene.name;
+        PlayerCard.UpdateCardVisibility();
     }
 
     private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
     {
+        UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
         CreateCard();
     }
 

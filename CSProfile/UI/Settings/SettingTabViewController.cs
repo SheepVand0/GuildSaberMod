@@ -6,15 +6,22 @@ namespace CSProfile.UI.Settings;
 public class SettingTabViewController
 {
 
-    [UIValue("ShowCard")]
-    protected bool ShowCard
+    [UIValue("ShowCardInMenu")]
+    protected bool ShowCardInMenu
     {
-        get => PluginConfig.Instance.ShowCard;
+        get => PluginConfig.Instance.ShowCardInMenu;
         set
         {
-            PluginConfig.Instance.ShowCard = value;
+            PluginConfig.Instance.ShowCardInMenu = value;
             Plugin.PlayerCard.UpdateCardVisibility();
         }
+    }
+
+    [UIValue("ShowCardInGame")]
+    protected bool ShowCardInGame
+    {
+        get => PluginConfig.Instance.ShowCardIngame;
+        set => PluginConfig.Instance.ShowCardIngame = value;
     }
 
     [UIValue("ShowCardHandle")]

@@ -101,14 +101,12 @@ public class PlayerCard_UI
             {
                 CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31", 50));
             }
-        }
+        }*/
 
         foreach (var l_RankData in p_Player.RankData)
         {
             CardViewController.Ranks.Add(new PlayerRankUI(p_Player, l_RankData.PointsName, l_RankData.Rank.ToString(), l_RankData.Points.ToString()));
-        }*/
-
-
+        }
 
         FloatingScreen.SetRootViewController(CardViewController, ViewController.AnimationType.None);
 
@@ -140,7 +138,15 @@ public class PlayerCard_UI
 
     public void UpdateCardVisibility()
     {
-        FloatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCard);
+        switch (Plugin.m_CurrentSceneName) {
+            case "MainMenu":
+                FloatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCardInMenu);
+                break;
+            case "GameCore":
+                FloatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCardIngame);
+                break;
+            default: return;
+        }
     }
 
     public void Destroy()
