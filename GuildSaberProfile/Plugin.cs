@@ -27,7 +27,7 @@ public class Plugin
     // ReSharper disable once UnusedAutoPropertyAccessor.Local
     private static Plugin Instance { get; set; }
     public static string CurrentSceneName = "MainMenu";
-    public static List<string> m_AvaibleGuilds = new List<string>() { "CS", "BSCC"};
+    public static List<object> AvailableGuilds = new List<object>() { "CS", "BSCC" };
     internal static IPALogger Log { get; private set; }
 
     //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.GuildSaberProfile");

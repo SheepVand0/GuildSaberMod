@@ -13,9 +13,9 @@ internal class PluginConfig
 
     [JsonProperty("ShowCardInMenu")] public virtual bool ShowCardInMenu { get; set; } = true;
     [JsonProperty("ShowCardInGame")] public virtual bool ShowCardInGame { get; set; } = false;
-    [JsonProperty("CardPos")] public virtual Vector3 CardPosition { get; set; } = new Vector3(2.017512f, 2.801948f, 3.862442f);
+    [JsonProperty("CardPos")] public virtual Vector3 CardPosition { get; set; } = new Vector3(0.0f, 0.02f, 1.0f);
 
-    [JsonProperty("CardRot")] public virtual Quaternion CardRotation { get; set; } = Quaternion.Euler(351.3379f, 25.88555f, 0.1424697f);
+    [JsonProperty("CardRot")] public virtual Quaternion CardRotation { get; set; } = Quaternion.Euler(90.0f, 0.0f, 0.0f);
 
     [JsonProperty("CardHandleVisible")] public virtual bool CardHandleVisible { get; set; }
 
