@@ -7,6 +7,7 @@ using GuildSaberProfile.UI.Settings;
 using IPA;
 using IPA.Config.Stores;
 using UnityEngine;
+using GuildSaberProfile.Time;
 using System.Collections.Generic;
 using Config = IPA.Config.Config;
 using IPALogger = IPA.Logging.Logger;
@@ -28,6 +29,7 @@ public class Plugin
     private static Plugin Instance { get; set; }
     public static string CurrentSceneName = "MainMenu";
     public static List<object> AvailableGuilds = new List<object>() { "CS", "BSCC" };
+    public static TimeManager m_TimeManager;
     internal static IPALogger Log { get; private set; }
 
     //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.GuildSaberProfile");
@@ -82,6 +84,7 @@ public class Plugin
     private static void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
     {
         UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
+        m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
         CreateCard();
     }
 
@@ -94,15 +97,17 @@ public class Plugin
 
         PlayerApiReworkOutput l_OutputPlayer = GuildApi.GetPlayerByScoreSaberIdAndGuild(l_PlayerId, PluginConfig.Instance.SelectedGuild);
 
-        if (l_OutputPlayer.Name == null)
+        if (l_OutputPlayer.Name == null || l_OutputPlayer.Level == 0)
         {
             m_TabViewController.ShowError(true);
             return;
-        };
+        }
 
         m_TabViewController.ShowError(false);
         PlayerCard = new PlayerCard_UI(l_OutputPlayer);
         s_CardLoaded = true;
+
+        m_TimeManager.SetPlayerCardViewControllerRef((PlayerCard.CardViewController != null) ? PlayerCard.CardViewController : null);
     }
 
     public static void DestroyCard()

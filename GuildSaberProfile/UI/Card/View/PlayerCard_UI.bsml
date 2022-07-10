@@ -42,5 +42,4 @@
 		</horizontal>
     </grid>
   </bg>
-	<text id="ErrorText" text="Error during getting data from " active="false" color="red" underlined="true"></text>
 </bg>

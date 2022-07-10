@@ -22,8 +22,6 @@ namespace GuildSaberProfile.UI.Card;
 [ViewDefinition("GuildSaberProfile.UI.Card.View.PlayerCard_UI.bsml")]
 public class PlayerCardViewController : BSMLAutomaticViewController
 {
-    public TimeManager m_TimeManager;
-
     public FloatingScreen m_CardScreen;
 
     [UIComponent("PlayerNameText")] public TextMeshProUGUI m_PlayerNameText;
@@ -40,6 +38,8 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     // ReSharper disable once CollectionNeverQueried.Global
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public List<PlayerRankUI> Ranks = new List<PlayerRankUI>();
+
+    private int m_NumberOfPasses;
 
     private PlayerApiReworkOutput m_PlayerInfo;
     [CanBeNull]
@@ -91,9 +91,6 @@ public class PlayerCardViewController : BSMLAutomaticViewController
 
         l_CurrentImageView.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.BakedEmissive;
 
-        m_TimeManager = gameObject.AddComponent<TimeManager>();
-        m_TimeManager.SetPlayerCardViewControllerRef(this);
-
         Plugin.Log.Info("Card loaded");
     }
 
@@ -124,7 +121,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         if (l_ShowDetaislLevels)
         {
             //When the details levels is visible
-            m_CardScreen.ScreenSize = new Vector2((68 + m_PlayerInfo.Name.Length + l_LevelsSize)*0.9f, 28 + l_LevelsSize * 0.6f+(Ranks.Count*2));
+            m_CardScreen.ScreenSize = new Vector2((68 + (m_PlayerInfo.Name.Length*1.2f) + l_LevelsSize)*0.9f, 28 + l_LevelsSize * 0.6f+(Ranks.Count*2));
             m_ElementsGrid.cellSize = new Vector2((40 + m_PlayerInfo.Name.Length + l_LevelsSize)*1.1f, 40);
             m_DetailsLevelsLayout.cellSize = new Vector2(12 - l_LevelsSize*0.1f, 10.5f - l_LevelsSize * 0.1f);
             m_ElementsGrid.spacing = new Vector2(7, 7);
