@@ -21,7 +21,7 @@ public static class GuildApi
                     l_Result = l_Client.GetStringAsync($"http://api.bsdr.fdom.eu/player/data/{p_ID}");
                     break;
                 case "BSCC":
-                    l_Result = l_Client.GetStringAsync($"Insérer un lien");
+                    l_Result = l_Client.GetStringAsync($"https://api.jupilian.me/player/data/{p_ID}");
                     break;
             }
             l_Result.Wait();

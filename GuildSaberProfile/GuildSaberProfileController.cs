@@ -43,5 +43,4 @@ public class GuildSaberProfileController : MonoBehaviour
     }
 
     #endregion
-
 }

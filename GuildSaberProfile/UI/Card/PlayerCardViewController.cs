@@ -62,14 +62,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     }
     public string PlayerNumberOfPasses
     {
-        get
-        {
-            m_NumberOfPasses = 0;
-            for (int l_I = 0; l_I < m_PlayerInfo.CategoryData.Count; l_I++)
-                m_NumberOfPasses += m_PlayerInfo.CategoryData[l_I].NumberOfPass;
-            PlayerNumberOfPasses = m_NumberOfPasses.ToString();
-            return m_NumberOfPasses.ToString();
-        }
+        get => m_PlayerInfo.PassCount.ToString();
         set { }
     }
 
@@ -122,16 +115,18 @@ public class PlayerCardViewController : BSMLAutomaticViewController
 
     public void UpdateLevelsDetails()
     {
-        m_DetailsLevelsLayout.gameObject.SetActive(PluginConfig.Instance.ShowDetailsLevels);
+        bool l_ShowDetaislLevels = PluginConfig.Instance.ShowDetailsLevels && Levels.Count > 0;
+
+        m_DetailsLevelsLayout.gameObject.SetActive(l_ShowDetaislLevels);
 
         if (m_CardScreen == null)
             return;
 
         float l_LevelsSize = Levels.Count;
-        if (PluginConfig.Instance.ShowDetailsLevels)
+        if (l_ShowDetaislLevels)
         {
             //When the details levels is visible
-            m_CardScreen.ScreenSize = new Vector2((68 + m_PlayerInfo.Name.Length + l_LevelsSize)*0.9f, 28 + l_LevelsSize * 0.6f);
+            m_CardScreen.ScreenSize = new Vector2((68 + m_PlayerInfo.Name.Length + l_LevelsSize)*0.9f, 28 + l_LevelsSize * 0.6f+(Ranks.Count*2));
             m_ElementsGrid.cellSize = new Vector2((40 + m_PlayerInfo.Name.Length + l_LevelsSize)*1.1f, 40);
             m_DetailsLevelsLayout.cellSize = new Vector2(12 - l_LevelsSize*0.1f, 10.5f - l_LevelsSize * 0.1f);
             m_ElementsGrid.spacing = new Vector2(7, 7);
@@ -139,7 +134,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         else
         {
             //When the details levels is hidden
-            m_CardScreen.ScreenSize = new Vector2(33 + m_PlayerInfo.Name.Length, 28);
+            m_CardScreen.ScreenSize = new Vector2(33 + m_PlayerInfo.Name.Length, 28+ (Ranks.Count * 2));
             m_ElementsGrid.cellSize = new Vector2(25 + m_PlayerInfo.Name.Length, 40);
             m_ElementsGrid.spacing = new Vector2(1, 7);
         }

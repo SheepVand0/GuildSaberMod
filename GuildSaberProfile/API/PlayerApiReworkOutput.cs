@@ -12,12 +12,11 @@ public struct PlayerApiReworkOutput
     public string Name { get; set; }
     public string Country { get; set; }
     public string ProfilePicture { get; set; }
-
     public Color ProfileColor { get; set; }
-
     public List<ApiBadge> Badges { get; set; }
     public Trophy Trophy { get; set; }
     public int Level { get; set; }
+    public int PassCount { get; set; }
     public bool IsMapLeaderboardBanned { get; set; }
     public bool IsScanBanned { get; set; }
     // ReSharper disable once CollectionNeverUpdated.Global
