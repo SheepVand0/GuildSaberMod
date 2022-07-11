@@ -101,16 +101,11 @@ public class Plugin
     {
         if (s_CardLoaded) return;
 
-        string l_PlayerId = Authentication.GetPlayerIdFromSteam();
-        if (l_PlayerId == NOT_DEFINED)
+        string l_PlayerId = BS_Utils.Gameplay.GetUserInfo.GetUserID();
+        if (string.IsNullOrEmpty(l_PlayerId))
         {
-            Plugin.Log.Error("Cannot get Player Id from steam, trying from Oculus");
-            l_PlayerId = Authentication.GetPlayerIdFromOculus();
-        }
-
-        if(l_PlayerId == NOT_DEFINED)
-        {
-            Plugin.Log.Error("Connot get PLayer id from Oculus, not creating Card");
+            Plugin.Log.Error("Cannot get Player Id not creating card");
+            m_TabViewController.ShowError(true);
             return;
         }
 
