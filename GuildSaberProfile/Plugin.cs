@@ -9,6 +9,7 @@ using IPA.Config.Stores;
 using UnityEngine;
 using GuildSaberProfile.Time;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Config = IPA.Config.Config;
 using IPALogger = IPA.Logging.Logger;
 
@@ -98,17 +99,16 @@ public class Plugin
     public static void CreateCard()
     {
         if (s_CardLoaded) return;
+        Plugin.Log.Info("Trying to get Player ID");
 
-        string l_PlayerId = Authentication.GetPlayerIdFromSteam();
-        if (l_PlayerId == NOT_DEFINED)
-        {
-            Plugin.Log.Error("Cannot get Player Id from steam, trying from Oculus");
-            l_PlayerId = Authentication.GetPlayerIdFromOculus();
-        }
+        /// We don't care if it return null because this function is loaded on the MenuSceneLoadedFresh, and the UserID will most likely be fetched way before that happen.
+#pragma warning disable CS0618
+        string l_PlayerId =  BS_Utils.Gameplay.GetUserInfo.GetUserID();
+#pragma warning restore CS0618
 
-        if(l_PlayerId == NOT_DEFINED)
+        if(string.IsNullOrEmpty(l_PlayerId))
         {
-            Plugin.Log.Error("Connot get PLayer id from Oculus, not creating Card");
+            Plugin.Log.Error("Cannot get PLayer ID, not creating card");
             return;
         }
 
