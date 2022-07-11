@@ -189,8 +189,8 @@ public class PlayerCard_UI
     }
     public void ResetInGameCardPosition()
     {
-        PluginConfig.Instance.InGameCardPosition = PluginConfig.DefaultCardPosition;
-        PluginConfig.Instance.InGameCardRotation = PluginConfig.DefaultCardRotation;
+        PluginConfig.Instance.InGameCardPosition = PluginConfig.DefaultInGameCardPosition;
+        PluginConfig.Instance.InGameCardRotation = PluginConfig.DefaultInGameCardRotation;
     }
 
     public void Destroy()
