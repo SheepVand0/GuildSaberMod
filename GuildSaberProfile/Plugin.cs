@@ -110,6 +110,7 @@ public class Plugin
         if(string.IsNullOrEmpty(l_PlayerId))
         {
             Plugin.Log.Error("Cannot get PLayer ID, not creating card");
+            m_TabViewController.ShowError(true);
             return;
         }
 
