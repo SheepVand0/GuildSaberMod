@@ -80,6 +80,7 @@ public class Plugin
 
         CurrentSceneName = p_NextScene.name;
         PlayerCard.UpdateCardVisibility();
+        PlayerCard.UpdateCardPosition();
     }
 
     private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
@@ -96,7 +97,7 @@ public class Plugin
     #endregion
 
     #region Card Manager
-    public static void CreateCard()
+    public static async Task CreateCard()
     {
         if (s_CardLoaded) return;
         Plugin.Log.Info("Trying to get Player ID");
@@ -127,7 +128,7 @@ public class Plugin
         m_TimeManager.SetPlayerCardViewControllerRef((PlayerCard.CardViewController != null) ? PlayerCard.CardViewController : null);
     }
 
-    public static void DestroyCard()
+    public static async Task DestroyCard()
     {
         if (PlayerCard != null && PlayerCard.CardViewController != null)
         {

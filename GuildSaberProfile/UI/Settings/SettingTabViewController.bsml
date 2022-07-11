@@ -9,9 +9,12 @@
     <toggle-setting text='Show card handle :' value='ShowCardHandle' apply-on-change='true'></toggle-setting>
     <toggle-setting text='Show detailed levels :' value='DetailLevels' apply-on-change='true'></toggle-setting>
     <toggle-setting text='Show play time :' value='ShowPlayTime' apply-on-change='true'></toggle-setting>
-	<horizontal>
-		<button align='Right' text='Refresh' on-click='RefreshCard'></button>
-		<action-button align='Left' text='Reset Position' on-click='ResetPos'></action-button>
-	</horizontal>
+	<vertical vertical-fit='PreferredSize' spacing='5'>
+		<horizontal spacing='17'>
+			<action-button align='Left' text='Reset menu position' on-click='ResetPosMenu'></action-button>
+			<action-button align='Left' text='Reset game position' on-click='ResetPosGame'></action-button>
+		</horizontal>
+		<button align='Right' text='Refresh' on-click='RefreshCard' font-align='Center' min-width='40'></button>
+	</vertical>
   </settings-container>
 </bg>
