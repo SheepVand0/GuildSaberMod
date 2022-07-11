@@ -6,6 +6,7 @@ using GuildSaberProfile.Configuration;
 using HMUI;
 using UnityEngine;
 using TMPro;
+using System.Threading.Tasks;
 
 namespace GuildSaberProfile.UI.Card;
 
@@ -141,8 +142,17 @@ public class PlayerCard_UI
 
     private static void OnCardHandleReleased(object p_Sender, FloatingScreenHandleEventArgs p_EventArgs)
     {
-        PluginConfig.Instance.CardPosition = p_EventArgs.Position;
-        PluginConfig.Instance.CardRotation = p_EventArgs.Rotation;
+        switch (Plugin.CurrentSceneName) {
+            case "MainMenu":
+                PluginConfig.Instance.CardPosition = p_EventArgs.Position;
+                PluginConfig.Instance.CardRotation = p_EventArgs.Rotation;
+                break;
+            case "GameCore":
+                PluginConfig.Instance.InGameCardPosition = p_EventArgs.Position;
+                PluginConfig.Instance.InGameCardRotation = p_EventArgs.Rotation;
+                break;
+            default: break;
+        }
     }
 
     public void UpdateCardVisibility()
@@ -159,9 +169,30 @@ public class PlayerCard_UI
     }
     public void UpdateCardPosition()
     {
-        FloatingScreen.gameObject.transform.localPosition = PluginConfig.Instance.CardPosition;
-        FloatingScreen.gameObject.transform.localRotation = PluginConfig.Instance.CardRotation;
+        switch (Plugin.CurrentSceneName) {
+            case "MainMenu":
+                FloatingScreen.gameObject.transform.localPosition = PluginConfig.Instance.CardPosition;
+                FloatingScreen.gameObject.transform.localRotation = PluginConfig.Instance.CardRotation;
+                break;
+            case "GameCore":
+                FloatingScreen.gameObject.transform.localPosition = PluginConfig.Instance.InGameCardPosition;
+                FloatingScreen.gameObject.transform.localRotation = PluginConfig.Instance.InGameCardRotation;
+                break;
+            default: break;
+        }
     }
+    public void ResetMenuCardPosition()
+    {
+        PluginConfig.Instance.CardPosition = PluginConfig.DefaultCardPosition;
+        PluginConfig.Instance.CardRotation = PluginConfig.DefaultCardRotation;
+        UpdateCardPosition();
+    }
+    public void ResetInGameCardPosition()
+    {
+        PluginConfig.Instance.InGameCardPosition = PluginConfig.DefaultCardPosition;
+        PluginConfig.Instance.InGameCardRotation = PluginConfig.DefaultCardRotation;
+    }
+
     public void Destroy()
     {
         Object.Destroy(FloatingScreen.gameObject);

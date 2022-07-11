@@ -14,6 +14,7 @@ public static class Authentication
             return Plugin.NOT_DEFINED;
         }
 
+        if (SteamUser.GetHSteamUser() == null) return Plugin.NOT_DEFINED;
 
         if (!SteamUser.BLoggedOn()) return Plugin.NOT_DEFINED;
 
@@ -37,7 +38,7 @@ public static class Authentication
                 l_OculusId = Plugin.NOT_DEFINED;
             } else
             {
-                l_OculusId = p_Msg.RequestID.ToString();
+                l_OculusId = p_Msg.GetUser().OculusID;
             }
         });
 

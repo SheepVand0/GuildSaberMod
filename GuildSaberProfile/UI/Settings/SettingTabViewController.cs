@@ -90,14 +90,18 @@ public class SettingTabViewController
         RefreshCard();
     }
 
-    [UIAction("ResetPos")]
-    private void ResetPos()
+    [UIAction("ResetPosMenu")]
+    private void ResetPosMenu()
     {
-        PluginConfig.Instance.CardPosition = PluginConfig.DefaultCardPosition;
-        PluginConfig.Instance.CardRotation = PluginConfig.DefaultCardRotation;
-        Plugin.PlayerCard.UpdateCardPosition();
+        Plugin.PlayerCard.ResetMenuCardPosition();
     }
-    #endregion
+
+    [UIAction("ResetPosGame")]
+    private void ResetPosInGame()
+    {
+        Plugin.PlayerCard.ResetInGameCardPosition();
+    }
+#endregion
 
     public void ShowError(bool p_Visible)
     {

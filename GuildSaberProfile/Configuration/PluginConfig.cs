@@ -18,11 +18,10 @@ internal class PluginConfig
     [JsonProperty("ShowCardInGame")] public virtual bool ShowCardInGame { get; set; } = false;
     [JsonProperty("CardPos")] public virtual Vector3 CardPosition { get; set; } = DefaultCardPosition;
     [JsonProperty("CardRot")] public virtual Quaternion CardRotation { get; set; } = DefaultCardRotation;
-
+    [JsonProperty("InGameCardPos")] public virtual Vector3 InGameCardPosition { get; set; } = DefaultCardPosition;
+    [JsonProperty("IngGameCardRot")] public virtual Quaternion InGameCardRotation { get; set; } = DefaultCardRotation;
     [JsonProperty("CardHandleVisible")] public virtual bool CardHandleVisible { get; set; }
-
     [JsonProperty("ShowDetailsLevels")] public virtual bool ShowDetailsLevels { get; set; } = true;
-
     [JsonProperty("ShowPlayTime")] public virtual bool ShowPlayTime { get; set; } = true;
     [JsonProperty("SelectedGuild")] public virtual string SelectedGuild { get; set; } = "CS";
 
