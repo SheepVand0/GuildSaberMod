@@ -28,8 +28,6 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     [UIComponent("DetailsLevelsLayout")] private readonly GridLayoutGroup m_DetailsLevelsLayout = null;
     [UIComponent("ElemGrid")] private readonly GridLayoutGroup m_ElementsGrid = null;
     [UIComponent("NeonBackground")] private readonly Transform m_NeonBackground = null;
-    [UIComponent("ErrorText")] private readonly TextMeshProUGUI m_ErrorText = null;
-
     [UIComponent("PlayTimeText")] private readonly TextMeshProUGUI m_PlayTimeText = null;
 
     // ReSharper disable once FieldCanBeMadeReadOnly.Global

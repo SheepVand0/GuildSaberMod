@@ -11,11 +11,13 @@ internal class PluginConfig
 {
     public static PluginConfig Instance { get; set; }
 
+    public static readonly Vector3 DefaultCardPosition = new Vector3(0.0f, 0.02f, 1.0f);
+    public static readonly Quaternion DefaultCardRotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
+
     [JsonProperty("ShowCardInMenu")] public virtual bool ShowCardInMenu { get; set; } = true;
     [JsonProperty("ShowCardInGame")] public virtual bool ShowCardInGame { get; set; } = false;
-    [JsonProperty("CardPos")] public virtual Vector3 CardPosition { get; set; } = new Vector3(0.0f, 0.02f, 1.0f);
-
-    [JsonProperty("CardRot")] public virtual Quaternion CardRotation { get; set; } = Quaternion.Euler(90.0f, 0.0f, 0.0f);
+    [JsonProperty("CardPos")] public virtual Vector3 CardPosition { get; set; } = DefaultCardPosition;
+    [JsonProperty("CardRot")] public virtual Quaternion CardRotation { get; set; } = DefaultCardRotation;
 
     [JsonProperty("CardHandleVisible")] public virtual bool CardHandleVisible { get; set; }
 

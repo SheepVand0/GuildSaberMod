@@ -8,10 +8,13 @@ namespace GuildSaberProfile.UI.Settings;
 
 public class SettingTabViewController
 {
-    [UIComponent("GuildList")] DropdownWithTableView m_GuildListDropDown = null;
-    [UIComponent("ErrorText")] TextMeshProUGUI m_ErrorText = null;
-    [UIComponent("ErrorText2")] TextMeshProUGUI m_ErrorText2 = null;
+    #region Components
+    //[UIComponent("GuildList")] DropdownWithTableView m_GuildListDropDown = null;
+    [UIComponent("ErrorText")] private readonly TextMeshProUGUI m_ErrorText = null;
+    [UIComponent("ErrorText2")] private readonly TextMeshProUGUI m_ErrorText2 = null;
+    #endregion
 
+    #region UIValues
     [UIValue("AvailableGuilds")]
     private List<object> m_AvailableGuilds = new List<object>() { "CS", "BSCC" };
 
@@ -70,7 +73,9 @@ public class SettingTabViewController
         get => PluginConfig.Instance.ShowPlayTime;
         set => PluginConfig.Instance.ShowPlayTime = value;
     }
+    #endregion
 
+    #region UIActions
     [UIAction("RefreshCard")]
     protected void RefreshCard()
     {
@@ -78,18 +83,21 @@ public class SettingTabViewController
         Plugin.CreateCard();
     }
 
-    [UIAction("#post-parse")]
-    internal void PostParse()
-    {
-
-    }
-
     [UIAction("UpdateCard")]
-    public void UpdateCard(string p_Selected)
+    private void UpdateCard(string p_Selected)
     {
         PluginConfig.Instance.SelectedGuild = p_Selected;
         RefreshCard();
     }
+
+    [UIAction("ResetPos")]
+    private void ResetPos()
+    {
+        PluginConfig.Instance.CardPosition = PluginConfig.DefaultCardPosition;
+        PluginConfig.Instance.CardRotation = PluginConfig.DefaultCardRotation;
+        Plugin.PlayerCard.UpdateCardPosition();
+    }
+    #endregion
 
     public void ShowError(bool p_Visible)
     {

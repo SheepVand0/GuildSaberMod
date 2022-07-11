@@ -9,6 +9,9 @@
     <toggle-setting text='Show card handle :' value='ShowCardHandle' apply-on-change='true'></toggle-setting>
     <toggle-setting text='Show detailed levels :' value='DetailLevels' apply-on-change='true'></toggle-setting>
     <toggle-setting text='Show play time :' value='ShowPlayTime' apply-on-change='true'></toggle-setting>
-    <button align='Center' text='Refresh' on-click='RefreshCard'></button>
+	<horizontal>
+		<button align='Right' text='Refresh' on-click='RefreshCard'></button>
+		<action-button align='Left' text='Reset Position' on-click='ResetPos'></action-button>
+	</horizontal>
   </settings-container>
 </bg>

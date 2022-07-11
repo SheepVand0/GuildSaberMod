@@ -60,7 +60,6 @@ public class PlayerRankUI
     {
         m_CategoryText.SetText(m_Category);
         m_PlayerRankText.SetText(m_PlayerRank);
-        //m_PointsText.SetText(m_Points);
 
         Color l_PlayerColor = m_Player.ProfileColor.ToUnityColor();
         Color l_BeforePlayerColor = new Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
@@ -155,12 +154,14 @@ public class PlayerCard_UI
             case "GameCore":
                 FloatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCardInGame);
                 break;
-            default:
-                Plugin.Log.Info(Plugin.CurrentSceneName);
-                break;
+            default: break;
         }
     }
-
+    public void UpdateCardPosition()
+    {
+        FloatingScreen.gameObject.transform.localPosition = PluginConfig.Instance.CardPosition;
+        FloatingScreen.gameObject.transform.localRotation = PluginConfig.Instance.CardRotation;
+    }
     public void Destroy()
     {
         Object.Destroy(FloatingScreen.gameObject);

@@ -24,7 +24,6 @@ public class TimeManager : MonoBehaviour
     {
         if (m_CardControllerRef is null)
         {
-            Plugin.Log.Error("Controller ref is null");
             return;
         }
 

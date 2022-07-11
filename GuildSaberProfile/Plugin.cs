@@ -18,22 +18,23 @@ namespace GuildSaberProfile;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Plugin
 {
-    public const string NOT_DEFINED = "Undefined";
+    // ReSharper disable once UnusedAutoPropertyAccessor.Local
+    private static Plugin Instance { get; set; }
 
-    public static PlayerCard_UI PlayerCard;
+    internal static IPALogger Log { get; private set; }
+
+    public const string NOT_DEFINED = "Undefined";
+    public static string CurrentSceneName = "MainMenu";
 
     private static bool s_CardLoaded;
 
-    public static readonly SettingTabViewController m_TabViewController = new SettingTabViewController();
-    // ReSharper disable once UnusedAutoPropertyAccessor.Local
-    private static Plugin Instance { get; set; }
-    public static string CurrentSceneName = "MainMenu";
+    public static PlayerCard_UI PlayerCard;
     public static List<object> AvailableGuilds = new List<object>() { "CS", "BSCC" };
     public static TimeManager m_TimeManager;
-    internal static IPALogger Log { get; private set; }
-
+    public static readonly SettingTabViewController m_TabViewController = new SettingTabViewController();
     //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.GuildSaberProfile");
 
+    #region On mod start
     [Init]
     /// <summary>
     /// Called when the plugin is first loaded by IPA (either when the game starts or when the plugin is enabled if it starts disabled).
@@ -47,21 +48,6 @@ public class Plugin
         Log.Info("GuildSaberProfile initialized.");
     }
 
-    #region BSIPA Config
-
-    //Uncomment to use BSIPA's config
-
-    [Init]
-    public void InitWithConfig(Config p_Conf)
-    {
-        PluginConfig.Instance = p_Conf.Generated<PluginConfig>();
-        Log.Debug("Config loaded");
-
-        //m_Harmony.PatchAll();
-    }
-
-    #endregion
-
     [OnStart]
     public void OnApplicationStart()
     {
@@ -73,6 +59,20 @@ public class Plugin
 
     }
 
+    #region BSIPA Config
+    [Init]
+    public void InitWithConfig(Config p_Conf)
+    {
+        PluginConfig.Instance = p_Conf.Generated<PluginConfig>();
+        Log.Debug("Config loaded");
+
+        //m_Harmony.PatchAll();
+    }
+
+    #endregion
+    #endregion
+
+    #region Events
     private static void OnSceneChanged(UnityEngine.SceneManagement.Scene p_CurrentScene, UnityEngine.SceneManagement.Scene p_NextScene)
     {
         if (p_NextScene == null) return;
@@ -92,12 +92,25 @@ public class Plugin
         CreateCard();
     }
 
+    #endregion
+
+    #region Card Manager
     public static void CreateCard()
     {
         if (s_CardLoaded) return;
 
         string l_PlayerId = Authentication.GetPlayerIdFromSteam();
-        if (l_PlayerId == NOT_DEFINED) return;
+        if (l_PlayerId == NOT_DEFINED)
+        {
+            Plugin.Log.Error("Cannot get Player Id from steam, trying from Oculus");
+            l_PlayerId = Authentication.GetPlayerIdFromOculus();
+        }
+
+        if(l_PlayerId == NOT_DEFINED)
+        {
+            Plugin.Log.Error("Connot get PLayer id from Oculus, not creating Card");
+            return;
+        }
 
         PlayerApiReworkOutput l_OutputPlayer = GuildApi.GetPlayerByScoreSaberIdAndGuild(l_PlayerId, PluginConfig.Instance.SelectedGuild);
 
@@ -123,11 +136,14 @@ public class Plugin
         }
         s_CardLoaded = false;
     }
+    #endregion
 
+    #region On Game exit
     [OnExit]
     public void OnApplicationQuit()
     {
         Log.Debug("OnApplicationQuit");
         //m_Harmony.UnpatchSelf();
     }
+    #endregion
 }
