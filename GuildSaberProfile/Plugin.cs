@@ -87,7 +87,10 @@ public class Plugin
     {
         UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
         if (m_TimeManager == null)
+        {
             m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
+            GameObject.DontDestroyOnLoad(m_TimeManager);
+        }
 
         if (PlayerCard != null)
             DestroyCard();
