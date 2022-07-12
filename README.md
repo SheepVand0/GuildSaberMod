@@ -10,7 +10,7 @@ features :
     Shows the category level details (Only visible for Challenge Saber, because no category on BSCC) (Can be disabled)
     The card color depends on your level role color in the selected guild
     The Cards settings are moved to a modal, 
-    which can be open by clicking your profile picture and the Card visibility settings are moved yo Mod Settings page
+    which can be open by clicking your profile picture and the Card visibility settings are moved to Mod Settings page
 
 
 Made with love by SheepVand(Modder)&Kuurama(Ideas&GuildSaberDev)
