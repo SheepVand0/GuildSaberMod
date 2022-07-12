@@ -7,6 +7,7 @@ using HMUI;
 using UnityEngine;
 using TMPro;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace GuildSaberProfile.UI.Card;
 
@@ -83,7 +84,7 @@ public class PlayerCard_UI
     // ReSharper disable once MemberCanBePrivate.Global
     public FloatingScreen FloatingScreen;
 
-    public PlayerCard_UI(PlayerApiReworkOutput p_Player)
+    public PlayerCard_UI(PlayerApiReworkOutput p_Player, List<object> p_AvailableGuilds)
     {
         Plugin.Log.Info("Loading Player Card");
 
@@ -94,6 +95,7 @@ public class PlayerCard_UI
         FloatingScreen.HandleReleased += OnCardHandleReleased;
 
         CardViewController.SetReferences(p_Player, FloatingScreen);
+        CardViewController.m_AvailableGuilds = p_AvailableGuilds;
 
         /// For debug purpose with lots of levels
         /*bool l_UseALot = true;
@@ -136,6 +138,8 @@ public class PlayerCard_UI
     public void UpdateAll()
     {
         CardViewController.UpdateLevelsDetails();
+        CardViewController.UpdateToggleCardHandleVisibility();
+        UpdateCardPosition();
         UpdateCardHandleVisibility();
         UpdateCardVisibility();
     }
@@ -181,16 +185,19 @@ public class PlayerCard_UI
             default: break;
         }
     }
-    public void ResetMenuCardPosition()
+    public static void ResetMenuCardPosition()
     {
         PluginConfig.Instance.CardPosition = PluginConfig.DefaultCardPosition;
         PluginConfig.Instance.CardRotation = PluginConfig.DefaultCardRotation;
-        UpdateCardPosition();
+        if (Plugin.PlayerCard != null)
+            Plugin.PlayerCard.UpdateCardPosition();
     }
-    public void ResetInGameCardPosition()
+    public static void ResetInGameCardPosition()
     {
         PluginConfig.Instance.InGameCardPosition = PluginConfig.DefaultInGameCardPosition;
         PluginConfig.Instance.InGameCardRotation = PluginConfig.DefaultInGameCardRotation;
+        if (Plugin.CurrentSceneName == "GameCore" && Plugin.PlayerCard != null)
+            Plugin.PlayerCard.UpdateCardPosition();
     }
 
     public void Destroy()

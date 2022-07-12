@@ -1,8 +1,7 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using GuildSaberProfile.Configuration;
-using System.Collections.Generic;
-using HMUI;
 using TMPro;
+using GuildSaberProfile.UI.Card;
 
 namespace GuildSaberProfile.UI.Settings;
 
@@ -15,15 +14,6 @@ public class SettingTabViewController
     #endregion
 
     #region UIValues
-    [UIValue("AvailableGuilds")]
-    private List<object> m_AvailableGuilds = new List<object>() { "CS", "BSCC" };
-
-    [UIValue("SelectedGuild")]
-    protected string SelectedGuild {
-        get => PluginConfig.Instance.SelectedGuild;
-        set => PluginConfig.Instance.SelectedGuild = value;
-    }
-
     [UIValue("ShowCardInMenu")]
     protected bool ShowCardInMenu
     {
@@ -42,66 +32,27 @@ public class SettingTabViewController
         get => PluginConfig.Instance.ShowCardInGame;
         set => PluginConfig.Instance.ShowCardInGame = value;
     }
-
-    [UIValue("ShowCardHandle")]
-    protected bool ShowCardHandle
-    {
-        get => PluginConfig.Instance.CardHandleVisible;
-        set
-        {
-            PluginConfig.Instance.CardHandleVisible = value;
-            if (Plugin.PlayerCard != null)
-                Plugin.PlayerCard.UpdateCardHandleVisibility();
-        }
-    }
-
-    [UIValue("DetailLevels")]
-    protected bool ShowDetailedLevels
-    {
-        get => PluginConfig.Instance.ShowDetailsLevels;
-        set
-        {
-            PluginConfig.Instance.ShowDetailsLevels = value;
-            if (Plugin.PlayerCard != null)
-                Plugin.PlayerCard.CardViewController.UpdateLevelsDetails();
-        }
-    }
-
-    [UIValue("ShowPlayTime")]
-    protected bool ShowPlayTime
-    {
-        get => PluginConfig.Instance.ShowPlayTime;
-        set => PluginConfig.Instance.ShowPlayTime = value;
-    }
     #endregion
 
     #region UIActions
     [UIAction("RefreshCard")]
-    protected void RefreshCard()
+    public void RefreshCard()
     {
         Plugin.DestroyCard();
         Plugin.CreateCard();
     }
 
-    [UIAction("UpdateCard")]
-    private void UpdateCard(string p_Selected)
-    {
-        PluginConfig.Instance.SelectedGuild = p_Selected;
-        RefreshCard();
-    }
-
     [UIAction("ResetPosMenu")]
     private void ResetPosMenu()
     {
-        Plugin.PlayerCard.ResetMenuCardPosition();
+        PlayerCard_UI.ResetMenuCardPosition();
     }
 
     [UIAction("ResetPosGame")]
-    private void ResetPosInGame()
-    {
-        Plugin.PlayerCard.ResetInGameCardPosition();
+    private void ResetPosGame() {
+        PlayerCard_UI.ResetInGameCardPosition();
     }
-#endregion
+    #endregion
 
     public void ShowError(bool p_Visible)
     {

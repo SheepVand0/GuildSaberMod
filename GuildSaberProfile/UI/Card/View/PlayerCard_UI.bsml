@@ -28,9 +28,25 @@
 					<text font-size="2" id="PlayTimeText" text="00:00:00" align="MidlineRight"></text>
 				</vertical>
 				<grid cell-size-x="15" cell-size-y="15" child-align="MiddleCenter">
-					<clickable-image pref-height="1" pref-width="1" preserve-aspect="false" src="~PlayerImageSrc"/>
+					<clickable-image pref-height="1" pref-width="1" preserve-aspect="false" src="~PlayerImageSrc" event-click="ShowSettings"/>
 				</grid>
 			</horizontal>
+			<modal size-delta-x="100" size-delta-y="60" show-event="ShowSettings" hide-event="HideSettings">
+				<vertical vertical-fit="PreferredSize">
+				<dropdown-list-setting text='Guild :' value='SelectedGuild' bind-value='true' on-change='UpdateCard' choices='AvailableGuilds' apply-on-change='true'></dropdown-list-setting>
+				<toggle-setting text='Show card handle :' value='ShowCardHandle' id='ToggleShowHandle' apply-on-change='true'></toggle-setting>
+				<toggle-setting text='Show detailed levels :' value='DetailLevels' apply-on-change='true'></toggle-setting>
+				<toggle-setting text='Show play time :' value='ShowPlayTime' apply-on-change='true'></toggle-setting>
+				<vertical vertical-fit='PreferredSize' spacing='5'>
+					<horizontal spacing='17'>
+						<action-button align='Left' text='Reset menu position' on-click='ResetPosMenu'></action-button>
+						<action-button align='Left' text='Reset game position' on-click='ResetPosGame'></action-button>
+					</horizontal>
+					<button align='Right' text='Refresh' on-click='RefreshCard' font-align='Center' min-width='40'></button>
+				</vertical>
+				<button text='Hide' event-click='HideSettings'></button>
+				</vertical>
+			</modal>
 			<grid id="DetailsLevelsLayout" vertical-fit="MinSize" horizontal-fit="PreferredSize" cell-size-x="7" cell-size-y="5.5">
 				<macro.for-each items="Levels">
 					<vertical vertical-fit="PreferredSize" child-control-height="true" child-expand-height="true">

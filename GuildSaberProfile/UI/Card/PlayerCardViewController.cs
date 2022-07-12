@@ -4,6 +4,7 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.ViewControllers;
+using BeatSaberMarkupLanguage.Components.Settings;
 using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
 using GuildSaberProfile.Time;
@@ -105,6 +106,89 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         m_CardScreen = p_CardScreen;
     }
 
+    #endregion
+
+    #region Settings
+
+    [UIComponent("ToggleShowHandle")] ToggleSetting m_ToggleShowHandle = null;
+
+    #region UIValues
+    [UIValue("AvailableGuilds")]
+    public List<object> m_AvailableGuilds = new List<object>() { "CS", "BSCC" };
+
+    [UIValue("SelectedGuild")]
+    protected string SelectedGuild
+    {
+        get => PluginConfig.Instance.SelectedGuild;
+        set => PluginConfig.Instance.SelectedGuild = value;
+    }
+
+    [UIValue("ShowCardHandle")]
+    protected bool ShowCardHandle
+    {
+        get => PluginConfig.Instance.CardHandleVisible;
+        set
+        {
+            PluginConfig.Instance.CardHandleVisible = value;
+            Plugin.PlayerCard.UpdateCardHandleVisibility();
+            Plugin.PlayerCard.CardViewController.UpdateToggleCardHandleVisibility();
+        }
+    }
+
+    [UIValue("DetailLevels")]
+    protected bool ShowDetailedLevels
+    {
+        get => PluginConfig.Instance.ShowDetailsLevels;
+        set
+        {
+            PluginConfig.Instance.ShowDetailsLevels = value;
+            Plugin.PlayerCard.CardViewController.UpdateLevelsDetails();
+        }
+    }
+
+    [UIValue("ShowPlayTime")]
+    protected bool ShowPlayTime
+    {
+        get => PluginConfig.Instance.ShowPlayTime;
+        set => PluginConfig.Instance.ShowPlayTime = value;
+    }
+
+    public void UpdateToggleCardHandleVisibility()
+    {
+        if (Plugin.CurrentSceneName == "GameCore")
+            m_ToggleShowHandle.gameObject.SetActive(PluginConfig.Instance.CardHandleVisible);
+        else
+            m_ToggleShowHandle.gameObject.SetActive(true);
+    }
+    #endregion
+
+    #region UIActions
+    [UIAction("RefreshCard")]
+    protected void RefreshCard()
+    {
+        Plugin.DestroyCard();
+        Plugin.CreateCard();
+    }
+
+    [UIAction("UpdateCard")]
+    private void UpdateCard(string p_Selected)
+    {
+        PluginConfig.Instance.SelectedGuild = p_Selected;
+        RefreshCard();
+    }
+
+    [UIAction("ResetPosMenu")]
+    private void ResetPosMenu()
+    {
+        PlayerCard_UI.ResetMenuCardPosition();
+    }
+
+    [UIAction("ResetPosGame")]
+    private void ResetPosInGame()
+    {
+        PlayerCard_UI.ResetInGameCardPosition();
+    }
+    #endregion
     #endregion
 
     #region Card Updates

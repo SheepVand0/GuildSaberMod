@@ -1,4 +1,4 @@
-﻿using BeatSaberMarkupLanguage.GameplaySetup;
+﻿using BeatSaberMarkupLanguage.Settings;
 using BS_Utils.Utilities;
 using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
@@ -30,7 +30,7 @@ public class Plugin
     private static bool s_CardLoaded;
 
     public static PlayerCard_UI PlayerCard;
-    public static List<object> AvailableGuilds = new List<object>() { "CS", "BSCC" };
+    public static List<object> AvailableGuilds = new List<object>();
     public static TimeManager m_TimeManager;
     public static readonly SettingTabViewController m_TabViewController = new SettingTabViewController();
     //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.GuildSaberProfile");
@@ -54,12 +54,11 @@ public class Plugin
     {
         Log.Debug("OnApplicationStart");
 
-        GameplaySetup.instance.AddTab("GuildSaberProfile", "GuildSaberProfile.UI.Settings.SettingTabViewController.bsml", m_TabViewController);
+        BSMLSettings.instance.AddSettingsMenu("GuildSaberProfile", "GuildSaberProfile.UI.Settings.SettingTabViewController.bsml", m_TabViewController);
 
         BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
 
     }
-
     #region BSIPA Config
     [Init]
     public void InitWithConfig(Config p_Conf)
@@ -81,6 +80,7 @@ public class Plugin
         CurrentSceneName = p_NextScene.name;
         PlayerCard.UpdateCardVisibility();
         PlayerCard.UpdateCardPosition();
+        PlayerCard.CardViewController.UpdateToggleCardHandleVisibility();
     }
 
     private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
@@ -96,7 +96,6 @@ public class Plugin
             DestroyCard();
         CreateCard();
     }
-
     #endregion
 
     #region Card Manager
@@ -112,24 +111,62 @@ public class Plugin
 
         if(string.IsNullOrEmpty(l_PlayerId))
         {
-            Plugin.Log.Error("Cannot get PLayer ID, not creating card");
+            Plugin.Log.Error("Cannot get Player ID, not creating card");
             m_TabViewController.ShowError(true);
             return;
         }
 
-        PlayerApiReworkOutput l_OutputPlayer = GuildApi.GetPlayerByScoreSaberIdAndGuild(l_PlayerId, PluginConfig.Instance.SelectedGuild);
+        PlayerApiReworkOutput l_OutputPlayer = new PlayerApiReworkOutput();
+        PlayerApiReworkOutput l_DefinedPlayer = new PlayerApiReworkOutput();
+        PlayerApiReworkOutput l_LastValidPlayer = new PlayerApiReworkOutput();
+        string l_LastValidGuild = string.Empty;
 
-        if (l_OutputPlayer.Name == null || l_OutputPlayer.Level == 0)
+        List<string> l_TempAvailableGuilds = new List<string>() { "CS", "BSCC"};
+        AvailableGuilds = new List<object>();
+
+        for (int l_i = 0;l_i < l_TempAvailableGuilds.Count;l_i++)
         {
-            m_TabViewController.ShowError(true);
-            return;
+            l_OutputPlayer = GuildApi.GetPlayerByScoreSaberIdAndGuild(l_PlayerId, l_TempAvailableGuilds[l_i]);
+
+            if (l_TempAvailableGuilds[l_i] == PluginConfig.Instance.SelectedGuild)
+                l_DefinedPlayer = l_OutputPlayer;
+
+            if (!l_OutputPlayer.Equals(null) && l_OutputPlayer.Level > 0)
+            {
+                l_LastValidPlayer = l_OutputPlayer;
+                l_LastValidGuild = l_TempAvailableGuilds[l_i];
+                AvailableGuilds.Add(l_TempAvailableGuilds[l_i]);
+            }
         }
 
-        m_TabViewController.ShowError(false);
-        PlayerCard = new PlayerCard_UI(l_OutputPlayer);
+        if (AvailableGuilds.Count == 0) return;
+
+        if (!IsGuildValidForPlayer(PluginConfig.Instance.SelectedGuild))
+        {
+            PluginConfig.Instance.SelectedGuild = l_LastValidGuild;
+            l_DefinedPlayer = l_LastValidPlayer;
+        }
+
+        //m_TabViewController.ShowError(false);
+        PlayerCard = new PlayerCard_UI(l_DefinedPlayer, AvailableGuilds);
         s_CardLoaded = true;
 
         m_TimeManager.SetPlayerCardViewControllerRef((PlayerCard.CardViewController != null) ? PlayerCard.CardViewController : null);
+    }
+
+    public static bool IsGuildValidForPlayer(string p_Guild)
+    {
+        bool l_IsValid = false;
+        foreach (string l_Current in AvailableGuilds)
+        {
+            if (l_Current == p_Guild)
+            {
+                Plugin.Log.Info("Selected guild is valid for this player not changing");
+                l_IsValid = true;
+                break;
+            }
+        }
+        return l_IsValid;
     }
 
     public static async Task DestroyCard()
