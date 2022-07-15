@@ -3,13 +3,16 @@ using BS_Utils.Utilities;
 using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
 using GuildSaberProfile.UI.Card;
-using GuildSaberProfile.UI.Settings;
 using IPA;
 using IPA.Config.Stores;
 using UnityEngine;
 using GuildSaberProfile.Time;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using BeatSaberMarkupLanguage.MenuButtons;
+using BeatSaberMarkupLanguage;
+using GuildSaberProfile.UI.GuildSaber;
+using GuildSaberProfile.UI.Card.Settings;
 using Config = IPA.Config.Config;
 using IPALogger = IPA.Logging.Logger;
 
@@ -32,7 +35,7 @@ public class Plugin
     public static PlayerCard_UI PlayerCard;
     public static List<object> AvailableGuilds = new List<object>();
     public static TimeManager m_TimeManager;
-    public static readonly SettingTabViewController m_TabViewController = new SettingTabViewController();
+    static ModFlowCoordinator _modFlowCoordinator;
     //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.GuildSaberProfile");
 
     #region On mod start
@@ -47,6 +50,8 @@ public class Plugin
         Instance = this;
         Log = p_Logger;
         Log.Info("GuildSaberProfile initialized.");
+
+        MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow, true));
     }
 
     [OnStart]
@@ -54,10 +59,15 @@ public class Plugin
     {
         Log.Debug("OnApplicationStart");
 
-        BSMLSettings.instance.AddSettingsMenu("GuildSaberProfile", "GuildSaberProfile.UI.Settings.SettingTabViewController.bsml", m_TabViewController);
-
         BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
+    }
 
+    public void ShowGuildFlow()
+    {
+        if (_modFlowCoordinator == null)
+            _modFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
+
+        _modFlowCoordinator.ShowFlow(false);
     }
     #region BSIPA Config
     [Init]
@@ -99,7 +109,7 @@ public class Plugin
     #endregion
 
     #region Card Manager
-    public static async Task CreateCard()
+    public static void CreateCard()
     {
         if (s_CardLoaded) return;
         Plugin.Log.Info("Trying to get Player ID");
@@ -112,7 +122,7 @@ public class Plugin
         if(string.IsNullOrEmpty(l_PlayerId))
         {
             Plugin.Log.Error("Cannot get Player ID, not creating card");
-            m_TabViewController.ShowError(true);
+            _modFlowCoordinator._LeftModViewController.ShowError(true);
             return;
         }
 
@@ -169,14 +179,17 @@ public class Plugin
         return l_IsValid;
     }
 
-    public static async Task DestroyCard()
+    public static async Task<Task> DestroyCard()
     {
         if (PlayerCard != null && PlayerCard.CardViewController != null)
         {
+            PlayerCard.CardViewController.m_SettingsModal = null;
             PlayerCard.Destroy();
             PlayerCard = null;
         }
         s_CardLoaded = false;
+
+        return Task.CompletedTask;
     }
     #endregion
 

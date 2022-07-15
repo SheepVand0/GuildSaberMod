@@ -26,7 +26,7 @@ internal class PluginConfig
     [JsonProperty("ShowDetailsLevels")] public virtual bool ShowDetailsLevels { get; set; } = true;
     [JsonProperty("ShowPlayTime")] public virtual bool ShowPlayTime { get; set; } = true;
     [JsonProperty("SelectedGuild")] public virtual string SelectedGuild { get; set; } = "CS";
-
+    [JsonProperty("ShowSettingsModal")] public virtual bool ShowSettingsModal { get; set; } = true;
     /// <summary>
     ///     This is called whenever BSIPA reads the config from disk (including when file changes are detected).
     /// </summary>

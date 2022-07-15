@@ -156,7 +156,10 @@
     <Compile Include="Time\TimeManager.cs" />
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCard_UI.cs" />
-    <Compile Include="UI\Settings\SettingTabViewController.cs" />
+    <Compile Include="UI\GuildSaber\LeftModViewController.cs" />
+    <Compile Include="UI\GuildSaber\ModFlowCoordinator.cs" />
+    <Compile Include="UI\GuildSaber\ModViewController.cs" />
+    <Compile Include="UI\Card\Settings\SettingsModal.cs" />
     <Compile Include="Utils\Color.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -165,7 +168,9 @@
   <ItemGroup>
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
     <EmbeddedResource Include="UI\Card\View\PlayerCard_UI.bsml" />
-    <EmbeddedResource Include="UI\Settings\SettingTabViewController.bsml" />
+    <EmbeddedResource Include="UI\GuildSaber\View\ModViewController.bsml" />
+    <EmbeddedResource Include="UI\GuildSaber\View\LeftModViewController.bsml" />
+    <EmbeddedResource Include="UI\Card\Settings\SettingsModal.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">

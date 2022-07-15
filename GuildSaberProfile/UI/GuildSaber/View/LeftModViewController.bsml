@@ -1,0 +1,21 @@
+﻿<bg bg="round-rect-panel" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
+	>
+	<horizontal anchor-pos-y='47' bg='panel-top' background-color='#0054ad' size-delta-y='7'>
+		<text align='Center' text='Settings' font-size='5'></text>
+	</horizontal>
+	<settings-container child-control-height='true' child-expand-height='true'>
+		<toggle-setting text='Show Modal by clicking the profile picture : ' value='ShowSettingsModal' apply-on-change='true'></toggle-setting>
+		<text text='Error during getting data from ' active='false' id='ErrorText' color='red' underlined='true'></text>
+		<text text='Make sure your registered and had pass Level 1 or if your internet is online' active='false' id='ErrorText2' color='red' underlined='false'></text>
+		<toggle-setting text='Show card In Menu :' value='ShowCardInMenu' apply-on-change='true'></toggle-setting>
+		<toggle-setting text='Show Card In Game :' value='ShowCardInGame' apply-on-change='true'></toggle-setting>
+		<vertical vertical-fit='PreferredSize' spacing='5'>
+			<horizontal spacing='17'>
+				<action-button align='Left' text='Reset menu position' on-click='ResetPosMenu'></action-button>
+				<action-button align='Left' text='Reset game position' on-click='ResetPosGame'></action-button>
+			</horizontal>
+			<button align='Right' text='Refresh' on-click='RefreshCard' font-align='Center' min-width='40'></button>
+		</vertical>
+	</settings-container>
+</bg>

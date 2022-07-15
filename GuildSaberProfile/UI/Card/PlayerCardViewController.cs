@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.ViewControllers;
@@ -8,12 +8,15 @@ using BeatSaberMarkupLanguage.Components.Settings;
 using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
 using GuildSaberProfile.Time;
+using GuildSaberProfile.UI.Card.Settings;
 using HMUI;
 using IPA.Utilities;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using BeatSaberMarkupLanguage.Parser;
+using System.Reflection;
 
 namespace GuildSaberProfile.UI.Card;
 
@@ -32,6 +35,8 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     [UIComponent("NeonBackground")] private readonly Transform m_NeonBackground = null;
     [UIComponent("PlayTimeText")] private readonly TextMeshProUGUI m_PlayTimeText = null;
 
+    public SettingsModal m_SettingsModal = null;
+
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public List<PlayerLevelUI> Levels = new List<PlayerLevelUI>();
 
@@ -42,8 +47,10 @@ public class PlayerCardViewController : BSMLAutomaticViewController
 #pragma warning disable CS0169
     private int m_NumberOfPasses;
 #pragma warning restore CS0169
-
     private PlayerApiReworkOutput m_PlayerInfo;
+
+    public List<object> m_AvailableGuilds = new List<object>();
+
     [CanBeNull]
     public string PlayerName
     {
@@ -67,7 +74,6 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     }
 
     #region Main Card Info and style Loading
-
     [UIAction("#post-parse")]
     public void PostParse()
     {
@@ -93,9 +99,23 @@ public class PlayerCardViewController : BSMLAutomaticViewController
 
         l_CurrentImageView.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.BakedEmissive;
 
+        if (m_SettingsModal == null)
+            m_SettingsModal = new SettingsModal(m_CardScreen.gameObject);
+
+        m_SettingsModal.m_AvailableGuilds = m_AvailableGuilds;
+
         Plugin.Log.Info("Card loaded");
     }
 
+    [UIAction("OnPPClick")]
+    private void OnPPClick()
+    {
+        if (!PluginConfig.Instance.ShowSettingsModal) return;
+
+        if (m_SettingsModal is null) return;
+
+        m_SettingsModal.ShowModal();
+    }
     #endregion
 
     #region References
@@ -108,91 +128,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
 
     #endregion
 
-    #region Settings
-
-    [UIComponent("ToggleShowHandle")] ToggleSetting m_ToggleShowHandle = null;
-
-    #region UIValues
-    [UIValue("AvailableGuilds")]
-    public List<object> m_AvailableGuilds = new List<object>() { "CS", "BSCC" };
-
-    [UIValue("SelectedGuild")]
-    protected string SelectedGuild
-    {
-        get => PluginConfig.Instance.SelectedGuild;
-        set => PluginConfig.Instance.SelectedGuild = value;
-    }
-
-    [UIValue("ShowCardHandle")]
-    protected bool ShowCardHandle
-    {
-        get => PluginConfig.Instance.CardHandleVisible;
-        set
-        {
-            PluginConfig.Instance.CardHandleVisible = value;
-            Plugin.PlayerCard.UpdateCardHandleVisibility();
-            Plugin.PlayerCard.CardViewController.UpdateToggleCardHandleVisibility();
-        }
-    }
-
-    [UIValue("DetailLevels")]
-    protected bool ShowDetailedLevels
-    {
-        get => PluginConfig.Instance.ShowDetailsLevels;
-        set
-        {
-            PluginConfig.Instance.ShowDetailsLevels = value;
-            Plugin.PlayerCard.CardViewController.UpdateLevelsDetails();
-        }
-    }
-
-    [UIValue("ShowPlayTime")]
-    protected bool ShowPlayTime
-    {
-        get => PluginConfig.Instance.ShowPlayTime;
-        set => PluginConfig.Instance.ShowPlayTime = value;
-    }
-
-    public void UpdateToggleCardHandleVisibility()
-    {
-        if (Plugin.CurrentSceneName == "GameCore")
-            m_ToggleShowHandle.gameObject.SetActive(PluginConfig.Instance.CardHandleVisible);
-        else
-            m_ToggleShowHandle.gameObject.SetActive(true);
-    }
-    #endregion
-
-    #region UIActions
-    [UIAction("RefreshCard")]
-    protected void RefreshCard()
-    {
-        Plugin.DestroyCard();
-        Plugin.CreateCard();
-    }
-
-    [UIAction("UpdateCard")]
-    private void UpdateCard(string p_Selected)
-    {
-        PluginConfig.Instance.SelectedGuild = p_Selected;
-        RefreshCard();
-    }
-
-    [UIAction("ResetPosMenu")]
-    private void ResetPosMenu()
-    {
-        PlayerCard_UI.ResetMenuCardPosition();
-    }
-
-    [UIAction("ResetPosGame")]
-    private void ResetPosInGame()
-    {
-        PlayerCard_UI.ResetInGameCardPosition();
-    }
-    #endregion
-    #endregion
-
     #region Card Updates
-
     public void UpdateLevelsDetails()
     {
         bool l_ShowDetaislLevels = PluginConfig.Instance.ShowDetailsLevels && Levels.Count > 0;
@@ -223,6 +159,12 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     public void UpdateTime(OptimizedDateTime p_Time)
     {
         m_PlayTimeText.text = PluginConfig.Instance.ShowPlayTime ? string.Join(":", p_Time.Hours.ToString("00"), p_Time.Minutes.ToString("00"), p_Time.Seconds.ToString("00")) : " ";
+    }
+
+    public void UpdateToggleCardHandleVisibility()
+    {
+        if (m_SettingsModal != null)
+            m_SettingsModal.UpdateToggleCardHandleVisibility();
     }
     #endregion
 }
