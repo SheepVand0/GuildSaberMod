@@ -156,6 +156,7 @@
     <Compile Include="Time\TimeManager.cs" />
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCard_UI.cs" />
+    <Compile Include="UI\GuildSaber\IRefresh.cs" />
     <Compile Include="UI\GuildSaber\LeftModViewController.cs" />
     <Compile Include="UI\GuildSaber\ModFlowCoordinator.cs" />
     <Compile Include="UI\GuildSaber\ModViewController.cs" />

@@ -10,7 +10,7 @@ namespace GuildSaberProfile.UI.GuildSaber
 {
     [HotReload(RelativePathToLayout = @"ModViewController.bsml")]
     [ViewDefinition("GuildSaberProfile.UI.GuildSaber.View.LeftModViewController.bsml")]
-    class LeftModViewController : BSMLAutomaticViewController
+    public class LeftModViewController : BSMLAutomaticViewController
     {
 
         [UIValue("ShowSettingsModal")]
@@ -48,10 +48,9 @@ namespace GuildSaberProfile.UI.GuildSaber
 
         #region UIActions
         [UIAction("RefreshCard")]
-        public async Task RefreshCard()
+        public static async void RefreshCard()
         {
-            await Plugin.DestroyCard();
-            Plugin.CreateCard();
+            Plugin.m_Refresher.RefreshCard();
         }
 
         [UIAction("ResetPosMenu")]

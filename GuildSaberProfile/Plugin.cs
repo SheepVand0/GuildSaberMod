@@ -20,7 +20,7 @@ namespace GuildSaberProfile;
 
 [Plugin(RuntimeOptions.SingleStartInit)]
 // ReSharper disable once ClassNeverInstantiated.Global
-public class Plugin
+public class Plugin : IRefresh
 {
     // ReSharper disable once UnusedAutoPropertyAccessor.Local
     private static Plugin Instance { get; set; }
@@ -35,7 +35,10 @@ public class Plugin
     public static PlayerCard_UI PlayerCard;
     public static List<object> AvailableGuilds = new List<object>();
     public static TimeManager m_TimeManager;
-    static ModFlowCoordinator _modFlowCoordinator;
+    public static ModFlowCoordinator _modFlowCoordinator;
+    public static string m_PlayerId = "";
+    public static IRefresh m_Refresher = new Refresher();
+
     //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.GuildSaberProfile");
 
     #region On mod start
@@ -116,10 +119,10 @@ public class Plugin
 
         /// We don't care if it return null because this function is loaded on the MenuSceneLoadedFresh, and the UserID will most likely be fetched way before that happen.
 #pragma warning disable CS0618
-        string l_PlayerId =  BS_Utils.Gameplay.GetUserInfo.GetUserID();
+        m_PlayerId =  BS_Utils.Gameplay.GetUserInfo.GetUserID();
 #pragma warning restore CS0618
 
-        if(string.IsNullOrEmpty(l_PlayerId))
+        if(string.IsNullOrEmpty(m_PlayerId))
         {
             Plugin.Log.Error("Cannot get Player ID, not creating card");
             _modFlowCoordinator._LeftModViewController.ShowError(true);
@@ -136,7 +139,7 @@ public class Plugin
 
         for (int l_i = 0;l_i < l_TempAvailableGuilds.Count;l_i++)
         {
-            l_OutputPlayer = GuildApi.GetPlayerByScoreSaberIdAndGuild(l_PlayerId, l_TempAvailableGuilds[l_i]);
+            l_OutputPlayer = GuildApi.GetPlayerByScoreSaberIdAndGuild(m_PlayerId, l_TempAvailableGuilds[l_i]);
 
             if (l_TempAvailableGuilds[l_i] == PluginConfig.Instance.SelectedGuild)
                 l_DefinedPlayer = l_OutputPlayer;
@@ -199,6 +202,14 @@ public class Plugin
     {
         Log.Debug("OnApplicationQuit");
         //m_Harmony.UnpatchSelf();
+    }
+    #endregion
+
+    #region Interface Implementations
+    async void IRefresh.RefreshCard()
+    {
+        await DestroyCard();
+        CreateCard();
     }
     #endregion
 }

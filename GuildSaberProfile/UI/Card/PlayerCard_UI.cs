@@ -123,7 +123,6 @@ public class PlayerCard_UI
         FloatingScreen.SetRootViewController(CardViewController, ViewController.AnimationType.None);
 
         Object.DontDestroyOnLoad(FloatingScreen);
-        Object.DontDestroyOnLoad(CardViewController);
 
         UpdateAll();
     }

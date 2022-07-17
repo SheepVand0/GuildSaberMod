@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Collections.Generic;
-using GuildSaberProfile.UI.Card;
+using GuildSaberProfile.UI.GuildSaber;
 using GuildSaberProfile.Configuration;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Components.Settings;
@@ -8,6 +8,7 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Parser;
 using UnityEngine;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace GuildSaberProfile.UI.Card.Settings
 {
@@ -38,7 +39,7 @@ namespace GuildSaberProfile.UI.Card.Settings
         protected string SelectedGuild
         {
             get => PluginConfig.Instance.SelectedGuild;
-            set => PluginConfig.Instance.SelectedGuild = value;
+            set { }
         }
 
         [UIValue("ShowCardHandle")]
@@ -82,17 +83,17 @@ namespace GuildSaberProfile.UI.Card.Settings
 
         #region UIActions
         [UIAction("RefreshCard")]
-        protected async Task RefreshCard()
+        protected void RefreshCard()
         {
-            await Plugin.DestroyCard();
-            Plugin.CreateCard();
+            Plugin.m_Refresher.RefreshCard();
         }
 
         [UIAction("UpdateCard")]
         private void UpdateCard(string p_Selected)
         {
             PluginConfig.Instance.SelectedGuild = p_Selected;
-            RefreshCard();
+            m_ParserParams.EmitEvent("HideSettings");
+            Plugin.m_Refresher.RefreshCard();
         }
 
         [UIAction("ResetPosMenu")]

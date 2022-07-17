@@ -3,7 +3,7 @@
 	>
 	<modal size-delta-x="100" size-delta-y="60" show-event="ShowSettings" hide-event="HideSettings">
 		<vertical vertical-fit="PreferredSize">
-			<dropdown-list-setting text='Guild :' value='SelectedGuild' bind-value='true' on-change='UpdateCard' choices='AvailableGuilds' apply-on-change='true'></dropdown-list-setting>
+			<dropdown-list-setting id="GuildList" text='Guild :' value='SelectedGuild' bind-value='true' on-change='UpdateCard' choices='AvailableGuilds' apply-on-change='true'></dropdown-list-setting>
 			<toggle-setting text='Show card handle :' value='ShowCardHandle' id='ToggleShowHandle' apply-on-change='true'></toggle-setting>
 			<toggle-setting text='Show detailed levels :' value='DetailLevels' apply-on-change='true'></toggle-setting>
 			<toggle-setting text='Show play time :' value='ShowPlayTime' apply-on-change='true'></toggle-setting>

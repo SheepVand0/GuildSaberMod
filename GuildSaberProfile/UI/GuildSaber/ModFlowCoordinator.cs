@@ -22,7 +22,7 @@ namespace GuildSaberProfile.UI.GuildSaber
 
     [HotReload(RelativePathToLayout = @"PlayerCard_UI.bsml")]
     [ViewDefinition("GuildSaberProfile.UI.Card.View.PlayerCard_UI.bsml")]
-    class ModFlowCoordinator : FlowCoordinator
+    public class ModFlowCoordinator : FlowCoordinator
     {
         public ModViewController _modViewController;
 
@@ -56,7 +56,6 @@ namespace GuildSaberProfile.UI.GuildSaber
                 _LastFlow = BeatSaberUI.MainFlowCoordinator;
             else
                 _LastFlow = BeatSaberUI.MainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf();
-
             _LastFlow.PresentFlowCoordinator(this, null, ViewController.AnimationDirection.Vertical, false, false);
         }
 
