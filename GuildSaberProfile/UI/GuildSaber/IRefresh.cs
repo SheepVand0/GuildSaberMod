@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GuildSaberProfile.UI.GuildSaber;
+﻿namespace GuildSaberProfile.UI.GuildSaber;
 
 public interface IRefresh
 {
@@ -13,10 +7,6 @@ public interface IRefresh
 
 public class Refresher : IRefresh
 {
-    public Refresher()
-    {
-
-    }
 
     void IRefresh.RefreshCard()
     {
@@ -24,4 +14,3 @@ public class Refresher : IRefresh
         Plugin.CreateCard();
     }
 }
-

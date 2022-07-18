@@ -1,18 +1,18 @@
-﻿using BeatSaberMarkupLanguage.Settings;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.MenuButtons;
+using BS_Utils.Gameplay;
 using BS_Utils.Utilities;
 using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
+using GuildSaberProfile.Time;
 using GuildSaberProfile.UI.Card;
+using GuildSaberProfile.UI.GuildSaber;
 using IPA;
 using IPA.Config.Stores;
 using UnityEngine;
-using GuildSaberProfile.Time;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using BeatSaberMarkupLanguage.MenuButtons;
-using BeatSaberMarkupLanguage;
-using GuildSaberProfile.UI.GuildSaber;
-using GuildSaberProfile.UI.Card.Settings;
+using UnityEngine.SceneManagement;
 using Config = IPA.Config.Config;
 using IPALogger = IPA.Logging.Logger;
 
@@ -22,10 +22,6 @@ namespace GuildSaberProfile;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Plugin : IRefresh
 {
-    // ReSharper disable once UnusedAutoPropertyAccessor.Local
-    private static Plugin Instance { get; set; }
-
-    internal static IPALogger Log { get; private set; }
 
     public const string NOT_DEFINED = "Undefined";
     public static string CurrentSceneName = "MainMenu";
@@ -38,10 +34,36 @@ public class Plugin : IRefresh
     public static ModFlowCoordinator _modFlowCoordinator;
     public static string m_PlayerId = "";
     public static IRefresh m_Refresher = new Refresher();
+    // ReSharper disable once UnusedAutoPropertyAccessor.Local
+    private static Plugin Instance { get; set; }
+
+    internal static IPALogger Log { get; private set; }
+
+    #region Interface Implementations
+
+    async void IRefresh.RefreshCard()
+    {
+        await DestroyCard();
+        CreateCard();
+    }
+
+    #endregion
+
+    #region On Game exit
+
+    [OnExit]
+    public void OnApplicationQuit()
+    {
+        Log.Debug("OnApplicationQuit");
+        //m_Harmony.UnpatchSelf();
+    }
+
+    #endregion
 
     //Harmony m_Harmony = new Harmony("SheepVand.BeatSaber.GuildSaberProfile");
 
     #region On mod start
+
     [Init]
     /// <summary>
     /// Called when the plugin is first loaded by IPA (either when the game starts or when the plugin is enabled if it starts disabled).
@@ -54,7 +76,7 @@ public class Plugin : IRefresh
         Log = p_Logger;
         Log.Info("GuildSaberProfile initialized.");
 
-        MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow, true));
+        MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
     }
 
     [OnStart]
@@ -72,7 +94,9 @@ public class Plugin : IRefresh
 
         _modFlowCoordinator.ShowFlow(false);
     }
+
     #region BSIPA Config
+
     [Init]
     public void InitWithConfig(Config p_Conf)
     {
@@ -83,10 +107,12 @@ public class Plugin : IRefresh
     }
 
     #endregion
+
     #endregion
 
     #region Events
-    private static void OnSceneChanged(UnityEngine.SceneManagement.Scene p_CurrentScene, UnityEngine.SceneManagement.Scene p_NextScene)
+
+    private static void OnSceneChanged(Scene p_CurrentScene, Scene p_NextScene)
     {
         if (p_NextScene == null) return;
 
@@ -98,33 +124,35 @@ public class Plugin : IRefresh
 
     private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
     {
-        UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
+        SceneManager.activeSceneChanged += OnSceneChanged;
         if (m_TimeManager == null)
         {
             m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
-            GameObject.DontDestroyOnLoad(m_TimeManager);
+            Object.DontDestroyOnLoad(m_TimeManager);
         }
 
         if (PlayerCard != null)
             DestroyCard();
         CreateCard();
     }
+
     #endregion
 
     #region Card Manager
+
     public static void CreateCard()
     {
         if (s_CardLoaded) return;
-        Plugin.Log.Info("Trying to get Player ID");
+        Log.Info("Trying to get Player ID");
 
         /// We don't care if it return null because this function is loaded on the MenuSceneLoadedFresh, and the UserID will most likely be fetched way before that happen.
 #pragma warning disable CS0618
-        m_PlayerId =  BS_Utils.Gameplay.GetUserInfo.GetUserID();
+        m_PlayerId = GetUserInfo.GetUserID();
 #pragma warning restore CS0618
 
-        if(string.IsNullOrEmpty(m_PlayerId))
+        if (string.IsNullOrEmpty(m_PlayerId))
         {
-            Plugin.Log.Error("Cannot get Player ID, not creating card");
+            Log.Error("Cannot get Player ID, not creating card");
             _modFlowCoordinator._LeftModViewController.ShowError(true);
             return;
         }
@@ -134,10 +162,11 @@ public class Plugin : IRefresh
         PlayerApiReworkOutput l_LastValidPlayer = new PlayerApiReworkOutput();
         string l_LastValidGuild = string.Empty;
 
-        List<string> l_TempAvailableGuilds = new List<string>() { "CS", "BSCC"};
+        List<string> l_TempAvailableGuilds = new List<string>
+            { "CS", "BSCC" };
         AvailableGuilds = new List<object>();
 
-        for (int l_i = 0;l_i < l_TempAvailableGuilds.Count;l_i++)
+        for (int l_i = 0; l_i < l_TempAvailableGuilds.Count; l_i++)
         {
             l_OutputPlayer = GuildApi.GetPlayerByScoreSaberIdAndGuild(m_PlayerId, l_TempAvailableGuilds[l_i]);
 
@@ -164,7 +193,7 @@ public class Plugin : IRefresh
         PlayerCard = new PlayerCard_UI(l_DefinedPlayer, AvailableGuilds);
         s_CardLoaded = true;
 
-        m_TimeManager.SetPlayerCardViewControllerRef((PlayerCard.CardViewController != null) ? PlayerCard.CardViewController : null);
+        m_TimeManager.SetPlayerCardViewControllerRef(PlayerCard.CardViewController != null ? PlayerCard.CardViewController : null);
     }
 
     public static bool IsGuildValidForPlayer(string p_Guild)
@@ -174,7 +203,7 @@ public class Plugin : IRefresh
         {
             if (l_Current == p_Guild)
             {
-                Plugin.Log.Info("Selected guild is valid for this player not changing");
+                Log.Info("Selected guild is valid for this player not changing");
                 l_IsValid = true;
                 break;
             }
@@ -194,22 +223,7 @@ public class Plugin : IRefresh
 
         return Task.CompletedTask;
     }
+
     #endregion
 
-    #region On Game exit
-    [OnExit]
-    public void OnApplicationQuit()
-    {
-        Log.Debug("OnApplicationQuit");
-        //m_Harmony.UnpatchSelf();
-    }
-    #endregion
-
-    #region Interface Implementations
-    async void IRefresh.RefreshCard()
-    {
-        await DestroyCard();
-        CreateCard();
-    }
-    #endregion
 }

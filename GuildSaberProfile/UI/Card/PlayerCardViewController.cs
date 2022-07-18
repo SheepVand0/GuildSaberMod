@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.ViewControllers;
-using BeatSaberMarkupLanguage.Components.Settings;
 using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
 using GuildSaberProfile.Time;
@@ -15,8 +13,6 @@ using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using BeatSaberMarkupLanguage.Parser;
-using System.Reflection;
 
 namespace GuildSaberProfile.UI.Card;
 
@@ -30,26 +26,26 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     public FloatingScreen m_CardScreen;
 
     [UIComponent("PlayerNameText")] public TextMeshProUGUI m_PlayerNameText;
+
+    public List<object> m_AvailableGuilds = new List<object>();
     [UIComponent("DetailsLevelsLayout")] private readonly GridLayoutGroup m_DetailsLevelsLayout = null;
     [UIComponent("ElemGrid")] private readonly GridLayoutGroup m_ElementsGrid = null;
     [UIComponent("NeonBackground")] private readonly Transform m_NeonBackground = null;
     [UIComponent("PlayTimeText")] private readonly TextMeshProUGUI m_PlayTimeText = null;
 
-    public SettingsModal m_SettingsModal = null;
-
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public List<PlayerLevelUI> Levels = new List<PlayerLevelUI>();
-
-    // ReSharper disable once CollectionNeverQueried.Global
-    // ReSharper disable once FieldCanBeMadeReadOnly.Global
-    public List<PlayerRankUI> Ranks = new List<PlayerRankUI>();
 
 #pragma warning disable CS0169
     private int m_NumberOfPasses;
 #pragma warning restore CS0169
     private PlayerApiReworkOutput m_PlayerInfo;
 
-    public List<object> m_AvailableGuilds = new List<object>();
+    public SettingsModal m_SettingsModal;
+
+    // ReSharper disable once CollectionNeverQueried.Global
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    public List<PlayerRankUI> Ranks = new List<PlayerRankUI>();
 
     [CanBeNull]
     public string PlayerName
@@ -73,7 +69,18 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         set { }
     }
 
+    #region References
+
+    public void SetReferences(PlayerApiReworkOutput p_Player, FloatingScreen p_CardScreen)
+    {
+        m_PlayerInfo = p_Player;
+        m_CardScreen = p_CardScreen;
+    }
+
+    #endregion
+
     #region Main Card Info and style Loading
+
     [UIAction("#post-parse")]
     public void PostParse()
     {
@@ -116,19 +123,11 @@ public class PlayerCardViewController : BSMLAutomaticViewController
 
         m_SettingsModal.ShowModal();
     }
-    #endregion
-
-    #region References
-
-    public void SetReferences(PlayerApiReworkOutput p_Player, FloatingScreen p_CardScreen)
-    {
-        m_PlayerInfo = p_Player;
-        m_CardScreen = p_CardScreen;
-    }
 
     #endregion
 
     #region Card Updates
+
     public void UpdateLevelsDetails()
     {
         bool l_ShowDetaislLevels = PluginConfig.Instance.ShowDetailsLevels && Levels.Count > 0;
@@ -142,15 +141,15 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         if (l_ShowDetaislLevels)
         {
             //When the details levels is visible
-            m_CardScreen.ScreenSize = new Vector2((68 + (m_PlayerInfo.Name.Length*1.2f) + l_LevelsSize)*0.9f, 28 + l_LevelsSize * 0.6f+(Ranks.Count*2));
-            m_ElementsGrid.cellSize = new Vector2((40 + m_PlayerInfo.Name.Length + l_LevelsSize)*1.1f, 40);
-            m_DetailsLevelsLayout.cellSize = new Vector2(12 - l_LevelsSize*0.1f, 10.5f - l_LevelsSize * 0.1f);
+            m_CardScreen.ScreenSize = new Vector2((68 + m_PlayerInfo.Name.Length * 1.2f + l_LevelsSize) * 0.9f, 28 + l_LevelsSize * 0.6f + Ranks.Count * 2);
+            m_ElementsGrid.cellSize = new Vector2((40 + m_PlayerInfo.Name.Length + l_LevelsSize) * 1.1f, 40);
+            m_DetailsLevelsLayout.cellSize = new Vector2(12 - l_LevelsSize * 0.1f, 10.5f - l_LevelsSize * 0.1f);
             m_ElementsGrid.spacing = new Vector2(7, 7);
         }
         else
         {
             //When the details levels is hidden
-            m_CardScreen.ScreenSize = new Vector2(33 + m_PlayerInfo.Name.Length, 28+ (Ranks.Count * 2));
+            m_CardScreen.ScreenSize = new Vector2(33 + m_PlayerInfo.Name.Length, 28 + Ranks.Count * 2);
             m_ElementsGrid.cellSize = new Vector2(25 + m_PlayerInfo.Name.Length, 40);
             m_ElementsGrid.spacing = new Vector2(1, 7);
         }
@@ -166,6 +165,9 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         if (m_SettingsModal != null)
             m_SettingsModal.UpdateToggleCardHandleVisibility();
     }
+
     #endregion
+
 }
+
 #endregion

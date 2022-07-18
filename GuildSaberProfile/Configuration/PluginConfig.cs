@@ -9,12 +9,12 @@ namespace GuildSaberProfile.Configuration;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 internal class PluginConfig
 {
-    public static PluginConfig Instance { get; set; }
 
     public static readonly Vector3 DefaultCardPosition = new Vector3(0.0f, 0.02f, 1.0f);
     public static readonly Quaternion DefaultCardRotation = Quaternion.Euler(90.0f, 0.0f, 0.0f);
     public static readonly Vector3 DefaultInGameCardPosition = new Vector3(1.8f, 1, -1.5f);
     public static readonly Quaternion DefaultInGameCardRotation = Quaternion.Euler(20, 135, 0);
+    public static PluginConfig Instance { get; set; }
 
     [JsonProperty("ShowCardInMenu")] public virtual bool ShowCardInMenu { get; set; } = true;
     [JsonProperty("ShowCardInGame")] public virtual bool ShowCardInGame { get; set; } = true;
@@ -22,7 +22,7 @@ internal class PluginConfig
     [JsonProperty("CardRot")] public virtual Quaternion CardRotation { get; set; } = DefaultCardRotation;
     [JsonProperty("InGameCardPos")] public virtual Vector3 InGameCardPosition { get; set; } = DefaultInGameCardPosition;
     [JsonProperty("IngGameCardRot")] public virtual Quaternion InGameCardRotation { get; set; } = DefaultInGameCardRotation;
-    [JsonProperty("CardHandleVisible")] public virtual bool CardHandleVisible { get; set; } = false;
+    [JsonProperty("CardHandleVisible")] public virtual bool CardHandleVisible { get; set; }
     [JsonProperty("ShowDetailsLevels")] public virtual bool ShowDetailsLevels { get; set; } = true;
     [JsonProperty("ShowPlayTime")] public virtual bool ShowPlayTime { get; set; } = true;
     [JsonProperty("SelectedGuild")] public virtual string SelectedGuild { get; set; } = "CS";

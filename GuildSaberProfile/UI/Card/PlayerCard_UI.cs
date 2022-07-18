@@ -1,54 +1,53 @@
-﻿using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.FloatingScreen;
+﻿using System.Collections.Generic;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.FloatingScreen;
 using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
 using HMUI;
-using UnityEngine;
 using TMPro;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using UnityEngine;
 
 namespace GuildSaberProfile.UI.Card;
 
 public class PlayerLevelUI
 {
+    // ReSharper disable once MemberInitializerValueIgnored
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    // ReSharper disable once MemberCanBePrivate.Global
+    public int FontSize = 3;
     // ReSharper disable once MemberCanBePrivate.Global
     // ReSharper disable once MemberInitializerValueIgnored
     public string Level = "31";
     // ReSharper disable once MemberCanBePrivate.Global
     // ReSharper disable once MemberInitializerValueIgnored
     public string LevelName = "Vibro/Tech/Streams/Jumps/Shitpost";
-    // ReSharper disable once MemberInitializerValueIgnored
-    // ReSharper disable once FieldCanBeMadeReadOnly.Global
-    // ReSharper disable once MemberCanBePrivate.Global
-    public int FontSize = 3;
 
     public PlayerLevelUI(string p_LevelName, string p_Level, int p_LevelsCount)
     {
         LevelName = p_LevelName;
         Level = p_Level;
-        FontSize = (int)(2 / (p_LevelsCount*0.1f));
+        FontSize = (int)(2 / (p_LevelsCount * 0.1f));
         if (FontSize < 1) FontSize = 2;
     }
 }
 
 public class PlayerRankUI
 {
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
-    [UIComponent("PlayerRankText")] private TextMeshProUGUI m_PlayerRankText = null;
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
-    [UIComponent("CategoryText")] private TextMeshProUGUI m_CategoryText = null;
 
     // ReSharper disable once FieldCanBeMadeReadOnly.Local
     // ReSharper disable once MemberInitializerValueIgnored
     private string m_Category = string.Empty;
     // ReSharper disable once FieldCanBeMadeReadOnly.Local
-    // ReSharper disable once MemberInitializerValueIgnored
-    private string m_PlayerRank = string.Empty;
+    [UIComponent("CategoryText")] private TextMeshProUGUI m_CategoryText = null;
 
     // ReSharper disable once FieldCanBeMadeReadOnly.Local
-    PlayerApiReworkOutput m_Player;
+    private PlayerApiReworkOutput m_Player;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
+    // ReSharper disable once MemberInitializerValueIgnored
+    private string m_PlayerRank = string.Empty;
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
+    [UIComponent("PlayerRankText")] private TextMeshProUGUI m_PlayerRankText = null;
 
     public PlayerRankUI(PlayerApiReworkOutput p_Player, string p_Category, string p_Rank)
     {
@@ -102,10 +101,10 @@ public class PlayerCard_UI
 
         if (!l_UseALot)
         {*/
-            foreach (CustomApiPlayerCategory l_Category in p_Player.CategoryData)
-            {
-                CardViewController.Levels.Add(new PlayerLevelUI(l_Category.Category, l_Category.Level.ToString(), p_Player.CategoryData.Count));
-            }
+        foreach (CustomApiPlayerCategory l_Category in p_Player.CategoryData)
+        {
+            CardViewController.Levels.Add(new PlayerLevelUI(l_Category.Category, l_Category.Level.ToString(), p_Player.CategoryData.Count));
+        }
         /*}
         else
         {
@@ -145,7 +144,8 @@ public class PlayerCard_UI
 
     private static void OnCardHandleReleased(object p_Sender, FloatingScreenHandleEventArgs p_EventArgs)
     {
-        switch (Plugin.CurrentSceneName) {
+        switch (Plugin.CurrentSceneName)
+        {
             case "MainMenu":
                 PluginConfig.Instance.CardPosition = p_EventArgs.Position;
                 PluginConfig.Instance.CardRotation = p_EventArgs.Rotation;
@@ -154,25 +154,25 @@ public class PlayerCard_UI
                 PluginConfig.Instance.InGameCardPosition = p_EventArgs.Position;
                 PluginConfig.Instance.InGameCardRotation = p_EventArgs.Rotation;
                 break;
-            default: break;
         }
     }
 
     public void UpdateCardVisibility()
     {
-        switch (Plugin.CurrentSceneName) {
+        switch (Plugin.CurrentSceneName)
+        {
             case "MainMenu":
                 FloatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCardInMenu);
                 break;
             case "GameCore":
                 FloatingScreen.gameObject.SetActive(PluginConfig.Instance.ShowCardInGame);
                 break;
-            default: break;
         }
     }
     public void UpdateCardPosition()
     {
-        switch (Plugin.CurrentSceneName) {
+        switch (Plugin.CurrentSceneName)
+        {
             case "MainMenu":
                 FloatingScreen.gameObject.transform.localPosition = PluginConfig.Instance.CardPosition;
                 FloatingScreen.gameObject.transform.localRotation = PluginConfig.Instance.CardRotation;
@@ -181,7 +181,6 @@ public class PlayerCard_UI
                 FloatingScreen.gameObject.transform.localPosition = PluginConfig.Instance.InGameCardPosition;
                 FloatingScreen.gameObject.transform.localRotation = PluginConfig.Instance.InGameCardRotation;
                 break;
-            default: break;
         }
     }
     public static void ResetMenuCardPosition()

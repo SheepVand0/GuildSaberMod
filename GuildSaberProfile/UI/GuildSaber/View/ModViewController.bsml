@@ -5,7 +5,7 @@
 		<text text='Playlists : ' underlined='true'></text>
 		<dropdown-list-setting text='Selected Guild : ' choices='AvailableGuilds' value='SelectedGuild' on-change='OnGuildChange' bind-value='true'/>
 		<vertical min-width='25' spacing='2'>
-			<toggle-setting text='Playlists contains only unpassed maps' value='UnpassedMaps' apply-on-change='true'></toggle-setting>
+			<toggle-setting text='Playlists contains only unpassed maps' value='UnPassedMaps' apply-on-change='true'></toggle-setting>
 			<custom-list id='CategoryList' contents='AvailableCategories'>
 				<horizontal spacing='5' child-align='MiddleCenter' bg='panel-top' id='ElemsHorizontal' background-color='white'>
 					<text align='Center' text='~CategoryName'></text>
