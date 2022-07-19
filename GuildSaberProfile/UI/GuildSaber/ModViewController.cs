@@ -37,17 +37,25 @@ namespace GuildSaberProfile.UI.GuildSaber
 
         public int PlaylistsCountInCategory;
 
-        public CategoryUI(string p_Name, string p_GuildName)
+        public CategoryUI(string p_Name, string p_GuildName, bool p_DownloadOnlyUnpassed)
         {
             CategoryName = p_Name;
             m_GuildName = p_GuildName;
+            DownloadOnlyUnPassed = p_DownloadOnlyUnpassed;
 
             using (HttpClient l_Client = new HttpClient())
             {
-                Task<string> l_SerializedObject = l_Client.GetStringAsync(m_GuildName == "CS" ? $"http://api.bsdr.fdom.eu/levelcache/{CategoryName}" : "https://api.jupilian.me/levelcache/");
-                l_SerializedObject.Wait();
-                LevelIDs l_TempValidLevels = JsonConvert.DeserializeObject<LevelIDs>(l_SerializedObject.Result);
-                m_ValidPlaylists = l_TempValidLevels.LevelID;
+                try
+                {
+                    Task<string> l_SerializedObject = l_Client.GetStringAsync(m_GuildName == "CS" ? $"http://api.bsdr.fdom.eu/levelcache/{CategoryName}" : "https://api.jupilian.me/levelcache/");
+                    l_SerializedObject.Wait();
+                    LevelIDs l_TempValidLevels = JsonConvert.DeserializeObject<LevelIDs>(l_SerializedObject.Result);
+                    m_ValidPlaylists = l_TempValidLevels.LevelID;
+                } catch (HttpRequestException p_E)
+                {
+                    m_ValidPlaylists = new List<int>() {};
+                    Plugin.Log.Error(p_E);
+                }
             }
 
             PlaylistsCountInCategory = m_ValidPlaylists.Count;
@@ -58,6 +66,10 @@ namespace GuildSaberProfile.UI.GuildSaber
                 m_DownloadButton.interactable = false;
                 m_DownloadButton.SetButtonText("Error");
             }
+        }
+        public void UnbindEvent()
+        {
+            Plugin._modFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged -= OnUnpassedOnlyChanged;
         }
 
         public string CategoryName { get; set; } = Plugin.NOT_DEFINED;
@@ -75,13 +87,21 @@ namespace GuildSaberProfile.UI.GuildSaber
             l_Background.color1 = Color.white.ColorWithAlpha(0.4f);
             l_Background.overrideSprite = null;
 
-            Plugin._modFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged += p_UnPassedOnly =>
-            {
-                Plugin.Log.Info($"Updating On Un Passed Only: {p_UnPassedOnly}");
-                DownloadOnlyUnPassed = p_UnPassedOnly;
-            };
+            Plugin._modFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged += OnUnpassedOnlyChanged;
         }
-        [UIAction("DownloadPlaylist")] private async void DownloadPlaylist()
+        private void OnUnpassedOnlyChanged(bool p_UnPassedOnly)
+        {
+            Plugin.Log.Info($"Updating On Un Passed Only: {p_UnPassedOnly}");
+            DownloadOnlyUnPassed = p_UnPassedOnly;
+        }
+
+        [UIAction("DownloadPlaylist")] private void PreDownloadPlaylist()
+        {
+            CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.FolderOnly);
+            DownloadPlaylist();
+        }
+
+        private async void DownloadPlaylist()
         {
             if (CategoryName == Plugin.NOT_DEFINED || m_ValidPlaylists.Count == 0) return;
 
@@ -93,43 +113,37 @@ namespace GuildSaberProfile.UI.GuildSaber
                 return;
             }
 
-            CheckIfCategoryFolderExists();
-
             using (WebClient l_Client = new WebClient())
             {
-                m_DownloadButton.SetButtonText("Downloading");
+                Plugin.Log.Info((CurrentPlaylistIndex / (float)PlaylistsCountInCategory).ToString());
+                m_DownloadButton.SetButtonText($"Downloading {CurrentPlaylistIndex / (float)PlaylistsCountInCategory * 100:00}%");
                 m_DownloadButton.interactable = false;
                 string l_QueryString = string.Empty;
                 if (!DownloadOnlyUnPassed)
-                {
                     l_QueryString = m_GuildName != "BSCC"
                         ? $"http://api.bsdr.fdom.eu/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{CategoryName}"
                         : $"https://api.jupilian.me/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}";
-                }
                 else
                     l_QueryString = m_GuildName != "BSCC"
                         ? $"http://api.bsdr.fdom.eu/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{CategoryName}/{Plugin.m_PlayerId}"
                         : $"https://api.jupilian.me/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Plugin.m_PlayerId}";
 
                 Plugin.Log.Info(l_QueryString);
-                l_Client.DownloadFileAsync(new Uri(l_QueryString), $"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist");
-
-                l_Client.DownloadFileCompleted += (p_Sender, p_Event) =>
+                try
                 {
-                    if (p_Event.Error == null)
+                    CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.PlaylistsOnly);
+                    l_Client.DownloadFileAsync(new Uri(l_QueryString), $"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist");
+                    l_Client.DownloadFileCompleted += (p_Sender, p_Event) =>
                     {
-                        CurrentPlaylistIndex += 1;
-                        DownloadPlaylist();
-                    }
-                    else
-                    {
-                        if (DownloadOnlyUnPassed)
+                        if (p_Event.Error == null)
                         {
-                            if (File.Exists($"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist"))
-                            {
-                                File.Delete($"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist");
-                            }
-
+                            CurrentPlaylistIndex += 1;
+                            DownloadPlaylist();
+                        }
+                        else
+                            if (DownloadOnlyUnPassed)
+                        {
+                            CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.PlaylistsOnly);
                             CurrentPlaylistIndex += 1;
                             DownloadPlaylist();
                         }
@@ -138,21 +152,30 @@ namespace GuildSaberProfile.UI.GuildSaber
                             m_DownloadButton.SetButtonText("Error");
                             m_DownloadButton.interactable = false;
                         }
-                    }
-                };
+                    };
+                } catch (WebException p_E) {
+                    Plugin.Log.Error(p_E);
+                }
             }
         }
 
-        private void CheckIfCategoryFolderExists()
+        private void CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType p_VerificationType)
         {
-            if (!Directory.Exists(m_CategoryDirectory))
+            switch (p_VerificationType)
             {
-                Directory.CreateDirectory(m_CategoryDirectory);
-            }
-
-            if (File.Exists($"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist"))
-            {
-                File.Delete($"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist");
+                case PlaylistsVerificationType.FolderOnly:
+                    if (!Directory.Exists(m_CategoryDirectory))
+                        Directory.CreateDirectory(m_CategoryDirectory);
+                    break;
+                case PlaylistsVerificationType.PlaylistsOnly:
+                    if (File.Exists($"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist"))
+                        File.Delete($"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist");
+                    break;
+                case PlaylistsVerificationType.All:
+                    CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.FolderOnly);
+                    CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.PlaylistsOnly);
+                    break;
+                default: return;
             }
         }
     }
@@ -161,15 +184,13 @@ namespace GuildSaberProfile.UI.GuildSaber
     [ViewDefinition("GuildSaberProfile.UI.GuildSaber.View.ModViewController.bsml")]
     public class ModViewController : BSMLAutomaticViewController
     {
-
-        public delegate void OnOnlyPassedMapsChange(bool p_OnlyUnPassed);
+        public bool m_OnlyUnPassedMaps;
 
         public string GuildName = PluginConfig.Instance.SelectedGuild;
 
-        public bool m_OnlyUnPassedMaps;
+        public delegate void OnOnlyPassedMapsChange(bool p_OnlyUnPassed);
 
-        [UIComponent("CategoryList")]
-        public CustomCellListTableData m_CategoriesTableList;
+        public event OnOnlyPassedMapsChange e_OnUnPassedOnlyValueChanged;
 
         public CategoryUI CategoryInterface;
 
@@ -181,12 +202,13 @@ namespace GuildSaberProfile.UI.GuildSaber
                 { "Main" })
         };
 
+        [UIComponent("CategoryList")]
+        public CustomCellListTableData m_CategoriesTableList;
+
         public void Awake()
         {
             RefreshList();
         }
-
-        public event OnOnlyPassedMapsChange e_OnUnPassedOnlyValueChanged;
 
         [UIAction("OnGuildChange")]
         public void OnGuildChange(string p_Selected)
@@ -198,48 +220,40 @@ namespace GuildSaberProfile.UI.GuildSaber
 
         public void RefreshList()
         {
+            foreach (CategoryUI l_Current in m_ListCategories)
+                l_Current.UnbindEvent();
             m_ListCategories.Clear();
             GuildCategories l_CurrentGuild = GetGuildFromName(m_Guilds, GuildName);
             Plugin.Log.Info(l_CurrentGuild.GuildName);
             foreach (string l_Current in l_CurrentGuild.Categories)
-            {
-                m_ListCategories.Add(new CategoryUI(l_Current, GuildName));
-            }
+                m_ListCategories.Add(new CategoryUI(l_Current, GuildName, m_OnlyUnPassedMaps));
             if (m_CategoriesTableList != null)
                 m_CategoriesTableList.tableView.ReloadData();
         }
 
-        public void Init(string p_GuildName, ModFlowCoordinator p_ParentFlowCoordinator)
+        public void Init(string p_GuildName)
         {
             GuildName = p_GuildName;
-            //m_ParentFlowCoordinator = p_ParentFlowCoordinator;
         }
 
         public GuildCategories GetGuildFromName(List<GuildCategories> p_Guilds, string p_Name)
         {
             foreach (GuildCategories l_Current in p_Guilds)
-            {
                 if (l_Current.GuildName == p_Name)
                     return l_Current;
-            }
-
             return new GuildCategories(Plugin.NOT_DEFINED, new List<string>
                 { Plugin.NOT_DEFINED });
         }
 
         public List<string> GetGuildsName()
         {
-
             List<string> l_Temp = new List<string>();
             foreach (GuildCategories l_Current in m_Guilds)
-            {
                 l_Temp.Add(l_Current.GuildName);
-            }
             return l_Temp;
         }
 
         #region UIValues
-
         [UIValue("AvailableCategories")]
         public List<object> m_ListCategories = new List<object>();
 
@@ -250,9 +264,7 @@ namespace GuildSaberProfile.UI.GuildSaber
             {
                 List<object> l_TempList = new List<object>();
                 foreach (string l_Current in GetGuildsName())
-                {
                     l_TempList.Add(l_Current);
-                }
                 return l_TempList;
             }
         }
@@ -272,15 +284,19 @@ namespace GuildSaberProfile.UI.GuildSaber
             {
                 m_OnlyUnPassedMaps = value;
                 e_OnUnPassedOnlyValueChanged?.Invoke(m_OnlyUnPassedMaps);
+                RefreshList();
             }
         }
-
         #endregion
-
     }
 }
 
 public class LevelIDs
 {
     public List<int> LevelID { get; set; }
+}
+
+public enum PlaylistsVerificationType
+{
+    FolderOnly, PlaylistsOnly, All
 }

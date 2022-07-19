@@ -1,10 +1,11 @@
 ﻿<bg bg="round-rect-panel" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
-	<horizontal anchor-pos-y='47' bg='panel-top' background-color='#0054ad' size-delta-y='7'>
-		<text align='Center' text='Settings' font-size='5'></text>
-	</horizontal>
+
 	<settings-container child-control-height='true' child-expand-height='true'>
+		<horizontal anchor-pos-y='47' bg='panel-top' background-color='#0054ad' size-delta-y='7'>
+			<text align='Center' text='Settings' font-size='5'></text>
+		</horizontal>
 		<toggle-setting text='Show Modal by clicking the profile picture : ' value='ShowSettingsModal' apply-on-change='true'></toggle-setting>
 		<text text='Error during getting data from ' active='false' id='ErrorText' color='red' underlined='true'></text>
 		<text text='Make sure your registered and had pass Level 1 or if your internet is online' active='false' id='ErrorText2' color='red' underlined='false'></text>
