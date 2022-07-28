@@ -230,6 +230,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GuildSaberProfile.csproj.user" />
+    <EmbeddedResource Include="Resources\BSCCIconBlue.png" />
+    <EmbeddedResource Include="Resources\BSCCIconOrange.png" />
     <EmbeddedResource Include="Resources\CSIcon.png" />
   </ItemGroup>
   <ItemGroup />

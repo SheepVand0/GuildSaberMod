@@ -1,12 +1,11 @@
 ﻿using BeatSaberMarkupLanguage.ViewControllers;
-using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage;
 using TMPro;
-using GuildSaberProfile.UI.Card;
 using UnityEngine.UI;
-using UnityEngine.U2D;
+using HMUI;
+using IPA.Utilities;
+using UnityEngine;
 
 namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
 {
@@ -20,12 +19,19 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         [UIComponent("PlayerName")] TextMeshProUGUI m_PlayerName = null;
         [UIComponent("PPImage")] Image m_PlayerImage = null;
         [UIComponent("GSImage")] Image m_GSImage = null;
+        [UIComponent("BgHorizontal")] VerticalLayoutGroup m_BackgroundLayout = null;
 
         PlayerGuildsInfo m_PlayerGuildsInfo = new PlayerGuildsInfo();
 
         [UIAction("#post-parse")]
         private void PostParse()
         {
+            ImageView l_BackgroundView = m_BackgroundLayout.GetComponent<ImageView>();
+            l_BackgroundView.SetField("_skew", 0.0f);
+            l_BackgroundView.overrideSprite = Utilities.FindSpriteInAssembly("GuildSaberProfile.Resources.BSCCIconOrange.png");
+            l_BackgroundView.color0 = new UnityEngine.Color(0.2f, 0.2f, 0.2f, 0.8f);
+            l_BackgroundView.color1 = new UnityEngine.Color(0.2f, 0.2f, 0.2f, 0.8f);
+
             Reload(ReloadMode.FromCurrent, false);
         }
 
