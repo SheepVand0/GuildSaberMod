@@ -1,0 +1,15 @@
+﻿<horizontal horizontal-fit="PreferredSize" pref-height="20" min-height="20" child-align="MiddleCenter" anchor-pos-y="2" pad-left="0" pad-right="5" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
+	>
+	<text id='PlayerErrorTxt' text='Error during getting Player data' active='false'/>
+	<horizontal id='Elems' active='false' horizontal-fit='PreferredSize' spacing='5'>
+		<img id='PPImage' src='https://www.touteleurope.eu/wp-content/uploads/2020/08/flag_france-300x199.png' />
+		<text  id='PlayerName' text='GuildSaber'></text>
+		<grid cell-size-x='17' cell-size-y='17'>
+			<image id='GSImage' src='GuildSaberProfile.Resources.CSIcon.png' pref-height='1' pref-width='1'/>
+		</grid>
+	</horizontal>
+	<grid cell-size-x='17' cell-size-y='17' id='LoadingGrid' active='true'>
+		<loading-indicator pref-height='1' pref-width='1'/>
+	</grid>
+</horizontal>

@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using GuildSaberProfile.Utils;
 
 namespace GuildSaberProfile.API;
 
@@ -18,10 +19,10 @@ public static class GuildApi
             switch (p_Guild)
             {
                 case "CS":
-                    l_Result = l_Client.GetStringAsync($"http://api.bsdr.fdom.eu/player/data/{p_ID}");
+                    l_Result = l_Client.GetStringAsync($"{GuildSaberUtils.ReturnLinkFromGuild("CS")}/player/data/{p_ID}");
                     break;
                 case "BSCC":
-                    l_Result = l_Client.GetStringAsync($"https://api.jupilian.me/player/data/{p_ID}");
+                    l_Result = l_Client.GetStringAsync($"{GuildSaberUtils.ReturnLinkFromGuild("BSCC")}/player/data/{p_ID}");
                     break;
             }
             l_Result.Wait();

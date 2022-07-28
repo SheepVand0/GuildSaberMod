@@ -9,6 +9,7 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using GuildSaberProfile.Configuration;
+using GuildSaberProfile.Utils;
 using HMUI;
 using IPA.Utilities;
 using Newtonsoft.Json;
@@ -19,7 +20,7 @@ using UnityEngine.UI;
 namespace GuildSaberProfile.UI.GuildSaber
 {
 
-    public sealed class CategoryUI
+    public class CategoryUI
     {
 
         public int CurrentPlaylistIndex;
@@ -47,7 +48,9 @@ namespace GuildSaberProfile.UI.GuildSaber
             {
                 try
                 {
-                    Task<string> l_SerializedObject = l_Client.GetStringAsync(m_GuildName == "CS" ? $"http://api.bsdr.fdom.eu/levelcache/{CategoryName}" : "https://api.jupilian.me/levelcache/");
+                    Task<string> l_SerializedObject = l_Client.GetStringAsync(m_GuildName == "CS" ?
+                        $"{GuildSaberUtils.ReturnLinkFromGuild("CS")}/levelcache/{CategoryName}"
+                        : $"{GuildSaberUtils.ReturnLinkFromGuild("CS")}/levelcache/");
                     l_SerializedObject.Wait();
                     LevelIDs l_TempValidLevels = JsonConvert.DeserializeObject<LevelIDs>(l_SerializedObject.Result);
                     m_ValidPlaylists = l_TempValidLevels.LevelID;
@@ -82,9 +85,9 @@ namespace GuildSaberProfile.UI.GuildSaber
             l_Background.SetField("_skew", 0.0f);
             l_Background.SetImage("#RoundRect10BorderFade");
 
-            l_Background.color = Color.white.ColorWithAlpha(0.5f);
-            l_Background.color0 = Color.white.ColorWithAlpha(0.4f);
-            l_Background.color1 = Color.white.ColorWithAlpha(0.4f);
+            l_Background.color = UnityEngine.Color.white.ColorWithAlpha(0.5f);
+            l_Background.color0 = UnityEngine.Color.white.ColorWithAlpha(0.4f);
+            l_Background.color1 = UnityEngine.Color.white.ColorWithAlpha(0.4f);
             l_Background.overrideSprite = null;
 
             Plugin._modFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged += OnUnpassedOnlyChanged;
@@ -121,12 +124,12 @@ namespace GuildSaberProfile.UI.GuildSaber
                 string l_QueryString = string.Empty;
                 if (!DownloadOnlyUnPassed)
                     l_QueryString = m_GuildName != "BSCC"
-                        ? $"http://api.bsdr.fdom.eu/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{CategoryName}"
-                        : $"https://api.jupilian.me/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}";
+                        ? $"{GuildSaberUtils.ReturnLinkFromGuild("CS")}/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{CategoryName}"
+                        : $"{GuildSaberUtils.ReturnLinkFromGuild("BSCC")}/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}";
                 else
                     l_QueryString = m_GuildName != "BSCC"
-                        ? $"http://api.bsdr.fdom.eu/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{CategoryName}/{Plugin.m_PlayerId}"
-                        : $"https://api.jupilian.me/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Plugin.m_PlayerId}";
+                        ? $"{GuildSaberUtils.ReturnLinkFromGuild("CS")}/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{CategoryName}/{Plugin.m_PlayerId}"
+                        : $"{GuildSaberUtils.ReturnLinkFromGuild("BSCC")}/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Plugin.m_PlayerId}";
 
                 Plugin.Log.Info(l_QueryString);
                 try

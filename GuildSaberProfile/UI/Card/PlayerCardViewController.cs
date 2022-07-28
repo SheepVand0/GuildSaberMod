@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
@@ -7,6 +8,7 @@ using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
 using GuildSaberProfile.Time;
 using GuildSaberProfile.UI.Card.Settings;
+using GuildSaberProfile.Utils;
 using HMUI;
 using IPA.Utilities;
 using JetBrains.Annotations;
@@ -39,7 +41,8 @@ public class PlayerCardViewController : BSMLAutomaticViewController
 #pragma warning disable CS0169
     private int m_NumberOfPasses;
 #pragma warning restore CS0169
-    private PlayerApiReworkOutput m_PlayerInfo;
+
+    public PlayerApiReworkOutput m_PlayerInfo;
 
     public SettingsModal m_SettingsModal;
 
@@ -69,6 +72,8 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         set { }
     }
 
+    public bool AllowCustomCardColors = false;
+
     #region References
 
     public void SetReferences(PlayerApiReworkOutput p_Player, FloatingScreen p_CardScreen)
@@ -76,40 +81,84 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         m_PlayerInfo = p_Player;
         m_CardScreen = p_CardScreen;
     }
-
     #endregion
+
+    public async Task<Task> UpdateCanPlayerUseCustomColors()
+    {
+        int l_MaxLevel = 0;
+        string l_BestCategory = string.Empty;
+
+        //-----------------------------------------Checking if Player level is at 97% of max level-----------------------------------------
+        if (!(PluginConfig.Instance.SelectedGuild == "BSCC"))
+            foreach (var l_Current in m_PlayerInfo.CategoryData)
+                if (l_Current.Level == m_PlayerInfo.Level)
+                    l_BestCategory = l_Current.Category;
+                else
+                    l_BestCategory = string.Empty;
+
+        l_MaxLevel = GuildSaberUtils.GetStaticPlayerLevel(l_BestCategory);
+
+        //If thats true Allowing Custom Card Colors
+        AllowCustomCardColors = m_PlayerInfo.Level >= (int)(l_MaxLevel * 0.97f);
+
+        //Returning
+        return Task.CompletedTask;
+    }
 
     #region Main Card Info and style Loading
 
-    [UIAction("#post-parse")]
-    public void PostParse()
+    public async Task<Task> UpdateCardColor()
     {
-        if (m_PlayerInfo.Equals(null)) return;
+        //If Player is allowed to use custom colors, updating ProfileColor to selected color
+        if (AllowCustomCardColors == true)
+            m_PlayerInfo.ProfileColor = GuildSaberProfile.Utils.Color.ToGSProfileColor(PluginConfig.Instance.CustomColor);
 
-        Color l_PlayerColor = m_PlayerInfo.ProfileColor.ToUnityColor();
-        Color l_BeforePlayerColor = new Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
-        Color l_NewPlayerColor = new Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
+        //-----------------------------------------Gradient-----------------------------------------
+        //Defaults
+        UnityEngine.Color l_PlayerColor = m_PlayerInfo.ProfileColor.ToUnityColor();
+        UnityEngine.Color l_BeforePlayerColor = new UnityEngine.Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
+        UnityEngine.Color l_NewPlayerColor = new UnityEngine.Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
 
+        //Applying Gradient
         m_PlayerNameText.enableVertexGradient = true;
-
         m_PlayerNameText.colorGradient = new VertexGradient(l_BeforePlayerColor, l_BeforePlayerColor, l_NewPlayerColor, l_NewPlayerColor);
 
+        //-----------------------------------------Background editing-----------------------------------------
         ImageView l_CurrentImageView = m_NeonBackground.GetComponentInChildren<ImageView>();
-
+        //Editing style
         l_CurrentImageView.SetField("_skew", 0.0f);
         l_CurrentImageView.overrideSprite = null;
         l_CurrentImageView.SetImage("#RoundRect10BorderFade");
-
+        //Editing Colors
         l_CurrentImageView.color0 = l_BeforePlayerColor.ColorWithAlpha(1f);
         l_CurrentImageView.color1 = l_NewPlayerColor.ColorWithAlpha(1f);
         l_CurrentImageView.color = l_PlayerColor.ColorWithAlpha(1f);
-
+        //idk
         l_CurrentImageView.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.BakedEmissive;
 
-        if (m_SettingsModal == null)
-            m_SettingsModal = new SettingsModal(m_CardScreen.gameObject);
+        //Explicit
+        return Task.CompletedTask;
+    }
 
+    [UIAction("#post-parse")]
+    public async void PostParse()
+    {
+        if (m_PlayerInfo.Equals(null)) return;
+
+        await UpdateCanPlayerUseCustomColors();
+
+        //Creating Settings Modal
+        if (m_SettingsModal == null)
+            m_SettingsModal = new SettingsModal(m_CardScreen.gameObject, AllowCustomCardColors);
+
+        //Settings Modal Defaults
         m_SettingsModal.m_AvailableGuilds = m_AvailableGuilds;
+        m_SettingsModal.m_ShowCustomColors = AllowCustomCardColors;
+
+
+        //update
+        await UpdateCardColor();
+        m_SettingsModal.UpdateShowColors();
 
         Plugin.Log.Info("Card loaded");
     }
@@ -117,19 +166,20 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     [UIAction("OnPPClick")]
     private void OnPPClick()
     {
+        //If player disabled settings modal don't showing
         if (!PluginConfig.Instance.ShowSettingsModal) return;
 
         if (m_SettingsModal is null) return;
 
         m_SettingsModal.ShowModal();
     }
-
     #endregion
 
     #region Card Updates
 
     public void UpdateLevelsDetails()
     {
+        //Checking if Player enabled Details Levels and guild has differents categories
         bool l_ShowDetaislLevels = PluginConfig.Instance.ShowDetailsLevels && Levels.Count > 0;
 
         m_DetailsLevelsLayout.gameObject.SetActive(l_ShowDetaislLevels);
@@ -157,6 +207,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
 
     public void UpdateTime(OptimizedDateTime p_Time)
     {
+        //Let's go
         m_PlayTimeText.text = PluginConfig.Instance.ShowPlayTime ? string.Join(":", p_Time.Hours.ToString("00"), p_Time.Minutes.ToString("00"), p_Time.Seconds.ToString("00")) : " ";
     }
 
@@ -167,7 +218,5 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     }
 
     #endregion
-
 }
-
 #endregion
