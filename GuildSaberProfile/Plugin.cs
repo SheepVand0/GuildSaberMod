@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.MenuButtons;
 using BS_Utils.Gameplay;
-using BS_Utils.Utilities;
 using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
 using GuildSaberProfile.Time;
@@ -11,9 +10,6 @@ using GuildSaberProfile.UI.Card;
 using GuildSaberProfile.UI.GuildSaber;
 using IPA;
 using IPA.Config.Stores;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using HarmonyLib;
 using Config = IPA.Config.Config;
 using IPALogger = IPA.Logging.Logger;
 
@@ -29,8 +25,9 @@ public class Plugin
 
     private static bool s_CardLoaded;
 
-    public static PlayerCard_UI PlayerCard;
     public static List<object> AvailableGuilds = new List<object>();
+
+    public static PlayerCard_UI PlayerCard;
     public static TimeManager m_TimeManager;
     public static ModFlowCoordinator _modFlowCoordinator;
     public static string m_PlayerId = string.Empty;
@@ -38,7 +35,6 @@ public class Plugin
     public HarmonyLib.Harmony m_HarmonyInstance = new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaberProfile");
     // ReSharper disable once UnusedAutoPropertyAccessor.Local
     private static Plugin Instance { get; set; }
-
     internal static IPALogger Log { get; private set; }
 
     #region On mod start
@@ -58,14 +54,14 @@ public class Plugin
         MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
     }
 
+
     [OnStart]
     public void OnApplicationStart()
     {
         Log.Debug("OnApplicationStart");
 
-        BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
-
         m_HarmonyInstance.PatchAll();
+
     }
 
     public void ShowGuildFlow()
@@ -88,7 +84,6 @@ public class Plugin
     }
 
     #endregion
-
     #endregion
 
     #region On Game exit
@@ -100,36 +95,8 @@ public class Plugin
     }
     #endregion
 
-    #region Events
-
-    private static void OnSceneChanged(Scene p_CurrentScene, Scene p_NextScene)
-    {
-        if (p_NextScene == null) return;
-
-        CurrentSceneName = p_NextScene.name;
-        PlayerCard.UpdateCardVisibility();
-        PlayerCard.UpdateCardPosition();
-        PlayerCard.CardViewController.UpdateToggleCardHandleVisibility();
-    }
-
-    private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
-    {
-        SceneManager.activeSceneChanged += OnSceneChanged;
-        if (m_TimeManager == null)
-        {
-            m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
-            Object.DontDestroyOnLoad(m_TimeManager);
-        }
-
-        if (PlayerCard != null)
-            DestroyCard();
-        CreateCard();
-    }
-
-    #endregion
-
     #region Card Manager
-    public static PlayerGuildsInfo GetPlayerInfoFromAPI()
+    public static PlayerGuildsInfo GetPlayerInfoFromAPI(bool p_GuildFromConfig = true, string p_Guild = null)
     {
         Log.Info("Trying to get Player ID");
 
@@ -148,6 +115,8 @@ public class Plugin
         }
 
         //-----------------------------------------Defaults-----------------------------------------
+
+        string l_SelectedGuild = (p_GuildFromConfig == true) ? PluginConfig.Instance.SelectedGuild : p_Guild;
 
         //Temp Player in for
         PlayerApiReworkOutput l_OutputPlayer = new PlayerApiReworkOutput();
@@ -169,10 +138,6 @@ public class Plugin
             //Getting Player from Selected guild
             l_OutputPlayer = GuildApi.GetPlayerByScoreSaberIdAndGuild(m_PlayerId, l_TempAvailableGuilds[l_i]);
 
-            //If the current guild in for is the selected, l_DefinedPlayer will be set to OutputPlayer (Current Player)
-            if (l_TempAvailableGuilds[l_i] == PluginConfig.Instance.SelectedGuild)
-                l_DefinedPlayer = l_OutputPlayer;
-
             /*If Current Player from guild is valid settings l_LastValidPlayer to l_OutputPlayer and adding guild to AvailableGuilds,
             l_LastValidGuild is defined to the current guild too*/
             if (!l_OutputPlayer.Equals(null) && l_OutputPlayer.Level > 0)
@@ -181,12 +146,16 @@ public class Plugin
                 l_LastValidGuild = l_TempAvailableGuilds[l_i];
                 AvailableGuilds.Add(l_TempAvailableGuilds[l_i]);
             }
+
+            //If the current guild in for is the selected, l_DefinedPlayer will be set to OutputPlayer (Current Player)
+            if (l_TempAvailableGuilds[l_i] == l_SelectedGuild)
+                l_DefinedPlayer = l_OutputPlayer;
         }
 
         //-----------------------------------------Player found for guilds verification-----------------------------------------
 
         //If there is no valid guilds returning empty PlayerGuildsInfo
-        if (AvailableGuilds.Count == 0) return new PlayerGuildsInfo();
+        if (AvailableGuilds.Count == 0) return new();
 
         //If the selected guild is not valid for current Player settings, settings SelectedGuild to l_LastValidGuild and DefinedPlayer to l_LastValidPlayer
         if (!IsGuildValidForPlayer(PluginConfig.Instance.SelectedGuild))
@@ -195,21 +164,16 @@ public class Plugin
             l_DefinedPlayer = l_LastValidPlayer;
         }
 
-        //-----------------------------------------Return-----------------------------------------
-
         //If the processes succeffully end, returning l_DefinedPlayer and AvailableGuilds for Player
-        return new PlayerGuildsInfo(l_DefinedPlayer, AvailableGuilds);
+        return new(l_DefinedPlayer, AvailableGuilds);
     }
 
     public static PlayerGuildsInfo GetPlayerInfoFromCurrent()
     {
-        if (!PlayerCard.CardViewController.m_PlayerInfo.Equals(null))
-        {
+        if (PlayerCard.CardViewController != null)
             return new PlayerGuildsInfo(PlayerCard.CardViewController.m_PlayerInfo, AvailableGuilds);
-        } else
-        {
+        else
             return new PlayerGuildsInfo();
-        }
     }
 
     public static void CreateCard()

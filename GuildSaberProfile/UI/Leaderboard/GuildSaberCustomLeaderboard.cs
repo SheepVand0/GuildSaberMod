@@ -11,19 +11,18 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
     [UsedImplicitly]
     class GuildSaberCustomLeaderboard : CustomLeaderboard, IInitializable, IDisposable
     {
-        private readonly CustomLeaderboardManager _customLeaderboardManager;
-        private readonly GuildSaberLeaderboardPanel _panelViewController;
-        private readonly GuildSaberLeaderboardView _leaderboardViewController;
+        public readonly CustomLeaderboardManager _customLeaderboardManager;
+        public readonly GuildSaberLeaderboardPanel _panelViewController;
+        public readonly GuildSaberLeaderboardView _leaderboardViewController;
 
         public LeaderboardHeaderManager m_HeaderManager;
 
         protected override ViewController panelViewController => _panelViewController;
         protected override ViewController leaderboardViewController => _leaderboardViewController;
 
-        public GuildSaberCustomLeaderboard(
-            CustomLeaderboardManager customLeaderboardManager,
-            GuildSaberLeaderboardPanel panelViewController,
-            GuildSaberLeaderboardView leaderboardViewController)
+        public GuildSaberCustomLeaderboard(CustomLeaderboardManager customLeaderboardManager,
+                                           GuildSaberLeaderboardPanel panelViewController,
+                                           GuildSaberLeaderboardView leaderboardViewController)
         {
             _customLeaderboardManager = customLeaderboardManager;
             _panelViewController = panelViewController;
@@ -51,6 +50,11 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         public void OnHide()
         {
             m_HeaderManager.StopChangingColors();
+        }
+
+        public void RefreshLeaderboard(string p_Hash)
+        {
+
         }
     }
 

@@ -37,6 +37,8 @@ namespace GuildSaberProfile.Harmony
             {
                 GuildSaberCustomLeaderboard l_Leaderboard = (GuildSaberCustomLeaderboard)__instance;
                 l_Leaderboard.OnShow();
+                if (l_Leaderboard._panelViewController.m_IsFirtActivation)
+                    l_Leaderboard._panelViewController.Reload(ReloadMode.FromApi, true, true);
             }
         }
     }

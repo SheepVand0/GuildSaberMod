@@ -1,5 +1,6 @@
 ﻿using Zenject;
 using GuildSaberProfile.UI.GuildSaber.Leaderboard;
+using GuildSaberProfile.Managers;
 
 namespace GuildSaberProfile.Installers
 {
@@ -7,10 +8,14 @@ namespace GuildSaberProfile.Installers
     {
         public override void InstallBindings()
         {
-            Plugin.Log.Notice("Installing leaderboard Bindings (GuildSaber)");
+            Plugin.Log.Notice("Installing GuildSaber Bindings");
+            Container.BindInterfacesAndSelfTo<Events>().AsSingle();
+
             Container.BindInterfacesAndSelfTo<GuildSaberLeaderboardView>().FromNewComponentAsViewController().AsSingle();
             Container.BindInterfacesAndSelfTo<GuildSaberLeaderboardPanel>().FromNewComponentAsViewController().AsSingle();
             Container.BindInterfacesAndSelfTo<GuildSaberCustomLeaderboard>().AsSingle();
+
+            Container.BindInterfacesAndSelfTo<LeaderboardManager>().AsSingle();
         }
     }
 }

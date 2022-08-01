@@ -95,11 +95,6 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Oculus.VR.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="ScoreSaberSharp">
-      <HintPath>$(BeatSaberDir)\Libs\ScoreSaberSharp.dll</HintPath>
-      <Private>False</Private>
-      <SpecificVersion>False</SpecificVersion>
-    </Reference>
     <Reference Include="SiraUtil, Version=3.0.6.0, Culture=neutral, processorArchitecture=MSIL">
       <Private>False</Private>
       <HintPath>$(BeatSaberDir)\Plugins\SiraUtil.dll</HintPath>
@@ -188,9 +183,12 @@
     <Compile Include="API\GuildApi.cs" />
     <Compile Include="API\PlayerApiReworkOutput.cs" />
     <Compile Include="API\PlayerStatsFormat.cs" />
+    <Compile Include="AssetBundles\AssetBundleLoader.cs" />
+    <Compile Include="Events.cs" />
     <Compile Include="GuildSaberProfileController.cs" />
     <Compile Include="Harmony\OnMenuInstallerPatch.cs" />
     <Compile Include="Installers\MenuInstaller.cs" />
+    <Compile Include="Managers\LeaderboardManager.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Configuration\PluginConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -198,21 +196,26 @@
     <Compile Include="Time\TimeManager.cs" />
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCard_UI.cs" />
+    <Compile Include="UI\CustomUIComponent.cs" />
+    <Compile Include="UI\Components\PlayerAvatar.cs" />
     <Compile Include="UI\GuildSaber\IRefresh.cs" />
-    <Compile Include="UI\GuildSaber\Leaderboard\GuildSaberCustomLeaderboard.cs" />
-    <Compile Include="UI\GuildSaber\Leaderboard\GuildSaberLeaderboardPanel.cs" />
-    <Compile Include="UI\GuildSaber\Leaderboard\GuildSaberLeaderboardView.cs" />
+    <Compile Include="UI\Leaderboard\GuildSaberCustomLeaderboard.cs" />
+    <Compile Include="UI\Leaderboard\GuildSaberLeaderboardPanel.cs" />
+    <Compile Include="UI\Leaderboard\GuildSaberLeaderboardView.cs" />
     <Compile Include="UI\GuildSaber\LeftModViewController.cs" />
     <Compile Include="UI\GuildSaber\ModFlowCoordinator.cs" />
     <Compile Include="UI\GuildSaber\ModViewController.cs" />
     <Compile Include="UI\Card\Settings\SettingsModal.cs" />
     <Compile Include="Utils\Color.cs" />
+    <Compile Include="Utils\GSBeatmapUtils.cs" />
     <Compile Include="Utils\GuildSaberUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AssetBundles\asset_bundle" />
+    <EmbeddedResource Include="AssetBundles\gsbundle" />
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
     <EmbeddedResource Include="UI\Card\View\PlayerCard_UI.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\ModViewController.bsml" />
@@ -220,6 +223,7 @@
     <EmbeddedResource Include="UI\Card\Settings\SettingsModal.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardPanel.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardView.bsml" />
+    <EmbeddedResource Include="UI\GuildSaber\View\PlayerAvatar.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">
@@ -230,11 +234,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GuildSaberProfile.csproj.user" />
+    <EmbeddedResource Include="Resources\secteurinfo.jpg" />
     <EmbeddedResource Include="Resources\BSCCIconBlue.png" />
     <EmbeddedResource Include="Resources\BSCCIconOrange.png" />
     <EmbeddedResource Include="Resources\CSIcon.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="UI\Playlists\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
