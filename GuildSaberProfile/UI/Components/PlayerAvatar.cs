@@ -1,58 +1,64 @@
 ﻿using UnityEngine;
 using GuildSaberProfile.AssetBundles;
+using GuildSaberProfile.UI.GuildSaber.Leaderboard;
 using UnityEngine.UI;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 
 namespace GuildSaberProfile.UI.GuildSaber.Components
 {
-    sealed class PlayerAvatar : CustomUIComponent
+    class PlayerAvatar : CustomUIComponent
     {
         #region Defaults
-        protected override string m_ViewResourceName { get => "GuildSaberProfile.UI.GuildSaber.View.PlayerAvatar.bsml"; }
+        protected override string m_ViewResourceName { get => "GuildSaberProfile.UI.Components.Views.PlayerAvatar.bsml"; }
 
         private Material _PlayerAvatarMaskInstance;
 
-        private static readonly int AvatarTexturePropertyId = Shader.PropertyToID("_AvatarTexture");
-        private static readonly int FadeValuePropertyId = Shader.PropertyToID("_FadeValue");
-
         [UIComponent("AvatarImage")] private Image m_Avatar = null;
+        [UIComponent("AvatarGrid")] private GridLayoutGroup m_AvatarGrid = null;
         #endregion
 
         #region Setup
-        public void Setup(string p_AvatarLink)
+        public void Setup(string p_AvatarLink, Color p_ProfileColor)
         {
-            m_Avatar.SetImage("GuildSaberProfile.Resources.BSCCIconBlue.png");
-            UpdateShader();
+            m_Avatar.SetImage(p_AvatarLink);
+            UpdateShader(p_ProfileColor);
         }
         #endregion
 
         #region Update
-        public void UpdateShader()
+        public void UpdateShader(Color p_ProfileColor)
         {
-            if (m_Avatar == null) return;
+            if (m_Avatar == null) { Plugin.Log.Info("Is Null"); return; }
 
-            _PlayerAvatarMaskInstance = Object.Instantiate(AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask"));
-            //_PlayerAvatarMaskInstance = Object.Instantiate(AssetBundleLoader.LoadElement<Material>("PlayerAvatarMaterial"));
-
-            Texture l_PlayerAvatar = m_Avatar.sprite.texture;
+            //_PlayerAvatarMaskInstance = Object.Instantiate(AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask"));
+            _PlayerAvatarMaskInstance = AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask");
+            Texture l_PlayerAvatar = m_Avatar.material.mainTexture;
 
             m_Avatar.material = _PlayerAvatarMaskInstance;
 
-            //_PlayerAvatarMaskInstance.SetFloat(FadeValuePropertyId, 1);
             _PlayerAvatarMaskInstance.SetTexture(Shader.PropertyToID("_MainTex"), l_PlayerAvatar);
-            _PlayerAvatarMaskInstance.SetColor(Shader.PropertyToID("_HaloColor"),Plugin.GetPlayerInfoFromCurrent().m_ReturnPlayer.ProfileColor.ToUnityColor());
-            //_PlayerAvatarMaskInstance.SetTexture(AvatarTexturePropertyId, Utilities.FindTextureInAssembly("GuildSaberProfile.Resources.BSCCIconBlue.png"));
+            _PlayerAvatarMaskInstance.SetColor(Shader.PropertyToID("_HaloColor"),p_ProfileColor);
         }
         #endregion
 
         #region Events
         [UIAction("#post-parse")] private void PostParse()
         {
-            PlayerGuildsInfo l_Player = Plugin.GetPlayerInfoFromCurrent();
+            GuildSaberLeaderboardPanel l_Panel = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0];
+            PlayerGuildsInfo l_Player = l_Panel.m_PlayerGuildsInfo;
             if (string.IsNullOrEmpty(l_Player.m_ReturnPlayer.ProfilePicture)) return;
 
-            Setup(l_Player.m_ReturnPlayer.ProfilePicture);
+            Setup(l_Player.m_ReturnPlayer.ProfilePicture, l_Player.m_ReturnPlayer.ProfileColor.ToUnityColor());
+        }
+
+        public override void OnCreate()
+        {
+        }
+
+        public override void PostCreate()
+        {
+            m_AvatarGrid.cellSize = new Vector2(17, 17);
         }
         #endregion
     }

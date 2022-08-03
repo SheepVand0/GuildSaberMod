@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace GuildSaberProfile.Utils;
+namespace GuildSaberProfile.Utils.Color;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Color
@@ -28,8 +28,13 @@ public class Color
         return new Color32(Convert.ToByte(R), Convert.ToByte(G), Convert.ToByte(B), 155);
     }
 
-    public static Color ToGSProfileColor(UnityEngine.Color p_UnityColor)
+
+}
+
+public static class ColorUtils
+{
+    public static Color ToGSProfileColor(this UnityEngine.Color p_UnityColor)
     {
-        return new Color((int)(p_UnityColor.r*255), (int)(p_UnityColor.g * 255), (int)(p_UnityColor.b * 255));
+        return new Color((int)(p_UnityColor.r * 255), (int)(p_UnityColor.g * 255), (int)(p_UnityColor.b * 255));
     }
 }

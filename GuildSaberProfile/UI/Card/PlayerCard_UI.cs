@@ -131,7 +131,6 @@ public class PlayerCard_UI
         FloatingScreen.ShowHandle = PluginConfig.Instance.CardHandleVisible;
         FloatingScreen.UpdateHandle();
     }
-
     // ReSharper disable once MemberCanBePrivate.Global
     public void UpdateAll()
     {
@@ -141,7 +140,6 @@ public class PlayerCard_UI
         UpdateCardHandleVisibility();
         UpdateCardVisibility();
     }
-
     private static void OnCardHandleReleased(object p_Sender, FloatingScreenHandleEventArgs p_EventArgs)
     {
         switch (Plugin.CurrentSceneName)
@@ -156,7 +154,6 @@ public class PlayerCard_UI
                 break;
         }
     }
-
     public void UpdateCardVisibility()
     {
         switch (Plugin.CurrentSceneName)

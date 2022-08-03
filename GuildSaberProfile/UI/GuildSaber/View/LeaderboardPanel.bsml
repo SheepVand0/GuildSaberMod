@@ -4,20 +4,23 @@
 		<horizontal>
 			<text id='PlayerErrorTxt' text='Error during getting Player data' active='false'/>
 
-			<horizontal id='Elems' active='false' horizontal-fit='PreferredSize' spacing='45'>
+			<horizontal id='Elems' active='false' horizontal-fit='PreferredSize' spacing='10'>
 
 				<horizontal horizontal-fit='PreferredSize' spacing='2'>
 					<grid cell-size-x='14' cell-size-y='14'>
 						<img id='GSImage' src='GuildSaberProfile.Resources.BSCCIconOrange.png'/>
 					</grid>
 					<vertical vertical-fit='PreferredSize' spacing='0'>
-						<text font-size='5' id='PlayerName' text='GuildSaber'></text>
+						<horizontal id='NameLayout' horizontal-fit='PreferredSize'>
+							<text font-size='5' id='PlayerName' text='GuildSaber'></text>
+						</horizontal>
 						<dropdown-list-setting anchor-pos-x='25' preferred-width='5' text='' id='GuildSelector' value='LeaderboardGuild' choices='LeaderGuilds' on-change='OnGuildSelected'></dropdown-list-setting>
 					</vertical>
 				</horizontal>
-
-				<grid id='AvatarImageGrid' cell-size-x='14' cell-size-y='14'>
-				</grid>
+				<!--<macro.as-host host='PointsType'>
+				</macro.as-host>-->
+				<!--<grid id='AvatarImageGrid' cell-size-x='17' cell-size-y='17'>
+				</grid>-->
 			</horizontal>
 
 			<grid cell-size-x='17' cell-size-y='17' id='LoadingGrid' active='true'>

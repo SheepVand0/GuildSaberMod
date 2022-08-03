@@ -196,6 +196,7 @@
     <Compile Include="Time\TimeManager.cs" />
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCard_UI.cs" />
+    <Compile Include="UI\Components\PointsType.cs" />
     <Compile Include="UI\CustomUIComponent.cs" />
     <Compile Include="UI\Components\PlayerAvatar.cs" />
     <Compile Include="UI\GuildSaber\IRefresh.cs" />
@@ -223,7 +224,8 @@
     <EmbeddedResource Include="UI\Card\Settings\SettingsModal.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardPanel.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardView.bsml" />
-    <EmbeddedResource Include="UI\GuildSaber\View\PlayerAvatar.bsml" />
+    <EmbeddedResource Include="UI\Components\Views\PlayerAvatar.bsml" />
+    <EmbeddedResource Include="UI\Components\Views\PointsType.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">

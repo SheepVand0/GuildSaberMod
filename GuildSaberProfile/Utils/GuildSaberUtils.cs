@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Zenject;
 using System.Reflection;
+using UnityEngine;
+using TMPro;
 
 namespace GuildSaberProfile.Utils
 {
@@ -87,6 +89,31 @@ namespace GuildSaberProfile.Utils
         public static DiContainer GetContainer(this MonoInstallerBase p_MonoInstallerBase)
         {
             return (DiContainer)m_ContainerPropertyInfo.GetValue(p_MonoInstallerBase);
+        }
+
+        public static bool ColorEquals(this UnityEngine.Color p_ColorBase, UnityEngine.Color p_ColorToCheck, float p_Tolerance)
+        {
+            bool l_Return = p_ColorToCheck.r.IsIn(p_ColorBase.r - p_Tolerance, p_ColorBase.r + p_Tolerance)
+                         && p_ColorToCheck.g.IsIn(p_ColorBase.g - p_Tolerance, p_ColorBase.g + p_Tolerance)
+                         && p_ColorToCheck.b.IsIn(p_ColorBase.b - p_Tolerance, p_ColorBase.b + p_Tolerance);
+            return l_Return;
+        }
+
+        public static bool IsIn(this float l_Value, float l_Min, float l_Max)
+        {
+            return (l_Value < l_Max && l_Value > l_Min);
+        }
+
+        public static bool Greater(this UnityEngine.Color p_Base, UnityEngine.Color p_ColorToCheck)
+        {
+            return p_ColorToCheck.r > p_Base.r && p_ColorToCheck.g > p_Base.g && p_ColorToCheck.b > p_Base.b;
+        }
+
+        public static VertexGradient GenerateGradient(this UnityEngine.Color p_Base, float p_Difference)
+        {
+            UnityEngine.Color l_Color0 = new(p_Base.r * (1 + p_Difference), p_Base.g * (1 + p_Difference), p_Base.b * (1 + p_Difference));
+            UnityEngine.Color l_Color1 = new(p_Base.r * (1 - p_Difference), p_Base.g * (1 - p_Difference), p_Base.b * (1 - p_Difference));
+            return new(l_Color1, l_Color1, l_Color0, l_Color0);
         }
     }
 }

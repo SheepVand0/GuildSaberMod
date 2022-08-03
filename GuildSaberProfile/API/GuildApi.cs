@@ -16,15 +16,7 @@ public static class GuildApi
         try
         {
             Task<string> l_Result = null;
-            switch (p_Guild)
-            {
-                case "CS":
-                    l_Result = l_Client.GetStringAsync($"{GuildSaberUtils.ReturnLinkFromGuild("CS")}/player/data/{p_ID}");
-                    break;
-                case "BSCC":
-                    l_Result = l_Client.GetStringAsync($"{GuildSaberUtils.ReturnLinkFromGuild("BSCC")}/player/data/{p_ID}");
-                    break;
-            }
+            l_Result = l_Client.GetStringAsync($"{GuildSaberUtils.ReturnLinkFromGuild(p_Guild)}/player/data/{p_ID}");
             l_Result.Wait();
             l_ResultPlayer = JsonConvert.DeserializeObject<PlayerApiReworkOutput>(l_Result.Result);
         }

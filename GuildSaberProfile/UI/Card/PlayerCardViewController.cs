@@ -9,6 +9,7 @@ using GuildSaberProfile.Configuration;
 using GuildSaberProfile.Time;
 using GuildSaberProfile.UI.Card.Settings;
 using GuildSaberProfile.Utils;
+using GuildSaberProfile.Utils.Color;
 using HMUI;
 using IPA.Utilities;
 using JetBrains.Annotations;
@@ -111,7 +112,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     {
         //If Player is allowed to use custom colors, updating ProfileColor to selected color
         if (AllowCustomCardColors == true)
-            m_PlayerInfo.ProfileColor = GuildSaberProfile.Utils.Color.ToGSProfileColor(PluginConfig.Instance.CustomColor);
+            m_PlayerInfo.ProfileColor = PluginConfig.Instance.CustomColor.ToGSProfileColor();
 
         //-----------------------------------------Gradient-----------------------------------------
         //Defaults
@@ -155,6 +156,10 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         m_SettingsModal.m_AvailableGuilds = m_AvailableGuilds;
         m_SettingsModal.m_ShowCustomColors = AllowCustomCardColors;
 
+        foreach (RankData l_ in m_PlayerInfo.RankData)
+        {
+            Plugin.Log.Info(l_.Points.ToString());
+        }
 
         //update
         await UpdateCardColor();

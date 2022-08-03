@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using GuildSaberProfile.Utils;
+using GuildSaberProfile.Utils.Color;
 
 namespace GuildSaberProfile.API;
 

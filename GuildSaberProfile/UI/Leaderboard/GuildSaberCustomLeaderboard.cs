@@ -64,7 +64,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
 
         public bool m_Idle = false;
 
-        public static readonly Color m_Color0 = new Color(1, 0.2f, 1, 3);
+        public static Color m_Color0 { get => new Color(1, 0.5f, 0, 3); set { } }
         public static readonly Color m_Color1 = new Color(0.2f, 0.1f, 1, 0.75f);
 
         public void ChangeColors()
