@@ -13,6 +13,7 @@ using GuildSaberProfile.UI.GuildSaber.Components;
 using GuildSaberProfile.UI.Components;
 using GuildSaberProfile.Utils;
 using Newtonsoft.Json;
+using System;
 
 namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
 {
@@ -41,12 +42,16 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         public bool m_IsFirtActivation = true;
         [UIValue("LeaderboardGuild")] public string m_SelectedGuild = PluginConfig.Instance.SelectedGuild;
 
+        public delegate void OnLeaderboardRefresh(string p_SelectedGuild);
+        public event OnLeaderboardRefresh e_OnLeaderboardRefresh;
+
         #region Actions
         [UIAction("OnGuildSelected")]
         private void OnGuildSelected(string p_Selected)
         {
             m_SelectedGuild = p_Selected;
             Reload(ReloadMode.FromApi, true, false);
+            e_OnLeaderboardRefresh?.Invoke(m_SelectedGuild);
         }
         #endregion
 
@@ -83,7 +88,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                     return;
             }
 
-            m_PlayerName.text = m_PlayerGuildsInfo.m_ReturnPlayer.Name;
+            m_PlayerName.text = GetPlayerNameToFit(8);
             SetLeaderboardGuildsChoices(m_PlayerGuildsInfo.m_AvailableGuilds);
             if (m_IsFirtActivation)
             {
@@ -126,6 +131,25 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             }
 
             SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Normal);
+        }
+
+        public string GetPlayerNameToFit(int p_NumberOfChars)
+        {
+            if (m_PlayerGuildsInfo.m_ReturnPlayer.Name.Length > p_NumberOfChars)
+            {
+                string l_NewName = string.Empty;
+                for (int l_i = 0; l_i < m_PlayerGuildsInfo.m_ReturnPlayer.Name.Length; l_i++)
+                {
+                    if (l_i <= p_NumberOfChars)
+                        l_NewName += m_PlayerGuildsInfo.m_ReturnPlayer.Name[l_i].ToString();
+                    else
+                    {
+                        l_NewName += "...";
+                        return l_NewName;
+                    }
+                }
+            }
+            return string.Empty;
         }
 
         public void SetLeaderboardPanelViewMode(LeaderboardPanelViewMode p_ViewMode)

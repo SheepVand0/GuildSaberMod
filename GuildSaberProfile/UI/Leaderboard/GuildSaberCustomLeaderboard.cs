@@ -5,6 +5,7 @@ using Zenject;
 using JetBrains.Annotations;
 using System;
 using UnityEngine;
+using TMPro;
 
 namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
 {
@@ -76,6 +77,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 var l_Header = l_ScreenTransform.FindChildRecursive("HeaderPanel").gameObject;
 
                 _HeaderImageView = l_Header.GetComponentInChildren<ImageView>();
+                l_Header.GetComponentInChildren<TextMeshProUGUI>().text = "UwU";
 
                 m_Idle = false;
             } catch(Exception p_E)

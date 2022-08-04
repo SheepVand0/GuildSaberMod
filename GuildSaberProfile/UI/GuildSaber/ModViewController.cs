@@ -22,7 +22,6 @@ namespace GuildSaberProfile.UI.GuildSaber
 
     public class CategoryUI
     {
-
         public int CurrentPlaylistIndex;
 
         public bool DownloadOnlyUnPassed;

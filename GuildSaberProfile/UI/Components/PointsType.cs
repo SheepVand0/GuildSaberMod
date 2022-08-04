@@ -8,6 +8,7 @@ using UnityEngine;
 using GuildSaberProfile.API;
 using GuildSaberProfile.Utils;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GuildSaberProfile.UI.Components
 {
@@ -21,11 +22,21 @@ namespace GuildSaberProfile.UI.Components
 
         protected override string m_ViewResourceName => "GuildSaberProfile.UI.Components.Views.PointsType.bsml";
 
+        private GuildSaberLeaderboardPanel _LeaderboardPanel = null;
+
         public override void OnCreate()
         {
         }
 
         public override void PostCreate()
+        {
+            _LeaderboardPanel = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0];
+            RefreshPoints();
+            RefreshSelected();
+            _LeaderboardPanel.e_OnLeaderboardRefresh += OnLeaderboardRefresh;
+        }
+
+        private void OnLeaderboardRefresh(string p_SelectedGuild)
         {
             RefreshPoints();
             RefreshSelected();
@@ -45,7 +56,6 @@ namespace GuildSaberProfile.UI.Components
         {
             m_SelectedPoints = p_Selected;
             RefreshSelected();
-            m_SelectorModal.Hide(true, null);
         }
 
         public void RefreshSelected()
@@ -61,7 +71,7 @@ namespace GuildSaberProfile.UI.Components
 
         public void RefreshPoints()
         {
-            m_Player = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0].m_PlayerGuildsInfo.m_ReturnPlayer;
+            m_Player = _LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer;
             if (m_Player.Name == string.Empty) return;
             List<RankData> l_RankData = m_Player.RankData;
             m_Selector.values.Clear();

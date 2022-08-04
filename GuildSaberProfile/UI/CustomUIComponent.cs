@@ -36,6 +36,13 @@ namespace GuildSaberProfile.UI
             }
             return l_Comp;
         }
+        public static CustomUIComponent RecreateUIComponent<TItemType>(CustomUIComponent p_Component, bool p_UnderParent, bool p_NeedParse) where TItemType : CustomUIComponent
+        {
+            Transform l_CurrentTransform = p_Component.transform.parent;
+            DestroyImmediate(p_Component.gameObject);
+            p_Component = CreateItem<TItemType>(l_CurrentTransform, p_UnderParent, p_NeedParse);
+            return p_Component;
+        }
         #endregion
 
         #region Events
@@ -56,8 +63,8 @@ namespace GuildSaberProfile.UI
         public void Init(Transform p_Parent, bool p_UnderParent, bool p_Parse)
         {
             name = GetType().Name;
-            gameObject.transform.SetParent(p_UnderParent ? p_Parent : p_Parent.parent, false);
             if (p_Parse) m_ParserParams = Parse(p_Parent);
+            gameObject.transform.SetParent(p_UnderParent ? p_Parent : p_Parent.parent, false);
             PostCreate();
         }
 
