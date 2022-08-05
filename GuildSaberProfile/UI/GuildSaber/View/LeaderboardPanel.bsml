@@ -4,18 +4,18 @@
 		<horizontal>
 			<text id='PlayerErrorTxt' text='Error during getting Player data' active='false'/>
 
-			<horizontal id='Elems' active='false' horizontal-fit='PreferredSize' spacing='35'>
+			<horizontal id='Elems' active='false' horizontal-fit='PreferredSize' spacing='20'>
 
 				<horizontal horizontal-fit='PreferredSize' spacing='1'>
 					<grid cell-size-x='14' cell-size-y='14'>
 						<img id='GSImage' src='GuildSaberProfile.Resources.BSCCIconOrange.png'/>
 					</grid>
 
-					<vertical vertical-fit='PreferredSize' spacing='0' horizontal-fit='PreferredSize'>
-						<horizontal preferred-width='17' id='NameLayout' horizontal-fit='PreferredSize' spacing='27'>
+					<vertical spacing='0' horizontal-fit='PreferredSize'>
+						<horizontal preferred-width='17' id='NameLayout' horizontal-fit='PreferredSize' spacing='34'>
 							<text font-size='5' id='PlayerName' text='GuildSaber'></text>
 						</horizontal>
-						<dropdown-list-setting anchor-pos-x='17' preferred-width='5' text='' id='GuildSelector' value='LeaderboardGuild' choices='LeaderGuilds' on-change='OnGuildSelected'></dropdown-list-setting>
+						<dropdown-list-setting anchor-pos-x='2' preferred-width='5' text='' id='GuildSelector' value='LeaderboardGuild' choices='LeaderGuilds' on-change='OnGuildSelected'></dropdown-list-setting>
 					</vertical>
 				</horizontal>
 

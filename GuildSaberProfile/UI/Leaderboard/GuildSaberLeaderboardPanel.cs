@@ -30,20 +30,15 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         [UIComponent("BgHorizontal")] private readonly VerticalLayoutGroup m_BackgroundLayout = null;
         [UIComponent("GuildSelector")] private readonly DropDownListSetting m_GuildSelector = null;
         [UIComponent("NameLayout")] private readonly HorizontalLayoutGroup m_NameLayout = null;
-        //[UIComponent("AvatarImageGrid")] private readonly GridLayoutGroup m_AvatarPlayerGrid = null;
         private PlayerAvatar m_PlayerAvatar = null;
-        /*[UIValue("PointsType")]*/ private PointsType m_PointsType = null;
+        public PointsType m_PointsType = null;
         #endregion
 
         [UIValue("LeaderGuilds")] private List<object> m_AvailablesGuilds = new() { PluginConfig.Instance.SelectedGuild };
-
-        public PlayerGuildsInfo m_PlayerGuildsInfo = new PlayerGuildsInfo();
-
-        public bool m_IsFirtActivation = true;
         [UIValue("LeaderboardGuild")] public string m_SelectedGuild = PluginConfig.Instance.SelectedGuild;
 
-        public delegate void OnLeaderboardRefresh(string p_SelectedGuild);
-        public event OnLeaderboardRefresh e_OnLeaderboardRefresh;
+        public PlayerGuildsInfo m_PlayerGuildsInfo = new PlayerGuildsInfo();
+        public bool m_IsFirtActivation = true;
 
         #region Actions
         [UIAction("OnGuildSelected")]
@@ -51,7 +46,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         {
             m_SelectedGuild = p_Selected;
             Reload(ReloadMode.FromApi, true, false);
-            e_OnLeaderboardRefresh?.Invoke(m_SelectedGuild);
+            Events.m_Instance.SelectGuild(m_SelectedGuild);
         }
         #endregion
 
@@ -88,7 +83,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                     return;
             }
 
-            m_PlayerName.text = GetPlayerNameToFit(8);
+            m_PlayerName.text = GetPlayerNameToFit(12);
             SetLeaderboardGuildsChoices(m_PlayerGuildsInfo.m_AvailableGuilds);
             if (m_IsFirtActivation)
             {

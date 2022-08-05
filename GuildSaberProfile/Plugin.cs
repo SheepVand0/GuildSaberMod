@@ -8,8 +8,10 @@ using GuildSaberProfile.Configuration;
 using GuildSaberProfile.Time;
 using GuildSaberProfile.UI.Card;
 using GuildSaberProfile.UI.GuildSaber;
+using GuildSaberProfile.Utils;
 using IPA;
 using IPA.Config.Stores;
+using SiraUtil.Zenject;
 using Config = IPA.Config.Config;
 using IPALogger = IPA.Logging.Logger;
 
@@ -20,23 +22,24 @@ namespace GuildSaberProfile;
 public class Plugin
 {
 
-    public const string NOT_DEFINED = "Undefined";
-    public static string CurrentSceneName = "MainMenu";
-
-    private static bool s_CardLoaded;
-
-    public static List<object> AvailableGuilds = new List<object>();
-
-    public static PlayerCard_UI PlayerCard;
-    public static TimeManager m_TimeManager;
-    public static ModFlowCoordinator _modFlowCoordinator;
-    public static string m_PlayerId = string.Empty;
-    public static IRefresh m_Refresher = new Refresher();
-    public HarmonyLib.Harmony m_HarmonyInstance = new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaberProfile");
-    // ReSharper disable once UnusedAutoPropertyAccessor.Local
     private static Plugin Instance { get; set; }
+
     internal static IPALogger Log { get; private set; }
 
+    public HarmonyLib.Harmony m_HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaberProfile"); }
+
+
+    private static bool s_CardLoaded = false;
+
+    public const string NOT_DEFINED = "Undefined";
+    public static string CurrentSceneName = "MainMenu";
+    public static List<object> AvailableGuilds = new List<object>();
+    public static TimeManager m_TimeManager;
+    public static ModFlowCoordinator _modFlowCoordinator;
+    public static PlayerCard_UI PlayerCard;
+    public static string m_PlayerId = string.Empty;
+    public static IRefresh m_Refresher = new Refresher();
+    // ReSharper disable once UnusedAutoPropertyAccessor.Local
     #region On mod start
 
     [Init]
@@ -53,7 +56,6 @@ public class Plugin
 
         MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
     }
-
 
     [OnStart]
     public void OnApplicationStart()

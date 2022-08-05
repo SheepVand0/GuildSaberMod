@@ -23,19 +23,17 @@ namespace GuildSaberProfile.UI.GuildSaber
     public class CategoryUI
     {
         public int CurrentPlaylistIndex;
-
         public bool DownloadOnlyUnPassed;
-
         public string m_CategoryDirectory = Plugin.NOT_DEFINED;
-        [UIComponent("DownloadBut")] private readonly Button m_DownloadButton = null;
-
         public string m_GuildName = "CS";
-        [UIComponent("ElemsHorizontal")] private readonly HorizontalLayoutGroup m_HorizontalElems = null;
-
         public List<int> m_ValidPlaylists = new List<int>
             { 1, 2, 3 };
-
         public int PlaylistsCountInCategory;
+
+        #region UIComponents
+        [UIComponent("DownloadBut")] private readonly Button m_DownloadButton = null;
+        [UIComponent("ElemsHorizontal")] private readonly HorizontalLayoutGroup m_HorizontalElems = null;
+        #endregion
 
         public CategoryUI(string p_Name, string p_GuildName, bool p_DownloadOnlyUnpassed)
         {

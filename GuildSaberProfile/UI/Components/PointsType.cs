@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace GuildSaberProfile.UI.Components
 {
-    class PointsType : CustomUIComponent
+    public class PointsType : CustomUIComponent
     {
         [UIComponent("PointsText")] ClickableText m_PointsText = null;
         [UIComponent("PointsSelectorModal")] ModalView m_SelectorModal = null;
@@ -33,10 +33,16 @@ namespace GuildSaberProfile.UI.Components
             _LeaderboardPanel = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0];
             RefreshPoints();
             RefreshSelected();
-            _LeaderboardPanel.e_OnLeaderboardRefresh += OnLeaderboardRefresh;
+            Events.m_Instance.e_OnGuildSelected += OnGuildSelected;
+            Events.m_Instance.e_OnLeaderboardPostLoad += OnLeaderboardViewPostLoad;
         }
 
-        private void OnLeaderboardRefresh(string p_SelectedGuild)
+        private void OnLeaderboardViewPostLoad()
+        {
+            Events.m_Instance.SelectPointsTypes(m_SelectedPoints);
+        }
+
+        private void OnGuildSelected(string p_SelectedGuild)
         {
             RefreshPoints();
             RefreshSelected();
@@ -56,6 +62,7 @@ namespace GuildSaberProfile.UI.Components
         {
             m_SelectedPoints = p_Selected;
             RefreshSelected();
+            Events.m_Instance.SelectPointsTypes(m_SelectedPoints);
         }
 
         public void RefreshSelected()

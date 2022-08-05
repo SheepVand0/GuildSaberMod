@@ -1,6 +1,8 @@
 ﻿using Zenject;
 using GuildSaberProfile.UI.GuildSaber.Leaderboard;
 using GuildSaberProfile.Managers;
+using UnityEngine;
+using GuildSaberProfile.Utils;
 
 namespace GuildSaberProfile.Installers
 {
@@ -16,6 +18,7 @@ namespace GuildSaberProfile.Installers
             Container.BindInterfacesAndSelfTo<GuildSaberCustomLeaderboard>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<LeaderboardManager>().AsSingle();
+            Container.Bind<BeatmapListener>().AsSingle();
         }
     }
 }

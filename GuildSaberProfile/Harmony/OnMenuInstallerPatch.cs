@@ -5,6 +5,7 @@ using GuildSaberProfile.Utils;
 using System;
 using Zenject;
 using LeaderboardCore.Models;
+using UnityEngine;
 
 namespace GuildSaberProfile.Harmony
 {
@@ -36,7 +37,7 @@ namespace GuildSaberProfile.Harmony
             if (__instance.GetType() == typeof(GuildSaberCustomLeaderboard))
             {
                 GuildSaberCustomLeaderboard l_Leaderboard = (GuildSaberCustomLeaderboard)__instance;
-                l_Leaderboard.OnShow();
+                Events.OnLeaderboardShow();
                 if (l_Leaderboard._panelViewController.m_IsFirtActivation)
                     l_Leaderboard._panelViewController.Reload(ReloadMode.FromApi, true, true);
             }
@@ -52,7 +53,7 @@ namespace GuildSaberProfile.Harmony
             if (__instance.GetType() == typeof(GuildSaberCustomLeaderboard))
             {
                 GuildSaberCustomLeaderboard l_Leaderboard = (GuildSaberCustomLeaderboard)__instance;
-                l_Leaderboard.OnHide();
+                Events.OnLeaderboardIsHide();
             }
         }
     }

@@ -1,8 +1,9 @@
 ﻿using GuildSaberProfile.UI.GuildSaber.Leaderboard;
+using UnityEngine;
 
 namespace GuildSaberProfile.Managers
 {
-    class LeaderboardManager
+    class LeaderboardManager : MonoBehaviour
     {
         public string l_CurrentSongHash;
 

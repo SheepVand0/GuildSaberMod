@@ -181,11 +181,13 @@
     <Compile Include="API\ApiOutputs.cs" />
     <Compile Include="API\BeatSaverAPI.cs" />
     <Compile Include="API\GuildApi.cs" />
+    <Compile Include="API\MapLeaderboardApiOutput.cs" />
     <Compile Include="API\PlayerApiReworkOutput.cs" />
     <Compile Include="API\PlayerStatsFormat.cs" />
     <Compile Include="AssetBundles\AssetBundleLoader.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="GuildSaberProfileController.cs" />
+    <Compile Include="Harmony\BeatmapPatch.cs" />
     <Compile Include="Harmony\OnMenuInstallerPatch.cs" />
     <Compile Include="Installers\MenuInstaller.cs" />
     <Compile Include="Managers\LeaderboardManager.cs" />
@@ -196,6 +198,7 @@
     <Compile Include="Time\TimeManager.cs" />
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCard_UI.cs" />
+    <Compile Include="UI\Components\LeaderboardScoreList.cs" />
     <Compile Include="UI\Components\PointsType.cs" />
     <Compile Include="UI\CustomUIComponent.cs" />
     <Compile Include="UI\Components\PlayerAvatar.cs" />
@@ -207,6 +210,7 @@
     <Compile Include="UI\GuildSaber\ModFlowCoordinator.cs" />
     <Compile Include="UI\GuildSaber\ModViewController.cs" />
     <Compile Include="UI\Card\Settings\SettingsModal.cs" />
+    <Compile Include="Utils\BeatmapListener.cs" />
     <Compile Include="Utils\Color.cs" />
     <Compile Include="Utils\GSBeatmapUtils.cs" />
     <Compile Include="Utils\GuildSaberUtils.cs" />
@@ -226,6 +230,7 @@
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardView.bsml" />
     <EmbeddedResource Include="UI\Components\Views\PlayerAvatar.bsml" />
     <EmbeddedResource Include="UI\Components\Views\PointsType.bsml" />
+    <EmbeddedResource Include="UI\Components\Views\LeaderboardScoreList.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">

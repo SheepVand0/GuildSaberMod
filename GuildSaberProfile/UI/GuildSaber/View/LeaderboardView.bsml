@@ -1,5 +1,7 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+﻿<vertical id="VerticalElems" vertical-fit="PreferredSize" min-width="95" preferred-width="95" anchor-pos-x="3" anchor-pos-y="5" pad-right="5" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
-	<text text='Seems Working'></text>
-</bg>
+	<horizontal child-align='UpperCenter' id ='ScoreParamsLayout'>
+
+	</horizontal>
+</vertical>

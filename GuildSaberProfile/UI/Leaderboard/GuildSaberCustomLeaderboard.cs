@@ -17,7 +17,6 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         public readonly GuildSaberLeaderboardView _leaderboardViewController;
 
         public LeaderboardHeaderManager m_HeaderManager;
-
         protected override ViewController panelViewController => _panelViewController;
         protected override ViewController leaderboardViewController => _leaderboardViewController;
 
@@ -28,6 +27,9 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             _customLeaderboardManager = customLeaderboardManager;
             _panelViewController = panelViewController;
             _leaderboardViewController = leaderboardViewController;
+
+            Events.e_OnLeaderboardShown += OnShow;
+            Events.e_OnLeaderboardHide += OnHide;
         }
 
         public void Initialize()

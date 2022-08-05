@@ -8,16 +8,13 @@ namespace GuildSaberProfile.Utils
 {
     class GSBeatmapUtils
     {
-        public static string DifficultyBeatmapToString(IDifficultyBeatmap difficultyBeatmap)
+        public static string DifficultyBeatmapToHash(IDifficultyBeatmap difficultyBeatmap)
         {
             if (difficultyBeatmap.level is CustomPreviewBeatmapLevel p_CustomLevel)
             {
-                var hash = SongCore.Utilities.Hashing.GetCustomLevelHash(p_CustomLevel);
-                var difficulty = difficultyBeatmap.difficulty.ToString();
-                var characteristic = difficultyBeatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.serializedName;
-                return $"{hash}%7C_{difficulty}_Solo{characteristic}";
+                var l_Hash = SongCore.Utilities.Hashing.GetCustomLevelHash(p_CustomLevel);
+                return l_Hash;
             }
-
             return null;
         }
 

@@ -1,21 +1,88 @@
 ﻿using BS_Utils.Utilities;
-using Zenject;
 using UnityEngine;
 using GuildSaberProfile.Time;
 using UnityEngine.SceneManagement;
 using GuildSaberProfile.Utils;
+using Zenject;
 
 namespace GuildSaberProfile;
 
-class Events : IInitializable
+public class Events : IInitializable
 {
+    public static Events m_Instance { get; private set; }
 
+    public static bool m_IsGuildSaberLeaderboardShown = false;
+
+    public bool m_LeaderboardViewHasBeenLoaded = false;
+
+    #region Events
+    public delegate void OnLeaderboardViewPostLoad();
+    public event OnLeaderboardViewPostLoad e_OnLeaderboardPostLoad;
+
+    public delegate void OnBeatmapSelected(StandardLevelDetailViewController p_LevelDetailViewController, IDifficultyBeatmap p_Map);
+    public event OnBeatmapSelected e_OnBeatmapSelected;
+
+    public delegate void OnGuildSelected(string p_Guild);
+    public event OnGuildSelected e_OnGuildSelected;
+
+    public delegate void OnPointsTypeChange(string p_PointsName);
+    public event OnPointsTypeChange e_OnPointsTypeChange;
+
+    public delegate void OnLeaderboardShown();
+    public static event OnLeaderboardShown e_OnLeaderboardShown;
+
+    public delegate void OnLeaderboardHide();
+    public static event OnLeaderboardHide e_OnLeaderboardHide;
+    #endregion
+
+    #region Setup
     public void Initialize()
     {
         BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
         BSEvents.difficultySelected += BeatmapDifficultySelected;
+
+        Plugin.Log.Info("Defining Events Manager");
+        m_Instance = this;
+    }
+    #endregion
+
+    #region Events Invoker
+    public void SelectGuild(string p_Guild)
+    {
+        e_OnGuildSelected?.Invoke(p_Guild);
     }
 
+    public void SelectPointsTypes(string p_PointsNames)
+    {
+        e_OnPointsTypeChange?.Invoke(p_PointsNames);
+    }
+
+    public void EventOnPostLoadLeaderboard()
+    {
+        if (m_LeaderboardViewHasBeenLoaded) return;
+        e_OnLeaderboardPostLoad?.Invoke();
+        m_LeaderboardViewHasBeenLoaded = true;
+    }
+
+    public void SelectBeatmap(IDifficultyBeatmap p_Beatmap)
+    {
+        e_OnBeatmapSelected?.Invoke(null, p_Beatmap);
+    }
+
+    public static void OnLeaderboardShow()
+    {
+        m_IsGuildSaberLeaderboardShown = true;
+        e_OnLeaderboardShown?.Invoke();
+    }
+
+    public static void OnLeaderboardIsHide()
+    {
+        m_IsGuildSaberLeaderboardShown = false;
+        e_OnLeaderboardHide?.Invoke();
+    }
+    #endregion
+
+    #region Defaults Events Handlers
     private static void OnSceneChanged(Scene p_CurrentScene, Scene p_NextScene)
     {
         if (p_NextScene == null) return;
@@ -42,8 +109,9 @@ class Events : IInitializable
 
     private void BeatmapDifficultySelected(StandardLevelDetailViewController p_LevelDetailViewController, IDifficultyBeatmap p_Beatmap)
     {
-        string l_Hash = GSBeatmapUtils.DifficultyBeatmapToString(p_Beatmap);
-
+        Plugin.Log.Info("BeatmapSelected");
+        e_OnBeatmapSelected?.Invoke(p_LevelDetailViewController, p_Beatmap);
     }
+    #endregion
 }
 
