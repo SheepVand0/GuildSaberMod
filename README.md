@@ -13,7 +13,7 @@ features :
     which can be open by clicking your profile picture and the Card visibility settings are moved to Mod Settings page
 
 
-Made with love by SheepVand(Modder)&Kuurama(Ideas&GuildSaberDev)
+Made with love by SheepVand(Modder)&Kuurama(Ideas&GuildSaberDev), special thanks to [Reezonate](https://github.com/Reezonate).
 
 ![Screen 1](https://user-images.githubusercontent.com/66167164/178449306-a9ed0e48-bf42-45f5-84f3-cbe3b2a9c252.png)
 ![Screen 2](https://user-images.githubusercontent.com/66167164/178449311-f75b5777-e276-49fe-a1b8-87565fb1bf6d.png)
