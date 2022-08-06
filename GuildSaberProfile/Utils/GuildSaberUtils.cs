@@ -8,6 +8,7 @@ using Zenject;
 using System.Reflection;
 using UnityEngine;
 using TMPro;
+using System;
 
 namespace GuildSaberProfile.Utils
 {
@@ -114,6 +115,26 @@ namespace GuildSaberProfile.Utils
             UnityEngine.Color l_Color0 = new(p_Base.r * (1 + p_Difference), p_Base.g * (1 + p_Difference), p_Base.b * (1 + p_Difference));
             UnityEngine.Color l_Color1 = new(p_Base.r * (1 - p_Difference), p_Base.g * (1 - p_Difference), p_Base.b * (1 - p_Difference));
             return new(l_Color1, l_Color1, l_Color0, l_Color0);
+        }
+
+        public static void SetTextError(this TextMeshProUGUI p_Text, Exception p_Ex, ErrorMode p_Mode)
+        {
+            p_Text.color = UnityEngine.Color.red;
+            switch (p_Mode)
+            {
+                case ErrorMode.StackTrace:
+                    p_Text.text = p_Ex.StackTrace;
+                    break;
+                case ErrorMode.Message:
+                    p_Text.text = p_Ex.Message;
+                    break;
+                default: return;
+            }
+        }
+
+        public enum ErrorMode
+        {
+            StackTrace, Message
         }
     }
 }

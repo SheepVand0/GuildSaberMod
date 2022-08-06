@@ -18,7 +18,6 @@ namespace GuildSaberProfile.UI.Components
         #endregion
 
         public int ScoreFontSize { get => 4; set { } }
-
         public string Rank { get; set; }
         public string PlayerName { get; set; }
         public string Points { get; set; }
@@ -27,7 +26,7 @@ namespace GuildSaberProfile.UI.Components
 
         public LeaderboardScoreCell(int p_Rank, string p_Name, float p_Points, string p_PointsName, int p_Score, float p_Acc)
         {
-            Rank = p_Rank.ToString();
+            Rank = $"{p_Rank}";
             PlayerName = p_Name;
             Points = $"{p_Points.ToString("0.00")} {p_PointsName}";
             Score = p_Score.ToString();

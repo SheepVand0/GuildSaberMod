@@ -37,7 +37,7 @@ namespace GuildSaberProfile.Harmony
             if (__instance.GetType() == typeof(GuildSaberCustomLeaderboard))
             {
                 GuildSaberCustomLeaderboard l_Leaderboard = (GuildSaberCustomLeaderboard)__instance;
-                Events.OnLeaderboardShow();
+                Events.OnLeaderboardShow(l_Leaderboard._panelViewController.m_IsFirtActivation);
                 if (l_Leaderboard._panelViewController.m_IsFirtActivation)
                     l_Leaderboard._panelViewController.Reload(ReloadMode.FromApi, true, true);
             }

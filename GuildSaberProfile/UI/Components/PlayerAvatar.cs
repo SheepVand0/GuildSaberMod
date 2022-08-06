@@ -4,6 +4,7 @@ using GuildSaberProfile.UI.GuildSaber.Leaderboard;
 using UnityEngine.UI;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
+using HMUI;
 
 namespace GuildSaberProfile.UI.GuildSaber.Components
 {
@@ -14,7 +15,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Components
 
         private Material _PlayerAvatarMaskInstance;
 
-        [UIComponent("AvatarImage")] private Image m_Avatar = null;
+        [UIComponent("AvatarImage")] private ImageView m_Avatar = null;
         [UIComponent("AvatarGrid")] private GridLayoutGroup m_AvatarGrid = null;
         #endregion
 

@@ -20,7 +20,10 @@ public class Events : IInitializable
     public event OnLeaderboardViewPostLoad e_OnLeaderboardPostLoad;
 
     public delegate void OnBeatmapSelected(StandardLevelDetailViewController p_LevelDetailViewController, IDifficultyBeatmap p_Map);
-    public event OnBeatmapSelected e_OnBeatmapSelected;
+    public static event OnBeatmapSelected e_OnBeatmapSelected;
+
+    public delegate void _OnBeatmapSelected();
+    public static event _OnBeatmapSelected e_OnBeatmapSelected_NoReturned;
 
     public delegate void OnGuildSelected(string p_Guild);
     public event OnGuildSelected e_OnGuildSelected;
@@ -28,7 +31,7 @@ public class Events : IInitializable
     public delegate void OnPointsTypeChange(string p_PointsName);
     public event OnPointsTypeChange e_OnPointsTypeChange;
 
-    public delegate void OnLeaderboardShown();
+    public delegate void OnLeaderboardShown(bool p_FirstActivation);
     public static event OnLeaderboardShown e_OnLeaderboardShown;
 
     public delegate void OnLeaderboardHide();
@@ -39,7 +42,6 @@ public class Events : IInitializable
     public void Initialize()
     {
         BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
-        BSEvents.difficultySelected += BeatmapDifficultySelected;
 
         Plugin.Log.Info("Defining Events Manager");
         m_Instance = this;
@@ -64,15 +66,20 @@ public class Events : IInitializable
         m_LeaderboardViewHasBeenLoaded = true;
     }
 
-    public void SelectBeatmap(IDifficultyBeatmap p_Beatmap)
+    public static void SelectBeatmap(IDifficultyBeatmap p_Beatmap)
     {
         e_OnBeatmapSelected?.Invoke(null, p_Beatmap);
     }
 
-    public static void OnLeaderboardShow()
+    public static void _SelecteBeatmap()
+    {
+        e_OnBeatmapSelected_NoReturned?.Invoke();
+    }
+
+    public static void OnLeaderboardShow(bool p_FirstActivation)
     {
         m_IsGuildSaberLeaderboardShown = true;
-        e_OnLeaderboardShown?.Invoke();
+        e_OnLeaderboardShown?.Invoke(p_FirstActivation);
     }
 
     public static void OnLeaderboardIsHide()

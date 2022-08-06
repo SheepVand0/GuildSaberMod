@@ -1,20 +1,19 @@
 ﻿<custom-list id="ScoreList" contents="ScoreCells" stick-scrolling="false" min-height="60" cell-size="4" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
-	<horizontal anchor-pos-x='-5' anchor-min-x='0' preferred-width='90' child-align='UpperLeft' horizontal-fit='PreferredSize' spacing='4' vertical-fit='MinSize'>
-		<horizontal spacing='2'>
-			<text align='Left' id='Rank' text='~Rank' font-size='~ScoreFontSize'></text>
-			<text text='-'></text>
-			<text align='Left' id='Name' text='~PlayerName' font-size='~ScoreFontSize'></text>
+	<horizontal  preferred-width='90' ignore-layout='true' child-align='UpperLeft' horizontal-fit='PreferredSize' spacing='0' vertical-fit='MinSize'>
+		<horizontal ignore-layout='true' anchor-pos-x='2'>
+			<text align='Left' anchor-pos-x='0' id='Rank' text='~Rank' font-size='~ScoreFontSize'></text>
+			<text align='Left' overflow-mode='Ellipsis' anchor-pos-x='1' id='Name' text='~PlayerName' font-size='~ScoreFontSize'></text>
 			<horizontal child-align='MiddleLeft' horizontal-fit='PreferredSize'>
 				<text text='(' align='Left' font-size='~ScoreFontSize'></text>
 				<text id='Points' align='Left' text='~Points' font-size='~ScoreFontSize'></text>
 				<text text=')' align='Left' font-size='~ScoreFontSize'></text>
 			</horizontal>
 		</horizontal>
-		<horizontal anchor-pos-x='1' anchor-min-x='1' spacing='1'>
-			<text id='Score' align='Right' text='~Score' font-size='~ScoreFontSize'></text>
-			<text anchor-min-x='4' anchor-pos-x='4' id='Acc' text='~Acc' align='Right' font-size='~ScoreFontSize'></text>
+		<horizontal ignore-layout='true' anchor-pos-x='8' spacing='1'>
+			<text anchor-pos-x='0' id='Score' align='Right' text='~Score' font-size='~ScoreFontSize'></text>
+			<text anchor-min-x='1' anchor-pos-x='1' id='Acc' text='~Acc' align='Right' font-size='~ScoreFontSize'></text>
 		</horizontal>
 	</horizontal>
 </custom-list>

@@ -18,7 +18,6 @@ namespace GuildSaberProfile.Installers
             Container.BindInterfacesAndSelfTo<GuildSaberCustomLeaderboard>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<LeaderboardManager>().AsSingle();
-            Container.Bind<BeatmapListener>().AsSingle();
         }
     }
 }

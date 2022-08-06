@@ -210,7 +210,6 @@
     <Compile Include="UI\GuildSaber\ModFlowCoordinator.cs" />
     <Compile Include="UI\GuildSaber\ModViewController.cs" />
     <Compile Include="UI\Card\Settings\SettingsModal.cs" />
-    <Compile Include="Utils\BeatmapListener.cs" />
     <Compile Include="Utils\Color.cs" />
     <Compile Include="Utils\GSBeatmapUtils.cs" />
     <Compile Include="Utils\GuildSaberUtils.cs" />
