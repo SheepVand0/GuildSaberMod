@@ -187,7 +187,6 @@
     <Compile Include="AssetBundles\AssetBundleLoader.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="GuildSaberProfileController.cs" />
-    <Compile Include="Harmony\BeatmapPatch.cs" />
     <Compile Include="Harmony\OnMenuInstallerPatch.cs" />
     <Compile Include="Installers\MenuInstaller.cs" />
     <Compile Include="Managers\LeaderboardManager.cs" />
@@ -198,17 +197,18 @@
     <Compile Include="Time\TimeManager.cs" />
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCard_UI.cs" />
+    <Compile Include="UI\Components\CustomText.cs" />
     <Compile Include="UI\Components\LeaderboardScoreList.cs" />
     <Compile Include="UI\Components\PointsType.cs" />
     <Compile Include="UI\CustomUIComponent.cs" />
     <Compile Include="UI\Components\PlayerAvatar.cs" />
-    <Compile Include="UI\GuildSaber\IRefresh.cs" />
+    <Compile Include="UI\Interfaces\IRefresh.cs" />
     <Compile Include="UI\Leaderboard\GuildSaberCustomLeaderboard.cs" />
     <Compile Include="UI\Leaderboard\GuildSaberLeaderboardPanel.cs" />
     <Compile Include="UI\Leaderboard\GuildSaberLeaderboardView.cs" />
-    <Compile Include="UI\GuildSaber\LeftModViewController.cs" />
-    <Compile Include="UI\GuildSaber\ModFlowCoordinator.cs" />
-    <Compile Include="UI\GuildSaber\ModViewController.cs" />
+    <Compile Include="UI\Settings\LeftModViewController.cs" />
+    <Compile Include="UI\FlowCoordinator\ModFlowCoordinator.cs" />
+    <Compile Include="UI\Playlists\ModViewController.cs" />
     <Compile Include="UI\Card\Settings\SettingsModal.cs" />
     <Compile Include="Utils\Color.cs" />
     <Compile Include="Utils\GSBeatmapUtils.cs" />
@@ -230,6 +230,7 @@
     <EmbeddedResource Include="UI\Components\Views\PlayerAvatar.bsml" />
     <EmbeddedResource Include="UI\Components\Views\PointsType.bsml" />
     <EmbeddedResource Include="UI\Components\Views\LeaderboardScoreList.bsml" />
+    <EmbeddedResource Include="UI\Components\Views\CustomText.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">
@@ -245,9 +246,7 @@
     <EmbeddedResource Include="Resources\BSCCIconOrange.png" />
     <EmbeddedResource Include="Resources\CSIcon.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\Playlists\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

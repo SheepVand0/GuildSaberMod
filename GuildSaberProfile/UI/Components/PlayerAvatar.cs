@@ -40,6 +40,8 @@ namespace GuildSaberProfile.UI.GuildSaber.Components
 
             _PlayerAvatarMaskInstance.SetTexture(Shader.PropertyToID("_MainTex"), l_PlayerAvatar);
             _PlayerAvatarMaskInstance.SetColor(Shader.PropertyToID("_HaloColor"),p_ProfileColor);
+            _PlayerAvatarMaskInstance.SetFloat(Shader.PropertyToID("_HaloIntensity"), 0.0f);
+            _PlayerAvatarMaskInstance.SetFloat(Shader.PropertyToID("_Scale"), 0.8f);
         }
         #endregion
 

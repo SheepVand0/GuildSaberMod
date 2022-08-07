@@ -4,17 +4,23 @@ using BeatSaberMarkupLanguage.Components;
 using GuildSaberProfile.API;
 using TMPro;
 using GuildSaberProfile.Utils.Color;
+using UnityEngine.UI;
 
 namespace GuildSaberProfile.UI.Components
 {
     class LeaderboardScoreCell
     {
         #region UIComponents
+        [UIComponent("RankAndNameH")] private HorizontalLayoutGroup m_RankAndNameLayout = null;
+        [UIComponent("ScoreH")] private HorizontalLayoutGroup m_ScoreLayout = null;
+
         [UIComponent("Rank")] private TextMeshProUGUI m_CRank = null;
-        [UIComponent("Name")] private TextMeshProUGUI m_CPlayerName = null;
         [UIComponent("Points")] private TextMeshProUGUI m_CPoints = null;
-        [UIComponent("Score")] private TextMeshProUGUI m_CScore = null;
         [UIComponent("Acc")] private TextMeshProUGUI m_CAcc = null;
+        #endregion
+        #region Custom Components
+        [UIValue("ScoreText")] private CustomText m_CScore = null;
+        [UIValue("Name")] private CustomText m_CPlayerName = null;
         #endregion
 
         public int ScoreFontSize { get => 4; set { } }
@@ -39,6 +45,21 @@ namespace GuildSaberProfile.UI.Components
             UnityEngine.Color l_Red = new Color(255, 0, 55).ToUnityColor();
             m_CPoints.color = l_Red;
             m_CAcc.color = l_Red;
+
+            List<ItemParam> l_TextNameParam = new List<ItemParam>()
+            {
+                new ItemParam("m_FontSize", ScoreFontSize),
+                new ItemParam("AnchorPosX", 1f),
+                new ItemParam("m_Text", PlayerName),
+                new ItemParam("m_Alignment", TextAlignmentOptions.Left)
+            };
+
+            m_CPlayerName = CustomUIComponent.CreateItemWithParams<CustomText>(m_RankAndNameLayout.transform, true, true, l_TextNameParam);
+
+            l_TextNameParam[2] = new ItemParam("m_Text", Score.ToString());
+            l_TextNameParam[3] = new ItemParam("m_Alignment", TextAlignmentOptions.Right);
+
+            m_CScore = CustomUIComponent.CreateItemWithParams<CustomText>(m_ScoreLayout.transform, true, true, l_TextNameParam);
         }
     }
 

@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
 using System;
+using LeaderboardCore.Interfaces;
 
 /*
 *
@@ -21,23 +22,24 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
 {
     [HotReload(RelativePathToLayout = @"LeaderboardView.bsml")]
     [ViewDefinition("GuildSaberProfile.UI.GuildSaber.View.LeaderboardView.bsml")]
-    public class GuildSaberLeaderboardView : BSMLAutomaticViewController
+    public class GuildSaberLeaderboardView : BSMLAutomaticViewController, INotifyLeaderboardSet, INotifyScoreUpload
     {
+        #region
         [UIComponent("VerticalElems")] VerticalLayoutGroup m_VerticalElems = null;
         [UIComponent("ScoreParamsLayout")] HorizontalLayoutGroup m_ScoreParamsLayout = null;
         [UIComponent("NotRankedText")] TextMeshProUGUI m_NotRankedText = null;
         [UIComponent("ErrorText")] TextMeshProUGUI m_ErrorText = null;
+        LeaderboardScoreList m_ScoresList = null;
+        #endregion
 
         private GuildSaberLeaderboardPanel _LeaderboardPanel;
-        //private LevelSelectionNavigationController
 
         public string m_CurrentPointsName { get; internal set; }
         public string m_CurrentMapHash { get; internal set; }
         public static IDifficultyBeatmap m_CurrentBeatmap { get; internal set; }
         public ApiMapLeaderboardCollectionStruct m_Leaderboard { get; private set; }
 
-        LeaderboardScoreList m_ScoresList = null;
-
+        #region Setup
         [UIAction("#post-parse")]
         private void PostParse()
         {
@@ -56,17 +58,12 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             if (Events.m_Instance == null) { Plugin.Log.Error("Events manager is null"); return; }
 
             Events.e_OnLeaderboardShown += OnLeaderboardShow;
-            Events.e_OnBeatmapSelected += OnBeatmapSelected;
-            Events.e_OnBeatmapSelected_NoReturned += _OnBeatmapSelected;
             Events.m_Instance.e_OnPointsTypeChange += OnPointsTypeChange;
             Events.m_Instance.e_OnGuildSelected += OnGuildSelected;
         }
+        #endregion
 
-        private void _OnBeatmapSelected()
-        {
-
-        }
-
+        #region Leaderboard
         public void GetLeaderboard(string p_Guild)
         {
             Plugin.Log.Info("Getting Leaderboard");
@@ -78,14 +75,22 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             m_ScoresList.SetScores(m_Leaderboard.CustomData, m_Leaderboard.Leaderboards, m_CurrentPointsName);
             SetLeaderboardViewMode(LeaderboardViewMode.Scores);
         }
+        #endregion
 
         #region Events
-        private void OnBeatmapSelected(StandardLevelDetailViewController p_LevelDetailViewController, IDifficultyBeatmap p_Map)
+        public void OnLeaderboardSet(IDifficultyBeatmap difficultyBeatmap)
         {
-            m_CurrentBeatmap = p_Map;
+            try
+            {
+                m_CurrentBeatmap = difficultyBeatmap;
 
-            if (Events.m_IsGuildSaberLeaderboardShown)
-                GetLeaderboard(_LeaderboardPanel.m_SelectedGuild);
+                if (Events.m_IsGuildSaberLeaderboardShown)
+                    GetLeaderboard(_LeaderboardPanel.m_SelectedGuild);
+            } catch (Exception l_Ex)
+            {
+                m_ErrorText.SetTextError(l_Ex, GuildSaberUtils.ErrorMode.Message);
+                SetLeaderboardViewMode(LeaderboardViewMode.Error);
+            }
         }
 
         private void OnLeaderboardShow(bool p_FirstActivation)
@@ -99,11 +104,16 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             {
                 GetLeaderboard(_LeaderboardPanel.m_SelectedGuild);
             }
-            catch (Exception p_E)
+            catch (Exception l_Ex)
             {
                 SetLeaderboardViewMode(LeaderboardViewMode.Error);
-                m_ErrorText.SetTextError(p_E, GuildSaberUtils.ErrorMode.Message);
+                m_ErrorText.SetTextError(l_Ex, GuildSaberUtils.ErrorMode.Message);
             }
+        }
+
+        public void OnScoreUploaded()
+        {
+            throw new NotImplementedException();
         }
 
         private void OnGuildSelected(string p_Guild)

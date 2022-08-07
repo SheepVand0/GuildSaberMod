@@ -19,12 +19,6 @@ public class Events : IInitializable
     public delegate void OnLeaderboardViewPostLoad();
     public event OnLeaderboardViewPostLoad e_OnLeaderboardPostLoad;
 
-    public delegate void OnBeatmapSelected(StandardLevelDetailViewController p_LevelDetailViewController, IDifficultyBeatmap p_Map);
-    public static event OnBeatmapSelected e_OnBeatmapSelected;
-
-    public delegate void _OnBeatmapSelected();
-    public static event _OnBeatmapSelected e_OnBeatmapSelected_NoReturned;
-
     public delegate void OnGuildSelected(string p_Guild);
     public event OnGuildSelected e_OnGuildSelected;
 
@@ -66,16 +60,6 @@ public class Events : IInitializable
         m_LeaderboardViewHasBeenLoaded = true;
     }
 
-    public static void SelectBeatmap(IDifficultyBeatmap p_Beatmap)
-    {
-        e_OnBeatmapSelected?.Invoke(null, p_Beatmap);
-    }
-
-    public static void _SelecteBeatmap()
-    {
-        e_OnBeatmapSelected_NoReturned?.Invoke();
-    }
-
     public static void OnLeaderboardShow(bool p_FirstActivation)
     {
         m_IsGuildSaberLeaderboardShown = true;
@@ -112,12 +96,6 @@ public class Events : IInitializable
         if (Plugin.PlayerCard != null)
             await Plugin.DestroyCard();
         Plugin.CreateCard();
-    }
-
-    private void BeatmapDifficultySelected(StandardLevelDetailViewController p_LevelDetailViewController, IDifficultyBeatmap p_Beatmap)
-    {
-        Plugin.Log.Info("BeatmapSelected");
-        e_OnBeatmapSelected?.Invoke(p_LevelDetailViewController, p_Beatmap);
     }
     #endregion
 }

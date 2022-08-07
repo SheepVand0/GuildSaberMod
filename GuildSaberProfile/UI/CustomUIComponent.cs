@@ -2,9 +2,22 @@
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Parser;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace GuildSaberProfile.UI
 {
+    public struct ItemParam
+    {
+        public ItemParam(string p_Param, object p_Value)
+        {
+            m_ParamName = p_Param;
+            m_Value = p_Value;
+        }
+        public string m_ParamName { get; set; }
+        public object m_Value { get; set; }
+    }
+
+
     public abstract class CustomUIComponent : MonoBehaviour
     {
         #region Defaults
@@ -14,12 +27,28 @@ namespace GuildSaberProfile.UI
         #endregion
 
         #region Creation
-        public static TItem CreateItem<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse) where TItem : CustomUIComponent
+        public static TItem CreateItem<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, bool p_Init = true) where TItem : CustomUIComponent
         {
             Plugin.Log.Info("Creating avatar");
             TItem l_Item = new GameObject($"Parent_{nameof(TItem)}").AddComponent<TItem>();
             l_Item.OnCreate();
-            l_Item.Init(p_Parent, p_UnderParent, p_NeedParse);
+            if (p_Init)
+                l_Item.Init(p_Parent, p_UnderParent, p_NeedParse);
+            return l_Item;
+        }
+
+        public static TItem CreateItemWithParams<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, List<ItemParam> p_Params) where TItem : CustomUIComponent
+        {
+            TItem l_Item = CreateItem<TItem>(p_Parent, p_UnderParent, p_NeedParse, false);
+            foreach (ItemParam l_Param in p_Params)
+            {
+                PropertyInfo p_PropertyInfo = typeof(TItem).GetProperty(l_Param.m_ParamName, BindingFlags.Public | BindingFlags.Instance);
+                if (p_PropertyInfo != null && p_PropertyInfo.CanWrite && p_PropertyInfo.PropertyType == l_Param.m_Value.GetType())
+                    p_PropertyInfo.SetValue(l_Item, l_Param.m_Value, null);
+                else
+                    Plugin.Log.Error($"Property not valid -> Gived Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}");
+            }
+            l_Item.Init(p_Parent,p_UnderParent,p_NeedParse);
             return l_Item;
         }
 
@@ -46,7 +75,10 @@ namespace GuildSaberProfile.UI
         #endregion
 
         #region Events
-        public abstract void OnCreate();
+        public virtual void OnCreate()
+        {
+
+        }
 
         public virtual void PostCreate()
         {
