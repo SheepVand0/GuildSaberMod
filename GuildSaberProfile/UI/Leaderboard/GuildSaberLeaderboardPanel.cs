@@ -12,6 +12,7 @@ using GuildSaberProfile.Configuration;
 using GuildSaberProfile.UI.GuildSaber.Components;
 using GuildSaberProfile.UI.Components;
 using GuildSaberProfile.Utils;
+using GuildSaberProfile.API;
 using Newtonsoft.Json;
 using System;
 
@@ -61,12 +62,12 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             switch (p_ReloadMode) {
                 case ReloadMode.FromCurrent:
                     if (m_SelectedGuild == PluginConfig.Instance.SelectedGuild)
-                        m_PlayerGuildsInfo = Plugin.GetPlayerInfoFromCurrent();
+                        m_PlayerGuildsInfo = GuildApi.GetPlayerInfoFromCurrent();
                     else
                         Reload(ReloadMode.FromApi, true, true);
                     break;
                 case ReloadMode.FromApi:
-                    m_PlayerGuildsInfo = Plugin.GetPlayerInfoFromAPI(false, m_SelectedGuild);
+                    m_PlayerGuildsInfo = GuildApi.GetPlayerInfoFromAPI(false, m_SelectedGuild);
                     break;
                 default: return;
             }
@@ -83,7 +84,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                     return;
             }
 
-            m_PlayerName.text = GetPlayerNameToFit(12);
+            m_PlayerName.text = GuildSaberUtils.GetPlayerNameToFit(m_PlayerGuildsInfo.m_ReturnPlayer.Name, 12);
             SetLeaderboardGuildsChoices(m_PlayerGuildsInfo.m_AvailableGuilds);
             if (m_IsFirtActivation)
             {
@@ -126,25 +127,6 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             }
 
             SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Normal);
-        }
-
-        public string GetPlayerNameToFit(int p_NumberOfChars)
-        {
-            if (m_PlayerGuildsInfo.m_ReturnPlayer.Name.Length > p_NumberOfChars)
-            {
-                string l_NewName = string.Empty;
-                for (int l_i = 0; l_i < m_PlayerGuildsInfo.m_ReturnPlayer.Name.Length; l_i++)
-                {
-                    if (l_i <= p_NumberOfChars)
-                        l_NewName += m_PlayerGuildsInfo.m_ReturnPlayer.Name[l_i].ToString();
-                    else
-                    {
-                        l_NewName += "...";
-                        return l_NewName;
-                    }
-                }
-            }
-            return string.Empty;
         }
 
         public void SetLeaderboardPanelViewMode(LeaderboardPanelViewMode p_ViewMode)

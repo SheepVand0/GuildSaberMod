@@ -41,8 +41,8 @@ public class LeftModViewController : BSMLAutomaticViewController
         set
         {
             PluginConfig.Instance.ShowCardInMenu = value;
-            if (Plugin.PlayerCard != null)
-                Plugin.PlayerCard.UpdateCardVisibility();
+            if (PlayerCardUI.m_Instance != null)
+                PlayerCardUI.m_Instance.UpdateCardVisibility();
         }
     }
 
@@ -58,21 +58,24 @@ public class LeftModViewController : BSMLAutomaticViewController
     #region UIActions
 
     [UIAction("RefreshCard")]
-    public static async void RefreshCard()
+    private void RefreshCard()
     {
-        Plugin.m_Refresher.RefreshCard();
+        if (PlayerCardUI.m_Instance == null)
+            PlayerCardUI.CreateCard();
+        else
+            PlayerCardUI.RefreshCard(true);
     }
 
     [UIAction("ResetPosMenu")]
     private void ResetPosMenu()
     {
-        PlayerCard_UI.ResetMenuCardPosition();
+        PlayerCardUI.ResetMenuCardPosition();
     }
 
     [UIAction("ResetPosGame")]
     private void ResetPosGame()
     {
-        PlayerCard_UI.ResetInGameCardPosition();
+        PlayerCardUI.ResetInGameCardPosition();
     }
 
     #endregion

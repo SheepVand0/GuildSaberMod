@@ -7,165 +7,100 @@ using BeatSaberMarkupLanguage.ViewControllers;
 using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
 using GuildSaberProfile.Time;
-using GuildSaberProfile.UI.Card.Settings;
 using GuildSaberProfile.Utils;
 using GuildSaberProfile.Utils.Color;
+using BeatSaberMarkupLanguage.Components.Settings;
+using BeatSaberMarkupLanguage.Components;
 using HMUI;
 using IPA.Utilities;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 namespace GuildSaberProfile.UI.Card;
-
-#region ViewController
-
 //PlayerCard variables
 [HotReload(RelativePathToLayout = @"PlayerCard_UI.bsml")]
 [ViewDefinition("GuildSaberProfile.UI.Card.View.PlayerCard_UI.bsml")]
 public class PlayerCardViewController : BSMLAutomaticViewController
 {
-    public FloatingScreen m_CardScreen;
-
+    #region UIComponents
     [UIComponent("PlayerNameText")] public TextMeshProUGUI m_PlayerNameText;
-
-    public List<object> m_AvailableGuilds = new List<object>();
     [UIComponent("DetailsLevelsLayout")] private readonly GridLayoutGroup m_DetailsLevelsLayout = null;
     [UIComponent("ElemGrid")] private readonly GridLayoutGroup m_ElementsGrid = null;
     [UIComponent("NeonBackground")] private readonly Transform m_NeonBackground = null;
     [UIComponent("PlayTimeText")] private readonly TextMeshProUGUI m_PlayTimeText = null;
+    [UIComponent("RankUIVertical")] private readonly VerticalLayoutGroup m_RankUIVertical = null;
+    #endregion
 
-    // ReSharper disable once FieldCanBeMadeReadOnly.Global
-    public List<PlayerLevelUI> Levels = new List<PlayerLevelUI>();
+    [UIValue("AvailableGuilds")]
+    public List<object> m_AvailableGuilds = new List<object>();
 
-#pragma warning disable CS0169
-    private int m_NumberOfPasses;
-#pragma warning restore CS0169
-
-    public PlayerApiReworkOutput m_PlayerInfo;
-
-    public SettingsModal m_SettingsModal;
-
-    // ReSharper disable once CollectionNeverQueried.Global
-    // ReSharper disable once FieldCanBeMadeReadOnly.Global
-    public List<PlayerRankUI> Ranks = new List<PlayerRankUI>();
-
+    #region Properties
     [CanBeNull]
     public string PlayerName
     {
-        get => m_PlayerInfo.Name;
+        get => PlayerCardUI.m_Player.Name;
         set { }
     }
     public string PlayerGlobalLevel
     {
-        get => m_PlayerInfo.Level.ToString();
+        get => PlayerCardUI.m_Player.Level.ToString();
         set { }
     }
     public string PlayerImageSrc
     {
-        get => m_PlayerInfo.ProfilePicture;
+        get => PlayerCardUI.m_Player.ProfilePicture;
         set { }
     }
     public string PlayerNumberOfPasses
     {
-        get => m_PlayerInfo.PassCount.ToString();
+        get => PlayerCardUI.m_Player.PassCount.ToString();
         set { }
     }
-
+    // ReSharper disable once CollectionNeverQueried.Global
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    public List<PlayerRankUI> Ranks = new List<PlayerRankUI>();
+    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+    public List<PlayerLevelUI> Levels = new List<PlayerLevelUI>();
+    public FloatingScreen m_CardScreen;
     public bool AllowCustomCardColors = false;
-
-    #region References
-
-    public void SetReferences(PlayerApiReworkOutput p_Player, FloatingScreen p_CardScreen)
-    {
-        m_PlayerInfo = p_Player;
-        m_CardScreen = p_CardScreen;
-    }
     #endregion
 
-    public async Task<Task> UpdateCanPlayerUseCustomColors()
+    [UIAction("#post-parse")]
+    public void PostParse()
     {
-        int l_MaxLevel = 0;
-        string l_BestCategory = string.Empty;
+        if (PlayerCardUI.m_Player.Equals(null)) return;
 
-        //-----------------------------------------Checking if Player level is at 97% of max level-----------------------------------------
-        if (!(PluginConfig.Instance.SelectedGuild == "BSCC"))
-            foreach (var l_Current in m_PlayerInfo.CategoryData)
-                if (l_Current.Level == m_PlayerInfo.Level)
-                    l_BestCategory = l_Current.Category;
-                else
-                    l_BestCategory = string.Empty;
+        Refresh();
 
-        l_MaxLevel = GuildSaberUtils.GetStaticPlayerLevel(l_BestCategory);
-
-        //If thats true Allowing Custom Card Colors
-        AllowCustomCardColors = m_PlayerInfo.Level >= (int)(l_MaxLevel * 0.97f);
-
-        //Returning
-        return Task.CompletedTask;
+        Plugin.Log.Info("Card loaded");
     }
 
     #region Main Card Info and style Loading
 
-    public async Task<Task> UpdateCardColor()
-    {
-        //If Player is allowed to use custom colors, updating ProfileColor to selected color
-        if (AllowCustomCardColors == true)
-            m_PlayerInfo.ProfileColor = PluginConfig.Instance.CustomColor.ToGSProfileColor();
 
-        //-----------------------------------------Gradient-----------------------------------------
-        //Defaults
-        UnityEngine.Color l_PlayerColor = m_PlayerInfo.ProfileColor.ToUnityColor();
+    public void UpdateCardColor()
+    {
+        if (AllowCustomCardColors == true)
+            PlayerCardUI.m_Player.ProfileColor = PluginConfig.Instance.CustomColor.ToGSProfileColor();
+
+        UnityEngine.Color l_PlayerColor = PlayerCardUI.m_Player.ProfileColor.ToUnityColor();
         UnityEngine.Color l_BeforePlayerColor = new UnityEngine.Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
         UnityEngine.Color l_NewPlayerColor = new UnityEngine.Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
 
-        //Applying Gradient
         m_PlayerNameText.enableVertexGradient = true;
         m_PlayerNameText.colorGradient = new VertexGradient(l_BeforePlayerColor, l_BeforePlayerColor, l_NewPlayerColor, l_NewPlayerColor);
 
-        //-----------------------------------------Background editing-----------------------------------------
         ImageView l_CurrentImageView = m_NeonBackground.GetComponentInChildren<ImageView>();
-        //Editing style
         l_CurrentImageView.SetField("_skew", 0.0f);
         l_CurrentImageView.overrideSprite = null;
         l_CurrentImageView.SetImage("#RoundRect10BorderFade");
-        //Editing Colors
         l_CurrentImageView.color0 = l_BeforePlayerColor.ColorWithAlpha(1f);
         l_CurrentImageView.color1 = l_NewPlayerColor.ColorWithAlpha(1f);
         l_CurrentImageView.color = l_PlayerColor.ColorWithAlpha(1f);
-        //idk
         l_CurrentImageView.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.BakedEmissive;
-
-        //Explicit
-        return Task.CompletedTask;
-    }
-
-    [UIAction("#post-parse")]
-    public async void PostParse()
-    {
-        if (m_PlayerInfo.Equals(null)) return;
-
-        await UpdateCanPlayerUseCustomColors();
-
-        //Creating Settings Modal
-        if (m_SettingsModal == null)
-            m_SettingsModal = new SettingsModal(m_CardScreen.gameObject, AllowCustomCardColors);
-
-        //Settings Modal Defaults
-        m_SettingsModal.m_AvailableGuilds = m_AvailableGuilds;
-        m_SettingsModal.m_ShowCustomColors = AllowCustomCardColors;
-
-        foreach (RankData l_ in m_PlayerInfo.RankData)
-        {
-            Plugin.Log.Info(l_.Points.ToString());
-        }
-
-        //update
-        await UpdateCardColor();
-        m_SettingsModal.UpdateShowColors();
-
-        Plugin.Log.Info("Card loaded");
     }
 
     [UIAction("OnPPClick")]
@@ -174,38 +109,105 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         //If player disabled settings modal don't showing
         if (!PluginConfig.Instance.ShowSettingsModal) return;
 
-        if (m_SettingsModal is null) return;
+        UpdateShowPlayerCustomColorUISetting();
+        if (PluginConfig.Instance.ShowSettingsModal)
+            ShowSettings();
+    }
+    #endregion
 
-        m_SettingsModal.ShowModal();
+    #region References
+    public void SetReferences(PlayerApiReworkOutput p_Player, FloatingScreen p_CardScreen)
+    {
+        PlayerCardUI.m_Player = p_Player;
+        m_CardScreen = p_CardScreen;
+    }
+    #endregion
+
+    #region Other
+    public void UpdateCanPlayerUseCustomColors()
+    {
+        string l_BestCategory = string.Empty;
+
+        //Checking if Player level is at 97% of max level
+        if (PlayerCardUI.m_Player.CategoryData.Count > 0)
+            foreach (var l_Current in PlayerCardUI.m_Player.CategoryData)
+                if (l_Current.Level == PlayerCardUI.m_Player.Level)
+                    l_BestCategory = l_Current.Category;
+                else
+                    l_BestCategory = string.Empty;
+        else
+            l_BestCategory = null;
+
+        int l_MaxLevel = GuildSaberUtils.GetStaticPlayerLevel(l_BestCategory);
+        AllowCustomCardColors = PlayerCardUI.m_Player.Level >= (int)(l_MaxLevel * 0.97f);
     }
     #endregion
 
     #region Card Updates
+    public void Refresh()
+    {
+        foreach (PlayerRankUI l_Current in Ranks)
+            GameObject.DestroyImmediate(l_Current.gameObject, true);
+
+        foreach (PlayerLevelUI l_Current in Levels)
+            GameObject.DestroyImmediate(l_Current.gameObject, true);
+
+        Ranks.Clear();
+        Levels.Clear();
+
+        foreach (CustomApiPlayerCategory l_Cat in PlayerCardUI.m_Player.CategoryData)
+        {
+            int l_FontSize = (int)(2 / (PlayerCardUI.m_Player.CategoryData.Count * 0.11f));
+            if (l_FontSize < 1) l_FontSize = 2;
+            if (l_FontSize == 5) l_FontSize = 4;
+
+             List<ItemParam> l_Params = new List<ItemParam>()
+                {
+                    new ItemParam("Level", l_Cat.Level.ToString()),
+                    new ItemParam("LevelName", l_Cat.Category),
+                    new ItemParam("FontSize", l_FontSize)
+                };
+            PlayerLevelUI l_Temp = CustomUIComponent.CreateItemWithParams<PlayerLevelUI>(m_DetailsLevelsLayout.transform, true, true, l_Params);
+            Levels.Add(l_Temp);
+        }
+
+        foreach (RankData l_Rank in PlayerCardUI.m_Player.RankData)
+        {
+            List<ItemParam> l_Params = new List<ItemParam>()
+                {
+                    new ItemParam("PointsName", l_Rank.PointsName),
+                    new ItemParam("PlayerRank", l_Rank.Rank.ToString())
+                };
+            PlayerRankUI l_Temp = CustomUIComponent.CreateItemWithParams<PlayerRankUI>(m_RankUIVertical.transform, true, true, l_Params);
+            Ranks.Add(l_Temp);
+        }
+
+        m_PlayerNameText.text = GuildSaberUtils.GetPlayerNameToFit(m_PlayerNameText.text, 16);
+        UpdateCanPlayerUseCustomColors();
+        UpdateCardColor();
+        UpdateLevelsDetails();
+    }
 
     public void UpdateLevelsDetails()
     {
-        //Checking if Player enabled Details Levels and guild has differents categories
-        bool l_ShowDetaislLevels = PluginConfig.Instance.ShowDetailsLevels && Levels.Count > 0;
-
+        bool l_ShowDetaislLevels = PluginConfig.Instance.ShowDetailsLevels;
+        if (Levels.Count == 0) l_ShowDetaislLevels = false;
         m_DetailsLevelsLayout.gameObject.SetActive(l_ShowDetaislLevels);
-
-        if (m_CardScreen == null)
-            return;
-
+        if (m_CardScreen == null) return;
         float l_LevelsSize = Levels.Count;
         if (l_ShowDetaislLevels)
         {
             //When the details levels is visible
-            m_CardScreen.ScreenSize = new Vector2((68 + m_PlayerInfo.Name.Length * 1.2f + l_LevelsSize) * 0.9f, 28 + l_LevelsSize * 0.6f + Ranks.Count * 2);
-            m_ElementsGrid.cellSize = new Vector2((40 + m_PlayerInfo.Name.Length + l_LevelsSize) * 1.1f, 40);
+            m_CardScreen.ScreenSize = new Vector2((68 + PlayerCardUI.m_Player.Name.Length * 1.2f + l_LevelsSize) * 0.9f, 28 + l_LevelsSize * 0.65f + Ranks.Count * 2);
+            m_ElementsGrid.cellSize = new Vector2((40 + PlayerCardUI.m_Player.Name.Length + l_LevelsSize) * 1.1f, 40);
             m_DetailsLevelsLayout.cellSize = new Vector2(12 - l_LevelsSize * 0.1f, 10.5f - l_LevelsSize * 0.1f);
             m_ElementsGrid.spacing = new Vector2(7, 7);
         }
         else
         {
             //When the details levels is hidden
-            m_CardScreen.ScreenSize = new Vector2(33 + m_PlayerInfo.Name.Length, 28 + Ranks.Count * 2);
-            m_ElementsGrid.cellSize = new Vector2(25 + m_PlayerInfo.Name.Length, 40);
+            m_CardScreen.ScreenSize = new Vector2(33 + PlayerCardUI.m_Player.Name.Length, 28 + Ranks.Count * 2);
+            m_ElementsGrid.cellSize = new Vector2(25 + PlayerCardUI.m_Player.Name.Length, 40);
             m_ElementsGrid.spacing = new Vector2(1, 7);
         }
     }
@@ -216,12 +218,123 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         m_PlayTimeText.text = PluginConfig.Instance.ShowPlayTime ? string.Join(":", p_Time.Hours.ToString("00"), p_Time.Minutes.ToString("00"), p_Time.Seconds.ToString("00")) : " ";
     }
 
-    public void UpdateToggleCardHandleVisibility()
+    #endregion
+
+    #region Settings
+    #region UIComponents
+    [UIComponent("ToggleShowHandle")] private readonly ToggleSetting m_ToggleShowHandle = null;
+    [UIComponent("CustomColorSettings")] private readonly ColorSetting m_CustomColorSettings = null;
+    [UIComponent("SettingsModal")] public ModalView m_ModalView = null;
+    [UIComponent("SettingsGuildSelector")] public DropDownListSetting m_GuildSelector = null;
+    #endregion
+
+    #region Updates
+    public void UpdateShowPlayerCustomColorUISetting()
     {
-        if (m_SettingsModal != null)
-            m_SettingsModal.UpdateToggleCardHandleVisibility();
+        m_CustomColorSettings.interactable = AllowCustomCardColors;
+        m_CustomColorSettings.gameObject.SetActive(AllowCustomCardColors);
+
+        RectTransform l_Rect = m_ModalView.GetComponent<RectTransform>();
+
+        if (AllowCustomCardColors)
+            l_Rect.sizeDelta = new Vector2(100, 70);
+        else
+            l_Rect.sizeDelta = new Vector2(100, 60);
+    }
+
+    public void UpdateToggleCardHandleUISettingVisibility()
+    {
+        if (Plugin.CurrentSceneName == "GameCore")
+            m_ToggleShowHandle.gameObject.SetActive(PluginConfig.Instance.CardHandleVisible);
+        else
+            m_ToggleShowHandle.gameObject.SetActive(true);
+    }
+    #endregion
+
+    #region Show
+    public void ShowSettings()
+    {
+        m_ModalView.Show(true, false, null);
+    }
+    #endregion
+
+    #region UIValues
+    [UIValue("SelectedGuild")]
+    protected string SelectedGuild
+    {
+        get => PluginConfig.Instance.SelectedGuild;
+        set { }
+    }
+
+    [UIValue("ShowCardHandle")]
+    protected bool ShowCardHandle
+    {
+        get => PluginConfig.Instance.CardHandleVisible;
+        set
+        {
+            PluginConfig.Instance.CardHandleVisible = value;
+            PlayerCardUI.m_Instance.UpdateCardHandleVisibility();
+            UpdateToggleCardHandleUISettingVisibility();
+        }
+    }
+
+    [UIValue("DetailLevels")]
+    protected bool ShowDetailedLevels
+    {
+        get => PluginConfig.Instance.ShowDetailsLevels;
+        set
+        {
+            PluginConfig.Instance.ShowDetailsLevels = value;
+            PlayerCardUI.m_Instance.CardViewController.UpdateLevelsDetails();
+        }
+    }
+
+    [UIValue("ShowPlayTime")]
+    protected bool ShowPlayTime
+    {
+        get => PluginConfig.Instance.ShowPlayTime;
+        set => PluginConfig.Instance.ShowPlayTime = value;
+    }
+
+    [UIValue("CustomColor")]
+    protected UnityEngine.Color CustomColor
+    {
+        get => PluginConfig.Instance.CustomColor;
+        set
+        {
+            PluginConfig.Instance.CustomColor = value;
+            UpdateCardColor();
+        }
     }
 
     #endregion
+
+    #region UIActions
+    [UIAction("RefreshCard")]
+    protected void OnButtonRefreshCardClicked()
+    {
+        PlayerCardUI.RefreshCard(true);
+    }
+
+    [UIAction("UpdateCard")]
+    private void UpdateCard(string p_Selected)
+    {
+        PluginConfig.Instance.SelectedGuild = p_Selected;
+        OnButtonRefreshCardClicked();
+    }
+
+    [UIAction("ResetPosMenu")]
+    private void ResetPosMenu()
+    {
+        PlayerCardUI.ResetMenuCardPosition();
+    }
+
+    [UIAction("ResetPosGame")]
+    private void ResetPosInGame()
+    {
+        PlayerCardUI.ResetInGameCardPosition();
+    }
+
+    #endregion
+    #endregion
 }
-#endregion

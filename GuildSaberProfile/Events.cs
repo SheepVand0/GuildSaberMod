@@ -3,7 +3,9 @@ using UnityEngine;
 using GuildSaberProfile.Time;
 using UnityEngine.SceneManagement;
 using GuildSaberProfile.Utils;
+using GuildSaberProfile.UI.Card;
 using Zenject;
+using System;
 
 namespace GuildSaberProfile;
 
@@ -74,28 +76,34 @@ public class Events : IInitializable
     #endregion
 
     #region Defaults Events Handlers
+    private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
+    {
+        try
+        {
+            SceneManager.activeSceneChanged += OnSceneChanged;
+
+            if (PlayerCardUI.m_Instance == null)
+                PlayerCardUI.CreateCard();
+
+        }
+        catch (Exception l_E)
+        {
+            Plugin.Log.Error($"Exception caught when creating card : {l_E.Message}");
+            Plugin.Log.Error("------------------------------------------------------------");
+            Plugin.Log.Error($"Stack trace : {l_E.StackTrace}");
+            Plugin.Log.Error("------------------------------------------------------------");
+            Plugin.Log.Error($"Inner : {l_E.InnerException}");
+            Plugin.Log.Error("------------------------------------------------------------");
+            Plugin.Log.Error($"TargetSite : {l_E.TargetSite}");
+        }
+    }
     private static void OnSceneChanged(Scene p_CurrentScene, Scene p_NextScene)
     {
         if (p_NextScene == null) return;
 
         Plugin.CurrentSceneName = p_NextScene.name;
-        Plugin.PlayerCard.UpdateCardVisibility();
-        Plugin.PlayerCard.UpdateCardPosition();
-        Plugin.PlayerCard.CardViewController.UpdateToggleCardHandleVisibility();
-    }
-
-    private async void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
-    {
-        SceneManager.activeSceneChanged += OnSceneChanged;
-        if (Plugin.m_TimeManager == null)
-        {
-            Plugin.m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
-            Object.DontDestroyOnLoad(Plugin.m_TimeManager);
-        }
-
-        if (Plugin.PlayerCard != null)
-            await Plugin.DestroyCard();
-        Plugin.CreateCard();
+        PlayerCardUI.m_Instance.UpdateCardVisibility();
+        PlayerCardUI.m_Instance.UpdateCardPosition();
     }
     #endregion
 }

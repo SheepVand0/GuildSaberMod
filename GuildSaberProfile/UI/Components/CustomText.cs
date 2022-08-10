@@ -1,6 +1,7 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage;
 using UnityEngine.UI;
+using UnityEngine;
 using TMPro;
 
 namespace GuildSaberProfile.UI.Components
@@ -9,23 +10,26 @@ namespace GuildSaberProfile.UI.Components
     {
         protected override string m_ViewResourceName => "GuildSaberProfile.UI.Components.Views.CustomText.bsml";
 
-        #region UICOomponents
+        #region UIComponents
         [UIComponent("Text")] TextMeshProUGUI m_CText = null;
-        [UIComponent("Horizontal")] VerticalLayoutGroup m_CHorizontal;
+        [UIComponent("Horizontal")] HorizontalLayoutGroup m_CHorizontal = null;
         #endregion
 
         #region properties
-        public int m_FontSize { get; set; }
+        public int FontSize { get; set; }
         public float AnchorPosX { get; set; }
-        public string m_Text { get; set; }
-        public TextAlignmentOptions m_Alignment { get; set; }
+        public string Text { get; set; }
+        public TextAlignmentOptions Alignment { get; set; }
+        public TextAnchor LayoutAlignment { get; set; }
         #endregion
 
         public override void PostCreate()
         {
-            m_CText.fontSize = m_FontSize;
-            m_CText.text = m_Text;
-            m_CText.alignment = m_Alignment;
+            m_CText.fontSize = FontSize;
+            m_CText.text = Text;
+            m_CText.alignment = Alignment;
+            m_CHorizontal.childAlignment = LayoutAlignment;
         }
+
     }
 }

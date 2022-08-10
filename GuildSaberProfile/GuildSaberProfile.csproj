@@ -145,6 +145,11 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.UI.dll</HintPath>
       <Private>False</Private>
@@ -202,14 +207,12 @@
     <Compile Include="UI\Components\PointsType.cs" />
     <Compile Include="UI\CustomUIComponent.cs" />
     <Compile Include="UI\Components\PlayerAvatar.cs" />
-    <Compile Include="UI\Interfaces\IRefresh.cs" />
     <Compile Include="UI\Leaderboard\GuildSaberCustomLeaderboard.cs" />
     <Compile Include="UI\Leaderboard\GuildSaberLeaderboardPanel.cs" />
     <Compile Include="UI\Leaderboard\GuildSaberLeaderboardView.cs" />
     <Compile Include="UI\Settings\LeftModViewController.cs" />
     <Compile Include="UI\FlowCoordinator\ModFlowCoordinator.cs" />
     <Compile Include="UI\Playlists\ModViewController.cs" />
-    <Compile Include="UI\Card\Settings\SettingsModal.cs" />
     <Compile Include="Utils\Color.cs" />
     <Compile Include="Utils\GSBeatmapUtils.cs" />
     <Compile Include="Utils\GuildSaberUtils.cs" />
@@ -224,13 +227,14 @@
     <EmbeddedResource Include="UI\Card\View\PlayerCard_UI.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\ModViewController.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeftModViewController.bsml" />
-    <EmbeddedResource Include="UI\Card\Settings\SettingsModal.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardPanel.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardView.bsml" />
     <EmbeddedResource Include="UI\Components\Views\PlayerAvatar.bsml" />
     <EmbeddedResource Include="UI\Components\Views\PointsType.bsml" />
     <EmbeddedResource Include="UI\Components\Views\LeaderboardScoreList.bsml" />
     <EmbeddedResource Include="UI\Components\Views\CustomText.bsml" />
+    <EmbeddedResource Include="UI\Card\View\PlayerLevelUI.bsml" />
+    <EmbeddedResource Include="UI\Card\View\PlayerRankUI.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">

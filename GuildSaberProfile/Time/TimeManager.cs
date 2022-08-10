@@ -22,20 +22,14 @@ public class TimeManager : MonoBehaviour
 
     public void Update()
     {
-        if (m_CardControllerRef is null)
-        {
-            return;
-        }
+        if (m_CardControllerRef is null) return;
 
         if (Time.AddSecondAndUpdateClock(UnityEngine.Time.deltaTime))
-        {
             m_CardControllerRef.UpdateTime(Time);
-        }
     }
 
     public void SetPlayerCardViewControllerRef(PlayerCardViewController p_Ref)
     {
-        if (p_Ref != null)
-            m_CardControllerRef = p_Ref;
+        m_CardControllerRef = p_Ref;
     }
 }

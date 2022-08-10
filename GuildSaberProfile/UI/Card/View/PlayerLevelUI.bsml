@@ -1,0 +1,4 @@
+﻿<vertical id='ElemsLayout' vertical-fit="PreferredSize" child-control-height="true" child-expand-height="true" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<text text="~LevelName" font-size="~FontSize"/>
+	<text text="~Level" font-size="~FontSize"/>
+</vertical>

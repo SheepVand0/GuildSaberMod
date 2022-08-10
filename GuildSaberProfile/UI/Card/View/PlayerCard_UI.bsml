@@ -16,13 +16,8 @@
 							<text text="Level:" font-size="3" align="MidlineLeft"/>
 							<text text="~PlayerGlobalLevel" font-size="3" align="MidlineLeft"/>
 						</horizontal>
-						<macro.for-each items="Ranks">
-							<horizontal horizontal-fit="PreferredSize">
-								<text align="Center" id="CategoryText" text="Undefined" font-size="2"/>
-								<text text=" # " font-size="3" align="MidlineLeft"/>
-								<text font-size="3" id="PlayerRankText" align="MidlineLeft"/>
-							</horizontal>
-						</macro.for-each>
+						<vertical child-control-height="true" child-expand-height="true" id="RankUIVertical" vertical-fit="PreferredSize">
+						</vertical>
 						<text text="______" font-size="3"></text>
 					</vertical>
 					<text font-size="2" id="PlayTimeText" text="00:00:00" align="MidlineRight"></text>
@@ -32,14 +27,25 @@
 				</grid>
 			</horizontal>
 			<grid id="DetailsLevelsLayout" vertical-fit="MinSize" horizontal-fit="PreferredSize" cell-size-x="7" cell-size-y="5.5">
-				<macro.for-each items="Levels">
-					<vertical vertical-fit="PreferredSize" child-control-height="true" child-expand-height="true">
-						<text text="~LevelName" font-size="~FontSize"/>
-						<text text="~Level" font-size="~FontSize"/>
-					</vertical>
-				</macro.for-each>
 			</grid>
 		</horizontal>
-    </grid>
-  </bg>
+	</grid>
+	</bg>
+	<modal size-delta-x="100" size-delta-y="60" id="SettingsModal" show-event="ShowSettings" hide-event="HideSettings">
+		<vertical vertical-fit="PreferredSize">
+			<dropdown-list-setting id="GuildList" text='Guild :' value='SelectedGuild' bind-value='true' on-change='UpdateCard' choices='AvailableGuilds' apply-on-change='true'></dropdown-list-setting>
+			<toggle-setting text='Show card handle :' value='ShowCardHandle' id='ToggleShowHandle' apply-on-change='true'></toggle-setting>
+			<toggle-setting text='Show detailed levels :' value='DetailLevels' apply-on-change='true'></toggle-setting>
+			<toggle-setting text='Show play time :' value='ShowPlayTime' apply-on-change='true'></toggle-setting>
+			<color-setting text='Custom Card Color' id='CustomColorSettings' value='CustomColor' apply-on-change='true'></color-setting>
+			<vertical vertical-fit='PreferredSize' spacing='5'>
+				<horizontal spacing='17'>
+					<action-button align='Left' text='Reset menu position' on-click='ResetPosMenu'></action-button>
+					<action-button align='Left' text='Reset game position' on-click='ResetPosGame'></action-button>
+				</horizontal>
+				<button align='Right' text='Refresh' on-click='RefreshCard' font-align='Center' min-width='40'></button>
+			</vertical>
+			<button text='Hide' event-click='HideSettings'></button>
+		</vertical>
+	</modal>
 </bg>

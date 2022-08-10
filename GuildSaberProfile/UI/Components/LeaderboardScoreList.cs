@@ -5,6 +5,7 @@ using GuildSaberProfile.API;
 using TMPro;
 using GuildSaberProfile.Utils.Color;
 using UnityEngine.UI;
+using UnityEngine;
 
 namespace GuildSaberProfile.UI.Components
 {
@@ -13,17 +14,17 @@ namespace GuildSaberProfile.UI.Components
         #region UIComponents
         [UIComponent("RankAndNameH")] private HorizontalLayoutGroup m_RankAndNameLayout = null;
         [UIComponent("ScoreH")] private HorizontalLayoutGroup m_ScoreLayout = null;
-
-        [UIComponent("Rank")] private TextMeshProUGUI m_CRank = null;
         [UIComponent("Points")] private TextMeshProUGUI m_CPoints = null;
-        [UIComponent("Acc")] private TextMeshProUGUI m_CAcc = null;
         #endregion
+
         #region Custom Components
+        [UIValue("Rank")] private CustomText m_CRank = null;
         [UIValue("ScoreText")] private CustomText m_CScore = null;
         [UIValue("Name")] private CustomText m_CPlayerName = null;
+        [UIValue("AccText")] private CustomText m_CAcc = null;
         #endregion
 
-        public int ScoreFontSize { get => 4; set { } }
+        public int ScoreFontSize { get => 3; set { } }
         public string Rank { get; set; }
         public string PlayerName { get; set; }
         public string Points { get; set; }
@@ -42,24 +43,35 @@ namespace GuildSaberProfile.UI.Components
         [UIAction("#post-parse")]
         private void PostParse()
         {
-            UnityEngine.Color l_Red = new Color(255, 0, 55).ToUnityColor();
+            UnityEngine.Color l_Red = new Utils.Color.Color(255, 0, 55).ToUnityColor();
             m_CPoints.color = l_Red;
-            m_CAcc.color = l_Red;
 
-            List<ItemParam> l_TextNameParam = new List<ItemParam>()
+            List<ItemParam> l_CurrentParams = new List<ItemParam>()
             {
-                new ItemParam("m_FontSize", ScoreFontSize),
-                new ItemParam("AnchorPosX", 1f),
-                new ItemParam("m_Text", PlayerName),
-                new ItemParam("m_Alignment", TextAlignmentOptions.Left)
+                new ItemParam("FontSize", ScoreFontSize),
+                new ItemParam("AnchorPosX", -14f),
+                new ItemParam("Text", Rank.ToString()),
+                new ItemParam("Alignment", TextAlignmentOptions.Left),
+                new ItemParam("LayoutAlignment", TextAnchor.MiddleLeft)
             };
 
-            m_CPlayerName = CustomUIComponent.CreateItemWithParams<CustomText>(m_RankAndNameLayout.transform, true, true, l_TextNameParam);
+            m_CRank = CustomUIComponent.CreateItemWithParams<CustomText>(m_RankAndNameLayout.transform, true, true, l_CurrentParams);
 
-            l_TextNameParam[2] = new ItemParam("m_Text", Score.ToString());
-            l_TextNameParam[3] = new ItemParam("m_Alignment", TextAlignmentOptions.Right);
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", -10f);
+            l_CurrentParams[2] = new ItemParam("Text", PlayerName);
 
-            m_CScore = CustomUIComponent.CreateItemWithParams<CustomText>(m_ScoreLayout.transform, true, true, l_TextNameParam);
+            m_CPlayerName = CustomUIComponent.CreateItemWithParams<CustomText>(m_RankAndNameLayout.transform, true, true, l_CurrentParams);
+
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", -4f);
+            l_CurrentParams[2] = new ItemParam("Text", Score.ToString());
+            l_CurrentParams[3] = new ItemParam("Alignment", TextAlignmentOptions.Right);
+
+            m_CScore = CustomUIComponent.CreateItemWithParams<CustomText>(m_ScoreLayout.transform, true, true, l_CurrentParams);
+
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", 1f);
+            l_CurrentParams[2] = new ItemParam("Text", Acc.ToString());
+
+            m_CAcc = CustomUIComponent.CreateItemWithParams<CustomText>(m_ScoreLayout.transform, true, true, l_CurrentParams);
         }
     }
 

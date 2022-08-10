@@ -3,6 +3,8 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Parser;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using System;
 
 namespace GuildSaberProfile.UI
 {
@@ -29,7 +31,6 @@ namespace GuildSaberProfile.UI
         #region Creation
         public static TItem CreateItem<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, bool p_Init = true) where TItem : CustomUIComponent
         {
-            Plugin.Log.Info("Creating avatar");
             TItem l_Item = new GameObject($"Parent_{nameof(TItem)}").AddComponent<TItem>();
             l_Item.OnCreate();
             if (p_Init)
@@ -102,9 +103,15 @@ namespace GuildSaberProfile.UI
 
         public BSMLParserParams Parse(Transform p_Parent)
         {
-            BSMLParserParams l_ParserParams = BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), m_ViewResourceName), p_Parent.gameObject, this);
-            if (l_ParserParams == null) { Plugin.Log.Info("Destroying"); DestroyImmediate(this); }
-            return l_ParserParams;
+            try {
+                BSMLParserParams l_ParserParams = BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), m_ViewResourceName), p_Parent.gameObject, this);
+                return l_ParserParams;
+            }
+            catch (Exception l_Ex)
+            {
+                Plugin.Log.Error($"Error during parsing, here the Complete error : {l_Ex.StackTrace}");
+                Exception l_NewEx = new("Error during parsing bsml : maybe path is invalid ?"); throw l_NewEx;
+            }
         }
         #endregion
     }
