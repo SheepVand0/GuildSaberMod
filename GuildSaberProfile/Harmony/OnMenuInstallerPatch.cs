@@ -2,10 +2,14 @@
 using GuildSaberProfile.Installers;
 using GuildSaberProfile.UI.GuildSaber.Leaderboard;
 using GuildSaberProfile.Utils;
+using GuildSaberProfile.Configuration;
 using System;
 using Zenject;
 using LeaderboardCore.Models;
 using UnityEngine;
+using TMPro;
+using HMUI;
+using Polyglot;
 
 namespace GuildSaberProfile.Harmony
 {
@@ -24,7 +28,6 @@ namespace GuildSaberProfile.Harmony
                 Plugin.Log.Error("Error during binding Leaderboard (GuildSaberLeaderboard)");
                 Plugin.Log.Error($"Here the stacktrace : {p_E}");
             }
-
         }
     }
 
@@ -39,7 +42,7 @@ namespace GuildSaberProfile.Harmony
                 GuildSaberCustomLeaderboard l_Leaderboard = (GuildSaberCustomLeaderboard)__instance;
                 Events.OnLeaderboardShow(l_Leaderboard._panelViewController.m_IsFirtActivation);
                 if (l_Leaderboard._panelViewController.m_IsFirtActivation)
-                    l_Leaderboard._panelViewController.Reload(ReloadMode.FromApi, true, true);
+                    l_Leaderboard._panelViewController.Reload(ReloadMode.FromCurrent, true, true);
             }
         }
     }
@@ -54,7 +57,18 @@ namespace GuildSaberProfile.Harmony
             {
                 GuildSaberCustomLeaderboard l_Leaderboard = (GuildSaberCustomLeaderboard)__instance;
                 Events.OnLeaderboardIsHide();
+                l_Leaderboard._panelViewController.m_HeaderManager.ChangeText(Localization.Get("TITLE_HIGHSCORES"));
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(FlowCoordinator), "SetTitle", new Type[] { typeof(string), typeof(ViewController.AnimationType)})]
+    class UwUModeSoloCoordinatorPatch
+    {
+        private static void Prefix(FlowCoordinator __instance, ref string value, ref ViewController.AnimationType animationType)
+        {
+            if (PluginConfig.Instance.UwUMode)
+                value = "UwU";
         }
     }
 }

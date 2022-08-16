@@ -182,7 +182,8 @@ public class PlayerCardViewController : BSMLAutomaticViewController
             Ranks.Add(l_Temp);
         }
 
-        m_PlayerNameText.text = GuildSaberUtils.GetPlayerNameToFit(m_PlayerNameText.text, 16);
+        Plugin.Log.Info($"{PlayerCardUI.m_Player.Name}");
+        m_PlayerNameText.text = GuildSaberUtils.GetPlayerNameToFit(PlayerCardUI.m_Player.Name, 16);
         UpdateCanPlayerUseCustomColors();
         UpdateCardColor();
         UpdateLevelsDetails();

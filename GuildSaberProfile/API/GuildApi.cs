@@ -38,22 +38,19 @@ public static class GuildApi
 
     public static ApiMapLeaderboardCollectionStruct GetLeaderboard(
         string p_Guild, string p_Hash, IDifficultyBeatmap p_Beatmap,
-        int p_Page, string p_ScoreSaberId = null, string p_Country = null,
-        int p_CountPerPage = 0)
+        string p_Page, string p_ScoreSaberId, string p_Country,
+        string p_CountPerPage = null)
     {
         ApiMapLeaderboardCollectionStruct l_Leaderboard = new ApiMapLeaderboardCollectionStruct();
         using HttpClient l_Client = new HttpClient();
-
-        try
-        {
+        try {
             Task<string> l_Result = null;
             l_Result = l_Client.GetStringAsync(
-                $"{GuildSaberUtils.ReturnLinkFromGuild(p_Guild)}/mapleaderboard/{p_Hash}/{GuildSaberLeaderboardUtils.BeatmapDifficultyToDifficultyInOrder(p_Beatmap.difficulty)}/{p_Beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.serializedName}/{p_Page}/{p_ScoreSaberId}/{p_Country}/{p_CountPerPage.ToString()}");
+                $"{GuildSaberUtils.ReturnLinkFromGuild(p_Guild)}/mapleaderboard/{p_Hash}/{GuildSaberLeaderboardUtils.BeatmapDifficultyToDifficultyInOrder(p_Beatmap.difficulty)}/{p_Beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.serializedName}/{p_Page}/{p_ScoreSaberId}/{p_Country}/{p_CountPerPage}");
             l_Result.Wait();
             l_Leaderboard = JsonConvert.DeserializeObject<ApiMapLeaderboardCollectionStruct>(l_Result.Result);
-        } catch(AggregateException p_E)
-        {
-            Plugin.Log.Error(p_E.Message);
+        } catch(AggregateException p_E) {
+            Plugin.Log.Debug(p_E.Message);
             return new();
         }
         return l_Leaderboard;

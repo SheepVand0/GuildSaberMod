@@ -55,10 +55,6 @@ namespace GuildSaberProfile.UI.GuildSaber.Components
             Setup(l_Player.m_ReturnPlayer.ProfilePicture, l_Player.m_ReturnPlayer.ProfileColor.ToUnityColor());
         }
 
-        public override void OnCreate()
-        {
-        }
-
         public override void PostCreate()
         {
             m_AvatarGrid.cellSize = new Vector2(17, 17);

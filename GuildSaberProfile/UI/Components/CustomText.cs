@@ -16,20 +16,31 @@ namespace GuildSaberProfile.UI.Components
         #endregion
 
         #region properties
-        public int FontSize { get; set; }
+        public float FontSize { get; set; }
         public float AnchorPosX { get; set; }
-        public string Text { get; set; }
+        public string Text { get => string.Empty; set { } }
+        public string RichText { get; set; }
         public TextAlignmentOptions Alignment { get; set; }
         public TextAnchor LayoutAlignment { get; set; }
+        public Color Color { get; set; }
+        public bool Italic { get; set; }
         #endregion
 
         public override void PostCreate()
         {
             m_CText.fontSize = FontSize;
-            m_CText.text = Text;
+            m_CText.text = $"{RichText}{Text}";
             m_CText.alignment = Alignment;
+            m_CText.color = Color;
+            m_CText.overflowMode = TextOverflowModes.Overflow;
+            if (Italic)
+                m_CText.fontStyle = FontStyles.Italic;
             m_CHorizontal.childAlignment = LayoutAlignment;
         }
 
+        public void SetText(string p_Text)
+        {
+            m_CText.text = p_Text;
+        }
     }
 }

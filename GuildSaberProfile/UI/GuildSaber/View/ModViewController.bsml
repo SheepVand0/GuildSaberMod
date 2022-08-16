@@ -1,8 +1,14 @@
 ﻿<bg bg="round-rect-panel" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
-	<settings-container child-control-height='true' child-expand-height='true'>
-		<text text='Playlists : ' underlined='true'></text>
+	<vertical anchor-pos-y='-4' id='Elems' child-control-height='true' child-expand-height='true' vertical-fit='PreferredSize'>
+		<clickable-text text='Playlists : ' underlined='true' event-click='ShowUwUSetting'></clickable-text>
+		<modal show-event='ShowUwUSetting' hide-event='HideUwU' size-delta-x='80' size-delta-y='20'>
+			<vertical vertical-fit='PreferredSize'>
+				<toggle-setting text='UwU Mode : ' value='UwU' apply-on-change='true'></toggle-setting>
+				<button text='Hide' event-click='HideUwU'></button>
+			</vertical>
+		</modal>
 		<dropdown-list-setting id='Dropdown' text='Selected Guild : ' choices='AvailableGuilds' value='SelectedGuild' on-change='OnGuildChange' bind-value='true'/>
 		<vertical min-width='25' spacing='2'>
 			<toggle-setting text='Playlists contains only unpassed maps' value='UnPassedMaps' apply-on-change='true'></toggle-setting>
@@ -13,5 +19,8 @@
 				</horizontal>
 			</custom-list>
 		</vertical>
-	</settings-container>
+	</vertical>
+	<grid id='LoadingLayout'  cell-size-x='20' cell-size-y='20'>
+		<loading-indicator></loading-indicator>
+	</grid>
 </bg>

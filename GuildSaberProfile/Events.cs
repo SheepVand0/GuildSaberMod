@@ -32,6 +32,9 @@ public class Events : IInitializable
 
     public delegate void OnLeaderboardHide();
     public static event OnLeaderboardHide e_OnLeaderboardHide;
+
+    public delegate void OnScopeSelected(ELeaderboardScope p_Scope);
+    public event OnScopeSelected e_OnScopeSelected;
     #endregion
 
     #region Setup
@@ -72,6 +75,11 @@ public class Events : IInitializable
     {
         m_IsGuildSaberLeaderboardShown = false;
         e_OnLeaderboardHide?.Invoke();
+    }
+
+    public void SelectScope(ELeaderboardScope p_Scope)
+    {
+        e_OnScopeSelected?.Invoke(p_Scope);
     }
     #endregion
 

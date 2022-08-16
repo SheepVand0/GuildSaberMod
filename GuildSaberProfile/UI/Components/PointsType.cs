@@ -24,10 +24,6 @@ namespace GuildSaberProfile.UI.Components
 
         private GuildSaberLeaderboardPanel _LeaderboardPanel = null;
 
-        public override void OnCreate()
-        {
-        }
-
         public override void PostCreate()
         {
             _LeaderboardPanel = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0];

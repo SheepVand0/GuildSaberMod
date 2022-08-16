@@ -105,7 +105,7 @@ public class PlayerCardUI
     public static PlayerCardUI CreateCard()
     {
         PlayerGuildsInfo l_Player = GuildApi.GetPlayerInfoFromAPI();
-        if (l_Player.Equals(null)) { Plugin.Log.Error("Failed Getting Player Info"); }
+        if (l_Player.Equals(default(PlayerGuildsInfo))) { Plugin.Log.Error("Failed Getting Player Info"); return null; }
 
         m_Player = l_Player.m_ReturnPlayer;
 

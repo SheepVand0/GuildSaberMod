@@ -28,6 +28,7 @@ internal class PluginConfig
     [JsonProperty("SelectedGuild")] public virtual string SelectedGuild { get; set; } = "CS";
     [JsonProperty("ShowSettingsModal")] public virtual bool ShowSettingsModal { get; set; } = true;
     [JsonProperty("CustomColor")] public virtual Color CustomColor { get; set; } = Color.red;
+    [JsonProperty("UwUMode")] public virtual bool UwUMode { get; set; } = false;
     /// <summary>
     ///     This is called whenever BSIPA reads the config from disk (including when file changes are detected).
     /// </summary>

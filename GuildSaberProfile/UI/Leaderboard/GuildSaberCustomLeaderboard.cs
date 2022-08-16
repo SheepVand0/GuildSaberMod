@@ -60,6 +60,8 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
     {
         public ImageView _HeaderImageView;
 
+        GameObject m_Header;
+
         public bool m_Idle = false;
 
         public static Color m_Color0 = new Color(1, 0.5f, 0, 3);
@@ -68,13 +70,6 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         {
             try
             {
-                Plugin.Log.Info("Changing GuildSaber Leaderboard Colors");
-                var l_ScreenTransform = GameObject.Find("RightScreen").transform;
-                var l_Header = l_ScreenTransform.FindChildRecursive("HeaderPanel").gameObject;
-
-                _HeaderImageView = l_Header.GetComponentInChildren<ImageView>();
-                l_Header.GetComponentInChildren<TextMeshProUGUI>().text = "UwU";
-
                 m_Idle = false;
             } catch(Exception p_E)
             {
@@ -91,13 +86,26 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         {
             if (m_Idle == true) return;
 
-            if (_HeaderImageView == null) return;
+            if (_HeaderImageView == null)
+            {
+                var l_ScreenTransform = GameObject.Find("RightScreen").transform;
+                m_Header = l_ScreenTransform.FindChildRecursive("HeaderPanel").gameObject;
+
+                _HeaderImageView = m_Header.GetComponentInChildren<ImageView>();
+            }
 
             _HeaderImageView.color0 = m_Color0;
             _HeaderImageView.color1 = m_Color1;
 
             if (_HeaderImageView.color1 == m_Color0 && _HeaderImageView.color1 == m_Color1)
                 m_Idle = true;
+        }
+
+        public void ChangeText(string p_Text)
+        {
+            if (m_Header == null) return;
+
+            m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
         }
     }
 }

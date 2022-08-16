@@ -1,22 +1,11 @@
-﻿<custom-list id="ScoreList" contents="ScoreCells" stick-scrolling="false" min-height="60" cell-size="4" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+﻿<custom-list id="ScoreList" contents="ScoreCells" stick-scrolling="false" min-height="60" cell-size="4" pref-width="100" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
-	<horizontal  preferred-width='90' ignore-layout='true' horizontal-fit='PreferredSize' anchor-pos-x='8' vertical-fit='MinSize'>
-		<horizontal id='RankAndNameH' preferred-width='44' child-align='MiddleLeft' horizontal-fit='MinSize' spacing='5' anchor-pos-x='8'>
-			<macro.as-host host='Rank'></macro.as-host>
-			<macro.as-host host='PlayerName'></macro.as-host>
-			<horizontal child-align='MiddleCenter' horizontal-fit='PreferredSize' anchor-pos-x='14'>
-				<text text='(' align='Left' font-size='~ScoreFontSize'></text>
-				<text id='Points' align='Left' text='~Points' font-size='~ScoreFontSize'></text>
-				<text text=')' align='Left' font-size='~ScoreFontSize'></text>
-			</horizontal>
-		</horizontal>
-		<horizontal anchor-pos-x='8'>
-			<horizontal id='ScoreH' horizontal-fit='MinSize'>
-				<macro.as-host host='ScoreText'></macro.as-host>
-				<macro.as-host host='AccText'></macro.as-host>
-			</horizontal>
-			<text id='Acc' text='~Acc' align='Right' anchor-pos-x='1' font-size='~ScoreFontSize'></text>
-		</horizontal>
+	<horizontal ignore-layout='true' id='Elems' child-control-width='true' child-expand-width='true' min-width='120'>
+		<macro.as-host host='Rank'></macro.as-host>
+		<macro.as-host host='PlayerName'></macro.as-host>
+		<macro.as-host host='Points'></macro.as-host>
+		<macro.as-host host='ScoreText'></macro.as-host>
+		<macro.as-host host='AccText'></macro.as-host>
 	</horizontal>
 </custom-list>

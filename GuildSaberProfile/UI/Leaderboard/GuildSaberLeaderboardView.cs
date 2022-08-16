@@ -8,7 +8,11 @@ using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
 using System;
+using System.Threading.Tasks;
 using LeaderboardCore.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
+using GuildSaberProfile.Configuration;
 
 /*
 *
@@ -25,14 +29,21 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
     public class GuildSaberLeaderboardView : BSMLAutomaticViewController, INotifyLeaderboardSet, INotifyScoreUpload
     {
         #region
+        #region Layouts
         [UIComponent("VerticalElems")] VerticalLayoutGroup m_VerticalElems = null;
-        [UIComponent("ScoreParamsLayout")] HorizontalLayoutGroup m_ScoreParamsLayout = null;
+        [UIComponent("ScoreParamsLayout")] VerticalLayoutGroup m_ScoreParamsLayout = null;
+        [UIComponent("WorldSelection")] VerticalLayoutGroup m_ScopeSelectionLayout = null;
+        [UIComponent("ElemsHorizontal")] HorizontalLayoutGroup m_HorizontalElems = null;
+        #endregion
         [UIComponent("NotRankedText")] TextMeshProUGUI m_NotRankedText = null;
         [UIComponent("ErrorText")] TextMeshProUGUI m_ErrorText = null;
+        [UIComponent("Loading")] GridLayoutGroup m_LoadingLayout = null;
         LeaderboardScoreList m_ScoresList = null;
+        ScopeSelector m_ScopeSelector = null;
         #endregion
 
         private GuildSaberLeaderboardPanel _LeaderboardPanel;
+        private ELeaderboardScope m_SelectedScope = ELeaderboardScope.Global;
 
         public string m_CurrentPointsName { get; internal set; }
         public string m_CurrentMapHash { get; internal set; }
@@ -47,6 +58,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
 
             _LeaderboardPanel = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0];
             m_ScoresList = CustomUIComponent.CreateItem<LeaderboardScoreList>(m_ScoreParamsLayout.transform, true, true);
+            m_ScopeSelector = CustomUIComponent.CreateItem<ScopeSelector>(m_ScopeSelectionLayout.transform, true, true);
 
             BindEvents();
 
@@ -60,37 +72,68 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             Events.e_OnLeaderboardShown += OnLeaderboardShow;
             Events.m_Instance.e_OnPointsTypeChange += OnPointsTypeChange;
             Events.m_Instance.e_OnGuildSelected += OnGuildSelected;
+            Events.m_Instance.e_OnScopeSelected += OnScopeSelected;
         }
         #endregion
 
         #region Leaderboard
-        public void GetLeaderboard(string p_Guild)
+        public async void GetLeaderboard(string p_Guild)
         {
-            Plugin.Log.Info("Getting Leaderboard");
-            if (m_CurrentBeatmap == null) { SetLeaderboardViewMode(LeaderboardViewMode.Error); return; }
-            string l_Hash = GSBeatmapUtils.DifficultyBeatmapToHash(m_CurrentBeatmap);
-            m_Leaderboard = GuildApi.GetLeaderboard(p_Guild, l_Hash, m_CurrentBeatmap,0, null, null, 10);
-            if (m_Leaderboard.Leaderboards == null) { SetLeaderboardViewMode(LeaderboardViewMode.NotRanked); return; }
-            Plugin.Log.Info(m_Leaderboard.Leaderboards.Count.ToString() + " Scores found");
-            m_ScoresList.SetScores(m_Leaderboard.CustomData, m_Leaderboard.Leaderboards, m_CurrentPointsName);
-            SetLeaderboardViewMode(LeaderboardViewMode.Scores);
+            try
+            {
+                SetLeaderboardViewMode(ELeaderboardViewMode.Loading);
+                if (m_CurrentBeatmap == null) { SetLeaderboardViewMode(ELeaderboardViewMode.Error); return; }
+                string l_Hash = GSBeatmapUtils.DifficultyBeatmapToHash(m_CurrentBeatmap);
+                string l_Id = "null";
+                string l_Country = "null";
+                string l_Page = "1";
+                if (m_SelectedScope == ELeaderboardScope.Around) { l_Id = Plugin.m_PlayerId; }
+                if (m_SelectedScope == ELeaderboardScope.Country) { l_Country = _LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer.Country; }
+                await Task.Run(delegate
+                {
+                    m_Leaderboard = GuildApi.GetLeaderboard(p_Guild, l_Hash, m_CurrentBeatmap, l_Page, l_Id, p_Country: l_Country, "10");
+                });
+
+                if (m_Leaderboard.Leaderboards is null) { SetLeaderboardViewMode(ELeaderboardViewMode.NotRanked); return; }
+                else if (!m_Leaderboard.Leaderboards.Any()) { SetLeaderboardViewMode(ELeaderboardViewMode.Unpassed);
+                    ChangeHeaderText($"Level {m_Leaderboard.CustomData.Level} - {m_Leaderboard.CustomData.Category}");
+                    return;
+                }
+
+                ChangeHeaderText($"Level {m_Leaderboard.CustomData.Level} - {m_Leaderboard.CustomData.Category}");
+
+                m_ScoresList.SetScores(m_Leaderboard.CustomData, m_Leaderboard.Leaderboards, m_CurrentPointsName);
+                SetLeaderboardViewMode(ELeaderboardViewMode.Scores);
+            }
+            catch (Exception l_Ex)
+            {
+                m_ErrorText.SetTextError(l_Ex, GuildSaberUtils.ErrorMode.Message);
+                SetLeaderboardViewMode(ELeaderboardViewMode.Error);
+                Plugin.Log.Error(l_Ex.StackTrace);
+            }
+        }
+
+        public void ChangeHeaderText(string p_Text)
+        {
+            if (_LeaderboardPanel.m_HeaderManager == null) _LeaderboardPanel.m_HeaderManager = Resources.FindObjectsOfTypeAll<LeaderboardHeaderManager>()[0];
+            if (PluginConfig.Instance.UwUMode)
+                p_Text += " `(*>﹏<*)′";
+
+                _LeaderboardPanel.m_HeaderManager.ChangeText(p_Text);
         }
         #endregion
 
         #region Events
+        private void OnScopeSelected(ELeaderboardScope p_Scope)
+        {
+            m_SelectedScope = p_Scope;
+            GetLeaderboard(_LeaderboardPanel.m_SelectedGuild);
+        }
         public void OnLeaderboardSet(IDifficultyBeatmap difficultyBeatmap)
         {
-            try
-            {
-                m_CurrentBeatmap = difficultyBeatmap;
-
-                if (Events.m_IsGuildSaberLeaderboardShown)
-                    GetLeaderboard(_LeaderboardPanel.m_SelectedGuild);
-            } catch (Exception l_Ex)
-            {
-                m_ErrorText.SetTextError(l_Ex, GuildSaberUtils.ErrorMode.Message);
-                SetLeaderboardViewMode(LeaderboardViewMode.Error);
-            }
+            m_CurrentBeatmap = difficultyBeatmap;
+            if (Events.m_IsGuildSaberLeaderboardShown)
+                GetLeaderboard(_LeaderboardPanel.m_SelectedGuild);
         }
 
         private void OnLeaderboardShow(bool p_FirstActivation)
@@ -98,55 +141,66 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             if (p_FirstActivation)
                 m_CurrentBeatmap = Resources.FindObjectsOfTypeAll<LevelCollectionNavigationController>()[0].selectedDifficultyBeatmap;
 
-            if (m_CurrentBeatmap == null) { SetLeaderboardViewMode(LeaderboardViewMode.Error); return; }
+            if (m_CurrentBeatmap == null) { SetLeaderboardViewMode(ELeaderboardViewMode.Error); return; }
 
-            try
-            {
-                GetLeaderboard(_LeaderboardPanel.m_SelectedGuild);
-            }
-            catch (Exception l_Ex)
-            {
-                SetLeaderboardViewMode(LeaderboardViewMode.Error);
-                m_ErrorText.SetTextError(l_Ex, GuildSaberUtils.ErrorMode.Message);
-            }
+            GetLeaderboard(_LeaderboardPanel.m_SelectedGuild);
         }
 
         public void OnScoreUploaded()
         {
-            throw new NotImplementedException();
-        }
 
-        private void OnGuildSelected(string p_Guild)
-        {
-            GetLeaderboard(p_Guild);
         }
+        private void OnGuildSelected(string p_Guild) { GetLeaderboard(p_Guild); }
 
         private void OnPointsTypeChange(string p_PointsName)
         {
             m_CurrentPointsName = p_PointsName;
-            m_ScoresList.SetScores(m_Leaderboard.CustomData, m_Leaderboard.Leaderboards, m_CurrentPointsName);
+            if (m_ScoresList.gameObject.activeInHierarchy)
+                m_ScoresList.SetScores(m_Leaderboard.CustomData, m_Leaderboard.Leaderboards, m_CurrentPointsName);
         }
         #endregion
 
         #region Other
-        public void SetLeaderboardViewMode(LeaderboardViewMode p_Mode)
+        public void SetLeaderboardViewMode(ELeaderboardViewMode p_Mode)
         {
             switch (p_Mode)
             {
-                case LeaderboardViewMode.Scores:
+                case ELeaderboardViewMode.Scores:
                     m_ScoreParamsLayout.gameObject.SetActive(true);
+                    m_ScopeSelectionLayout.gameObject.SetActive(true);
                     m_NotRankedText.gameObject.SetActive(false);
                     m_ErrorText.gameObject.SetActive(false);
+                    m_LoadingLayout.gameObject.SetActive(false);
                     break;
-                case LeaderboardViewMode.NotRanked:
+                case ELeaderboardViewMode.NotRanked:
                     m_ScoreParamsLayout.gameObject.SetActive(false);
+                    m_ScopeSelectionLayout.gameObject.SetActive(false);
                     m_NotRankedText.gameObject.SetActive(true);
                     m_ErrorText.gameObject.SetActive(false);
+                    m_LoadingLayout.gameObject.SetActive(false);
+                    m_NotRankedText.SetText("Map not ranked");
                     break;
-                case LeaderboardViewMode.Error:
+                case ELeaderboardViewMode.Unpassed:
                     m_ScoreParamsLayout.gameObject.SetActive(false);
+                    m_ScopeSelectionLayout.gameObject.SetActive(true);
+                    m_NotRankedText.gameObject.SetActive(true);
+                    m_ErrorText.gameObject.SetActive(false);
+                    m_LoadingLayout.gameObject.SetActive(false);
+                    m_NotRankedText.SetText("Map unpassed");
+                    break;
+                case ELeaderboardViewMode.Loading:
+                    m_ScoreParamsLayout.gameObject.SetActive(false);
+                    m_ScopeSelectionLayout.gameObject.SetActive(false);
+                    m_NotRankedText.gameObject.SetActive(false);
+                    m_ErrorText.gameObject.SetActive(false);
+                    m_LoadingLayout.gameObject.SetActive(true);
+                    break;
+                case ELeaderboardViewMode.Error:
+                    m_ScoreParamsLayout.gameObject.SetActive(false);
+                    m_ScopeSelectionLayout.gameObject.SetActive(false);
                     m_NotRankedText.gameObject.SetActive(false);
                     m_ErrorText.gameObject.SetActive(true);
+                    m_LoadingLayout.gameObject.SetActive(false);
                     break;
                 default: return;
             }
@@ -154,8 +208,8 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         #endregion
     }
 
-    public enum LeaderboardViewMode
+    public enum ELeaderboardViewMode
     {
-        Scores, NotRanked, Error
+        Scores, NotRanked, Unpassed, Loading, Error
     }
 }

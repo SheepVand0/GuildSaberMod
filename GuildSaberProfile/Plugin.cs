@@ -36,6 +36,7 @@ public class Plugin
     public static List<object> AvailableGuilds = new List<object>();
     public static ModFlowCoordinator _modFlowCoordinator;
     public static string m_PlayerId = string.Empty;
+    public static int m_ScoresPerPage = 10;
     // ReSharper disable once UnusedAutoPropertyAccessor.Local
     #endregion
 

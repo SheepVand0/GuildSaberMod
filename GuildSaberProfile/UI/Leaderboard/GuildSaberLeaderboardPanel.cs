@@ -13,6 +13,7 @@ using GuildSaberProfile.UI.GuildSaber.Components;
 using GuildSaberProfile.UI.Components;
 using GuildSaberProfile.Utils;
 using GuildSaberProfile.API;
+using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
 
@@ -41,36 +42,42 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         public PlayerGuildsInfo m_PlayerGuildsInfo = new PlayerGuildsInfo();
         public bool m_IsFirtActivation = true;
 
+        public LeaderboardHeaderManager m_HeaderManager;
+
         #region Actions
         [UIAction("OnGuildSelected")]
-        private void OnGuildSelected(string p_Selected)
+        private async void OnGuildSelected(string p_Selected)
         {
             m_SelectedGuild = p_Selected;
-            Reload(ReloadMode.FromApi, true, false);
+            await Reload(ReloadMode.FromApi, true, false);
             Events.m_Instance.SelectGuild(m_SelectedGuild);
         }
         #endregion
 
         #region Functions
-        public void Reload(ReloadMode p_ReloadMode, bool p_SetLoadingModeBeforeGettingData, bool p_ReloadStyle)
+        public async Task<Task> Reload(ReloadMode p_ReloadMode, bool p_SetLoadingModeBeforeGettingData, bool p_ReloadStyle)
         {
             if (p_SetLoadingModeBeforeGettingData)
                 SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Loading);
 
             Plugin.Log.Info(m_SelectedGuild);
             //-----------------------------------------Panel Style-----------------------------------------
-            switch (p_ReloadMode) {
-                case ReloadMode.FromCurrent:
-                    if (m_SelectedGuild == PluginConfig.Instance.SelectedGuild)
-                        m_PlayerGuildsInfo = GuildApi.GetPlayerInfoFromCurrent();
-                    else
-                        Reload(ReloadMode.FromApi, true, true);
-                    break;
-                case ReloadMode.FromApi:
-                    m_PlayerGuildsInfo = GuildApi.GetPlayerInfoFromAPI(false, m_SelectedGuild);
-                    break;
-                default: return;
-            }
+            await Task.Run(async delegate
+            {
+                switch (p_ReloadMode)
+                {
+                    case ReloadMode.FromCurrent:
+                        if (m_SelectedGuild == PluginConfig.Instance.SelectedGuild)
+                            m_PlayerGuildsInfo = GuildApi.GetPlayerInfoFromCurrent();
+                        else
+                            await Reload(ReloadMode.FromApi, true, true);
+                        break;
+                    case ReloadMode.FromApi:
+                        m_PlayerGuildsInfo = GuildApi.GetPlayerInfoFromAPI(false, m_SelectedGuild);
+                        break;
+                    default: return;
+                }
+            });
 
             if (m_PlayerAvatar != null)
                 m_PlayerAvatar.UpdateShader(m_PlayerGuildsInfo.m_ReturnPlayer.ProfileColor.ToUnityColor());
@@ -81,7 +88,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 if (p_ReloadMode == ReloadMode.FromCurrent)
                     Reload(ReloadMode.FromApi, true, true);
                 else
-                    return;
+                    return Task.CompletedTask;
             }
 
             m_PlayerName.text = GuildSaberUtils.GetPlayerNameToFit(m_PlayerGuildsInfo.m_ReturnPlayer.Name, 12);
@@ -103,11 +110,11 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 l_ResultTexture.SetPixels(l_Texture);
                 l_ResultTexture.Apply();
                 l_BackgroundView.overrideSprite = Sprite.Create(l_ResultTexture, new Rect(0, 0, l_ResultTexture.width, l_ResultTexture.height), new Vector2(0, 0));
-                Color l_MainColor = new Color(0,0,0,1);
+                Color l_MainColor = new Color(0, 0, 0, 1);
                 Color[] l_Pixels = l_ResultTexture.GetPixels();
                 for (int l_i = 0; l_i < l_Pixels.Length; l_i++)
                 {
-                    if (!l_Pixels[l_i].Greater(new Color(0.3f,0.3f,0.3f)))
+                    if (!l_Pixels[l_i].Greater(new Color(0.3f, 0.3f, 0.3f)))
                         continue;
 
                     if (l_MainColor == new Color(0, 0, 0, 1))
@@ -125,8 +132,8 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 l_BackgroundView.SetField("_gradientDirection", ImageView.GradientDirection.Horizontal);
                 l_BackgroundView.SetField("_flipGradientColors", false);
             }
-
             SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Normal);
+            return Task.CompletedTask;
         }
 
         public void SetLeaderboardPanelViewMode(LeaderboardPanelViewMode p_ViewMode)
@@ -158,7 +165,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             foreach (string l_Current in l_Guilds)
             {
                 m_AvailablesGuilds.Add(l_Current);
-                if (l_Current ==  m_SelectedGuild)
+                if (l_Current == m_SelectedGuild)
                 {
                     m_GuildSelector.Value = l_Current;
                     m_GuildSelector.ApplyValue();

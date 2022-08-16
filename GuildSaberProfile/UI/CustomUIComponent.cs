@@ -46,10 +46,9 @@ namespace GuildSaberProfile.UI
                 PropertyInfo p_PropertyInfo = typeof(TItem).GetProperty(l_Param.m_ParamName, BindingFlags.Public | BindingFlags.Instance);
                 if (p_PropertyInfo != null && p_PropertyInfo.CanWrite && p_PropertyInfo.PropertyType == l_Param.m_Value.GetType())
                     p_PropertyInfo.SetValue(l_Item, l_Param.m_Value, null);
-                else
-                    Plugin.Log.Error($"Property not valid -> Gived Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}");
+                else Plugin.Log.Error($"Property not valid -> Gived Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}");
             }
-            l_Item.Init(p_Parent,p_UnderParent,p_NeedParse);
+            l_Item.Init(p_Parent, p_UnderParent, p_NeedParse);
             return l_Item;
         }
 
@@ -76,20 +75,9 @@ namespace GuildSaberProfile.UI
         #endregion
 
         #region Events
-        public virtual void OnCreate()
-        {
-
-        }
-
-        public virtual void PostCreate()
-        {
-
-        }
-
-        public virtual void OnDestroy()
-        {
-
-        }
+        public virtual void OnCreate() { }
+        public virtual void PostCreate() { }
+        public virtual void OnDestroy() { }
         #endregion
 
         #region Init
@@ -103,13 +91,15 @@ namespace GuildSaberProfile.UI
 
         public BSMLParserParams Parse(Transform p_Parent)
         {
-            try {
+            try
+            {
                 BSMLParserParams l_ParserParams = BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), m_ViewResourceName), p_Parent.gameObject, this);
                 return l_ParserParams;
             }
             catch (Exception l_Ex)
             {
                 Plugin.Log.Error($"Error during parsing, here the Complete error : {l_Ex.StackTrace}");
+                Plugin.Log.Error($"Host name : {name}");
                 Exception l_NewEx = new("Error during parsing bsml : maybe path is invalid ?"); throw l_NewEx;
             }
         }

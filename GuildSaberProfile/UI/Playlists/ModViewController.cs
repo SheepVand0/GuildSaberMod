@@ -38,7 +38,7 @@ namespace GuildSaberProfile.UI.GuildSaber
 
         #region UIComponents
         [UIComponent("DownloadBut")] private readonly Button m_DownloadButton = null;
-        [UIComponent("ElemsHorizontal")] private readonly HorizontalLayoutGroup m_HorizontalElems = null;
+        [UIComponent("ElemsHorizontal")] public readonly HorizontalLayoutGroup m_HorizontalElems = null;
         #endregion
 
         public CategoryUI(string p_Name, string p_GuildName, bool p_DownloadOnlyUnpassed)
@@ -213,76 +213,112 @@ namespace GuildSaberProfile.UI.GuildSaber
         #endregion
 
         #region UIComponents
-        [UIComponent("CategoryList")] public CustomCellListTableData m_CategoriesTableList;
-        [UIComponent("Dropdown")] public DropDownListSetting m_GuildChoiceDropdown;
+        [UIComponent("CategoryList")] public CustomCellListTableData m_CategoriesTableList = null;
+        [UIComponent("Dropdown")] public DropDownListSetting m_GuildChoiceDropdown = null;
+        [UIComponent("LoadingLayout")] public GridLayoutGroup m_LoadingGrid = null;
+        [UIComponent("Elems")] public VerticalLayoutGroup m_ElemsLayout = null;
         #endregion
 
         #region UIActions
         [UIAction("#post-parse")]
         private void PostParse()
         {
-            UpdateCategories();
+            try
+            {
+                UpdateCategories();
+            } catch (Exception l_E)
+            {
+                Plugin.Log.Error(l_E.StackTrace);
+            }
         }
 
         [UIAction("OnGuildChange")]
-        public void OnGuildChange(string p_Selected)
+        public async void OnGuildChange(string p_Selected)
         {
+            SetLoadingMode(LoadingMode.loading);
             SelectedGuild = p_Selected;
             GuildName = p_Selected;
-            RefreshList();
+            await RefreshList();
+            SetLoadingMode(LoadingMode.normal);
         }
         #endregion
 
-        public void UpdateCategories()
+        public void SetLoadingMode(LoadingMode p_Mode)
         {
-            List<GuildCategories> l_Categories = new List<GuildCategories>();
-            m_Guilds.Clear();
-            foreach (string l_CurrentGuild in Plugin.AvailableGuilds)
+            switch (p_Mode)
             {
-                PlayerGuildsInfo l_Player = GuildApi.GetPlayerInfoFromAPI(false, l_CurrentGuild);
-                if (l_Player.m_AvailableGuilds.Count == 0)
-                    continue;
-
-                GuildCategories l_Guild = new GuildCategories(l_CurrentGuild, new List<string>());
-                foreach (CustomApiPlayerCategory l_Current in l_Player.m_ReturnPlayer.CategoryData)
-                    l_Guild.Categories.Add(l_Current.Category);
-                l_Categories.Add(l_Guild);
+                case LoadingMode.loading:
+                    m_LoadingGrid.gameObject.SetActive(true);
+                    m_GuildChoiceDropdown.interactable = false;
+                    break;
+                case LoadingMode.normal:
+                    m_GuildChoiceDropdown.interactable = true;
+                    m_LoadingGrid.gameObject.SetActive(false);
+                    break;
+                default: return;
             }
-            m_Guilds = l_Categories;
-            RefreshDropdown();
-            RefreshList();
         }
 
-        public void RefreshDropdown()
+        public async void UpdateCategories()
         {
-            List<string> l_Guilds = new List<string>();
-            foreach (GuildCategories l_Current in m_Guilds)
-                l_Guilds.Add(l_Current.GuildName);
-            m_AvailableGuilds.Clear();
-            foreach (string l_Current in l_Guilds)
-                m_AvailableGuilds.Add(l_Current);
-            m_GuildChoiceDropdown.UpdateChoices();
-            SelectedGuild = (string)m_GuildChoiceDropdown.Value;
-        }
-
-        public void RefreshList()
-        {
-            foreach (CategoryUI l_Current in m_ListCategories)
-                l_Current.UnbindEvent();
-            m_ListCategories.Clear();
-            GuildCategories l_CurrentGuild = GetGuildFromName(m_Guilds, SelectedGuild);
-            if (l_CurrentGuild.GuildName == Plugin.NOT_DEFINED) { Plugin.Log.Error($"Selected guild not valid : returned guild {l_CurrentGuild.GuildName}"); return; }
-            try
+            await Task.Run(delegate
             {
-                l_CurrentGuild.Categories.Add(string.Empty);
+                SetLoadingMode(LoadingMode.loading);
+                List<GuildCategories> l_Categories = new List<GuildCategories>();
+                m_Guilds.Clear();
+                foreach (string l_CurrentGuild in Plugin.AvailableGuilds)
+                {
+                    PlayerGuildsInfo l_Player = GuildApi.GetPlayerInfoFromAPI(false, l_CurrentGuild);
+                    if (l_Player.m_AvailableGuilds.Count == 0)
+                        continue;
+
+                    GuildCategories l_Guild = new GuildCategories(l_CurrentGuild, new List<string>());
+                    foreach (CustomApiPlayerCategory l_Current in l_Player.m_ReturnPlayer.CategoryData)
+                        l_Guild.Categories.Add(l_Current.Category);
+                    l_Categories.Add(l_Guild);
+                }
+                m_Guilds = l_Categories;
+            });
+            await RefreshDropdown();
+            await RefreshList();
+            SetLoadingMode(LoadingMode.normal);
+        }
+
+        public async Task<Task> RefreshDropdown()
+        {
+            await Task.Run(delegate
+            {
+                List<string> l_Guilds = new List<string>();
+                foreach (GuildCategories l_Current in m_Guilds)
+                    l_Guilds.Add(l_Current.GuildName);
+                m_AvailableGuilds.Clear();
+                foreach (string l_Current in l_Guilds)
+                    m_AvailableGuilds.Add(l_Current);
+                m_GuildChoiceDropdown.UpdateChoices();
+                SelectedGuild = (string)m_GuildChoiceDropdown.Value;
+            });
+            return Task.CompletedTask;
+        }
+
+        public async Task<Task> RefreshList()
+        {
+            await Task.Run(delegate
+            {
+                foreach (CategoryUI l_Current in m_ListCategories)
+                {
+                    l_Current.UnbindEvent();
+                    GameObject.DestroyImmediate(l_Current.m_HorizontalElems.gameObject);
+                }
+                m_ListCategories.Clear();
+                GuildCategories l_CurrentGuild = GetGuildFromName(m_Guilds, SelectedGuild);
+                if (l_CurrentGuild.GuildName == Plugin.NOT_DEFINED) { Plugin.Log.Error($"Selected guild not valid : returned guild {l_CurrentGuild.GuildName}"); return; }
                 foreach (string l_Current in l_CurrentGuild.Categories)
                     m_ListCategories.Add(new CategoryUI(l_Current, GuildName, m_OnlyUnPassedMaps));
-                if (m_CategoriesTableList != null)
-                    m_CategoriesTableList.tableView.ReloadData();
-            } catch( Exception l_E)
-            {
-                Plugin.Log.Error($"{l_E.StackTrace}");
-            }
+                m_ListCategories.Add(new CategoryUI(string.Empty, GuildName, m_OnlyUnPassedMaps));
+            });
+            if (m_CategoriesTableList != null)
+                m_CategoriesTableList.tableView.ReloadData();
+            return Task.CompletedTask;
         }
 
         public void Init(string p_GuildName)
@@ -337,12 +373,26 @@ namespace GuildSaberProfile.UI.GuildSaber
             get => m_OnlyUnPassedMaps;
             set
             {
+                SetLoadingMode(LoadingMode.loading);
                 m_OnlyUnPassedMaps = value;
                 e_OnUnPassedOnlyValueChanged?.Invoke(m_OnlyUnPassedMaps);
-                RefreshList();
+                RefreshFromUnpassed();
             }
         }
+
+        [UIValue("UwU")]
+        private bool UwUMode
+        {
+            get => PluginConfig.Instance.UwUMode;
+            set => PluginConfig.Instance.UwUMode = value;
+        }
         #endregion
+
+        public async void RefreshFromUnpassed()
+        {
+            await RefreshList();
+            SetLoadingMode(LoadingMode.normal);
+        }
     }
 }
 
@@ -354,4 +404,9 @@ public class LevelIDs
 public enum PlaylistsVerificationType
 {
     FolderOnly, PlaylistsOnly, All
+}
+
+public enum LoadingMode
+{
+    normal, loading
 }

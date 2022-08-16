@@ -117,7 +117,7 @@ namespace GuildSaberProfile.Utils
                     }
                 }
             }
-            return string.Empty;
+            return p_Name;
         }
         #endregion
 
