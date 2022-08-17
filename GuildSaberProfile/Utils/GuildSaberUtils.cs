@@ -119,6 +119,13 @@ namespace GuildSaberProfile.Utils
             }
             return p_Name;
         }
+
+        public static string VerifiedCategory(this string p_Cat)
+        {
+            Plugin.Log.Info($"Cat -> {p_Cat}");
+            if (p_Cat.StringIsNullOrEmpty()) return "Default";
+            return p_Cat;
+        }
         #endregion
 
         #region Zenject

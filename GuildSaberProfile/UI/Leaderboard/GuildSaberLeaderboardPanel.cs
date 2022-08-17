@@ -60,7 +60,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             if (p_SetLoadingModeBeforeGettingData)
                 SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Loading);
 
-            Plugin.Log.Info(m_SelectedGuild);
+            m_HeaderManager = Resources.FindObjectsOfTypeAll<LeaderboardHeaderManager>()[0];
             //-----------------------------------------Panel Style-----------------------------------------
             await Task.Run(async delegate
             {

@@ -37,6 +37,8 @@ public class Plugin
     public static ModFlowCoordinator _modFlowCoordinator;
     public static string m_PlayerId = string.Empty;
     public static int m_ScoresPerPage = 10;
+
+    public static bool m_IsHsvInstalled = false;
     // ReSharper disable once UnusedAutoPropertyAccessor.Local
     #endregion
 
@@ -97,7 +99,7 @@ public class Plugin
 
         foreach (CustomUIComponent l_Current in l_Components)
         {
-            GameObject.DestroyImmediate(l_Current);
+            GameObject.DestroyImmediate(l_Current.gameObject);
         }
 
         m_HarmonyInstance.UnpatchSelf();

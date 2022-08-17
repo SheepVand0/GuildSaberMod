@@ -42,5 +42,11 @@ namespace GuildSaberProfile.UI.Components
         {
             m_CText.text = p_Text;
         }
+
+        public void SetColor(Color p_Color)
+        {
+            m_CText.richText = true;
+            m_CText.color = p_Color;
+        }
     }
 }

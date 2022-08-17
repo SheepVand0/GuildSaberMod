@@ -70,6 +70,11 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\GameplayCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="HitScoreVisualizer, Version=3.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Plugins\HitScoreVisualizer.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="HMLibAttributes">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMLibAttributes.dll</HintPath>
       <Private>False</Private>
@@ -198,7 +203,7 @@
     <Compile Include="Events.cs" />
     <Compile Include="GuildSaberProfileController.cs" />
     <Compile Include="Harmony\OnMenuInstallerPatch.cs" />
-    <Compile Include="Harmony\SecretPages.cs" />
+    <Compile Include="Harmony\SecretPatches.cs" />
     <Compile Include="Installers\MenuInstaller.cs" />
     <Compile Include="Managers\LeaderboardManager.cs" />
     <Compile Include="Plugin.cs" />

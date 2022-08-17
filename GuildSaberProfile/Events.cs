@@ -6,6 +6,7 @@ using GuildSaberProfile.Utils;
 using GuildSaberProfile.UI.Card;
 using Zenject;
 using System;
+using IPA.Loader;
 
 namespace GuildSaberProfile;
 
@@ -90,9 +91,11 @@ public class Events : IInitializable
         {
             SceneManager.activeSceneChanged += OnSceneChanged;
 
+            var l_Hsv = PluginManager.GetPluginFromId("HitScoreVisualizer");
+            Plugin.m_IsHsvInstalled = l_Hsv != null;
+
             if (PlayerCardUI.m_Instance == null)
                 PlayerCardUI.CreateCard();
-
         }
         catch (Exception l_E)
         {

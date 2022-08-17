@@ -28,7 +28,7 @@ namespace GuildSaberProfile.UI.Components
         #endregion
 
         UnityEngine.Color m_Red = new Utils.Color.Color(255, 0, 55).ToUnityColor();
-        private static UnityEngine.Color m_Blue = new(0f, 0.7f, 1f, 0.8f);
+        private static UnityEngine.Color m_Blue = new(0f, 0.8f, 1f, 0.8f);
 
         public float ScoreFontSize { get => 2.5f; set { } }
         public string Rank { get; set; }
@@ -83,23 +83,23 @@ namespace GuildSaberProfile.UI.Components
 
             m_CRank = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
 
-            l_CurrentParams[1] = new ItemParam("AnchorPosX", 3f+l_OffsetFromRank);
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", 3f + l_OffsetFromRank);
 
             m_CPlayerName = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
 
-            l_CurrentParams[1] = new ItemParam("AnchorPosX", 31f+l_OffsetFromRank);
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", 31f + l_OffsetFromRank);
             l_CurrentParams[4] = new ItemParam("Color", m_Red);
 
             m_CPoints = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
 
-            l_CurrentParams[1] = new ItemParam("AnchorPosX", -44f+l_OffsetFromRank);
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", -44f + l_OffsetFromRank);
             l_CurrentParams[2] = new ItemParam("Alignment", TextAlignmentOptions.Right);
             l_CurrentParams[4] = new ItemParam("Color", UnityEngine.Color.white);
             l_CurrentParams[6] = new ItemParam("RichText", "<mspace=0.5em>");
 
             m_CScore = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
 
-            l_CurrentParams[1] = new ItemParam("AnchorPosX", -34f+l_OffsetFromRank);
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", -34f + l_OffsetFromRank);
             l_CurrentParams[4] = new ItemParam("Color", m_Red);
             l_CurrentParams[5] = new ItemParam("Italic", false);
             l_CurrentParams[6] = new ItemParam("RichText", string.Empty);
@@ -111,24 +111,34 @@ namespace GuildSaberProfile.UI.Components
             SetTexts();
         }
 
+        private bool m_IsTheCurrentPlayer = false;
+
         public void Reset()
         {
+            m_IsTheCurrentPlayer = false;
             UnityEngine.Color l_White = UnityEngine.Color.white;
-            m_CRank.Color = l_White;
-            m_CPlayerName.Color = l_White;
-            m_CScore.Color = l_White;
+            m_CRank.SetColor(l_White);
+            m_CPlayerName.SetColor(l_White);
+            m_CScore.SetColor(l_White);
         }
 
         public void SetCurrentColorToCurrentPlayer()
         {
-            m_CRank.Color = m_Blue;
-            m_CPlayerName.Color = m_Blue;
-            m_CScore.Color = m_Blue;
+            m_IsTheCurrentPlayer = true;
         }
 
         public void Destroy()
         {
             GameObject.DestroyImmediate(m_ElemsLayout);
+        }
+
+        public void Actualize()
+        {
+            if (!m_IsTheCurrentPlayer) return;
+
+            m_CRank.SetColor(m_Blue);
+            m_CPlayerName.SetColor(m_Blue);
+            m_CScore.SetColor(m_Blue);
         }
 
         public void SetEmpty()
@@ -154,41 +164,44 @@ namespace GuildSaberProfile.UI.Components
         #region UIValues
         [UIValue("ScoreCells")] List<object> m_Scores = new List<object>();
         #endregion
-        public void SetScores(ApiCustomDataStruct p_CustomData, List<ApiMapLeaderboardContentStruct> p_Scores, string p_PointsNames)
+        public async void SetScores(ApiCustomDataStruct p_CustomData, List<ApiMapLeaderboardContentStruct> p_Scores, string p_PointsNames)
         {
-            foreach (LeaderboardScoreCell l_Current in m_Scores) {
-                l_Current.Reset();
-            }
-
-            for (int l_i = 0; l_i < p_Scores.Count; l_i++)
+            await Task.Run(delegate
             {
-                ApiMapLeaderboardContentStruct l_Score = p_Scores[l_i];
-                RankData l_RankData = new RankData();
+                foreach (LeaderboardScoreCell l_Current in m_Scores)
+                {
+                    l_Current.Reset();
+                }
 
-                if (string.IsNullOrEmpty(p_PointsNames)) l_RankData = l_Score.RankData[0];
-                else
-                    foreach (RankData l_Current in l_Score.RankData)
-                    {
-                        if (l_Current.PointsName == p_PointsNames)
+                for (int l_i = 0; l_i < p_Scores.Count; l_i++)
+                {
+                    ApiMapLeaderboardContentStruct l_Score = p_Scores[l_i];
+                    RankData l_RankData = new RankData();
+
+                    if (string.IsNullOrEmpty(p_PointsNames)) l_RankData = l_Score.RankData[0];
+                    else
+                        foreach (RankData l_Current in l_Score.RankData)
                         {
-                            l_RankData = l_Current;
+                            if (l_Current.PointsName == p_PointsNames)
+                            {
+                                l_RankData = l_Current;
+                            }
+                        }
+                    if (m_Scores.ElementAtOrDefault(l_i) == null)
+                    {
+                        m_Scores.Add(new LeaderboardScoreCell(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore));
+                    }
+                    else
+                    {
+                        LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)m_Scores[l_i];
+                        l_CurrentCell.Init(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore);
+                        if (l_Score.ScoreSaberID.ToString() == Plugin.m_PlayerId)
+                        {
+                            l_CurrentCell.SetCurrentColorToCurrentPlayer();
                         }
                     }
-                if (m_Scores.ElementAtOrDefault(l_i) == null)
-                {
-                    m_Scores.Add(new LeaderboardScoreCell(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore));
                 }
-                else
-                {
-                    LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)m_Scores[l_i];
-                    l_CurrentCell.Init(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore);
-                    if (l_Score.ScoreSaberID.ToString() == Plugin.m_PlayerId)
-                    {
-                        Plugin.Log.Info("Setting");
-                        //l_CurrentCell.SetCurrentColorToCurrentPlayer();
-                    }
-                }
-            }
+            });
 
             m_ScoreList.tableView.ReloadData();
 
@@ -196,6 +209,8 @@ namespace GuildSaberProfile.UI.Components
             {
                 if (l_i >= p_Scores.Count)
                     ((LeaderboardScoreCell)m_Scores[l_i]).SetEmpty();
+                else
+                    ((LeaderboardScoreCell)m_Scores[l_i]).Actualize();
             }
         }
     }

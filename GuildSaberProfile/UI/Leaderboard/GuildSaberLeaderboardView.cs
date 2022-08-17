@@ -13,6 +13,7 @@ using LeaderboardCore.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using GuildSaberProfile.Configuration;
+using Polyglot;
 
 /*
 *
@@ -96,11 +97,11 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
 
                 if (m_Leaderboard.Leaderboards is null) { SetLeaderboardViewMode(ELeaderboardViewMode.NotRanked); return; }
                 else if (!m_Leaderboard.Leaderboards.Any()) { SetLeaderboardViewMode(ELeaderboardViewMode.Unpassed);
-                    ChangeHeaderText($"Level {m_Leaderboard.CustomData.Level} - {m_Leaderboard.CustomData.Category}");
+                    ChangeHeaderText($"Level {m_Leaderboard.CustomData.Level} - {m_Leaderboard.CustomData.Category.VerifiedCategory()}");
                     return;
                 }
 
-                ChangeHeaderText($"Level {m_Leaderboard.CustomData.Level} - {m_Leaderboard.CustomData.Category}");
+                ChangeHeaderText($"Level {m_Leaderboard.CustomData.Level} - {m_Leaderboard.CustomData.Category.VerifiedCategory()}");
 
                 m_ScoresList.SetScores(m_Leaderboard.CustomData, m_Leaderboard.Leaderboards, m_CurrentPointsName);
                 SetLeaderboardViewMode(ELeaderboardViewMode.Scores);
@@ -179,6 +180,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                     m_ErrorText.gameObject.SetActive(false);
                     m_LoadingLayout.gameObject.SetActive(false);
                     m_NotRankedText.SetText("Map not ranked");
+                    _LeaderboardPanel.m_HeaderManager.ChangeText(Localization.Get("TITLE_HIGHSCORES"));
                     break;
                 case ELeaderboardViewMode.Unpassed:
                     m_ScoreParamsLayout.gameObject.SetActive(false);
