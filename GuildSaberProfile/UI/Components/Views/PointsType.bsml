@@ -1,12 +1,3 @@
-﻿<bg xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-
-	<clickable-text font-size="3" align="Center" id="PointsText" on-click="OnTextClick">
-		<modal id='PointsSelectorModal' size-delta-x='40' size-delta-y='20' hide-event='HideModal'>
-			<vertical vertical-fit='PreferredSize' child-align='MiddleCenter'>
-				<dropdown-list-setting anchor-pos-x='12' preferred-width='5' choices='DefaultPoints' id='PointsDropdown' text='' value='SelectedPoints' on-change='OnPointsSelected'/>
-				<button text='Hide' event-click='HideModal'/>
-			</vertical>
-		</modal>
-	</clickable-text>
-
-</bg>
+﻿<vertical xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
+	<dropdown-list-setting anchor-pos-x='22' ignore-layout='true' preferred-width='2' choices='DefaultPoints' id='PointsDropdown' text='' value='SelectedPoints' on-change='OnPointsSelected'/>
+</vertical>

@@ -30,7 +30,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Components
         #region Update
         public void UpdateShader(Color p_ProfileColor)
         {
-            if (m_Avatar == null) { Plugin.Log.Info("Is Null"); return; }
+            if (m_Avatar == null) { Plugin.Log.Error("Avatar Is Null"); return; }
 
             //_PlayerAvatarMaskInstance = Object.Instantiate(AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask"));
             _PlayerAvatarMaskInstance = AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask");

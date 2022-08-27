@@ -10,6 +10,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Threading.Tasks;
+
 namespace GuildSaberProfile.UI.Card;
 
 public class PlayerLevelUI : CustomUIComponent
@@ -104,7 +106,9 @@ public class PlayerCardUI
     #region Setup
     public static PlayerCardUI CreateCard()
     {
+
         PlayerGuildsInfo l_Player = GuildApi.GetPlayerInfoFromAPI();
+
         if (l_Player.Equals(default(PlayerGuildsInfo))) { Plugin.Log.Error("Failed Getting Player Info"); return null; }
 
         m_Player = l_Player.m_ReturnPlayer;
@@ -128,41 +132,41 @@ public class PlayerCardUI
     public PlayerCardUI(List<object> p_AvailableGuilds)
     {
 
-            Plugin.Log.Info("Loading Player Card");
+        Plugin.Log.Info("Loading Player Card");
 
-            if (m_TimeManager == null)
-            {
-                m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
-                //If i put Object it will do an "ambïgue" reference Between System.object and UnityEngine.Object
-                GameObject.DontDestroyOnLoad(m_TimeManager);
-            }
-            CardViewController = BeatSaberUI.CreateViewController<PlayerCardViewController>();
-            FloatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40f, 40f), true, PluginConfig.Instance.CardPosition, PluginConfig.Instance.CardRotation);
-            FloatingScreen.HighlightHandle = true;
-            FloatingScreen.HandleSide = FloatingScreen.Side.Right;
-            FloatingScreen.HandleReleased += OnCardHandleReleased;
+        if (m_TimeManager == null)
+        {
+            m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
+            //If i put Object it will do an "ambïgue" reference Between System.object and UnityEngine.Object
+            GameObject.DontDestroyOnLoad(m_TimeManager);
+        }
+        CardViewController = BeatSaberUI.CreateViewController<PlayerCardViewController>();
+        FloatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40f, 40f), true, PluginConfig.Instance.CardPosition, PluginConfig.Instance.CardRotation);
+        FloatingScreen.HighlightHandle = true;
+        FloatingScreen.HandleSide = FloatingScreen.Side.Right;
+        FloatingScreen.HandleReleased += OnCardHandleReleased;
 
-            CardViewController.SetReferences(m_Player, FloatingScreen);
-            CardViewController.m_AvailableGuilds = p_AvailableGuilds;
+        CardViewController.SetReferences(m_Player, FloatingScreen);
+        CardViewController.m_AvailableGuilds = p_AvailableGuilds;
 
-            #region Debug with a lot
-            /// For debug purpose with lots of levels
-            /*for (int l_i = 0; l_i < 50; l_i++)
-            {
-              CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31", 50));
-            }
-            }*/
-            #endregion
+        #region Debug with a lot
+        /// For debug purpose with lots of levels
+        /*for (int l_i = 0; l_i < 50; l_i++)
+        {
+          CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31", 50));
+        }
+        }*/
+        #endregion
 
-            FloatingScreen.SetRootViewController(CardViewController, ViewController.AnimationType.None);
+        FloatingScreen.SetRootViewController(CardViewController, ViewController.AnimationType.None);
 
-            m_TimeManager.SetPlayerCardViewControllerRef(CardViewController);
+        m_TimeManager.SetPlayerCardViewControllerRef(CardViewController);
 
-            GameObject.DontDestroyOnLoad(FloatingScreen);
+        GameObject.DontDestroyOnLoad(FloatingScreen);
 
-            m_Instance = this;
+        m_Instance = this;
 
-            RefreshCard(false);
+        RefreshCard(false);
     }
     #endregion
 

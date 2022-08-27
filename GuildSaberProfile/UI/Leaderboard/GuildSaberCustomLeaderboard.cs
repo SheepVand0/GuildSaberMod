@@ -6,6 +6,7 @@ using JetBrains.Annotations;
 using System;
 using UnityEngine;
 using TMPro;
+using System.Threading.Tasks;
 
 namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
 {
@@ -101,11 +102,14 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 m_Idle = true;
         }
 
-        public void ChangeText(string p_Text)
+        public async void ChangeText(string p_Text)
         {
             if (m_Header == null) return;
 
-            m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
+            await Task.Run(delegate
+            {
+                m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
+            });
         }
     }
 }

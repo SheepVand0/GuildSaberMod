@@ -35,6 +35,8 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         [UIComponent("ScoreParamsLayout")] VerticalLayoutGroup m_ScoreParamsLayout = null;
         [UIComponent("WorldSelection")] VerticalLayoutGroup m_ScopeSelectionLayout = null;
         [UIComponent("ElemsHorizontal")] HorizontalLayoutGroup m_HorizontalElems = null;
+        [UIComponent("PageUpImage")] ClickableImage m_PageUpImage = null;
+        [UIComponent("PageDownImage")] ClickableImage m_PageDownImage = null;
         #endregion
         [UIComponent("NotRankedText")] TextMeshProUGUI m_NotRankedText = null;
         [UIComponent("ErrorText")] TextMeshProUGUI m_ErrorText = null;
@@ -43,13 +45,15 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         ScopeSelector m_ScopeSelector = null;
         #endregion
 
-        private GuildSaberLeaderboardPanel _LeaderboardPanel;
+        public static GuildSaberLeaderboardPanel _LeaderboardPanel;
         private ELeaderboardScope m_SelectedScope = ELeaderboardScope.Global;
 
         public string m_CurrentPointsName { get; internal set; }
         public string m_CurrentMapHash { get; internal set; }
         public static IDifficultyBeatmap m_CurrentBeatmap { get; internal set; }
         public ApiMapLeaderboardCollectionStruct m_Leaderboard { get; private set; }
+
+        public int Page { get => 1; internal set { } }
 
         #region Setup
         [UIAction("#post-parse")]
@@ -87,7 +91,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 string l_Hash = GSBeatmapUtils.DifficultyBeatmapToHash(m_CurrentBeatmap);
                 string l_Id = "null";
                 string l_Country = "null";
-                string l_Page = "1";
+                string l_Page = Page.ToString();
                 if (m_SelectedScope == ELeaderboardScope.Around) { l_Id = Plugin.m_PlayerId; }
                 if (m_SelectedScope == ELeaderboardScope.Country) { l_Country = _LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer.Country; }
                 await Task.Run(delegate
@@ -96,12 +100,22 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 });
 
                 if (m_Leaderboard.Leaderboards is null) { SetLeaderboardViewMode(ELeaderboardViewMode.NotRanked); return; }
-                else if (!m_Leaderboard.Leaderboards.Any()) { SetLeaderboardViewMode(ELeaderboardViewMode.Unpassed);
+                else if (!m_Leaderboard.Leaderboards.Any())
+                {
+                    SetLeaderboardViewMode(ELeaderboardViewMode.Unpassed);
                     ChangeHeaderText($"Level {m_Leaderboard.CustomData.Level} - {m_Leaderboard.CustomData.Category.VerifiedCategory()}");
                     return;
                 }
 
                 ChangeHeaderText($"Level {m_Leaderboard.CustomData.Level} - {m_Leaderboard.CustomData.Category.VerifiedCategory()}");
+
+                /*m_PageUpImage.enabled = true;
+                m_PageDownImage.enabled = false;
+
+                if (Page == m_Leaderboard.Metadata.MaxPage)
+                    m_PageDownImage.enabled = false;
+                if (Page == 1)
+                    m_PageUpImage.enabled = true;*/
 
                 m_ScoresList.SetScores(m_Leaderboard.CustomData, m_Leaderboard.Leaderboards, m_CurrentPointsName);
                 SetLeaderboardViewMode(ELeaderboardViewMode.Scores);
@@ -114,13 +128,13 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             }
         }
 
-        public void ChangeHeaderText(string p_Text)
+        public async void ChangeHeaderText(string p_Text)
         {
             if (_LeaderboardPanel.m_HeaderManager == null) _LeaderboardPanel.m_HeaderManager = Resources.FindObjectsOfTypeAll<LeaderboardHeaderManager>()[0];
             if (PluginConfig.Instance.UwUMode)
                 p_Text += " `(*>﹏<*)′";
 
-                _LeaderboardPanel.m_HeaderManager.ChangeText(p_Text);
+            _LeaderboardPanel.m_HeaderManager.ChangeText(p_Text);
         }
         #endregion
 
@@ -159,10 +173,24 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             if (m_ScoresList.gameObject.activeInHierarchy)
                 m_ScoresList.SetScores(m_Leaderboard.CustomData, m_Leaderboard.Leaderboards, m_CurrentPointsName);
         }
+
+        [UIAction("PageUp")]
+        private void PageUp()
+        {
+            Page -= 1;
+            GetLeaderboard(_LeaderboardPanel.m_SelectedGuild);
+        }
+
+        [UIAction("PageDown")]
+        private void PageDown()
+        {
+            Page += 1;
+            GetLeaderboard(_LeaderboardPanel.m_SelectedGuild);
+        }
         #endregion
 
         #region Other
-        public void SetLeaderboardViewMode(ELeaderboardViewMode p_Mode)
+        public async void SetLeaderboardViewMode(ELeaderboardViewMode p_Mode)
         {
             switch (p_Mode)
             {
@@ -180,6 +208,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                     m_ErrorText.gameObject.SetActive(false);
                     m_LoadingLayout.gameObject.SetActive(false);
                     m_NotRankedText.SetText("Map not ranked");
+                    m_NotRankedText.color = Color.red;
                     _LeaderboardPanel.m_HeaderManager.ChangeText(Localization.Get("TITLE_HIGHSCORES"));
                     break;
                 case ELeaderboardViewMode.Unpassed:
@@ -189,6 +218,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                     m_ErrorText.gameObject.SetActive(false);
                     m_LoadingLayout.gameObject.SetActive(false);
                     m_NotRankedText.SetText("Map unpassed");
+                    m_NotRankedText.color = Color.yellow;
                     break;
                 case ELeaderboardViewMode.Loading:
                     m_ScoreParamsLayout.gameObject.SetActive(false);

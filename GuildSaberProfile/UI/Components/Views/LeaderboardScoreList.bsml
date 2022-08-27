@@ -1,4 +1,4 @@
-﻿<custom-list id="ScoreList" contents="ScoreCells" stick-scrolling="false" min-height="60" cell-size="4" pref-width="100" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+﻿<custom-list id="ScoreList" contents="ScoreCells" stick-scrolling="false" min-height="60" cell-size="~ListCellSize" pref-width="100" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
 	<horizontal ignore-layout='true' id='Elems' child-control-width='true' child-expand-width='true' min-width='120'>
@@ -8,4 +8,6 @@
 		<macro.as-host host='ScoreText'></macro.as-host>
 		<macro.as-host host='AccText'></macro.as-host>
 	</horizontal>
+	<button anchor-pos-y='-2' ignore-layout='true' pref-width='~LeaderWidth' id='Interactable' preferred-height='~InteractableScaleY' text=''>
+	</button>
 </custom-list>

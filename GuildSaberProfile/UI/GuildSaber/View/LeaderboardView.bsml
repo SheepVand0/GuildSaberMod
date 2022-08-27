@@ -2,9 +2,11 @@
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
 	<horizontal id='ElemsHorizontal'>
+		<!--<clickable-image src='#ArrowIcon' ignore-layout='true' on-click='PageUp' id='PageUpImage' anchor-pos-x='-40' anchor-pos-y='3' preferred-height='5' ></clickable-image>-->
 		<vertical ignore-layout='true' child-align='MiddleCenter' id='WorldSelection' anchor-pos-x='-40' anchor-pos-y='0'>
 		</vertical>
-		<vertical ignore-layout='true' child-align='UpperCenter' id ='ScoreParamsLayout' anchor-pos-x='22' anchor-pos-y='20'>
+		<!--<clickable-image ignore-layout='true' src='#ArrowIcon' on-click='PageDown' id='PageDownImage' anchor-pos-x='-40' anchor-pos-y='-3' preferred-height='-5'></clickable-image>-->
+		<vertical ignore-layout='true' child-align='UpperCenter' id ='ScoreParamsLayout' anchor-pos-x='20' anchor-pos-y='24'>
 		</vertical>
 		<text id='NotRankedText' align='Center' text='Map not ranked' color='red' font-size='6' active='false'></text>
 		<text id='ErrorText' text='Error during loading leaderboard' align='Center' active='false' font-size='6'></text>

@@ -104,7 +104,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 ImageView l_BackgroundView = m_BackgroundLayout.GetComponent<ImageView>();
                 l_BackgroundView.SetField("_skew", 0.0f);
                 //-----------------------------------------Croping Icon to fit to panel-----------------------------------------
-                Texture2D l_IconTexture = Utilities.FindTextureInAssembly("GuildSaberProfile.Resources.BSCCIconOrange.png");
+                Texture2D l_IconTexture = Utilities.FindTextureInAssembly("GuildSaberProfile.Resources.BSCCIconBlue.png");
                 Color[] l_Texture = l_IconTexture.GetPixels(0, (int)(l_IconTexture.height / 2.25f), l_IconTexture.width, (int)(l_IconTexture.height / 4.5f));
                 Texture2D l_ResultTexture = new(l_IconTexture.width, (int)(l_IconTexture.height / 4.5f - (l_IconTexture.width / l_IconTexture.height) - 1));
                 l_ResultTexture.SetPixels(l_Texture);
@@ -119,16 +119,13 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
 
                     if (l_MainColor == new Color(0, 0, 0, 1))
                         l_MainColor = l_Pixels[l_i];
-
-                    if (!l_MainColor.ColorEquals(l_Pixels[l_i], 0.4f))
-                        l_MainColor = l_Pixels[l_i];
                 }
                 LeaderboardHeaderManager.m_Color0 = l_MainColor;
                 Resources.FindObjectsOfTypeAll<LeaderboardHeaderManager>()[0].ChangeColors();
                 //----------------------------------------------------------------------------------
                 l_BackgroundView.color = new(0.7f, 0.7f, 0.7f, 0.9f);
                 l_BackgroundView.color0 = new(0.7f, 0.7f, 0.7f, 0.9f);
-                l_BackgroundView.color1 = new(0.7f, 0.7f, 0.7f, 0.4f);
+                l_BackgroundView.color1 = new(0.7f, 0.7f, 0.7f, 0.1f);
                 l_BackgroundView.SetField("_gradientDirection", ImageView.GradientDirection.Horizontal);
                 l_BackgroundView.SetField("_flipGradientColors", false);
             }

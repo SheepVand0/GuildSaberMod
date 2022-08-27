@@ -55,6 +55,11 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\BeatmapCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="BeatSaberPlus">
+      <HintPath>$(BeatSaberDir)\Plugins\BeatSaberPlus.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="BSML">
       <HintPath>$(BeatSaberDir)\Plugins\BSML.dll</HintPath>
       <Private>False</Private>
@@ -258,6 +263,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GuildSaberProfile.csproj.user" />
+    <EmbeddedResource Include="Resources\GuildSaberLogoOrange4.png" />
+    <EmbeddedResource Include="Resources\GuildSaberLogo3.png" />
+    <EmbeddedResource Include="Resources\GuildSaberLogoOrange2.png" />
+    <EmbeddedResource Include="Resources\GuildSaberLogoOrange.png" />
+    <EmbeddedResource Include="Resources\GuildSaberLogo.png" />
     <EmbeddedResource Include="Resources\secteurinfo.jpg" />
     <EmbeddedResource Include="Resources\BSCCIconBlue.png" />
     <EmbeddedResource Include="Resources\BSCCIconOrange.png" />

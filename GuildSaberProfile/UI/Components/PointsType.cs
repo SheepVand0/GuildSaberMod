@@ -9,24 +9,27 @@ using GuildSaberProfile.API;
 using GuildSaberProfile.Utils;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 
 namespace GuildSaberProfile.UI.Components
 {
     public class PointsType : CustomUIComponent
     {
-        [UIComponent("PointsText")] ClickableText m_PointsText = null;
-        [UIComponent("PointsSelectorModal")] ModalView m_SelectorModal = null;
         [UIComponent("PointsDropdown")] DropDownListSetting m_Selector = null;
+
+        TextMeshProUGUI m_PointsText;
 
         public PlayerApiReworkOutput m_Player = new PlayerApiReworkOutput();
 
         protected override string m_ViewResourceName => "GuildSaberProfile.UI.Components.Views.PointsType.bsml";
-
-        private GuildSaberLeaderboardPanel _LeaderboardPanel = null;
-
         public override void PostCreate()
         {
-            _LeaderboardPanel = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0];
+            m_PointsText = m_Selector.GetComponentInChildren<TextMeshProUGUI>();
+            ImageView l_ImageView = m_Selector.GetComponentInChildren<ImageView>();
+            /*l_ImageView.color = Color.white.ColorWithAlpha(0);
+            l_ImageView.color0 = Color.white.ColorWithAlpha(0);
+            l_ImageView.color1 = Color.white.ColorWithAlpha(0);*/
+            l_ImageView.gameObject.SetActive(false);
             RefreshPoints();
             RefreshSelected();
             Events.m_Instance.e_OnGuildSelected += OnGuildSelected;
@@ -47,41 +50,38 @@ namespace GuildSaberProfile.UI.Components
         [UIValue("DefaultPoints")] private readonly List<object> m_DefaultsPoints = new List<object>() { Plugin.NOT_DEFINED };
         [UIValue("SelectedPoints")] public string m_SelectedPoints = Plugin.NOT_DEFINED;
 
-        [UIAction("OnTextClick")]
-        public void OpenModal()
-        {
-            m_SelectorModal.Show(true, true, null);
-        }
-
         [UIAction("OnPointsSelected")]
-        private void OnPointsSelected(string p_Selected)
+        private async void OnPointsSelected(string p_Selected)
         {
-            m_SelectedPoints = p_Selected;
+            await Task.Run(delegate
+            {
+                m_SelectedPoints = p_Selected;
+                Events.m_Instance.SelectPointsTypes(m_SelectedPoints);
+            });
             RefreshSelected();
-            Events.m_Instance.SelectPointsTypes(m_SelectedPoints);
         }
 
         public void RefreshSelected()
         {
-            if (string.IsNullOrEmpty(m_Player.Name)) return;
+            if (string.IsNullOrEmpty(GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer.Name)) return;
+            m_Player = GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer;
             m_PointsText.enableVertexGradient = true;
             m_PointsText.colorGradient = ((Color)m_Player.ProfileColor.ToUnityColor()).GenerateGradient(0.2f);
-            foreach (RankData l_Current in m_Player.RankData)
-                if (l_Current.PointsName == m_SelectedPoints) m_PointsText.text = $"{l_Current.Points} {l_Current.PointsName}";
-            foreach (RankData l in m_Player.RankData)
-                Plugin.Log.Info(l.Points.ToString());
+            foreach (RankData l_Rank in m_Player.RankData)
+                if (l_Rank.PointsName == m_SelectedPoints)
+                    m_PointsText.text = $"{l_Rank.Points} {l_Rank.PointsName}";
         }
 
         public void RefreshPoints()
         {
-            m_Player = _LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer;
+            m_Player = GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer;
             if (m_Player.Name == string.Empty) return;
-            List<RankData> l_RankData = m_Player.RankData;
             m_Selector.values.Clear();
-            foreach (RankData l_Current in l_RankData)
-                m_Selector.values.Add(l_Current.PointsName);
+            foreach (RankData l_Current in m_Player.RankData)
+                m_Selector.values.Add($"{l_Current.PointsName}");
             m_Selector.UpdateChoices();
-            m_Selector.Value = m_Selector.values[0];
+            m_SelectedPoints = (string)m_Selector.values[0];
+            m_Selector.Value = m_SelectedPoints;
             m_Selector.ApplyValue();
         }
     }

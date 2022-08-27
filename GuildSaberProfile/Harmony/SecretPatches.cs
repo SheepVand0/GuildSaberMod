@@ -4,50 +4,41 @@ using GuildSaberProfile.Configuration;
 using System;
 using IPA.Utilities;
 using UnityEngine;
+using HMUI;
+using UnityEngine.UI;
+using Polyglot;
+using System.Collections.Generic;
 
 namespace GuildSaberProfile.Harmony
 {
     [HarmonyPatch(typeof(FlyingObjectEffect), nameof(FlyingObjectEffect.InitAndPresent))]
-    [HarmonyPriority(int.MinValue)]
     class FlyTextPatch
     {
-        private static void Postfix(FlyingObjectEffect __instance/*, ref TValue __Result*/)
+        [HarmonyPatch(typeof(ComboUIController), nameof(ComboUIController.Start))]
+        public class ComboPatch
         {
+            private static void Prefix(ComboUIController __instance)
+            {
                 if (!PluginConfig.Instance.UwUMode) return;
 
-                TextMeshPro l_Text = null;
-
-                if (!Plugin.m_IsHsvInstalled)
-                {
-                    FlyingScoreEffect l_FlyingScore = (FlyingScoreEffect)__instance;
-                    l_Text = l_FlyingScore.GetField<TextMeshPro, FlyingScoreEffect>("_text");
-                }
-                else
-                {
-                    TextMeshPro l_TempText = __instance.GetComponentInChildren<TextMeshPro>();
-                    l_Text = new GameObject("HSText").AddComponent<TextMeshPro>();
-                    l_Text.transform.SetParent(l_TempText.transform.parent, false);
-                    l_Text.text = l_TempText.text;
-                    l_Text.color = l_TempText.color;
-                    l_TempText.gameObject.SetActive(false);
-                }
-
-                int l_Score = int.Parse(l_Text.text);
-
-                if (l_Score == 115)
-                    l_Text.text = "≧▽≦";
-                else if (l_Score < 108 && l_Score > 100)
-                    l_Text.text = "╯︿╰";
-                else if (l_Score <= 100)
-                    l_Text.text = "X﹏X";
+                __instance.GetComponentInChildren<TextMeshProUGUI>().text = "COMBWO";
+            }
         }
     }
 
-    public static class HsvUtils
+    [HarmonyPatch(typeof(GameplayModifierToggle),nameof(GameplayModifierToggle.Start))]
+    public class ModifierPatch
     {
-        public static void Hide(this GameObject p_Gm)
+        private static void Postfix(GameplayModifierToggle __instance)
         {
-            p_Gm.SetActive(false);
+            TextMeshProUGUI l_Text = __instance.GetField<TextMeshProUGUI, GameplayModifierToggle>("_nameText");
+
+            if (!PluginConfig.Instance.UwUMode) {return; }
+
+            if (l_Text.text == Localization.Get("MODIFIER_NO_FAIL_ON_0_ENERGY"))
+                l_Text.text = "Nowo Fwail";
+            else if (l_Text.text == Localization.Get("MODIFIER_NO_BOMBS"))
+                l_Text.text = "Nowo Bwombs";
         }
     }
 }
