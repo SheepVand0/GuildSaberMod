@@ -22,7 +22,7 @@ namespace GuildSaberProfile.UI.Components
         public PlayerApiReworkOutput m_Player = new PlayerApiReworkOutput();
 
         protected override string m_ViewResourceName => "GuildSaberProfile.UI.Components.Views.PointsType.bsml";
-        public override void PostCreate()
+        protected override void PostCreate()
         {
             m_PointsText = m_Selector.GetComponentInChildren<TextMeshProUGUI>();
             ImageView l_ImageView = m_Selector.GetComponentInChildren<ImageView>();

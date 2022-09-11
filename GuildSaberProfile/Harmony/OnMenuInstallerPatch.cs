@@ -67,7 +67,7 @@ namespace GuildSaberProfile.Harmony
     {
         private static void Prefix(FlowCoordinator __instance, ref string value, ref ViewController.AnimationType animationType)
         {
-            if (PluginConfig.Instance.UwUMode)
+            if (GSConfig.Instance.UwUMode)
                 value = "UwU";
         }
     }

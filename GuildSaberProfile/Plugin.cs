@@ -74,19 +74,6 @@ public class Plugin
 
         _modFlowCoordinator.ShowFlow(false);
     }
-
-    #region BSIPA Config
-
-    [Init]
-    public void InitWithConfig(Config p_Conf)
-    {
-        PluginConfig.Instance = p_Conf.Generated<PluginConfig>();
-        Log.Debug("Config loaded");
-
-        //m_Harmony.PatchAll();
-    }
-
-    #endregion
     #endregion
 
     #region On Game exit

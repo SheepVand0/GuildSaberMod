@@ -1,0 +1,3 @@
+﻿<grid cell-size="10">
+	<clickable-image id="PlaylistImage" src="GuildSaberProfile.Resources.GuildSaberLogo.png"></clickable-image>
+</grid>

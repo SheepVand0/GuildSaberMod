@@ -68,7 +68,7 @@ public static class GuildApi
 
         Plugin.m_PlayerId = l_PlayerId;
 
-        string l_SelectedGuild = (p_GuildFromConfig == true) ? PluginConfig.Instance.SelectedGuild : p_Guild;
+        string l_SelectedGuild = (p_GuildFromConfig == true) ? GSConfig.Instance.SelectedGuild : p_Guild;
 
         PlayerApiReworkOutput l_OutputPlayer = new PlayerApiReworkOutput();
         PlayerApiReworkOutput l_DefinedPlayer = new PlayerApiReworkOutput();
@@ -102,9 +102,9 @@ public static class GuildApi
         if (Plugin.AvailableGuilds.Count == 0) return new();
 
         //If the selected guild is not valid for current Player settings, settings SelectedGuild to l_LastValidGuild and DefinedPlayer to l_LastValidPlayer
-        if (!GuildSaberUtils.IsGuildValidForPlayer(PluginConfig.Instance.SelectedGuild))
+        if (!GuildSaberUtils.IsGuildValidForPlayer(GSConfig.Instance.SelectedGuild))
         {
-            PluginConfig.Instance.SelectedGuild = l_LastValidGuild;
+            GSConfig.Instance.SelectedGuild = l_LastValidGuild;
             l_DefinedPlayer = l_LastValidPlayer;
         }
 

@@ -211,62 +211,55 @@ namespace GuildSaberProfile.UI.Components
         public async void SetScores(ApiCustomDataStruct p_CustomData, List<ApiMapLeaderboardContentStruct> p_Scores, string p_PointsNames)
         {
             bool l_IsCellHasBeenCreated = false;
-
-            await Task.Run(delegate
+            foreach (LeaderboardScoreCell l_Current in m_Scores)
             {
-                foreach (LeaderboardScoreCell l_Current in m_Scores)
-                {
-                    l_Current.Reset();
-                    l_Current.Hide();
-                }
+                l_Current.Reset();
+                l_Current.Hide();
+            }
 
-                for (int l_i = 0; l_i < p_Scores.Count; l_i++)
-                {
-                    ApiMapLeaderboardContentStruct l_Score = p_Scores[l_i];
-                    RankData l_RankData = new RankData();
+            for (int l_i = 0; l_i < p_Scores.Count; l_i++)
+            {
+                ApiMapLeaderboardContentStruct l_Score = p_Scores[l_i];
+                RankData l_RankData = new RankData();
 
-                    if (string.IsNullOrEmpty(p_PointsNames)) l_RankData = l_Score.RankData[0];
-                    else
-                        foreach (RankData l_Current in l_Score.RankData)
-                        {
-                            if (l_Current.PointsName == p_PointsNames)
-                            {
-                                l_RankData = l_Current;
-                            }
-                        }
-                    if (m_Scores.ElementAtOrDefault(l_i) == null)
+                if (string.IsNullOrEmpty(p_PointsNames)) l_RankData = l_Score.RankData[0];
+                else
+                    foreach (RankData l_Current in l_Score.RankData)
                     {
-                        m_Scores.Add(new LeaderboardScoreCell(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString()));
-                        l_IsCellHasBeenCreated = true;
-                    }
-                    else
-                    {
-                        LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)m_Scores[l_i];
-                        l_CurrentCell.Init(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString());
-                        if (l_Score.ScoreSaberID.ToString() == Plugin.m_PlayerId)
+                        if (l_Current.PointsName == p_PointsNames)
                         {
-                            l_CurrentCell.SetCurrentColorToCurrentPlayer();
+                            l_RankData = l_Current;
                         }
                     }
+                if (m_Scores.ElementAtOrDefault(l_i) == null)
+                {
+                    m_Scores.Add(new LeaderboardScoreCell(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString()));
+                    l_IsCellHasBeenCreated = true;
                 }
-            });
+                else
+                {
+                    LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)m_Scores[l_i];
+                    l_CurrentCell.Init(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString());
+                    if (l_Score.ScoreSaberID.ToString() == Plugin.m_PlayerId)
+                    {
+                        l_CurrentCell.SetCurrentColorToCurrentPlayer();
+                    }
+                }
+            }
 
             if (l_IsCellHasBeenCreated)
                 m_ScoreList.tableView.ReloadData();
 
-            await Task.Run(delegate
+            for (int l_i = 0; l_i < Plugin.m_ScoresPerPage - (Plugin.m_ScoresPerPage - p_Scores.Count); l_i++)
             {
-                for (int l_i = 0; l_i < Plugin.m_ScoresPerPage - (Plugin.m_ScoresPerPage - p_Scores.Count); l_i++)
+                if (l_i >= p_Scores.Count)
+                    ((LeaderboardScoreCell)m_Scores[l_i]).Hide();
+                else
                 {
-                    if (l_i >= p_Scores.Count)
-                        ((LeaderboardScoreCell)m_Scores[l_i]).Hide();
-                    else
-                    {
-                        ((LeaderboardScoreCell)m_Scores[l_i]).Actualize();
-                        ((LeaderboardScoreCell)m_Scores[l_i]).Show();
-                    }
+                    ((LeaderboardScoreCell)m_Scores[l_i]).Actualize();
+                    ((LeaderboardScoreCell)m_Scores[l_i]).Show();
                 }
-            });
+            }
         }
     }
 }

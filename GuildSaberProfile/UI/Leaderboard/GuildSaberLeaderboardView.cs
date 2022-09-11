@@ -52,9 +52,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         public string m_CurrentMapHash { get; internal set; }
         public static IDifficultyBeatmap m_CurrentBeatmap { get; internal set; }
         public ApiMapLeaderboardCollectionStruct m_Leaderboard { get; private set; }
-
         public int Page { get => 1; internal set { } }
-
         #region Setup
         [UIAction("#post-parse")]
         private void PostParse()
@@ -80,12 +78,12 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             Events.m_Instance.e_OnScopeSelected += OnScopeSelected;
         }
         #endregion
-
         #region Leaderboard
         public async void GetLeaderboard(string p_Guild)
         {
             try
             {
+                Plugin.Log.Info(m_CurrentBeatmap.GetEnvironmentInfo().environmentType.typeNameLocalizationKey);
                 SetLeaderboardViewMode(ELeaderboardViewMode.Loading);
                 if (m_CurrentBeatmap == null) { SetLeaderboardViewMode(ELeaderboardViewMode.Error); return; }
                 string l_Hash = GSBeatmapUtils.DifficultyBeatmapToHash(m_CurrentBeatmap);
@@ -94,11 +92,9 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 string l_Page = Page.ToString();
                 if (m_SelectedScope == ELeaderboardScope.Around) { l_Id = Plugin.m_PlayerId; }
                 if (m_SelectedScope == ELeaderboardScope.Country) { l_Country = _LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer.Country; }
-                await Task.Run(delegate
-                {
+                await Task.Run(delegate {
                     m_Leaderboard = GuildApi.GetLeaderboard(p_Guild, l_Hash, m_CurrentBeatmap, l_Page, l_Id, p_Country: l_Country, "10");
                 });
-
                 if (m_Leaderboard.Leaderboards is null) { SetLeaderboardViewMode(ELeaderboardViewMode.NotRanked); return; }
                 else if (!m_Leaderboard.Leaderboards.Any())
                 {
@@ -131,7 +127,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         public async void ChangeHeaderText(string p_Text)
         {
             if (_LeaderboardPanel.m_HeaderManager == null) _LeaderboardPanel.m_HeaderManager = Resources.FindObjectsOfTypeAll<LeaderboardHeaderManager>()[0];
-            if (PluginConfig.Instance.UwUMode)
+            if (GSConfig.Instance.UwUMode)
                 p_Text += " `(*>﹏<*)′";
 
             _LeaderboardPanel.m_HeaderManager.ChangeText(p_Text);

@@ -199,7 +199,7 @@ namespace GuildSaberProfile.UI.GuildSaber
     {
         #region Properties
         public bool m_OnlyUnPassedMaps;
-        public string GuildName = PluginConfig.Instance.SelectedGuild;
+        public string GuildName = GSConfig.Instance.SelectedGuild;
         public delegate void OnOnlyPassedMapsChange(bool p_OnlyUnPassed);
         public event OnOnlyPassedMapsChange e_OnUnPassedOnlyValueChanged;
         public CategoryUI CategoryInterface;
@@ -383,8 +383,8 @@ namespace GuildSaberProfile.UI.GuildSaber
         [UIValue("UwU")]
         private bool UwUMode
         {
-            get => PluginConfig.Instance.UwUMode;
-            set => PluginConfig.Instance.UwUMode = value;
+            get => GSConfig.Instance.UwUMode;
+            set => GSConfig.Instance.UwUMode = value;
         }
         #endregion
 

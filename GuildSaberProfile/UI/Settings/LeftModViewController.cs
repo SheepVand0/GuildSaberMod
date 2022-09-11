@@ -14,15 +14,15 @@ public class LeftModViewController : BSMLAutomaticViewController
     [UIValue("ShowSettingsModal")]
     public bool ShowSettingsModal
     {
-        get => PluginConfig.Instance.ShowSettingsModal;
-        set => PluginConfig.Instance.ShowSettingsModal = value;
+        get => GSConfig.Instance.ShowSettingsModal;
+        set => GSConfig.Instance.ShowSettingsModal = value;
     }
 
     public void ShowError(bool p_Visible)
     {
         m_ErrorText.gameObject.SetActive(p_Visible);
         m_ErrorText2.gameObject.SetActive(p_Visible);
-        m_ErrorText.text = "Error during getting data from " + PluginConfig.Instance.SelectedGuild;
+        m_ErrorText.text = "Error during getting data from " + GSConfig.Instance.SelectedGuild;
     }
 
     #region Components
@@ -37,10 +37,10 @@ public class LeftModViewController : BSMLAutomaticViewController
     [UIValue("ShowCardInMenu")]
     protected bool ShowCardInMenu
     {
-        get => PluginConfig.Instance.ShowCardInMenu;
+        get => GSConfig.Instance.ShowCardInMenu;
         set
         {
-            PluginConfig.Instance.ShowCardInMenu = value;
+            GSConfig.Instance.ShowCardInMenu = value;
             if (PlayerCardUI.m_Instance != null)
                 PlayerCardUI.m_Instance.UpdateCardVisibility();
         }
@@ -49,8 +49,8 @@ public class LeftModViewController : BSMLAutomaticViewController
     [UIValue("ShowCardInGame")]
     protected bool ShowCardInGame
     {
-        get => PluginConfig.Instance.ShowCardInGame;
-        set => PluginConfig.Instance.ShowCardInGame = value;
+        get => GSConfig.Instance.ShowCardInGame;
+        set => GSConfig.Instance.ShowCardInGame = value;
     }
 
     #endregion

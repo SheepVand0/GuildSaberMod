@@ -26,7 +26,7 @@ namespace GuildSaberProfile.UI.Components
         public bool Italic { get; set; }
         #endregion
 
-        public override void PostCreate()
+        protected override void PostCreate()
         {
             m_CText.fontSize = FontSize;
             m_CText.text = $"{RichText}{Text}";

@@ -19,7 +19,7 @@ namespace GuildSaberProfile.Utils
         {
             //Gettings all levels
             List<int> l_Levels = new List<int>() { 0 };
-            l_Levels = GetLevelCache(PluginConfig.Instance.SelectedGuild, p_Category);
+            l_Levels = GetLevelCache(GSConfig.Instance.SelectedGuild, p_Category);
             int l_LastLevel = l_Levels[0];
             if (l_Levels.Count == 0)
                 return -1;

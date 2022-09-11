@@ -44,7 +44,7 @@ public class ModFlowCoordinator : FlowCoordinator
 
         SetTitle("GuildSaber");
         showBackButton = true;
-        _modViewController.Init(PluginConfig.Instance.SelectedGuild);
+        _modViewController.Init(GSConfig.Instance.SelectedGuild);
         ProvideInitialViewControllers(_modViewController, _LeftModViewController);
     }
 

@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
+using BeatSaberMarkupLanguage.Attributes;
+using GuildSaberProfile.UI.Card;
 
 namespace GuildSaberProfile.UI
 {
@@ -24,21 +26,24 @@ namespace GuildSaberProfile.UI
     {
         #region Defaults
         protected abstract string m_ViewResourceName { get; }
-
         public BSMLParserParams m_ParserParams;
+        public Action OnPostParse;
         #endregion
 
         #region Creation
-        public static TItem CreateItem<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, bool p_Init = true) where TItem : CustomUIComponent
+        public static TItem CreateItem<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, bool p_Init = true, Action<TItem> p_Callback = null) where TItem : CustomUIComponent
         {
             TItem l_Item = new GameObject($"Parent_{nameof(TItem)}").AddComponent<TItem>();
             l_Item.OnCreate();
-            if (p_Init)
-                l_Item.Init(p_Parent, p_UnderParent, p_NeedParse);
+            l_Item.Init(p_Init, p_Parent, p_UnderParent, p_NeedParse);
+            l_Item.OnPostParse += () =>
+            {
+                p_Callback?.Invoke(l_Item);
+            };
             return l_Item;
         }
 
-        public static TItem CreateItemWithParams<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, List<ItemParam> p_Params) where TItem : CustomUIComponent
+        public static TItem CreateItemWithParams<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, List<ItemParam> p_Params, Action<TItem> p_Callback = null) where TItem : CustomUIComponent
         {
             TItem l_Item = CreateItem<TItem>(p_Parent, p_UnderParent, p_NeedParse, false);
             foreach (ItemParam l_Param in p_Params)
@@ -48,11 +53,14 @@ namespace GuildSaberProfile.UI
                     p_PropertyInfo.SetValue(l_Item, l_Param.m_Value, null);
                 else Plugin.Log.Error($"Property not valid -> Gived Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}");
             }
-            l_Item.Init(p_Parent, p_UnderParent, p_NeedParse);
+            l_Item.Init(true, p_Parent, p_UnderParent, p_NeedParse);
+            l_Item.OnPostParse += () =>
+            {
+                p_Callback?.Invoke(l_Item);
+            };
             return l_Item;
         }
-
-        public TComponent CreateSubComponent<TComponent>(bool p_Under, bool p_NeedParse = false) where TComponent : MonoBehaviour
+        public TComponent CreateSubComponent<TComponent>(bool p_Under, bool p_NeedParse = false, Action<TComponent> p_Callback = null) where TComponent : MonoBehaviour
         {
             TComponent l_Comp = gameObject.AddComponent<TComponent>();
             l_Comp.name = $"Sub_{l_Comp.name}_{nameof(TComponent)}";
@@ -63,30 +71,42 @@ namespace GuildSaberProfile.UI
                 l_CustomComp.OnCreate();
                 if (p_NeedParse) l_CustomComp.Parse(l_Comp.transform.parent);
             }
+            p_Callback?.Invoke(l_Comp);
             return l_Comp;
         }
-        public static CustomUIComponent RecreateUIComponent<TItemType>(CustomUIComponent p_Component, bool p_UnderParent, bool p_NeedParse) where TItemType : CustomUIComponent
+        public static CustomUIComponent RecreateUIComponent<TType>(CustomUIComponent p_Component, bool p_UnderParent, bool p_NeedParse, Action<TType> p_Callback = null) where TType : CustomUIComponent
         {
             Transform l_CurrentTransform = p_Component.transform.parent;
             DestroyImmediate(p_Component.gameObject);
-            p_Component = CreateItem<TItemType>(l_CurrentTransform, p_UnderParent, p_NeedParse);
+            p_Component = CreateItem<TType>(l_CurrentTransform, p_UnderParent, p_NeedParse);
+            p_Callback?.Invoke((TType)p_Component);
             return p_Component;
         }
         #endregion
 
         #region Events
-        public virtual void OnCreate() { }
-        public virtual void PostCreate() { }
-        public virtual void OnDestroy() { }
+        protected virtual void OnCreate() { }
+        protected virtual void PostCreate() { }
+        protected virtual void OnDestroy() { }
+        private void PostParse() { OnPostParse?.Invoke(); AfterViewCreation();   }
+        protected virtual void AfterViewCreation() { }
         #endregion
 
         #region Init
-        public void Init(Transform p_Parent, bool p_UnderParent, bool p_Parse)
+        public void Init(bool p_Enable, Transform p_Parent, bool p_UnderParent, bool p_Parse)
         {
-            name = GetType().Name;
-            if (p_Parse) m_ParserParams = Parse(p_Parent);
-            gameObject.transform.SetParent(p_UnderParent ? p_Parent : p_Parent.parent, false);
-            PostCreate();
+            try {
+                //if (p_Enable == false) { PostParse(); return; }
+
+                name = GetType().Name;
+                if (p_Parse) m_ParserParams = Parse(p_Parent);
+                gameObject.transform.SetParent(p_UnderParent ? p_Parent : p_Parent.parent, false);
+                PostCreate();
+            }
+            catch (Exception l_E)
+            {
+                Plugin.Log.Error(l_E);
+            }
         }
 
         public BSMLParserParams Parse(Transform p_Parent)
@@ -94,6 +114,7 @@ namespace GuildSaberProfile.UI
             try
             {
                 BSMLParserParams l_ParserParams = BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), m_ViewResourceName), p_Parent.gameObject, this);
+                PostParse();
                 return l_ParserParams;
             }
             catch (Exception l_Ex)

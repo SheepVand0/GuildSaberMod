@@ -36,8 +36,8 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         public PointsType m_PointsType = null;
         #endregion
 
-        [UIValue("LeaderGuilds")] private List<object> m_AvailablesGuilds = new() { PluginConfig.Instance.SelectedGuild };
-        [UIValue("LeaderboardGuild")] public string m_SelectedGuild = PluginConfig.Instance.SelectedGuild;
+        [UIValue("LeaderGuilds")] private List<object> m_AvailablesGuilds = new() { GSConfig.Instance.SelectedGuild };
+        [UIValue("LeaderboardGuild")] public string m_SelectedGuild = GSConfig.Instance.SelectedGuild;
 
         public PlayerGuildsInfo m_PlayerGuildsInfo = new PlayerGuildsInfo();
         public bool m_IsFirtActivation = true;
@@ -67,7 +67,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 switch (p_ReloadMode)
                 {
                     case ReloadMode.FromCurrent:
-                        if (m_SelectedGuild == PluginConfig.Instance.SelectedGuild)
+                        if (m_SelectedGuild == GSConfig.Instance.SelectedGuild)
                             m_PlayerGuildsInfo = GuildApi.GetPlayerInfoFromCurrent();
                         else
                             await Reload(ReloadMode.FromApi, true, true);

@@ -1,5 +1,5 @@
 ﻿<horizontal id='ElemsLayout' horizontal-fit="PreferredSize" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-	<text align="Center" id="CategoryText" text="Undefined" font-size="2"/>
-	<text text=" # " font-size="3" align="MidlineLeft"/>
-	<text font-size="3" id="PlayerRankText" align="MidlineLeft"/>
+	<text align="Center" id="CategoryText" text="~PointsName" font-size="2"/>
+	<text text=" # " id="Hastag" font-size="3" align="MidlineLeft"/>
+	<text font-size="3" id="PlayerRankText" align="MidlineLeft" text="~PlayerRank"/>
 </horizontal>

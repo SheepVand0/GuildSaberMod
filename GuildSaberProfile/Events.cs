@@ -90,12 +90,6 @@ public class Events : IInitializable
         try
         {
             SceneManager.activeSceneChanged += OnSceneChanged;
-
-            var l_Hsv = PluginManager.GetPluginFromId("HitScoreVisualizer");
-            Plugin.m_IsHsvInstalled = l_Hsv != null;
-
-            if (PlayerCardUI.m_Instance == null)
-                PlayerCardUI.CreateCard();
         }
         catch (Exception l_E)
         {

@@ -198,7 +198,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="API\ApiCategory.cs" />
     <Compile Include="API\ApiOutputs.cs" />
+    <Compile Include="API\ApiRankLevel.cs" />
     <Compile Include="API\BeatSaverAPI.cs" />
     <Compile Include="API\GuildApi.cs" />
     <Compile Include="API\MapLeaderboardApiOutput.cs" />
@@ -206,13 +208,14 @@
     <Compile Include="API\PlayerStatsFormat.cs" />
     <Compile Include="AssetBundles\AssetBundleLoader.cs" />
     <Compile Include="Events.cs" />
+    <Compile Include="GuildSaber.cs" />
     <Compile Include="GuildSaberProfileController.cs" />
     <Compile Include="Harmony\OnMenuInstallerPatch.cs" />
     <Compile Include="Harmony\SecretPatches.cs" />
     <Compile Include="Installers\MenuInstaller.cs" />
     <Compile Include="Managers\LeaderboardManager.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="Configuration\PluginConfig.cs" />
+    <Compile Include="Configuration\GSConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Time\OptimizedDateTime.cs" />
     <Compile Include="Time\TimeManager.cs" />
@@ -220,8 +223,10 @@
     <Compile Include="UI\Card\PlayerCard_UI.cs" />
     <Compile Include="UI\Components\CustomText.cs" />
     <Compile Include="UI\Components\LeaderboardScoreList.cs" />
+    <Compile Include="UI\Components\LevelSelectionCustomCategory.cs" />
     <Compile Include="UI\Components\PointsType.cs" />
     <Compile Include="UI\Components\ScopeSelector.cs" />
+    <Compile Include="UI\CustomLevelSelection\CategorySelectionViewController.cs" />
     <Compile Include="UI\CustomUIComponent.cs" />
     <Compile Include="UI\Components\PlayerAvatar.cs" />
     <Compile Include="UI\Leaderboard\GuildSaberCustomLeaderboard.cs" />
@@ -253,6 +258,8 @@
     <EmbeddedResource Include="UI\Card\View\PlayerLevelUI.bsml" />
     <EmbeddedResource Include="UI\Card\View\PlayerRankUI.bsml" />
     <EmbeddedResource Include="UI\Components\Views\ScopeSelector.bsml" />
+    <EmbeddedResource Include="UI\CustomLevelSelection\Views\CategorySelectionViewController.bsml" />
+    <EmbeddedResource Include="UI\Components\Views\LevelSelectionCustomCategory.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">
@@ -268,7 +275,6 @@
     <EmbeddedResource Include="Resources\GuildSaberLogoOrange2.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogoOrange.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogo.png" />
-    <EmbeddedResource Include="Resources\secteurinfo.jpg" />
     <EmbeddedResource Include="Resources\BSCCIconBlue.png" />
     <EmbeddedResource Include="Resources\BSCCIconOrange.png" />
     <EmbeddedResource Include="Resources\CSIcon.png" />

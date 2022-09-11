@@ -46,7 +46,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Components
         #endregion
 
         #region Events
-        [UIAction("#post-parse")] private void PostParse()
+        protected override void AfterViewCreation()
         {
             GuildSaberLeaderboardPanel l_Panel = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0];
             PlayerGuildsInfo l_Player = l_Panel.m_PlayerGuildsInfo;
@@ -55,7 +55,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Components
             Setup(l_Player.m_ReturnPlayer.ProfilePicture, l_Player.m_ReturnPlayer.ProfileColor.ToUnityColor());
         }
 
-        public override void PostCreate()
+        protected override void PostCreate()
         {
             m_AvatarGrid.cellSize = new Vector2(17, 17);
         }

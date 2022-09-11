@@ -15,7 +15,7 @@ public class Color
     // ReSharper disable once MemberCanBePrivate.Global
     // ReSharper disable once UnassignedField.Global
     public int R;
-
+    public int RawValue;
     public Color(int p_R, int p_G, int p_B)
     {
         R = p_R;
