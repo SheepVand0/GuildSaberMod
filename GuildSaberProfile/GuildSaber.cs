@@ -3,6 +3,8 @@ using CP_SDK;
 using HMUI;
 using GuildSaberProfile.Configuration;
 using GuildSaberProfile.UI.Card;
+using System.Runtime.Remoting.Messaging;
+using System.Net.Http;
 
 namespace GuildSaberProfile
 {
@@ -20,7 +22,10 @@ namespace GuildSaberProfile
 
         public override EIModuleBaseActivationType ActivationType => EIModuleBaseActivationType.OnMenuSceneLoaded;
 
-        protected override (ViewController, ViewController, ViewController) GetSettingsUIImplementation()
+        #nullable enable
+        public static int? m_GSPlayerId = null;
+        public static long m_SSPlayerId = 0;
+        protected override (ViewController?, ViewController?, ViewController?) GetSettingsUIImplementation()
         {
             return (null, null, null);
         }

@@ -96,28 +96,12 @@ public class Plugin
 
 public struct PlayerGuildsInfo
 {
-    public PlayerGuildsInfo(PlayerApiReworkOutput p_Player = new PlayerApiReworkOutput(), List<string> p_AvailableGuilds = null)
+    public PlayerGuildsInfo(ApiPlayerData p_Player = default(ApiPlayerData), List<GuildData> p_AvailableGuilds = null)
     {
         m_ReturnPlayer = p_Player;
         m_AvailableGuilds = p_AvailableGuilds;
     }
 
-    public PlayerGuildsInfo(PlayerApiReworkOutput p_Player = new PlayerApiReworkOutput(), List<object> p_AvailableGuilds = null)
-    {
-        m_ReturnPlayer = p_Player;
-
-        //Converting List<object> to List<string>
-        List<string> l_Temp = new List<string>();
-        foreach (object l_Current in p_AvailableGuilds)
-        {
-            if(l_Current.GetType() == typeof(string))
-            {
-                l_Temp.Add((string)l_Current);
-            }
-        }
-
-        m_AvailableGuilds = l_Temp;
-    }
-    public PlayerApiReworkOutput m_ReturnPlayer { get; set; }
-    public List<string> m_AvailableGuilds { get; set; }
+    public ApiPlayerData m_ReturnPlayer { get; set; }
+    public List<GuildData> m_AvailableGuilds { get; set; }
 }

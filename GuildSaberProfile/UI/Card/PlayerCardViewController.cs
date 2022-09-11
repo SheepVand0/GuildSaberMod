@@ -46,17 +46,17 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     }
     public string PlayerGlobalLevel
     {
-        get => PlayerCardUI.m_Player.Level.ToString();
+        get => PlayerCardUI.m_Player.LevelValue.ToString();
         set { }
     }
     public string PlayerImageSrc
     {
-        get => PlayerCardUI.m_Player.ProfilePicture;
+        get => PlayerCardUI.m_Player.Avatar;
         set { }
     }
     public string PlayerNumberOfPasses
     {
-        get => PlayerCardUI.m_Player.PassCount.ToString();
+        get => PlayerCardUI.m_Player.Pass.ToString();
         set { }
     }
     // ReSharper disable once CollectionNeverQueried.Global

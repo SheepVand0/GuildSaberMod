@@ -32,7 +32,7 @@ internal class GSConfig : CP_SDK.Config.JsonConfig<GSConfig>
     [JsonProperty] internal bool ShowDetailsLevels = true;
     [JsonProperty] internal bool ShowPlayTime      = true;
 
-    [JsonProperty] internal string SelectedGuild = "CS";
+    [JsonProperty] internal int SelectedGuild = 0;
 
     [JsonProperty] internal Color CustomColor = Color.red;
     [JsonProperty] internal bool  UwUMode     = false;

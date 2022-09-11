@@ -94,7 +94,7 @@ public class PlayerCardUI
 {
     public static PlayerCardUI m_Instance;
 
-    public static PlayerApiReworkOutput m_Player;
+    public static ApiPlayerData m_Player;
 
     public static TimeManager m_TimeManager;
 

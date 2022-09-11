@@ -27,7 +27,7 @@ public struct PlayerApiReworkOutput
 
 // ReSharper disable once ClassNeverInstantiated.Global
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-public class RankData
+public struct RankData
 {
     public string PointsType { get; set; }
     public string PointsName { get; set; }

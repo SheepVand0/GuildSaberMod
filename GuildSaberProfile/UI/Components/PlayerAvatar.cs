@@ -50,9 +50,9 @@ namespace GuildSaberProfile.UI.GuildSaber.Components
         {
             GuildSaberLeaderboardPanel l_Panel = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0];
             PlayerGuildsInfo l_Player = l_Panel.m_PlayerGuildsInfo;
-            if (string.IsNullOrEmpty(l_Player.m_ReturnPlayer.ProfilePicture)) return;
+            if (string.IsNullOrEmpty(l_Player.m_ReturnPlayer.Avatar)) return;
 
-            Setup(l_Player.m_ReturnPlayer.ProfilePicture, l_Player.m_ReturnPlayer.ProfileColor.ToUnityColor());
+            Setup(l_Player.m_ReturnPlayer.Avatar, l_Player.m_ReturnPlayer.Color.ToUnityColor());
         }
 
         protected override void PostCreate()

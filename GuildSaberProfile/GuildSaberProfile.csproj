@@ -199,7 +199,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="API\ApiCategory.cs" />
+    <Compile Include="API\ApiGuildDataCollection.cs" />
+    <Compile Include="API\ApiMapLeaderboard.cs" />
     <Compile Include="API\ApiOutputs.cs" />
+    <Compile Include="API\ApiPlayerData.cs" />
+    <Compile Include="API\ApiRankedDifficultyCollection.cs" />
     <Compile Include="API\ApiRankLevel.cs" />
     <Compile Include="API\BeatSaverAPI.cs" />
     <Compile Include="API\GuildApi.cs" />

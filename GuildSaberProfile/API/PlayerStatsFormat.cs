@@ -17,16 +17,6 @@ public class PlayerStatsFormat
 }
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class Trophy
-{
-    public int Plastic { get; set; }
-    public int Silver { get; set; }
-    public int Gold { get; set; }
-    public int Diamond { get; set; }
-    public int Ruby { get; set; }
-}
-
-// ReSharper disable once ClassNeverInstantiated.Global
 public class PassedLevel
 {
     public int LevelID { get; set; }

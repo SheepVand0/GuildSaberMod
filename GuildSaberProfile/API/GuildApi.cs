@@ -7,22 +7,23 @@ using GuildSaberProfile.Configuration;
 using BS_Utils.Gameplay;
 using System.Collections.Generic;
 using GuildSaberProfile.UI.Card;
+using CP_SDK.Network;
 
 namespace GuildSaberProfile.API;
 
 public static class GuildApi
 {
-    public static PlayerApiReworkOutput GetPlayerByScoreSaberIdAndGuild(string p_ID, string p_Guild)
+    public static ApiPlayerData GetPlayerByScoreSaberIdAndGuild(string p_ID, int p_Guild)
     {
-        PlayerApiReworkOutput l_ResultPlayer = new PlayerApiReworkOutput();
+        ApiPlayerData l_ResultPlayer = default(ApiPlayerData);
         using HttpClient l_Client = new HttpClient();
 
         try
         {
             Task<string> l_Result = null;
-            l_Result = l_Client.GetStringAsync($"{GuildSaberUtils.ReturnLinkFromGuild(p_Guild)}/player/data/{p_ID}");
+            l_Result = l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{p_ID}/full?guild={p_Guild}");
             l_Result.Wait();
-            l_ResultPlayer = JsonConvert.DeserializeObject<PlayerApiReworkOutput>(l_Result.Result);
+            l_ResultPlayer = JsonConvert.DeserializeObject<ApiPlayerData>(l_Result.Result);
         }
         catch (AggregateException l_AggregateException)
         {
@@ -36,19 +37,20 @@ public static class GuildApi
         return l_ResultPlayer;
     }
 
-    public static ApiMapLeaderboardCollectionStruct GetLeaderboard(
-        string p_Guild, string p_Hash, IDifficultyBeatmap p_Beatmap,
-        string p_Page, string p_ScoreSaberId, string p_Country,
-        string p_CountPerPage = null)
+    public static ApiMapLeaderboardCollection GetLeaderboard(
+        int p_Guild, string p_Hash, IDifficultyBeatmap p_Beatmap,
+        int p_Page, int p_ScoreSaberId, string p_Country,
+        int p_CountPerPage = 10)
     {
-        ApiMapLeaderboardCollectionStruct l_Leaderboard = new ApiMapLeaderboardCollectionStruct();
+        ApiMapLeaderboardCollection l_Leaderboard = default(ApiMapLeaderboardCollection);
         using HttpClient l_Client = new HttpClient();
         try {
             Task<string> l_Result = null;
+            string l_ScoreSaberID = (p_ScoreSaberId != 0) ? $"&player-ssid={p_ScoreSaberId}" : string.Empty;
             l_Result = l_Client.GetStringAsync(
-                $"{GuildSaberUtils.ReturnLinkFromGuild(p_Guild)}/mapleaderboard/{p_Hash}/{GuildSaberLeaderboardUtils.BeatmapDifficultyToDifficultyInOrder(p_Beatmap.difficulty)}/{p_Beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.serializedName}/{p_Page}/{p_ScoreSaberId}/{p_Country}/{p_CountPerPage}");
+                $"https://api.guildsaber.com/maps/leaderboard/by-hash/{p_Hash}/9?guild={p_Guild}&page={p_Page}&countperpage={p_CountPerPage}{l_ScoreSaberID}");
             l_Result.Wait();
-            l_Leaderboard = JsonConvert.DeserializeObject<ApiMapLeaderboardCollectionStruct>(l_Result.Result);
+            l_Leaderboard = JsonConvert.DeserializeObject<ApiMapLeaderboardCollection>(l_Result.Result);
         } catch(AggregateException p_E) {
             Plugin.Log.Debug(p_E.Message);
             return new();
@@ -56,60 +58,52 @@ public static class GuildApi
         return l_Leaderboard;
     }
 
-    public static PlayerGuildsInfo GetPlayerInfoFromAPI(bool p_GuildFromConfig = true, string p_Guild = null)
+    public static PlayerGuildsInfo GetPlayerInfoFromAPI(bool p_GuildFromConfig = true, int p_GuildId = 0)
     {
         /// We don't care if it return null because this function is loaded on the MenuSceneLoadedFresh, and the UserID will most likely be fetched way before that happen.
         #pragma warning disable CS0618
-        string l_PlayerId = GetUserInfo.GetUserID();
+        long l_PlayerId = long.Parse(GetUserInfo.GetUserID());
         #pragma warning restore CS0618
 
-        if (l_PlayerId.StringIsNullOrEmpty())
+        if (l_PlayerId == 0)
         { Plugin.Log.Error("Cannot get Player ID, not creating card"); return new PlayerGuildsInfo(); }
 
-        Plugin.m_PlayerId = l_PlayerId;
+        GuildSaber.m_SSPlayerId = l_PlayerId;
 
-        string l_SelectedGuild = (p_GuildFromConfig == true) ? GSConfig.Instance.SelectedGuild : p_Guild;
+        int l_SelectedGuild = (p_GuildFromConfig == true) ? GSConfig.Instance.SelectedGuild : p_GuildId;
 
-        PlayerApiReworkOutput l_OutputPlayer = new PlayerApiReworkOutput();
-        PlayerApiReworkOutput l_DefinedPlayer = new PlayerApiReworkOutput();
-        PlayerApiReworkOutput l_LastValidPlayer = new PlayerApiReworkOutput();
+        ApiPlayerData l_DefinedPlayer = default(ApiPlayerData);
+        List<GuildData> l_AvailableGuilds = new List<GuildData>();
 
-        string l_LastValidGuild = string.Empty;
-
-        List<string> l_TempAvailableGuilds = new List<string>
-            { "CS", "BSCC" };
-        Plugin.AvailableGuilds = new List<object>();
-
-        for (int l_i = 0; l_i < l_TempAvailableGuilds.Count; l_i++)
+        try
         {
-            l_OutputPlayer = GetPlayerByScoreSaberIdAndGuild(l_PlayerId, l_TempAvailableGuilds[l_i]);
-
-            /*If Current Player from guild is valid setting l_LastValidPlayer to l_OutputPlayer and adding guild to AvailableGuilds,
-            l_LastValidGuild is defined to the current guild too*/
-            if (!l_OutputPlayer.Equals(null) && l_OutputPlayer.Level > 0)
+            using (HttpClient l_Client = new HttpClient())
             {
-                l_LastValidPlayer = l_OutputPlayer;
-                l_LastValidGuild = l_TempAvailableGuilds[l_i];
-                Plugin.AvailableGuilds.Add(l_TempAvailableGuilds[l_i]);
+                if (GuildSaber.m_GSPlayerId == null)
+                {
+                    Task<string> l_SerializedPlayer = l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{GuildSaber.m_SSPlayerId}/full");
+                    l_SerializedPlayer.Wait();
+                    ApiPlayerData l_Player = JsonConvert.DeserializeObject<ApiPlayerData>(l_SerializedPlayer.Result);
+                    GuildSaber.m_GSPlayerId = l_Player.ID;
+                }
+
+                Task<string> l_Serialized = l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{GuildSaber.m_GSPlayerId}/full?guild={l_SelectedGuild}");
+                l_Serialized.Wait();
+                l_DefinedPlayer = JsonConvert.DeserializeObject<ApiPlayerData>(l_Serialized.Result);
             }
 
-            //If the current guild in for is the selected, l_DefinedPlayer will be set to OutputPlayer (Current Player)
-            if (l_TempAvailableGuilds[l_i] == l_SelectedGuild)
-                l_DefinedPlayer = l_OutputPlayer;
-        }
-
-        //If there is no valid guilds returning empty PlayerGuildsInfo
-        if (Plugin.AvailableGuilds.Count == 0) return new();
-
-        //If the selected guild is not valid for current Player settings, settings SelectedGuild to l_LastValidGuild and DefinedPlayer to l_LastValidPlayer
-        if (!GuildSaberUtils.IsGuildValidForPlayer(GSConfig.Instance.SelectedGuild))
+        } catch (Exception l_E)
         {
-            GSConfig.Instance.SelectedGuild = l_LastValidGuild;
-            l_DefinedPlayer = l_LastValidPlayer;
+
         }
 
-        //If the processes succeffully end, returning l_DefinedPlayer and AvailableGuilds for Player
-        return new(l_DefinedPlayer, Plugin.AvailableGuilds);
+        Plugin.AvailableGuilds.Clear();
+        foreach (GuildData l_Current in l_AvailableGuilds)
+        {
+            Plugin.AvailableGuilds.Add(l_Current);
+        }
+
+        return new(l_DefinedPlayer, l_AvailableGuilds);
     }
 
     public static PlayerGuildsInfo GetPlayerInfoFromCurrent()

@@ -59,9 +59,35 @@ namespace GuildSaberProfile.API
         public bool Pure_OnlyAutoWeight { get; set; }
         public bool GGP_ShowAccPoint { get; set; }
     }
+    public struct GuildLightData
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+        public string Logo { get; set; }
+        public string Banner { get; set; }
+        public string Description { get; set; }
+        public Utils.Color.Color Color { get; set; }
+        public int MemberCount { get; set; }
+        public int RankedDiffCount { get; set; }
+        public int PlaylistCount { get; set; }
+        public int CategoryCount { get; set; }
+        public int PatreonBenefits { get; set; }
+    }
+
+    public struct GuildMetadata
+    {
+        public int Count { get; set; }
+    }
+
+    public struct GuildLightDataCollection
+    {
+        public List<GuildLightData> Guilds { get; set; }
+        public GuildMetadata Metadata { get; set; }
+    }
 
     public struct ApiGuildDataCollection
     {
-
+        public GuildData Guild { get; set; }
+        public GuildConfig GuildConfig { get; set; }
     }
 }
