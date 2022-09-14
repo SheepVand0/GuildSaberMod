@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System;
 using BeatSaberMarkupLanguage.Attributes;
 using GuildSaberProfile.UI.Card;
+using UnityEngine.UI;
 
 namespace GuildSaberProfile.UI
 {
@@ -81,6 +82,22 @@ namespace GuildSaberProfile.UI
             p_Component = CreateItem<TType>(l_CurrentTransform, p_UnderParent, p_NeedParse);
             p_Callback?.Invoke((TType)p_Component);
             return p_Component;
+        }
+        #endregion
+
+        #region Destroy
+        public void DestroyItem()
+        {
+            foreach (var l_Current in transform.GetComponentsInChildren<HorizontalLayoutGroup>())
+                GameObject.DestroyImmediate(l_Current);
+
+            foreach (var l_Current in transform.GetComponentsInChildren<VerticalLayoutGroup>())
+                GameObject.DestroyImmediate(l_Current);
+
+            foreach (var l_Current in transform.GetComponentsInChildren<GridLayoutGroup>())
+                GameObject.DestroyImmediate(l_Current);
+
+            GameObject.Destroy(this);
         }
         #endregion
 

@@ -1,5 +1,6 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
+using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
 using GuildSaberProfile.UI.Card;
 using TMPro;
@@ -22,7 +23,7 @@ public class LeftModViewController : BSMLAutomaticViewController
     {
         m_ErrorText.gameObject.SetActive(p_Visible);
         m_ErrorText2.gameObject.SetActive(p_Visible);
-        m_ErrorText.text = "Error during getting data from " + GSConfig.Instance.SelectedGuild;
+        m_ErrorText.text = "Error during getting data from " + GuildSaberProfile.GuildSaber.m_CardSelectedGuild.Name;
     }
 
     #region Components
@@ -60,6 +61,8 @@ public class LeftModViewController : BSMLAutomaticViewController
     [UIAction("RefreshCard")]
     private void RefreshCard()
     {
+        if (!PlayerCardUI.GetIsCardActive()) return;
+
         if (PlayerCardUI.m_Instance == null)
             PlayerCardUI.CreateCard();
         else

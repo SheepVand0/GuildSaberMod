@@ -28,12 +28,11 @@ public class Plugin
     private static Plugin Instance { get; set; }
 
     internal static IPALogger Log { get; private set; }
-
     public HarmonyLib.Harmony m_HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaberProfile"); }
 
     public const string NOT_DEFINED = "Undefined";
     public static string CurrentSceneName = "MainMenu";
-    public static List<object> AvailableGuilds = new List<object>();
+    public static List<GuildData> AvailableGuilds = new List<GuildData>();
     public static ModFlowCoordinator _modFlowCoordinator;
     public static string m_PlayerId = string.Empty;
     public static int m_ScoresPerPage = 10;

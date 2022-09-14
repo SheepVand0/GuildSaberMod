@@ -12,6 +12,7 @@ using UnityEngine.UI;
 using System;
 using System.Threading.Tasks;
 using CP_SDK_WebSocketSharp;
+using GuildSaberProfile.Utils;
 
 namespace GuildSaberProfile.UI.Card;
 
@@ -36,11 +37,6 @@ public class PlayerLevelUI : CustomUIComponent
     // ReSharper disable once MemberInitializerValueIgnored
     public string LevelName { get; set; }
     #endregion
-
-    protected override void OnDestroy()
-    {
-        GameObject.DestroyImmediate(m_Elems.gameObject, true);
-    }
 }
 
 public class PlayerRankUI : CustomUIComponent
@@ -65,18 +61,13 @@ public class PlayerRankUI : CustomUIComponent
     public string PlayerRank { get; set; }
     #endregion
 
-    protected override void OnDestroy()
-    {
-        GameObject.DestroyImmediate(m_Elems.gameObject, true);
-    }
-
     #region Setup
     protected override void AfterViewCreation()
     {
         if (m_Hastag != null && PointsName.IsNullOrEmpty() && PlayerRank.IsNullOrEmpty())
             GameObject.DestroyImmediate(m_Hastag.gameObject);
 
-        Color l_PlayerColor = PlayerCardUI.m_Player.ProfileColor.ToUnityColor();
+        Color l_PlayerColor = PlayerCardUI.m_Player.Color.ToUnityColor();
         Color l_BeforePlayerColor = new Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
         Color l_NewPlayerColor = new Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
 
@@ -98,6 +89,8 @@ public class PlayerCardUI
 
     public static TimeManager m_TimeManager;
 
+    private static bool IsCardActive = true;
+
     #region Properties
     // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public PlayerCardViewController CardViewController;
@@ -109,14 +102,27 @@ public class PlayerCardUI
     #region Setup
     public static PlayerCardUI CreateCard()
     {
+        if (Plugin.AvailableGuilds.Count == 0) return null;
 
-        PlayerGuildsInfo l_Player = GuildApi.GetPlayerInfoFromAPI();
+        if (!GuildSaberUtils.GuildsListContainsId(Plugin.AvailableGuilds, GSConfig.Instance.SelectedGuild))
+        {
+            GSConfig.Instance.SelectedGuild = Plugin.AvailableGuilds[0].ID;
+            GuildSaberProfile.GuildSaber.m_CardSelectedGuild = Plugin.AvailableGuilds[0];
+        }
 
-        if (l_Player.Equals(default(PlayerGuildsInfo))) { Plugin.Log.Error("Failed Getting Player Info"); return null; }
+        ApiPlayerData l_Player = GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: false, GSConfig.Instance.SelectedGuild, p_UseGuild: true);
 
-        m_Player = l_Player.m_ReturnPlayer;
+        if (l_Player.Equals(default(PlayerGuildsInfo)) || l_Player.Equals(null)) { Plugin.Log.Error("Failed Getting Player Info"); return null; }
 
-        new PlayerCardUI(Plugin.AvailableGuilds);
+        m_Player = l_Player;
+
+        Plugin.Log.Info(m_Player.Name);
+        Plugin.Log.Info(m_Player.Country);
+        Plugin.Log.Info(m_Player.LevelValue.ToString());
+
+        Plugin.Log.Info(Plugin.AvailableGuilds.Count.ToString());
+
+        new PlayerCardUI();
 
         return m_Instance;
     }
@@ -126,11 +132,13 @@ public class PlayerCardUI
         if (m_Instance == null) return;
 
         if (m_Instance.CardViewController != null) m_Instance.CardViewController.gameObject.SetActive(p_Active);
+        else return;
 
+        IsCardActive = p_Active;
         m_Instance.FloatingScreen.gameObject.SetActive(p_Active);
     }
 
-    public PlayerCardUI(List<object> p_AvailableGuilds)
+    public PlayerCardUI()
     {
 
         Plugin.Log.Info("Loading Player Card");
@@ -141,6 +149,7 @@ public class PlayerCardUI
             //If i put Object it will do an "ambïgue" reference Between System.object and UnityEngine.Object
             GameObject.DontDestroyOnLoad(m_TimeManager);
         }
+
         CardViewController = BeatSaberUI.CreateViewController<PlayerCardViewController>();
         FloatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40f, 40f), true, GSConfig.Instance.CardPosition.ToUnityVector3(), GSConfig.Instance.CardRotation.ToUnityQuat());
         FloatingScreen.HighlightHandle = true;
@@ -148,7 +157,6 @@ public class PlayerCardUI
         FloatingScreen.HandleReleased += OnCardHandleReleased;
 
         CardViewController.SetReferences(FloatingScreen);
-        CardViewController.m_AvailableGuilds = p_AvailableGuilds;
 
         #region Debug with a lot
         /// For debug purpose with lots of levels
@@ -213,9 +221,9 @@ public class PlayerCardUI
         {
             if (m_Instance == null) { CreateCard(); return; }
 
-            PlayerGuildsInfo l_Player = GuildApi.GetPlayerInfoFromAPI();
+            ApiPlayerData l_Player = GuildApi.GetPlayerInfoFromAPI();
             if (l_Player.Equals(null)) { if (m_Instance != null) SetCardActive(false); return; }
-            m_Player = l_Player.m_ReturnPlayer;
+            m_Player = l_Player;
 
             m_Instance.CardViewController.Refresh();
         }
@@ -260,14 +268,12 @@ public class PlayerCardUI
     #endregion
 
     #region Destroying Card
-    [Obsolete("Provoque une fuite de mémoire")]
     public void Destroy()
     {
         GameObject.DestroyImmediate(CardViewController.gameObject);
         GameObject.DestroyImmediate(FloatingScreen.gameObject);
     }
 
-    [Obsolete("Provoque des fuites de mémoire use PlayerCardUI.m_Instance.SetCardActive() Instead")]
     public static void DestroyCard()
     {
         if (m_Instance != null && m_Instance.CardViewController != null)
@@ -276,4 +282,6 @@ public class PlayerCardUI
         }
     }
     #endregion
+
+    internal static bool GetIsCardActive() => IsCardActive;
 }

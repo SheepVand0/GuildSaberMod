@@ -28,7 +28,7 @@ namespace GuildSaberProfile.UI.GuildSaber
         public int CurrentPlaylistIndex;
         public bool DownloadOnlyUnPassed;
         public string m_CategoryDirectory = Plugin.NOT_DEFINED;
-        public string m_GuildName = "CS";
+        public int m_GuildId = 1;
         public List<int> m_ValidPlaylists = new List<int>
             { 1, 2, 3 };
         public int PlaylistsCountInCategory;
@@ -41,19 +41,17 @@ namespace GuildSaberProfile.UI.GuildSaber
         [UIComponent("ElemsHorizontal")] public readonly HorizontalLayoutGroup m_HorizontalElems = null;
         #endregion
 
-        public CategoryUI(string p_Name, string p_GuildName, bool p_DownloadOnlyUnpassed)
+        public CategoryUI(CategoryData p_Category, int p_GuildId, bool p_DownloadOnlyUnpassed)
         {
-            CategoryName = p_Name;
-            m_GuildName = p_GuildName;
+            Category = p_Category;
+            m_GuildId = p_GuildId;
             DownloadOnlyUnPassed = p_DownloadOnlyUnpassed;
 
             using (HttpClient l_Client = new HttpClient())
             {
                 try
                 {
-                    Task<string> l_SerializedObject = l_Client.GetStringAsync(!CategoryName.StringIsNullOrEmpty() ?
-                        $"{GuildSaberUtils.ReturnLinkFromGuild(m_GuildName)}/levelcache/{CategoryName}"
-                        : $"{GuildSaberUtils.ReturnLinkFromGuild(m_GuildName)}/levelcache/");
+                    Task<string> l_SerializedObject = l_Client.GetStringAsync($"https://api.guildsaber.com/levels/data/all?guild=1{Category}");
                     l_SerializedObject.Wait();
                     LevelIDs l_TempValidLevels = JsonConvert.DeserializeObject<LevelIDs>(l_SerializedObject.Result);
                     m_ValidPlaylists = l_TempValidLevels.LevelID;
@@ -66,7 +64,7 @@ namespace GuildSaberProfile.UI.GuildSaber
             }
 
             PlaylistsCountInCategory = m_ValidPlaylists.Count;
-            m_CategoryDirectory = $"./Playlists/GuildSaber/{m_GuildName}/{CategoryName}";
+            m_CategoryDirectory = $"./Playlists/GuildSaber/{m_GuildId}/{Category}";
 
             if (PlaylistsCountInCategory == 0)
             {
@@ -79,7 +77,7 @@ namespace GuildSaberProfile.UI.GuildSaber
             Plugin._modFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged -= OnUnpassedOnlyChanged;
         }
 
-        public string CategoryName { get; set; } = Plugin.NOT_DEFINED;
+        public CategoryData Category { get; set; }
 
         [UIAction("#post-parse")]
         private void PostParse()
@@ -96,7 +94,7 @@ namespace GuildSaberProfile.UI.GuildSaber
 
             Plugin._modFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged += OnUnpassedOnlyChanged;
 
-            if (CategoryName == string.Empty)
+            if (Category.CategoryName == string.Empty)
                 m_CategoryNameText.text = "Default";
         }
         private void OnUnpassedOnlyChanged(bool p_UnPassedOnly)
@@ -114,7 +112,7 @@ namespace GuildSaberProfile.UI.GuildSaber
 
         private async void DownloadPlaylist()
         {
-            if (CategoryName == Plugin.NOT_DEFINED || m_ValidPlaylists.Count == 0) return;
+            if (Category.CategoryName == Plugin.NOT_DEFINED || m_ValidPlaylists.Count == 0) return;
 
             if (CurrentPlaylistIndex == PlaylistsCountInCategory)
             {
@@ -131,19 +129,19 @@ namespace GuildSaberProfile.UI.GuildSaber
                 m_DownloadButton.interactable = false;
                 string l_QueryString = string.Empty;
                 if (!DownloadOnlyUnPassed)
-                    l_QueryString = !CategoryName.StringIsNullOrEmpty()
-                        ? $"{GuildSaberUtils.ReturnLinkFromGuild(m_GuildName)}/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{CategoryName}"
-                        : $"{GuildSaberUtils.ReturnLinkFromGuild(m_GuildName)}/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}";
+                    l_QueryString = !Category.CategoryName.StringIsNullOrEmpty()
+                        ? $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Category}"
+                        : $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}";
                 else
-                    l_QueryString = !CategoryName.StringIsNullOrEmpty()
-                        ? $"{GuildSaberUtils.ReturnLinkFromGuild(m_GuildName)}/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{CategoryName}/{Plugin.m_PlayerId}"
-                        : $"{GuildSaberUtils.ReturnLinkFromGuild(m_GuildName)}/playlist/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Plugin.m_PlayerId}";
+                    l_QueryString = !Category.CategoryName.StringIsNullOrEmpty()
+                        ? $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Category}/{Plugin.m_PlayerId}"
+                        : $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Plugin.m_PlayerId}";
 
                 Plugin.Log.Info(l_QueryString);
                 try
                 {
                     CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.PlaylistsOnly);
-                    l_Client.DownloadFileAsync(new Uri(l_QueryString), $"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist");
+                    l_Client.DownloadFileAsync(new Uri(l_QueryString), $"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildId}_{Category}.bplist");
                     l_Client.DownloadFileCompleted += (p_Sender, p_Event) =>
                     {
                         if (p_Event.Error == null)
@@ -181,8 +179,8 @@ namespace GuildSaberProfile.UI.GuildSaber
                         Directory.CreateDirectory(m_CategoryDirectory);
                     break;
                 case PlaylistsVerificationType.PlaylistsOnly:
-                    if (File.Exists($"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist"))
-                        File.Delete($"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildName}_{CategoryName}.bplist");
+                    if (File.Exists($"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildId}_{Category}.bplist"))
+                        File.Delete($"{m_CategoryDirectory}/{m_ValidPlaylists[CurrentPlaylistIndex]:D3}_{m_GuildId}_{Category}.bplist");
                     break;
                 case PlaylistsVerificationType.All:
                     CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.FolderOnly);
@@ -199,17 +197,11 @@ namespace GuildSaberProfile.UI.GuildSaber
     {
         #region Properties
         public bool m_OnlyUnPassedMaps;
-        public string GuildName = GSConfig.Instance.SelectedGuild;
+        public int GuildId = GSConfig.Instance.SelectedGuild;
         public delegate void OnOnlyPassedMapsChange(bool p_OnlyUnPassed);
         public event OnOnlyPassedMapsChange e_OnUnPassedOnlyValueChanged;
         public CategoryUI CategoryInterface;
-        public List<GuildCategories> m_Guilds = new List<GuildCategories>
-        {
-            new GuildCategories("CS", new List<string>
-                { "Tech", "Vibro", "Streams", "Jumps", "Shitpost" }),
-            new GuildCategories("BSCC", new List<string>
-                { "Main" })
-        };
+        public List<GuildCategories> m_Guilds = new List<GuildCategories>();
         #endregion
 
         #region UIComponents
@@ -237,7 +229,7 @@ namespace GuildSaberProfile.UI.GuildSaber
         {
             SetLoadingMode(LoadingMode.loading);
             SelectedGuild = p_Selected;
-            GuildName = p_Selected;
+            GuildId = GuildApi.GetGuildFromName(p_Selected).ID;
             await RefreshList();
             SetLoadingMode(LoadingMode.normal);
         }
@@ -264,20 +256,18 @@ namespace GuildSaberProfile.UI.GuildSaber
             await Task.Run(delegate
             {
                 SetLoadingMode(LoadingMode.loading);
-                List<GuildCategories> l_Categories = new List<GuildCategories>();
-                m_Guilds.Clear();
-                foreach (string l_CurrentGuild in Plugin.AvailableGuilds)
+                List<CategoryData> l_Categories = new List<CategoryData>();
+                foreach (GuildData l_CurrentGuild in Plugin.AvailableGuilds)
                 {
-                    PlayerGuildsInfo l_Player = GuildApi.GetPlayerInfoFromAPI(false, l_CurrentGuild);
+                    PlayerGuildsInfo l_Player = GuildApi.GetPlayerGuildsInfo();
                     if (l_Player.m_AvailableGuilds.Count == 0)
                         continue;
 
-                    GuildCategories l_Guild = new GuildCategories(l_CurrentGuild, new List<string>());
-                    foreach (CustomApiPlayerCategory l_Current in l_Player.m_ReturnPlayer.CategoryData)
-                        l_Guild.Categories.Add(l_Current.Category);
-                    l_Categories.Add(l_Guild);
+                    GuildCategories l_Guild = new GuildCategories(l_CurrentGuild.ID, new List<CategoryData>());
+                    foreach (CategoryData l_Current in l_Player.m_ReturnPlayer.CategoryData)
+                        l_Guild.Categories.Add(l_Current);
+                    m_Guilds.Add(l_Guild);
                 }
-                m_Guilds = l_Categories;
             });
             await RefreshDropdown();
             await RefreshList();
@@ -290,7 +280,7 @@ namespace GuildSaberProfile.UI.GuildSaber
             {
                 List<string> l_Guilds = new List<string>();
                 foreach (GuildCategories l_Current in m_Guilds)
-                    l_Guilds.Add(l_Current.GuildName);
+                    l_Guilds.Add(GuildSaberUtils.GetGuildFromId(l_Current.GuildId).Name);
                 m_AvailableGuilds.Clear();
                 foreach (string l_Current in l_Guilds)
                     m_AvailableGuilds.Add(l_Current);
@@ -310,36 +300,40 @@ namespace GuildSaberProfile.UI.GuildSaber
                     GameObject.DestroyImmediate(l_Current.m_HorizontalElems.gameObject);
                 }
                 m_ListCategories.Clear();
-                GuildCategories l_CurrentGuild = GetGuildFromName(m_Guilds, SelectedGuild);
-                if (l_CurrentGuild.GuildName == Plugin.NOT_DEFINED) { Plugin.Log.Error($"Selected guild not valid : returned guild {l_CurrentGuild.GuildName}"); return; }
-                foreach (string l_Current in l_CurrentGuild.Categories)
-                    m_ListCategories.Add(new CategoryUI(l_Current, GuildName, m_OnlyUnPassedMaps));
-                m_ListCategories.Add(new CategoryUI(string.Empty, GuildName, m_OnlyUnPassedMaps));
+                List<CategoryData> l_Categories = GuildApi.GetPlayerCategoriesDataForGuild(GuildSaberProfile.GuildSaber.m_SSPlayerId, GuildId);
+                foreach (CategoryData l_Current in l_Categories)
+                {
+                    m_ListCategories.Add(new CategoryUI(l_Current, GuildId, m_OnlyUnPassedMaps));
+                }
             });
             if (m_CategoriesTableList != null)
                 m_CategoriesTableList.tableView.ReloadData();
             return Task.CompletedTask;
         }
 
-        public void Init(string p_GuildName)
+        public void Init(int p_GuildId)
         {
-            GuildName = p_GuildName;
+            GuildId = p_GuildId;
         }
 
-        public GuildCategories GetGuildFromName(List<GuildCategories> p_Guilds, string p_Name)
+        public GuildData GetGuildFromName(string p_Name)
         {
-            foreach (GuildCategories l_Current in p_Guilds)
-                if (l_Current.GuildName == p_Name)
-                    return l_Current;
-            return new GuildCategories(Plugin.NOT_DEFINED, new List<string>
-                { Plugin.NOT_DEFINED });
+            foreach (GuildData l_Current in Plugin.AvailableGuilds)
+            {
+                if (l_Current.Name != p_Name)
+                    continue;
+
+                return l_Current;
+            }
+
+            return default(GuildData);
         }
 
         public List<string> GetGuildsName()
         {
             List<string> l_Temp = new List<string>();
-            foreach (GuildCategories l_Current in m_Guilds)
-                l_Temp.Add(l_Current.GuildName);
+            foreach (GuildData l_Current in Plugin.AvailableGuilds)
+                l_Temp.Add(l_Current.Name);
             return l_Temp;
         }
 
@@ -363,7 +357,7 @@ namespace GuildSaberProfile.UI.GuildSaber
         [UIValue("SelectedGuild")]
         public string SelectedGuild
         {
-            get => GuildName;
+            get => GuildSaberProfile.GuildSaber.m_PlaylistDownloadSelectedGuild.Name;
             set { }
         }
 

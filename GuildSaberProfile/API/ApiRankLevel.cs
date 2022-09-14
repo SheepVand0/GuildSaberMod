@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace GuildSaberProfile.API
 {
+    public struct RankData
+    {
+        public string PointsType { get; set; }
+        public string PointsName { get; set; }
+        public float Points { get; set; }
+        public int Rank { get; set; }
+    }
+
     struct ApiRankingLevel
     {
         public int ID { get; set; }

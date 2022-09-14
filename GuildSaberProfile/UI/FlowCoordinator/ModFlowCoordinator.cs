@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
+using GuildSaberProfile.API;
 using GuildSaberProfile.Configuration;
 using HMUI;
 
@@ -8,12 +9,12 @@ namespace GuildSaberProfile.UI.GuildSaber;
 
 public struct GuildCategories
 {
-    public string GuildName { get; set; }
-    public List<string> Categories { get; set; }
+    public int GuildId { get; set; }
+    public List<CategoryData> Categories { get; set; }
 
-    public GuildCategories(string p_GuildName, List<string> p_Categories)
+    public GuildCategories(int p_GuildId, List<CategoryData> p_Categories)
     {
-        GuildName = p_GuildName;
+        GuildId = p_GuildId;
         Categories = p_Categories;
     }
 }

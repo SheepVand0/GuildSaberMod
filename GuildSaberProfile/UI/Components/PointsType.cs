@@ -19,7 +19,7 @@ namespace GuildSaberProfile.UI.Components
 
         TextMeshProUGUI m_PointsText;
 
-        public PlayerApiReworkOutput m_Player = new PlayerApiReworkOutput();
+        public ApiPlayerData m_Player = default(ApiPlayerData);
 
         protected override string m_ViewResourceName => "GuildSaberProfile.UI.Components.Views.PointsType.bsml";
         protected override void PostCreate()
@@ -41,7 +41,7 @@ namespace GuildSaberProfile.UI.Components
             Events.m_Instance.SelectPointsTypes(m_SelectedPoints);
         }
 
-        private void OnGuildSelected(string p_SelectedGuild)
+        private void OnGuildSelected(int p_SelectedGuild)
         {
             RefreshPoints();
             RefreshSelected();
@@ -63,10 +63,10 @@ namespace GuildSaberProfile.UI.Components
 
         public void RefreshSelected()
         {
-            if (string.IsNullOrEmpty(GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer.Name)) return;
-            m_Player = GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer;
+            if (string.IsNullOrEmpty(GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerData.Name)) return;
+            m_Player = GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerData;
             m_PointsText.enableVertexGradient = true;
-            m_PointsText.colorGradient = ((Color)m_Player.ProfileColor.ToUnityColor()).GenerateGradient(0.2f);
+            m_PointsText.colorGradient = ((Color)m_Player.Color.ToUnityColor()).GenerateGradient(0.2f);
             foreach (RankData l_Rank in m_Player.RankData)
                 if (l_Rank.PointsName == m_SelectedPoints)
                     m_PointsText.text = $"{l_Rank.Points} {l_Rank.PointsName}";
@@ -74,7 +74,7 @@ namespace GuildSaberProfile.UI.Components
 
         public void RefreshPoints()
         {
-            m_Player = GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer;
+            m_Player = GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerData;
             if (m_Player.Name == string.Empty) return;
             m_Selector.values.Clear();
             foreach (RankData l_Current in m_Player.RankData)

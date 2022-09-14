@@ -10,7 +10,7 @@
 					<vertical child-control-height="true" child-expand-height="true">
 						<horizontal horizontal-fit="PreferredSize" child-control-width="true" child-expand-width="true">
 							<text text="Passes:" align="MidlineLeft" font-size="2"/>
-							<text text="~PlayerNumberOfPasses" align="MidlineLeft" font-size="2"/>
+							<text id="PlayerNumberOfPasses" text="UwU" align="MidlineLeft" font-size="2"/>
 						</horizontal>
 						<horizontal child-align="MiddleLeft" horizontal-fit="PreferredSize" child-control-width="true" child-expand-width="true">
 							<text text="Level:" font-size="3" align="MidlineLeft"/>

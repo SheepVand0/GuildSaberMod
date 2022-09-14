@@ -136,7 +136,7 @@ namespace GuildSaberProfile.UI.Components
 
         public void SetInfo(string p_ScoreSaberId)
         {
-            PlayerApiReworkOutput l_Info = GuildApi.GetPlayerByScoreSaberIdAndGuild(p_ScoreSaberId, GuildSaberLeaderboardView._LeaderboardPanel.m_SelectedGuild);
+            ApiPlayerData l_Info = GuildApi.GetPlayerByScoreSaberIdAndGuild(p_ScoreSaberId, GuildSaberLeaderboardView._LeaderboardPanel.m_SelectedGuild);
         }
 
         public void Reset()
@@ -208,7 +208,7 @@ namespace GuildSaberProfile.UI.Components
         #region UIValues
         [UIValue("ScoreCells")] List<object> m_Scores = new List<object>();
         #endregion
-        public async void SetScores(ApiCustomDataStruct p_CustomData, List<ApiMapLeaderboardContentStruct> p_Scores, string p_PointsNames)
+        public void SetScores(MapLeaderboardCustomData p_CustomData, List<MapLeaderboardContent> p_Scores, string p_PointsNames)
         {
             bool l_IsCellHasBeenCreated = false;
             foreach (LeaderboardScoreCell l_Current in m_Scores)
@@ -219,7 +219,7 @@ namespace GuildSaberProfile.UI.Components
 
             for (int l_i = 0; l_i < p_Scores.Count; l_i++)
             {
-                ApiMapLeaderboardContentStruct l_Score = p_Scores[l_i];
+                MapLeaderboardContent l_Score = p_Scores[l_i];
                 RankData l_RankData = new RankData();
 
                 if (string.IsNullOrEmpty(p_PointsNames)) l_RankData = l_Score.RankData[0];

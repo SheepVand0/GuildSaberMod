@@ -18,6 +18,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using System.Linq;
 
 namespace GuildSaberProfile.UI.Card;
 //PlayerCard variables
@@ -32,10 +33,11 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     [UIComponent("NeonBackground")] private readonly Transform m_NeonBackground = null;
     [UIComponent("PlayTimeText")] private readonly TextMeshProUGUI m_PlayTimeText = null;
     [UIComponent("RankUIVertical")] private readonly VerticalLayoutGroup m_RankUIVertical = null;
+    [UIComponent("PlayerNumberOfPasses")] private readonly TextMeshProUGUI m_PlayerNumberOfPasses = null;
     #endregion
 
     [UIValue("AvailableGuilds")]
-    public List<object> m_AvailableGuilds = new List<object>();
+    private List<object> m_DropdownAvailableGuilds = new List<object>() { "UwU" };
 
     #region Properties
     [CanBeNull]
@@ -56,7 +58,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     }
     public string PlayerNumberOfPasses
     {
-        get => PlayerCardUI.m_Player.Pass.ToString();
+        get => PlayerCardUI.m_Player.GuildPassCount.ToString();
         set { }
     }
     // ReSharper disable once CollectionNeverQueried.Global
@@ -73,7 +75,21 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     {
         if (PlayerCardUI.m_Player.Equals(null)) return;
 
+        m_DropdownAvailableGuilds.Clear();
+        foreach (GuildData l_Current in Plugin.AvailableGuilds)
+        {
+            m_DropdownAvailableGuilds.Add(l_Current.Name);
+        }
+        m_GuildSelector.UpdateChoices();
+
+        m_GuildSelector.Value = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild).Name;
+        m_GuildSelector.ApplyValue();
+
+        GuildSaberProfile.GuildSaber.m_CardSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild);
+
         Refresh();
+
+        Plugin.Log.Info(PlayerCardUI.m_Player.Avatar);
 
         Plugin.Log.Info("Card loaded");
     }
@@ -82,9 +98,9 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     public void UpdateCardColor()
     {
         if (AllowCustomCardColors == true)
-            PlayerCardUI.m_Player.ProfileColor = GSConfig.Instance.CustomColor.ToGSProfileColor();
+            PlayerCardUI.m_Player.Color = GSConfig.Instance.CustomColor.ToGSProfileColor();
 
-        UnityEngine.Color l_PlayerColor = PlayerCardUI.m_Player.ProfileColor.ToUnityColor();
+        UnityEngine.Color l_PlayerColor = PlayerCardUI.m_Player.Color.ToUnityColor();
         UnityEngine.Color l_BeforePlayerColor = new UnityEngine.Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
         UnityEngine.Color l_NewPlayerColor = new UnityEngine.Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
 
@@ -123,73 +139,84 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     #region Other
     public void UpdateCanPlayerUseCustomColors()
     {
-        string l_BestCategory = string.Empty;
+        float l_MaxLevel = 0;
 
         //Checking if Player level is at 97% of max level
         if (PlayerCardUI.m_Player.CategoryData.Count > 0)
+        {
             foreach (var l_Current in PlayerCardUI.m_Player.CategoryData)
-                if (l_Current.Level == PlayerCardUI.m_Player.Level)
-                    l_BestCategory = l_Current.Category;
-                else
-                    l_BestCategory = string.Empty;
-        else
-            l_BestCategory = null;
+            {
+                if (l_Current.LevelValue != PlayerCardUI.m_Player.LevelValue)
+                    continue;
 
-        int l_MaxLevel = GuildSaberUtils.GetStaticPlayerLevel(l_BestCategory);
-        AllowCustomCardColors = PlayerCardUI.m_Player.Level >= (int)(l_MaxLevel * 0.97f);
+                l_MaxLevel = l_Current.MaxLevelValue;
+            }
+
+        }
+
+        AllowCustomCardColors = PlayerCardUI.m_Player.LevelValue >= (float)(l_MaxLevel * 0.97f);
     }
     #endregion
 
     #region Card Updates
     public void Refresh()
     {
-        foreach (PlayerRankUI l_Current in Ranks)
+        try
         {
-            GameObject.Destroy(l_Current.gameObject);
-        }
+            m_PlayerNumberOfPasses.text = PlayerCardUI.m_Player.GuildPassCount.ToString();
 
-        foreach (PlayerLevelUI l_Current in Levels)
+            if (GuildSaberProfile.GuildSaber.m_CardSelectedGuild.Equals(default(GuildData)))
+                PlayerCardUI.SetCardActive(false);
+
+            foreach (PlayerRankUI l_Current in Ranks)
+            {
+                l_Current.DestroyItem();
+            }
+
+            foreach (PlayerLevelUI l_Current in Levels)
+            {
+                l_Current.DestroyItem();
+            }
+
+            Ranks.Clear();
+            Levels.Clear();
+
+            foreach (RankData l_Rank in PlayerCardUI.m_Player.RankData)
+            {
+                List<ItemParam> l_Params = new List<ItemParam>()
+                    {
+                        new ItemParam("PointsName", l_Rank.PointsName),
+                        new ItemParam("PlayerRank", l_Rank.Rank.ToString())
+                    };
+                PlayerRankUI l_Temp = CustomUIComponent.CreateItemWithParams<PlayerRankUI>(m_RankUIVertical.transform, true, true, l_Params);
+                Ranks.Add(l_Temp);
+            }
+
+            foreach (CategoryData l_Cat in PlayerCardUI.m_Player.CategoryData)
+            {
+                int l_FontSize = (int)(2 / (PlayerCardUI.m_Player.CategoryData.Count * 0.11f));
+                if (l_FontSize < 1) l_FontSize = 2;
+                if (l_FontSize == 5) l_FontSize = 4;
+
+                List<ItemParam> l_Params = new List<ItemParam>()
+                    {
+                        new ItemParam("Level", l_Cat.LevelValue.ToString("0.0")),
+                        new ItemParam("LevelName", l_Cat.CategoryName),
+                        new ItemParam("FontSize", l_FontSize)
+                    };
+                PlayerLevelUI l_Temp = CustomUIComponent.CreateItemWithParams<PlayerLevelUI>(m_DetailsLevelsLayout.transform, true, true, l_Params);
+                Levels.Add(l_Temp);
+            }
+
+            m_PlayerNameText.text = GuildSaberUtils.GetPlayerNameToFit(PlayerCardUI.m_Player.Name, 16);
+            UpdateCanPlayerUseCustomColors();
+            UpdateCardColor();
+            UpdateLevelsDetails();
+        }
+        catch (Exception l_E)
         {
-            GameObject.DestroyImmediate(l_Current.gameObject, true);
+            Plugin.Log.Error(l_E);
         }
-
-        Ranks.Clear();
-        Levels.Clear();
-
-        Plugin.Log.Info(PlayerCardUI.m_Player.RankData.Count.ToString());
-
-        foreach (RankData l_Rank in PlayerCardUI.m_Player.RankData)
-        {
-            List<ItemParam> l_Params = new List<ItemParam>()
-                {
-                    new ItemParam("PointsName", l_Rank.PointsName),
-                    new ItemParam("PlayerRank", l_Rank.Rank.ToString())
-                };
-            PlayerRankUI l_Temp = CustomUIComponent.CreateItemWithParams<PlayerRankUI>(m_RankUIVertical.transform, true, true, l_Params);
-            Ranks.Add(l_Temp);
-        }
-
-        foreach (CustomApiPlayerCategory l_Cat in PlayerCardUI.m_Player.CategoryData)
-        {
-            int l_FontSize = (int)(2 / (PlayerCardUI.m_Player.CategoryData.Count * 0.11f));
-            if (l_FontSize < 1) l_FontSize = 2;
-            if (l_FontSize == 5) l_FontSize = 4;
-
-            List<ItemParam> l_Params = new List<ItemParam>()
-                {
-                    new ItemParam("Level", l_Cat.Level.ToString()),
-                    new ItemParam("LevelName", l_Cat.Category),
-                    new ItemParam("FontSize", l_FontSize)
-                };
-            PlayerLevelUI l_Temp = CustomUIComponent.CreateItemWithParams<PlayerLevelUI>(m_DetailsLevelsLayout.transform, true, true, l_Params);
-            Levels.Add(l_Temp);
-        }
-
-        Plugin.Log.Info($"{PlayerCardUI.m_Player.Name}");
-        m_PlayerNameText.text = GuildSaberUtils.GetPlayerNameToFit(PlayerCardUI.m_Player.Name, 16);
-        UpdateCanPlayerUseCustomColors();
-        UpdateCardColor();
-        UpdateLevelsDetails();
     }
 
     public void UpdateLevelsDetails()
@@ -229,7 +256,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     [UIComponent("ToggleShowHandle")] private readonly ToggleSetting m_ToggleShowHandle = null;
     [UIComponent("CustomColorSettings")] private readonly ColorSetting m_CustomColorSettings = null;
     [UIComponent("SettingsModal")] public ModalView m_ModalView = null;
-    [UIComponent("SettingsGuildSelector")] public DropDownListSetting m_GuildSelector = null;
+    [UIComponent("GuildList")] public DropDownListSetting m_GuildSelector = null;
     #endregion
 
     #region Updates
@@ -266,7 +293,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     [UIValue("SelectedGuild")]
     protected string SelectedGuild
     {
-        get => GSConfig.Instance.SelectedGuild;
+        get => (string)m_DropdownAvailableGuilds[0];
         set { }
     }
 
@@ -323,7 +350,17 @@ public class PlayerCardViewController : BSMLAutomaticViewController
     [UIAction("UpdateCard")]
     private void UpdateCard(string p_Selected)
     {
-        GSConfig.Instance.SelectedGuild = p_Selected;
+        if (!Plugin.AvailableGuilds.ElementAt(m_GuildSelector.dropdown.selectedIndex).Equals(null))
+        {
+            GuildData l_CurrentGuild = Plugin.AvailableGuilds[m_GuildSelector.dropdown.selectedIndex];
+            GSConfig.Instance.SelectedGuild = l_CurrentGuild.ID;
+            GuildSaberProfile.GuildSaber.m_CardSelectedGuild = l_CurrentGuild;
+        }
+        else
+        {
+            GSConfig.Instance.SelectedGuild = 0;
+            GuildSaberProfile.GuildSaber.m_CardSelectedGuild = default(GuildData);
+        }
         OnButtonRefreshCardClicked();
     }
 

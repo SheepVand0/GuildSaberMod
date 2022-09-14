@@ -9,89 +9,42 @@ using System.Reflection;
 using UnityEngine;
 using TMPro;
 using System;
+using System.Security.Policy;
 
 namespace GuildSaberProfile.Utils
 {
     public static class GuildSaberUtils
     {
         #region Statics Utils
-        public static int GetStaticPlayerLevel(string p_Category = null)
+        public static bool GuildsListContainsId(List<GuildData> p_Guilds, int p_GuildId)
         {
-            //Gettings all levels
-            List<int> l_Levels = new List<int>() { 0 };
-            l_Levels = GetLevelCache(GSConfig.Instance.SelectedGuild, p_Category);
-            int l_LastLevel = l_Levels[0];
-            if (l_Levels.Count == 0)
-                return -1;
-
-            //Getting Max Level
-            for (int l_i = 0; l_i < l_Levels.Count - 1;l_i++)
+            foreach (var l_Current in p_Guilds)
             {
-                if (l_Levels.Count - 1 != l_i) {
-                    if (l_LastLevel + 1 == l_Levels[l_i + 1])
-                    {
-                        l_LastLevel = l_Levels[l_i + 1];
-                    }
-                }
+                if (l_Current.ID != p_GuildId)
+                    continue;
+
+                return true;
             }
 
-            return l_LastLevel;
+            return false;
         }
-
-        public static List<int> GetLevelCache(string p_Guild, string p_CategoryName = null)
+        public static GuildData GetGuildFromId(int p_Id)
         {
-            List<int> l_Levels = new List<int>() { -1, -2 };
-            try
+            foreach (GuildData l_Current in Plugin.AvailableGuilds)
             {
-                using (HttpClient l_Client = new HttpClient())
-                {
-                    string l_Link = string.Empty;
-                    switch (p_Guild)
-                    {
-                        case "CS":
-                            l_Link = $"{ReturnLinkFromGuild("CS")}/levelcache/{p_CategoryName}";
-                            break;
-                        case "BSCC":
-                            l_Link = $"{ReturnLinkFromGuild("BSCC")}/levelcache/";
-                            break;
-                        default: return null;
-                    }
+                if (l_Current.ID != p_Id)
+                    continue;
 
-                    //Wait for result
-                    Task<string> l_Result = l_Client.GetStringAsync(l_Link);
-                    l_Result.Wait();
-                    if (l_Result.Result == string.Empty) {
-                        Plugin.Log.Info("Result is null");
-                        return new List<int> { 0 };
-                    }
-                    //Function explicit
-                    LevelIDs l_LevelIDs = JsonConvert.DeserializeObject<LevelIDs>(l_Result.Result);
-                    l_Levels = l_LevelIDs.LevelID;
-                }
-            } catch (HttpRequestException p_E)
-            {
-                Plugin.Log.Error(p_E);
+                return l_Current;
             }
-            return l_Levels;
+            return default(GuildData);
         }
-
-        public static string ReturnLinkFromGuild(string p_Guild)
-        {
-            switch (p_Guild)
-            {
-                case "CS":
-                    return "http://api.bsdr.fdom.eu";
-                case "BSCC":
-                    return "https://api.jupilian.me";
-                default: return string.Empty;
-            }
-        }
-        public static bool IsGuildValidForPlayer(string p_Guild)
+        public static bool IsGuildValidForPlayer(int p_Guild)
         {
             bool l_IsValid = false;
-            foreach (string l_Current in Plugin.AvailableGuilds)
+            foreach (GuildData l_Current in Plugin.AvailableGuilds)
             {
-                if (l_Current == p_Guild)
+                if (l_Current.ID == p_Guild)
                 {
                     Plugin.Log.Info("Selected guild is valid for this player not changing");
                     l_IsValid = true;

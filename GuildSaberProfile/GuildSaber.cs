@@ -5,6 +5,7 @@ using GuildSaberProfile.Configuration;
 using GuildSaberProfile.UI.Card;
 using System.Runtime.Remoting.Messaging;
 using System.Net.Http;
+using GuildSaberProfile.API;
 
 namespace GuildSaberProfile
 {
@@ -25,13 +26,20 @@ namespace GuildSaberProfile
         #nullable enable
         public static int? m_GSPlayerId = null;
         public static long m_SSPlayerId = 0;
+
+        public static GuildData m_CardSelectedGuild = default(GuildData);
+        public static GuildData m_PlaylistDownloadSelectedGuild = default(GuildData);
+        public static GuildData m_LeaderboardSelectedGuild = default(GuildData);
+        public static GuildData m_GuildSaberPlayingMenuSelectedGuild = default(GuildData);
+
         protected override (ViewController?, ViewController?, ViewController?) GetSettingsUIImplementation()
         {
             return (null, null, null);
         }
-
         protected override void OnEnable()
         {
+            Plugin.AvailableGuilds = GuildApi.GetPlayerGuildsInfo().m_AvailableGuilds;
+
             if (PlayerCardUI.m_Instance == null)
                 PlayerCardUI.CreateCard();
         }

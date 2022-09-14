@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
+using GuildSaberProfile.API;
 
 namespace GuildSaberProfile.UI.GuildSaber.Components
 {
@@ -49,10 +50,10 @@ namespace GuildSaberProfile.UI.GuildSaber.Components
         protected override void AfterViewCreation()
         {
             GuildSaberLeaderboardPanel l_Panel = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0];
-            PlayerGuildsInfo l_Player = l_Panel.m_PlayerGuildsInfo;
-            if (string.IsNullOrEmpty(l_Player.m_ReturnPlayer.Avatar)) return;
+            ApiPlayerData l_Player = l_Panel.m_PlayerData;
+            if (string.IsNullOrEmpty(l_Player.Avatar)) return;
 
-            Setup(l_Player.m_ReturnPlayer.Avatar, l_Player.m_ReturnPlayer.Color.ToUnityColor());
+            Setup(l_Player.Avatar, l_Player.Color.ToUnityColor());
         }
 
         protected override void PostCreate()

@@ -51,7 +51,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         public string m_CurrentPointsName { get; internal set; }
         public string m_CurrentMapHash { get; internal set; }
         public static IDifficultyBeatmap m_CurrentBeatmap { get; internal set; }
-        public ApiMapLeaderboardCollectionStruct m_Leaderboard { get; private set; }
+        public ApiMapLeaderboardCollection m_Leaderboard { get; private set; }
         public int Page { get => 1; internal set { } }
         #region Setup
         [UIAction("#post-parse")]
@@ -79,7 +79,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         }
         #endregion
         #region Leaderboard
-        public async void GetLeaderboard(string p_Guild)
+        public async void GetLeaderboard(int p_Guild)
         {
             try
             {
@@ -87,24 +87,23 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 SetLeaderboardViewMode(ELeaderboardViewMode.Loading);
                 if (m_CurrentBeatmap == null) { SetLeaderboardViewMode(ELeaderboardViewMode.Error); return; }
                 string l_Hash = GSBeatmapUtils.DifficultyBeatmapToHash(m_CurrentBeatmap);
-                string l_Id = "null";
+                long l_Id = 0;
                 string l_Country = "null";
-                string l_Page = Page.ToString();
-                if (m_SelectedScope == ELeaderboardScope.Around) { l_Id = Plugin.m_PlayerId; }
-                if (m_SelectedScope == ELeaderboardScope.Country) { l_Country = _LeaderboardPanel.m_PlayerGuildsInfo.m_ReturnPlayer.Country; }
+                int l_Page = Page;
+                if (m_SelectedScope == ELeaderboardScope.Around) { l_Id = GuildSaberProfile.GuildSaber.m_SSPlayerId; }
+                if (m_SelectedScope == ELeaderboardScope.Country) { l_Country = _LeaderboardPanel.m_PlayerData.Country; }
                 await Task.Run(delegate {
-                    m_Leaderboard = GuildApi.GetLeaderboard(p_Guild, l_Hash, m_CurrentBeatmap, l_Page, l_Id, p_Country: l_Country, "10");
+                    m_Leaderboard = GuildApi.GetLeaderboard(p_Guild, l_Hash, m_CurrentBeatmap, l_Page, l_Id, p_Country: l_Country, 10);
                 });
-                if (m_Leaderboard.Leaderboards is null) { SetLeaderboardViewMode(ELeaderboardViewMode.NotRanked); return; }
-                else if (!m_Leaderboard.Leaderboards.Any())
+                if (m_Leaderboard.Equals(default(ApiMapLeaderboardCollection))) { SetLeaderboardViewMode(ELeaderboardViewMode.NotRanked); return; }
+                else if (!m_Leaderboard.Equals(default(ApiMapLeaderboardCollection)))
                 {
                     SetLeaderboardViewMode(ELeaderboardViewMode.Unpassed);
-                    ChangeHeaderText($"Level {m_Leaderboard.CustomData.Level} - {m_Leaderboard.CustomData.Category.VerifiedCategory()}");
+                    ChangeHeaderText($"Level {m_Leaderboard.CustomData.LevelValue} - {m_Leaderboard.CustomData.CategoryName.VerifiedCategory()}");
                     return;
                 }
 
-                ChangeHeaderText($"Level {m_Leaderboard.CustomData.Level} - {m_Leaderboard.CustomData.Category.VerifiedCategory()}");
-
+                ChangeHeaderText($"Level {m_Leaderboard.CustomData.LevelValue} - {m_Leaderboard.CustomData.CategoryName.VerifiedCategory()}");
                 /*m_PageUpImage.enabled = true;
                 m_PageDownImage.enabled = false;
 
@@ -161,7 +160,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         {
 
         }
-        private void OnGuildSelected(string p_Guild) { GetLeaderboard(p_Guild); }
+        private void OnGuildSelected(int p_Guild) { GetLeaderboard(p_Guild); }
 
         private void OnPointsTypeChange(string p_PointsName)
         {

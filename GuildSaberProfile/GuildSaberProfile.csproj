@@ -201,15 +201,12 @@
     <Compile Include="API\ApiCategory.cs" />
     <Compile Include="API\ApiGuildDataCollection.cs" />
     <Compile Include="API\ApiMapLeaderboard.cs" />
-    <Compile Include="API\ApiOutputs.cs" />
     <Compile Include="API\ApiPlayerData.cs" />
     <Compile Include="API\ApiRankedDifficultyCollection.cs" />
     <Compile Include="API\ApiRankLevel.cs" />
     <Compile Include="API\BeatSaverAPI.cs" />
     <Compile Include="API\GuildApi.cs" />
     <Compile Include="API\MapLeaderboardApiOutput.cs" />
-    <Compile Include="API\PlayerApiReworkOutput.cs" />
-    <Compile Include="API\PlayerStatsFormat.cs" />
     <Compile Include="AssetBundles\AssetBundleLoader.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="GuildSaber.cs" />

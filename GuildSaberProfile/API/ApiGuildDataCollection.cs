@@ -85,6 +85,12 @@ namespace GuildSaberProfile.API
         public GuildMetadata Metadata { get; set; }
     }
 
+    public struct ApiGuildCollection
+    {
+        public List<GuildData> Guilds { get; set; }
+        public GuildMetadata Metadata { get; set; }
+    }
+
     public struct ApiGuildDataCollection
     {
         public GuildData Guild { get; set; }

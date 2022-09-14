@@ -22,7 +22,7 @@ public class Events : IInitializable
     public delegate void OnLeaderboardViewPostLoad();
     public event OnLeaderboardViewPostLoad e_OnLeaderboardPostLoad;
 
-    public delegate void OnGuildSelected(string p_Guild);
+    public delegate void OnGuildSelected(int p_GuildId);
     public event OnGuildSelected e_OnGuildSelected;
 
     public delegate void OnPointsTypeChange(string p_PointsName);
@@ -49,9 +49,9 @@ public class Events : IInitializable
     #endregion
 
     #region Events Invoker
-    public void SelectGuild(string p_Guild)
+    public void SelectGuild(int p_GuildId)
     {
-        e_OnGuildSelected?.Invoke(p_Guild);
+        e_OnGuildSelected?.Invoke(p_GuildId);
     }
 
     public void SelectPointsTypes(string p_PointsNames)

@@ -9,9 +9,11 @@ namespace GuildSaberProfile.API;
 
 internal static class BeatSaverAPI
 {
+    #nullable enable
+
     public static BeatSaverFormat FetchBeatMapByKey(string p_Key)
     {
-        BeatSaverFormat l_BeatSaverFormat = null;
+        BeatSaverFormat? l_BeatSaverFormat = null;
         using HttpClient l_HttpClient = new HttpClient();
         try
         {
