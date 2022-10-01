@@ -1,14 +1,14 @@
 ﻿using BS_Utils.Utilities;
 using UnityEngine;
-using GuildSaberProfile.Time;
+using GuildSaber.Time;
 using UnityEngine.SceneManagement;
-using GuildSaberProfile.Utils;
-using GuildSaberProfile.UI.Card;
+using GuildSaber.Utils;
+using GuildSaber.UI.Card;
 using Zenject;
 using System;
 using IPA.Loader;
 
-namespace GuildSaberProfile;
+namespace GuildSaber;
 
 public class Events : IInitializable
 {

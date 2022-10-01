@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 #nullable enable
 
-namespace GuildSaberProfile.API
+namespace GuildSaber.API
 {
     public struct Badges
     {

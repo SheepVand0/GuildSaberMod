@@ -2,16 +2,16 @@
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
-using GuildSaberProfile.UI.GuildSaber.Leaderboard;
+using GuildSaber.UI.GuildSaber.Leaderboard;
 using HMUI;
 using UnityEngine;
-using GuildSaberProfile.API;
-using GuildSaberProfile.Utils;
+using GuildSaber.API;
+using GuildSaber.Utils;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 
-namespace GuildSaberProfile.UI.Components
+namespace GuildSaber.UI.Components
 {
     public class PointsType : CustomUIComponent
     {
@@ -21,7 +21,7 @@ namespace GuildSaberProfile.UI.Components
 
         public ApiPlayerData m_Player = default(ApiPlayerData);
 
-        protected override string m_ViewResourceName => "GuildSaberProfile.UI.Components.Views.PointsType.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.PointsType.bsml";
         protected override void PostCreate()
         {
             m_PointsText = m_Selector.GetComponentInChildren<TextMeshProUGUI>();
@@ -63,8 +63,8 @@ namespace GuildSaberProfile.UI.Components
 
         public void RefreshSelected()
         {
-            if (string.IsNullOrEmpty(GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerData.Name)) return;
-            m_Player = GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerData;
+            if (string.IsNullOrEmpty(GuildSaberLeaderboardPanel.m_Instance.m_PlayerData.Name)) return;
+            m_Player = GuildSaberLeaderboardPanel.m_Instance.m_PlayerData;
             m_PointsText.enableVertexGradient = true;
             m_PointsText.colorGradient = ((Color)m_Player.Color.ToUnityColor()).GenerateGradient(0.2f);
             foreach (RankData l_Rank in m_Player.RankData)
@@ -74,7 +74,7 @@ namespace GuildSaberProfile.UI.Components
 
         public void RefreshPoints()
         {
-            m_Player = GuildSaberLeaderboardView._LeaderboardPanel.m_PlayerData;
+            m_Player = GuildSaberLeaderboardPanel.m_Instance.m_PlayerData;
             if (m_Player.Name == string.Empty) return;
             m_Selector.values.Clear();
             foreach (RankData l_Current in m_Player.RankData)

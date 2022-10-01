@@ -8,22 +8,25 @@ using HMUI;
 using IPA.Utilities;
 using UnityEngine;
 using System.Collections.Generic;
-using GuildSaberProfile.Configuration;
-using GuildSaberProfile.UI.GuildSaber.Components;
-using GuildSaberProfile.UI.Components;
-using GuildSaberProfile.Utils;
-using GuildSaberProfile.API;
+using GuildSaber.Configuration;
+using GuildSaber.UI.GuildSaber.Components;
+using GuildSaber.UI.Components;
+using GuildSaber.Utils;
+using GuildSaber.API;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
+using System.Collections;
 
-namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
+namespace GuildSaber.UI.GuildSaber.Leaderboard
 {
     [HotReload(RelativePathToLayout = @"LeaderboardPanel.bsml")]
-    [ViewDefinition("GuildSaberProfile.UI.GuildSaber.View.LeaderboardPanel.bsml")]
+    [ViewDefinition("GuildSaber.UI.GuildSaber.View.LeaderboardPanel.bsml")]
     public class GuildSaberLeaderboardPanel : BSMLAutomaticViewController
     {
+        public static GuildSaberLeaderboardPanel m_Instance;
+
         #region Components
         [UIComponent("PlayerErrorTxt")] private readonly TextMeshProUGUI m_ErrorText = null;
         [UIComponent("Elems")] private readonly HorizontalLayoutGroup m_ElemsLayout = null;
@@ -38,95 +41,95 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
         #endregion
 
         [UIValue("LeaderGuilds")] private List<object> m_AvailablesGuilds = new() { GSConfig.Instance.SelectedGuild };
-        [UIValue("LeaderboardGuild")] public int m_SelectedGuild = GSConfig.Instance.SelectedGuild;
+        [UIValue("LeaderboardGuild")] private string DropdownSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild).Name;
+        public int m_SelectedGuild = GSConfig.Instance.SelectedGuild;
 
         public ApiPlayerData m_PlayerData = default(ApiPlayerData);
         public bool m_IsFirtActivation = true;
 
-        public LeaderboardHeaderManager m_HeaderManager;
-
         #region Actions
-        [UIAction("OnGuildSelected")]
-        private async void OnGuildSelected(string p_Selected)
+        [UIAction("#post-parse")] private void PostParse()
         {
-            GuildData l_Guild = Plugin.AvailableGuilds.ElementAt(m_GuildSelector.dropdown.selectedIndex).Equals(null) ? default(GuildData) : Plugin.AvailableGuilds.ElementAt(m_GuildSelector.dropdown.selectedIndex);
+            m_Instance = this;
+        }
+
+        [UIAction("OnGuildSelected")]
+        private void OnGuildSelected(string p_Selected)
+        {
+            GuildData l_Guild = GuildApi.GetGuildFromName(p_Selected);
             m_SelectedGuild = l_Guild.ID;
-            GuildSaberProfile.GuildSaber.m_LeaderboardSelectedGuild = l_Guild;
-            await Reload(ReloadMode.FromApi, true, false);
-            Events.m_Instance.SelectGuild(m_SelectedGuild);
+            BSPModule.GuildSaber.m_LeaderboardSelectedGuild = l_Guild;
+            Reload(ReloadMode.FromApi, true, true);
         }
         #endregion
 
         #region Functions
-        public async Task<Task> Reload(ReloadMode p_ReloadMode, bool p_SetLoadingModeBeforeGettingData, bool p_ReloadStyle)
+        public void Reload(ReloadMode p_ReloadMode, bool p_SetLoadingModeBeforeGettingData, bool p_ReloadStyle)
         {
+            StartCoroutine(_Reload(p_ReloadMode, p_SetLoadingModeBeforeGettingData, p_ReloadStyle));
+        }
+
+        public IEnumerator _Reload(ReloadMode p_ReloadMode, bool p_SetLoadingModeBeforeGettingData, bool p_ReloadStyle)
+        {
+            m_Instance = this;
+
             if (p_SetLoadingModeBeforeGettingData)
                 SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Loading);
 
-            m_HeaderManager = Resources.FindObjectsOfTypeAll<LeaderboardHeaderManager>()[0];
+            if (m_IsFirtActivation)
+                m_SelectedGuild = GSConfig.Instance.SelectedGuild;
+
+            BSPModule.GuildSaber.m_LeaderboardSelectedGuild = GuildSaberUtils.GetGuildFromId(m_SelectedGuild);
+
             //-----------------------------------------Panel Style-----------------------------------------
-            await Task.Run(async delegate
+            switch (p_ReloadMode)
             {
-                switch (p_ReloadMode)
-                {
-                    case ReloadMode.FromCurrent:
-                        if (m_SelectedGuild == GSConfig.Instance.SelectedGuild)
-                            m_PlayerData = GuildApi.GetPlayerDataFromCurrent();
-                        else
-                            await Reload(ReloadMode.FromApi, true, true);
-                        break;
-                    case ReloadMode.FromApi:
-                        m_PlayerData = GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: true);
-                        break;
-                    default: return;
-                }
-            });
+                case ReloadMode.FromCurrent:
+                    if (m_SelectedGuild == GSConfig.Instance.SelectedGuild) m_PlayerData = GuildApi.GetPlayerDataFromCurrent();
+                    else Reload(ReloadMode.FromApi, true, true);
+                    break;
+                case ReloadMode.FromApi:
+                    m_PlayerData = GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: true);
+                    break;
+            }
 
-            GuildSaberProfile.GuildSaber.m_LeaderboardSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild);
+            if (m_PlayerAvatar != null) m_PlayerAvatar.UpdateShader(m_PlayerData.Color.ToUnityColor());
 
-            if (m_PlayerAvatar != null)
-                m_PlayerAvatar.UpdateShader(m_PlayerData.Color.ToUnityColor());
-
-            if (string.IsNullOrEmpty(m_PlayerData.Name))
+            if (m_PlayerData.Equals(default(ApiPlayerData)))
             {
                 SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Error);
-                if (p_ReloadMode == ReloadMode.FromCurrent)
-                    Reload(ReloadMode.FromApi, true, true);
-                else
-                    return Task.CompletedTask;
+                if (p_ReloadMode == ReloadMode.FromCurrent) Reload(ReloadMode.FromApi, true, true);
+                else yield return null;
             }
 
             m_PlayerName.text = GuildSaberUtils.GetPlayerNameToFit(m_PlayerData.Name, 12);
             SetLeaderboardGuildsChoices(Plugin.AvailableGuilds);
+
             if (m_IsFirtActivation)
             {
                 m_PointsType = CustomUIComponent.CreateItem<PointsType>(m_NameLayout.transform, true, true);
                 m_PlayerAvatar = CustomUIComponent.CreateItem<PlayerAvatar>(m_ElemsLayout.transform, true, true);
                 m_IsFirtActivation = false;
             }
+
             if (p_ReloadStyle)
             {
                 ImageView l_BackgroundView = m_BackgroundLayout.GetComponent<ImageView>();
                 l_BackgroundView.SetField("_skew", 0.0f);
+
                 //-----------------------------------------Croping Icon to fit to panel-----------------------------------------
-                Texture2D l_IconTexture = Utilities.FindTextureInAssembly("GuildSaberProfile.Resources.BSCCIconBlue.png");
+                Texture2D l_IconTexture = Utilities.FindTextureInAssembly("GuildSaber.Resources.BSCCIconOrange.png");
                 Color[] l_Texture = l_IconTexture.GetPixels(0, (int)(l_IconTexture.height / 2.25f), l_IconTexture.width, (int)(l_IconTexture.height / 4.5f));
+
                 Texture2D l_ResultTexture = new(l_IconTexture.width, (int)(l_IconTexture.height / 4.5f - (l_IconTexture.width / l_IconTexture.height) - 1));
                 l_ResultTexture.SetPixels(l_Texture);
                 l_ResultTexture.Apply();
-                l_BackgroundView.overrideSprite = Sprite.Create(l_ResultTexture, new Rect(0, 0, l_ResultTexture.width, l_ResultTexture.height), new Vector2(0, 0));
-                Color l_MainColor = new Color(0, 0, 0, 1);
-                Color[] l_Pixels = l_ResultTexture.GetPixels();
-                for (int l_i = 0; l_i < l_Pixels.Length; l_i++)
-                {
-                    if (!l_Pixels[l_i].Greater(new Color(0.3f, 0.3f, 0.3f)))
-                        continue;
 
-                    if (l_MainColor == new Color(0, 0, 0, 1))
-                        l_MainColor = l_Pixels[l_i];
-                }
-                LeaderboardHeaderManager.m_Color0 = l_MainColor;
-                Resources.FindObjectsOfTypeAll<LeaderboardHeaderManager>()[0].ChangeColors();
+                l_BackgroundView.overrideSprite = Sprite.Create(l_ResultTexture, new Rect(0, 0, l_ResultTexture.width, l_ResultTexture.height), new Vector2(0, 0));
+
+                LeaderboardHeaderManager.m_Color0 = BSPModule.GuildSaber.m_LeaderboardSelectedGuild.Color.ToUnityColor();
+                LeaderboardHeaderManager.m_Instance.ChangeColors();
+
                 //----------------------------------------------------------------------------------
                 l_BackgroundView.color = new(0.7f, 0.7f, 0.7f, 0.9f);
                 l_BackgroundView.color0 = new(0.7f, 0.7f, 0.7f, 0.9f);
@@ -134,43 +137,30 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
                 l_BackgroundView.SetField("_gradientDirection", ImageView.GradientDirection.Horizontal);
                 l_BackgroundView.SetField("_flipGradientColors", false);
             }
+
+            Events.m_Instance.SelectGuild(m_SelectedGuild);
+
             SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Normal);
-            return Task.CompletedTask;
+            yield return null;
         }
 
         public void SetLeaderboardPanelViewMode(LeaderboardPanelViewMode p_ViewMode)
         {
-            switch (p_ViewMode)
-            {
-                case LeaderboardPanelViewMode.Normal:
-                    m_ElemsLayout.gameObject.SetActive(true);
-                    m_ErrorText.gameObject.SetActive(false);
-                    m_LoadingLayout.gameObject.SetActive(false);
-                    break;
-                case LeaderboardPanelViewMode.Loading:
-                    m_ElemsLayout.gameObject.SetActive(false);
-                    m_ErrorText.gameObject.SetActive(false);
-                    m_LoadingLayout.gameObject.SetActive(true);
-                    break;
-                case LeaderboardPanelViewMode.Error:
-                    m_ElemsLayout.gameObject.SetActive(false);
-                    m_ErrorText.gameObject.SetActive(true);
-                    m_LoadingLayout.gameObject.SetActive(false);
-                    break;
-                default: return;
-            }
+            m_ElemsLayout.gameObject.SetActive(p_ViewMode == LeaderboardPanelViewMode.Normal);
+            m_ErrorText.gameObject.SetActive(p_ViewMode == LeaderboardPanelViewMode.Error);
+            m_LoadingLayout.gameObject.SetActive(p_ViewMode == LeaderboardPanelViewMode.Loading);
         }
 
         public void SetLeaderboardGuildsChoices(List<GuildData> l_Guilds)
         {
             m_AvailablesGuilds.Clear();
-            for(int l_i = 0;l_i < l_Guilds.Count;l_i++)
+            for (int l_i = 0; l_i < l_Guilds.Count; l_i++)
             {
                 GuildData l_Current = l_Guilds[l_i];
-                m_AvailablesGuilds.Add(l_Current);
+                m_AvailablesGuilds.Add(l_Current.Name);
                 if (l_Current.ID == m_SelectedGuild)
                 {
-                    m_GuildSelector.Value = l_Current;
+                    m_GuildSelector.Value = l_Current.Name;
                     m_GuildSelector.ApplyValue();
                 }
             }

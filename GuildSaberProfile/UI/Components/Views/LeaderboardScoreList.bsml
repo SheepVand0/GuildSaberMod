@@ -7,6 +7,7 @@
 		<macro.as-host host='Points'></macro.as-host>
 		<macro.as-host host='ScoreText'></macro.as-host>
 		<macro.as-host host='AccText'></macro.as-host>
+		<macro.as-host host='Modifiers'></macro.as-host>
 	</horizontal>
 	<button anchor-pos-y='-2' ignore-layout='true' pref-width='~LeaderWidth' id='Interactable' preferred-height='~InteractableScaleY' text=''>
 	</button>

@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using TMPro;
-using GuildSaberProfile.Configuration;
+using GuildSaber.Configuration;
 using System;
 using IPA.Utilities;
 using UnityEngine;
@@ -9,7 +9,7 @@ using UnityEngine.UI;
 using Polyglot;
 using System.Collections.Generic;
 
-namespace GuildSaberProfile.Harmony
+namespace GuildSaber.Harmony
 {
     [HarmonyPatch(typeof(FlyingObjectEffect), nameof(FlyingObjectEffect.InitAndPresent))]
     class FlyTextPatch

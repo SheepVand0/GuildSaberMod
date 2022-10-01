@@ -1,7 +1,7 @@
 ﻿{
   "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
-  "id": "GuildSaberProfile",
-  "name": "GuildSaberProfile",
+  "id": "GuildSaber",
+  "name": "GuildSaber",
   "author": "SheepVand & Kuurama",
   "version": "0.2.0",
   "description": "",
@@ -9,6 +9,7 @@
   "dependsOn": {
     "BSIPA": "^4.2.0",
     "LeaderboardCore": "^1.2.2",
-    "SiraUtil":  "^3.1.0"
+    "SiraUtil": "^3.1.0",
+    "BeatSaberPlus": "^5.0.0"
   }
 }

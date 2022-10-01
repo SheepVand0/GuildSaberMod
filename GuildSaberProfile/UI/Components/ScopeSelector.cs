@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GuildSaberProfile.UI.Components
+namespace GuildSaber.UI.Components
 {
     class ScopeSelector : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaberProfile.UI.Components.Views.ScopeSelector.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.ScopeSelector.bsml";
 
         #region UIComponents
         [UIComponent("ScopesLayout")] VerticalLayoutGroup m_Layout = null;

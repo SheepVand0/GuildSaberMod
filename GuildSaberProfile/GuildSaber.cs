@@ -1,13 +1,13 @@
 ﻿using BeatSaberPlus.SDK;
 using CP_SDK;
 using HMUI;
-using GuildSaberProfile.Configuration;
-using GuildSaberProfile.UI.Card;
+using GuildSaber.Configuration;
+using GuildSaber.UI.Card;
 using System.Runtime.Remoting.Messaging;
 using System.Net.Http;
-using GuildSaberProfile.API;
+using GuildSaber.API;
 
-namespace GuildSaberProfile
+namespace GuildSaber.BSPModule
 {
     internal class GuildSaber : BSPModuleBase<GuildSaber>
     {
@@ -31,6 +31,7 @@ namespace GuildSaberProfile
         public static GuildData m_PlaylistDownloadSelectedGuild = default(GuildData);
         public static GuildData m_LeaderboardSelectedGuild = default(GuildData);
         public static GuildData m_GuildSaberPlayingMenuSelectedGuild = default(GuildData);
+        public static GuildData m_LevelSelectionMenuSelectedGuild = default(GuildData);
 
         protected override (ViewController?, ViewController?, ViewController?) GetSettingsUIImplementation()
         {

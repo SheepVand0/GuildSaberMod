@@ -1,18 +1,18 @@
 ﻿using UnityEngine;
-using GuildSaberProfile.AssetBundles;
-using GuildSaberProfile.UI.GuildSaber.Leaderboard;
+using GuildSaber.AssetBundles;
+using GuildSaber.UI.GuildSaber.Leaderboard;
 using UnityEngine.UI;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
-using GuildSaberProfile.API;
+using GuildSaber.API;
 
-namespace GuildSaberProfile.UI.GuildSaber.Components
+namespace GuildSaber.UI.GuildSaber.Components
 {
     class PlayerAvatar : CustomUIComponent
     {
         #region Defaults
-        protected override string m_ViewResourceName { get => "GuildSaberProfile.UI.Components.Views.PlayerAvatar.bsml"; }
+        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.PlayerAvatar.bsml";
 
         private Material _PlayerAvatarMaskInstance;
 
@@ -24,6 +24,7 @@ namespace GuildSaberProfile.UI.GuildSaber.Components
         public void Setup(string p_AvatarLink, Color p_ProfileColor)
         {
             m_Avatar.SetImage(p_AvatarLink);
+
             UpdateShader(p_ProfileColor);
         }
         #endregion
@@ -34,31 +35,31 @@ namespace GuildSaberProfile.UI.GuildSaber.Components
             if (m_Avatar == null) { Plugin.Log.Error("Avatar Is Null"); return; }
 
             //_PlayerAvatarMaskInstance = Object.Instantiate(AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask"));
-            _PlayerAvatarMaskInstance = AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask");
+
+            Material l_Mat = AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask");
+            _PlayerAvatarMaskInstance = l_Mat;
+
             Texture l_PlayerAvatar = m_Avatar.material.mainTexture;
 
             m_Avatar.material = _PlayerAvatarMaskInstance;
 
             _PlayerAvatarMaskInstance.SetTexture(Shader.PropertyToID("_MainTex"), l_PlayerAvatar);
-            _PlayerAvatarMaskInstance.SetColor(Shader.PropertyToID("_HaloColor"),p_ProfileColor);
+            _PlayerAvatarMaskInstance.SetColor(Shader.PropertyToID("_HaloColor"), p_ProfileColor);
             _PlayerAvatarMaskInstance.SetFloat(Shader.PropertyToID("_HaloIntensity"), 0.0f);
             _PlayerAvatarMaskInstance.SetFloat(Shader.PropertyToID("_Scale"), 0.8f);
+            _PlayerAvatarMaskInstance.SetFloat(Shader.PropertyToID("_FadeStart"), 1f);
+            _PlayerAvatarMaskInstance.SetFloat(Shader.PropertyToID("_FadeEnd"), 0.97f);
         }
         #endregion
 
         #region Events
         protected override void AfterViewCreation()
         {
-            GuildSaberLeaderboardPanel l_Panel = Resources.FindObjectsOfTypeAll<GuildSaberLeaderboardPanel>()[0];
-            ApiPlayerData l_Player = l_Panel.m_PlayerData;
+            ApiPlayerData l_Player = GuildSaberLeaderboardPanel.m_Instance.m_PlayerData;
             if (string.IsNullOrEmpty(l_Player.Avatar)) return;
 
-            Setup(l_Player.Avatar, l_Player.Color.ToUnityColor());
-        }
-
-        protected override void PostCreate()
-        {
             m_AvatarGrid.cellSize = new Vector2(17, 17);
+            Setup(l_Player.Avatar, l_Player.Color.ToUnityColor());
         }
         #endregion
     }

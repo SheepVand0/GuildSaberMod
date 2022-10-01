@@ -244,7 +244,6 @@
     <EmbeddedResource Include="manifest.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AssetBundles\asset_bundle" />
     <EmbeddedResource Include="AssetBundles\gsbundle" />
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
     <EmbeddedResource Include="UI\Card\View\PlayerCard_UI.bsml" />

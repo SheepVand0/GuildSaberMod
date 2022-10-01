@@ -2,18 +2,20 @@
 using BeatSaberMarkupLanguage;
 using System.Reflection;
 using System.Collections.Generic;
-using GuildSaberProfile.UI.Components;
+using GuildSaber.UI.Components;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using UnityEngine.UI;
+using GuildSaber.API;
+using GuildSaber.Configuration;
 
-namespace GuildSaberProfile.UI.CustomLevelSelection
+namespace GuildSaber.UI.CustomLevelSelection
 {
     public class CategorySelectionViewController : ViewController<CategorySelectionViewController>
     {
         protected override string GetViewContentDescription()
         {
-            return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaberProfile.UI.CustomLevelSelection.View.CategorySelectionViewController.bsml");
+            return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.CustomLevelSelection.View.CategorySelectionViewController.bsml");
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -25,6 +27,8 @@ namespace GuildSaberProfile.UI.CustomLevelSelection
         ////////////////////////////////////////////////////////////////////////////
 
         List<LevelSelectionCustomCategory> m_CustomCategories = new List<LevelSelectionCustomCategory>();
+
+        public int m_SelectedGuild = GSConfig.Instance.SelectedGuild;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -51,6 +55,17 @@ namespace GuildSaberProfile.UI.CustomLevelSelection
         }
     }
 
+    internal struct Category
+    {
+        public ApiCategory m_ApiCategory;
+    }
+
+    internal struct Level
+    {
+        public ApiRankingLevel m_ApiLevel;
+        public List<CategoryMap> m_Maps;
+    }
+
     internal struct CategoryMap
     {
         public CategoryMap(string p_Hash, IBeatmapLevel p_Level, List<IDifficultyBeatmap> p_DifficultiesBeatmap, List<BeatmapDifficulty> p_Difficulties)
@@ -59,6 +74,7 @@ namespace GuildSaberProfile.UI.CustomLevelSelection
             m_Level = p_Level;
             m_DifficultyBeatmps = p_DifficultiesBeatmap;
             m_CategoryRankedDifficulties = p_Difficulties;
+            Setup(p_Hash, m_CategoryRankedDifficulties);
         }
 
         internal string m_Hash { get; set; }

@@ -7,15 +7,15 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using UnityEngine;
-using GuildSaberProfile.UI.CustomLevelSelection;
+using GuildSaber.UI.CustomLevelSelection;
 using HMUI;
-using GuildSaberProfile.AssetBundles;
+using GuildSaber.AssetBundles;
 
-namespace GuildSaberProfile.UI.Components
+namespace GuildSaber.UI.Components
 {
     internal class LevelSelectionCustomCategory : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaberProfile.UI.Components.Views.LevelSelectionCustomCategory.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.LevelSelectionCustomCategory.bsml";
 
         [UIComponent("PlaylistImage")] ClickableImage m_PlaylistImage = null;
 

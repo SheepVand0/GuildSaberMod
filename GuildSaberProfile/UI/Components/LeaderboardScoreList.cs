@@ -4,20 +4,21 @@ using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Parser;
 using BeatSaberMarkupLanguage;
-using GuildSaberProfile.API;
+using GuildSaber.API;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine;
 using System.Threading.Tasks;
 using System.Linq;
 using HMUI;
-using GuildSaberProfile.AssetBundles;
+using GuildSaber.AssetBundles;
 using IPA.Utilities;
 using System.Collections;
-using GuildSaberProfile.UI.GuildSaber.Leaderboard;
-using GuildSaberProfile.Utils;
+using GuildSaber.UI.GuildSaber.Leaderboard;
+using GuildSaber.Utils;
+using ModestTree;
 
-namespace GuildSaberProfile.UI.Components
+namespace GuildSaber.UI.Components
 {
     class LeaderboardScoreCell
     {
@@ -37,6 +38,7 @@ namespace GuildSaberProfile.UI.Components
         [UIValue("Points")] private CustomText m_CPoints = null;
         [UIValue("ScoreText")] private CustomText m_CScore = null;
         [UIValue("AccText")] private CustomText m_CAcc = null;
+        [UIValue("Modifiers")] private CustomText m_Modifiers = null;
         #endregion
 
         UnityEngine.Color m_Red = new Utils.Color.Color(255, 0, 55).ToUnityColor();
@@ -45,7 +47,7 @@ namespace GuildSaberProfile.UI.Components
         public static float ScaleFactor { get => 1.2f; }
         private float InteractableScaleY { get => (6.5f * ScaleFactor) * 0.9f; }
         private float ScoreFontSize { get => 2.5f * ScaleFactor; }
-        private float LeaderWidth { get => 90 * ScaleFactor + ($"{BasePoints}".Length * 1.4f); }
+        private float LeaderWidth { get => 90 * ScaleFactor + (7* 1.4f); }
 
         float BasePoints { get; set; }
         public string Rank { get; set; }
@@ -54,15 +56,16 @@ namespace GuildSaberProfile.UI.Components
         public string Score { get; set; }
         public string Acc { get; set; }
         public string Id { get; set; }
+        public string Modifiers { get; set; }
 
         private bool m_HasBeenParsed = false;
 
-        public LeaderboardScoreCell(int p_Rank, string p_Name, float p_Points, string p_PointsName, int p_Score, float p_Acc, string p_Id)
+        public LeaderboardScoreCell(int p_Rank, string p_Name, float p_Points, string p_PointsName, int p_Score, float p_Acc, string p_Id, string p_Modifiers)
         {
-            Init(p_Rank, p_Name, p_Points, p_PointsName, p_Score, p_Acc, p_Id);
+            Init(p_Rank, p_Name, p_Points, p_PointsName, p_Score, p_Acc, p_Id, p_Modifiers);
         }
 
-        public void Init(int p_Rank, string p_Name, float p_Points, string p_PointsName, int p_Score, float p_Acc, string p_Id)
+        public void Init(int p_Rank, string p_Name, float p_Points, string p_PointsName, int p_Score, float p_Acc, string p_Id, string p_Modfiers)
         {
             Rank = $"{p_Rank}";
             PlayerName = p_Name;
@@ -71,6 +74,7 @@ namespace GuildSaberProfile.UI.Components
             Score = p_Score.ToString();
             Acc = $"{p_Acc.ToString("00.00")}%";
             Id = p_Id;
+            Modifiers = GuildSaberUtils.GetPlayerNameToFit(p_Modfiers, 4);
 
             if (m_HasBeenParsed)
                 SetTexts();
@@ -83,6 +87,7 @@ namespace GuildSaberProfile.UI.Components
             m_CPoints.SetText(Points);
             m_CScore.SetText($"{m_CScore.RichText}{Score}");
             m_CAcc.SetText(Acc);
+            m_Modifiers.SetText(Modifiers);
         }
 
         [UIAction("#post-parse")]
@@ -100,7 +105,7 @@ namespace GuildSaberProfile.UI.Components
                 };
 
             float l_OffsetFromRank = 7f;
-            float l_NameOffset = -4f + $"{BasePoints}".Length;
+            float l_NameOffset = -4f;
 
             m_CRank = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
 
@@ -108,22 +113,29 @@ namespace GuildSaberProfile.UI.Components
 
             m_CPlayerName = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
 
-            l_CurrentParams[1] = new ItemParam("AnchorPosX", (31f + l_OffsetFromRank + l_NameOffset) + (ScaleFactor * 1.02f));
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", (34f + l_OffsetFromRank + l_NameOffset) + (ScaleFactor * 1.02f));
             l_CurrentParams[4] = new ItemParam("Color", m_Red);
 
             m_CPoints = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
 
-            l_CurrentParams[1] = new ItemParam("AnchorPosX", (-44f + l_OffsetFromRank + l_NameOffset) + (ScaleFactor * 1.04f));
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", (-40f + l_OffsetFromRank + l_NameOffset) + (ScaleFactor * 1.04f));
             l_CurrentParams[2] = new ItemParam("Alignment", TextAlignmentOptions.Right);
             l_CurrentParams[4] = new ItemParam("Color", UnityEngine.Color.white);
             l_CurrentParams[6] = new ItemParam("RichText", "<mspace=0.5em>");
 
             m_CScore = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
 
-            l_CurrentParams[1] = new ItemParam("AnchorPosX", (-34f + l_OffsetFromRank + l_NameOffset) + (ScaleFactor * 1.06f));
-            l_CurrentParams[4] = new ItemParam("Color", m_Red);
+            l_CurrentParams[0] = new ItemParam("FontSize", ScoreFontSize / ScaleFactor);
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", (-36f + l_OffsetFromRank + l_NameOffset) + (ScaleFactor * 1.06f));
+            l_CurrentParams[4] = new ItemParam("Color", Color.grey);
             l_CurrentParams[5] = new ItemParam("Italic", false);
             l_CurrentParams[6] = new ItemParam("RichText", string.Empty);
+
+            m_Modifiers = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
+
+            l_CurrentParams[0] = new ItemParam("FontSize", ScoreFontSize);
+            l_CurrentParams[1] = new ItemParam("AnchorPosX", (-25f + l_OffsetFromRank + l_NameOffset) + (ScaleFactor * 1.06f));
+            l_CurrentParams[4] = new ItemParam("Color", m_Red);
 
             m_CAcc = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
 
@@ -136,7 +148,7 @@ namespace GuildSaberProfile.UI.Components
 
         public void SetInfo(string p_ScoreSaberId)
         {
-            ApiPlayerData l_Info = GuildApi.GetPlayerByScoreSaberIdAndGuild(p_ScoreSaberId, GuildSaberLeaderboardView._LeaderboardPanel.m_SelectedGuild);
+            ApiPlayerData l_Info = GuildApi.GetPlayerByScoreSaberIdAndGuild(p_ScoreSaberId, GuildSaberLeaderboardPanel.m_Instance.m_SelectedGuild);
         }
 
         public void Reset()
@@ -177,6 +189,7 @@ namespace GuildSaberProfile.UI.Components
             Points = string.Empty;
             Score = string.Empty;
             Acc = string.Empty;
+            Modifiers = string.Empty;
 
             SetTexts();
         }
@@ -197,7 +210,7 @@ namespace GuildSaberProfile.UI.Components
 
     class LeaderboardScoreList : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaberProfile.UI.Components.Views.LeaderboardScoreList.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.LeaderboardScoreList.bsml";
 
         #region UIComponent
         [UIComponent("ScoreList")] CustomCellListTableData m_ScoreList = null;
@@ -210,6 +223,8 @@ namespace GuildSaberProfile.UI.Components
         #endregion
         public void SetScores(MapLeaderboardCustomData p_CustomData, List<MapLeaderboardContent> p_Scores, string p_PointsNames)
         {
+            Plugin.Log.Info(p_Scores.Count.ToString());
+
             bool l_IsCellHasBeenCreated = false;
             foreach (LeaderboardScoreCell l_Current in m_Scores)
             {
@@ -233,13 +248,13 @@ namespace GuildSaberProfile.UI.Components
                     }
                 if (m_Scores.ElementAtOrDefault(l_i) == null)
                 {
-                    m_Scores.Add(new LeaderboardScoreCell(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString()));
+                    m_Scores.Add(new LeaderboardScoreCell(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString(), l_Score.Modifiers));
                     l_IsCellHasBeenCreated = true;
                 }
                 else
                 {
                     LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)m_Scores[l_i];
-                    l_CurrentCell.Init(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString());
+                    l_CurrentCell.Init(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString(), l_Score.Modifiers);
                     if (l_Score.ScoreSaberID.ToString() == Plugin.m_PlayerId)
                     {
                         l_CurrentCell.SetCurrentColorToCurrentPlayer();

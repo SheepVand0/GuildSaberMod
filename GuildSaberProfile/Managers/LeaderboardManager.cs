@@ -1,7 +1,7 @@
-﻿using GuildSaberProfile.UI.GuildSaber.Leaderboard;
+﻿using GuildSaber.UI.GuildSaber.Leaderboard;
 using UnityEngine;
 
-namespace GuildSaberProfile.Managers
+namespace GuildSaber.Managers
 {
     class LeaderboardManager : MonoBehaviour
     {

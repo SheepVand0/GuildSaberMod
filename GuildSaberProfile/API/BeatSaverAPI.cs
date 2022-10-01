@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace GuildSaberProfile.API;
+namespace GuildSaber.API;
 
 internal static class BeatSaverAPI
 {

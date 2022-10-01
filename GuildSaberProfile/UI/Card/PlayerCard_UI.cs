@@ -2,9 +2,9 @@
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
-using GuildSaberProfile.API;
-using GuildSaberProfile.Configuration;
-using GuildSaberProfile.Time;
+using GuildSaber.API;
+using GuildSaber.Configuration;
+using GuildSaber.Time;
 using HMUI;
 using TMPro;
 using UnityEngine;
@@ -12,13 +12,13 @@ using UnityEngine.UI;
 using System;
 using System.Threading.Tasks;
 using CP_SDK_WebSocketSharp;
-using GuildSaberProfile.Utils;
+using GuildSaber.Utils;
 
-namespace GuildSaberProfile.UI.Card;
+namespace GuildSaber.UI.Card;
 
 public class PlayerLevelUI : CustomUIComponent
 {
-    protected override string m_ViewResourceName => "GuildSaberProfile.UI.Card.View.PlayerLevelUI.bsml";
+    protected override string m_ViewResourceName => "GuildSaber.UI.Card.View.PlayerLevelUI.bsml";
 
     [UIComponent("ElemsLayout")] VerticalLayoutGroup m_Elems = null;
 
@@ -41,7 +41,7 @@ public class PlayerLevelUI : CustomUIComponent
 
 public class PlayerRankUI : CustomUIComponent
 {
-    protected override string m_ViewResourceName => "GuildSaberProfile.UI.Card.View.PlayerRankUI.bsml";
+    protected override string m_ViewResourceName => "GuildSaber.UI.Card.View.PlayerRankUI.bsml";
 
     #region UIComponents
     [UIComponent("ElemsLayout")] HorizontalLayoutGroup m_Elems = null;
@@ -107,7 +107,7 @@ public class PlayerCardUI
         if (!GuildSaberUtils.GuildsListContainsId(Plugin.AvailableGuilds, GSConfig.Instance.SelectedGuild))
         {
             GSConfig.Instance.SelectedGuild = Plugin.AvailableGuilds[0].ID;
-            GuildSaberProfile.GuildSaber.m_CardSelectedGuild = Plugin.AvailableGuilds[0];
+            BSPModule.GuildSaber.m_CardSelectedGuild = Plugin.AvailableGuilds[0];
         }
 
         ApiPlayerData l_Player = GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: false, GSConfig.Instance.SelectedGuild, p_UseGuild: true);

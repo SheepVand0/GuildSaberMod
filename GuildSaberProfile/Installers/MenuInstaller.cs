@@ -1,10 +1,10 @@
 ﻿using Zenject;
-using GuildSaberProfile.UI.GuildSaber.Leaderboard;
-using GuildSaberProfile.Managers;
+using GuildSaber.UI.GuildSaber.Leaderboard;
+using GuildSaber.Managers;
 using UnityEngine;
-using GuildSaberProfile.Utils;
+using GuildSaber.Utils;
 
-namespace GuildSaberProfile.Installers
+namespace GuildSaber.Installers
 {
     class MenuInstaller : Installer<MenuInstaller>
     {

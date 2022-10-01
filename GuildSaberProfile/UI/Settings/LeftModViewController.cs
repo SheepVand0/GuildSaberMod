@@ -1,14 +1,14 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
-using GuildSaberProfile.API;
-using GuildSaberProfile.Configuration;
-using GuildSaberProfile.UI.Card;
+using GuildSaber.API;
+using GuildSaber.Configuration;
+using GuildSaber.UI.Card;
 using TMPro;
 
-namespace GuildSaberProfile.UI.GuildSaber;
+namespace GuildSaber.UI.GuildSaber;
 
 [HotReload(RelativePathToLayout = @"ModViewController.bsml")]
-[ViewDefinition("GuildSaberProfile.UI.GuildSaber.View.LeftModViewController.bsml")]
+[ViewDefinition("GuildSaber.UI.GuildSaber.View.LeftModViewController.bsml")]
 public class LeftModViewController : BSMLAutomaticViewController
 {
 
@@ -23,7 +23,7 @@ public class LeftModViewController : BSMLAutomaticViewController
     {
         m_ErrorText.gameObject.SetActive(p_Visible);
         m_ErrorText2.gameObject.SetActive(p_Visible);
-        m_ErrorText.text = "Error during getting data from " + GuildSaberProfile.GuildSaber.m_CardSelectedGuild.Name;
+        m_ErrorText.text = "Error during getting data from " + BSPModule.GuildSaber.m_CardSelectedGuild.Name;
     }
 
     #region Components

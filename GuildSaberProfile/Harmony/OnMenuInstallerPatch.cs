@@ -1,8 +1,8 @@
 ﻿using HarmonyLib;
-using GuildSaberProfile.Installers;
-using GuildSaberProfile.UI.GuildSaber.Leaderboard;
-using GuildSaberProfile.Utils;
-using GuildSaberProfile.Configuration;
+using GuildSaber.Installers;
+using GuildSaber.UI.GuildSaber.Leaderboard;
+using GuildSaber.Utils;
+using GuildSaber.Configuration;
 using System;
 using Zenject;
 using LeaderboardCore.Models;
@@ -11,7 +11,7 @@ using TMPro;
 using HMUI;
 using Polyglot;
 
-namespace GuildSaberProfile.Harmony
+namespace GuildSaber.Harmony
 {
     [HarmonyPatch(typeof(MainSettingsMenuViewControllersInstaller), nameof(MainSettingsMenuViewControllersInstaller.InstallBindings))]
     public static class OnMenuInstallerPatch
@@ -57,7 +57,7 @@ namespace GuildSaberProfile.Harmony
             {
                 GuildSaberCustomLeaderboard l_Leaderboard = (GuildSaberCustomLeaderboard)__instance;
                 Events.OnLeaderboardIsHide();
-                l_Leaderboard._panelViewController.m_HeaderManager.ChangeText(Localization.Get("TITLE_HIGHSCORES"));
+                LeaderboardHeaderManager.m_Instance.ChangeText(Localization.Get("TITLE_HIGHSCORES"));
             }
         }
     }

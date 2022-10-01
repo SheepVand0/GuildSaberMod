@@ -8,7 +8,7 @@ using UnityEngine;
 using TMPro;
 using System.Threading.Tasks;
 
-namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
+namespace GuildSaber.UI.GuildSaber.Leaderboard
 {
     [UsedImplicitly]
     class GuildSaberCustomLeaderboard : CustomLeaderboard, IInitializable, IDisposable
@@ -59,6 +59,8 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
 
     public class LeaderboardHeaderManager : MonoBehaviour
     {
+        public static LeaderboardHeaderManager m_Instance;
+
         public ImageView _HeaderImageView;
 
         GameObject m_Header;
@@ -76,6 +78,11 @@ namespace GuildSaberProfile.UI.GuildSaber.Leaderboard
             {
                 Plugin.Log.Error($"An Error occurred when changing leaderboard colors -> {p_E.Message}");
             }
+        }
+
+        public void Awake()
+        {
+            m_Instance = this;
         }
 
         public void StopChangingColors()

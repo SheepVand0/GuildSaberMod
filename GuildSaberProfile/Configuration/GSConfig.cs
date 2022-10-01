@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo(GeneratedStore.AssemblyVisibilityTarget)]
-namespace GuildSaberProfile.Configuration;
+namespace GuildSaber.Configuration;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 internal class GSConfig : CP_SDK.Config.JsonConfig<GSConfig>

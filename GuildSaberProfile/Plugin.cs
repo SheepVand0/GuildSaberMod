@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.MenuButtons;
 using BS_Utils.Gameplay;
-using GuildSaberProfile.API;
-using GuildSaberProfile.Configuration;
-using GuildSaberProfile.Time;
-using GuildSaberProfile.UI.Card;
-using GuildSaberProfile.UI.GuildSaber;
-using GuildSaberProfile.UI;
+using GuildSaber.API;
+using GuildSaber.Configuration;
+using GuildSaber.Time;
+using GuildSaber.UI.Card;
+using GuildSaber.UI.GuildSaber;
+using GuildSaber.UI;
 using UnityEngine;
 using IPA;
 using IPA.Config.Stores;
@@ -18,7 +18,7 @@ using Config = IPA.Config.Config;
 using IPALogger = IPA.Logging.Logger;
 #endregion
 
-namespace GuildSaberProfile;
+namespace GuildSaber;
 
 [Plugin(RuntimeOptions.SingleStartInit)]
 // ReSharper disable once ClassNeverInstantiated.Global
@@ -28,7 +28,7 @@ public class Plugin
     private static Plugin Instance { get; set; }
 
     internal static IPALogger Log { get; private set; }
-    public HarmonyLib.Harmony m_HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaberProfile"); }
+    public HarmonyLib.Harmony m_HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber"); }
 
     public const string NOT_DEFINED = "Undefined";
     public static string CurrentSceneName = "MainMenu";
@@ -53,7 +53,7 @@ public class Plugin
     {
         Instance = this;
         Log = p_Logger;
-        Log.Info("GuildSaberProfile initialized.");
+        Log.Info("GuildSaber initialized.");
 
         MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
     }

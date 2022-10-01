@@ -4,11 +4,11 @@ using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
 
-namespace GuildSaberProfile.UI.Components
+namespace GuildSaber.UI.Components
 {
     class CustomText : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaberProfile.UI.Components.Views.CustomText.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.CustomText.bsml";
 
         #region UIComponents
         [UIComponent("Text")] TextMeshProUGUI m_CText = null;

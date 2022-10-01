@@ -4,11 +4,11 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.ViewControllers;
-using GuildSaberProfile.API;
-using GuildSaberProfile.Configuration;
-using GuildSaberProfile.Time;
-using GuildSaberProfile.Utils;
-using GuildSaberProfile.Utils.Color;
+using GuildSaber.API;
+using GuildSaber.Configuration;
+using GuildSaber.Time;
+using GuildSaber.Utils;
+using GuildSaber.Utils.Color;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.Components;
 using HMUI;
@@ -20,10 +20,10 @@ using UnityEngine.UI;
 using System;
 using System.Linq;
 
-namespace GuildSaberProfile.UI.Card;
+namespace GuildSaber.UI.Card;
 //PlayerCard variables
 [HotReload(RelativePathToLayout = @"PlayerCard_UI.bsml")]
-[ViewDefinition("GuildSaberProfile.UI.Card.View.PlayerCard_UI.bsml")]
+[ViewDefinition("GuildSaber.UI.Card.View.PlayerCard_UI.bsml")]
 public class PlayerCardViewController : BSMLAutomaticViewController
 {
     #region UIComponents
@@ -85,11 +85,11 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         m_GuildSelector.Value = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild).Name;
         m_GuildSelector.ApplyValue();
 
-        GuildSaberProfile.GuildSaber.m_CardSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild);
+        BSPModule.GuildSaber.m_CardSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild);
 
         Refresh();
 
-        Plugin.Log.Info(PlayerCardUI.m_Player.Avatar);
+        //Plugin.Log.Info(PlayerCardUI.m_Player.Avatar);
 
         Plugin.Log.Info("Card loaded");
     }
@@ -165,7 +165,7 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         {
             m_PlayerNumberOfPasses.text = PlayerCardUI.m_Player.GuildPassCount.ToString();
 
-            if (GuildSaberProfile.GuildSaber.m_CardSelectedGuild.Equals(default(GuildData)))
+            if (BSPModule.GuildSaber.m_CardSelectedGuild.Equals(default(GuildData)))
                 PlayerCardUI.SetCardActive(false);
 
             foreach (PlayerRankUI l_Current in Ranks)
@@ -354,12 +354,12 @@ public class PlayerCardViewController : BSMLAutomaticViewController
         {
             GuildData l_CurrentGuild = Plugin.AvailableGuilds[m_GuildSelector.dropdown.selectedIndex];
             GSConfig.Instance.SelectedGuild = l_CurrentGuild.ID;
-            GuildSaberProfile.GuildSaber.m_CardSelectedGuild = l_CurrentGuild;
+            BSPModule.GuildSaber.m_CardSelectedGuild = l_CurrentGuild;
         }
         else
         {
             GSConfig.Instance.SelectedGuild = 0;
-            GuildSaberProfile.GuildSaber.m_CardSelectedGuild = default(GuildData);
+            BSPModule.GuildSaber.m_CardSelectedGuild = default(GuildData);
         }
         OnButtonRefreshCardClicked();
     }

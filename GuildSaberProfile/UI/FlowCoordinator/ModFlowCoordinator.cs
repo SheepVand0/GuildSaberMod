@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
-using GuildSaberProfile.API;
-using GuildSaberProfile.Configuration;
+using GuildSaber.API;
+using GuildSaber.Configuration;
 using HMUI;
 
-namespace GuildSaberProfile.UI.GuildSaber;
+namespace GuildSaber.UI.GuildSaber;
 
 public struct GuildCategories
 {
@@ -20,7 +20,7 @@ public struct GuildCategories
 }
 
 [HotReload(RelativePathToLayout = @"PlayerCard_UI.bsml")]
-[ViewDefinition("GuildSaberProfile.UI.Card.View.PlayerCard_UI.bsml")]
+[ViewDefinition("GuildSaber.UI.Card.View.PlayerCard_UI.bsml")]
 public class ModFlowCoordinator : FlowCoordinator
 {
     public ModViewController _modViewController;

@@ -1,5 +1,5 @@
-﻿using GuildSaberProfile.API;
-using GuildSaberProfile.Configuration;
+﻿using GuildSaber.API;
+using GuildSaber.Configuration;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ using TMPro;
 using System;
 using System.Security.Policy;
 
-namespace GuildSaberProfile.Utils
+namespace GuildSaber.Utils
 {
     public static class GuildSaberUtils
     {

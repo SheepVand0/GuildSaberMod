@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GuildSaberProfile.Utils
+namespace GuildSaber.Utils
 {
     class GSBeatmapUtils
     {
@@ -16,6 +16,19 @@ namespace GuildSaberProfile.Utils
                 return l_Hash;
             }
             return null;
+        }
+
+        public static int DifficultyToNumber(BeatmapDifficulty p_Difficulty)
+        {
+            switch (p_Difficulty)
+            {
+                case BeatmapDifficulty.Easy: return 1;
+                case BeatmapDifficulty.Normal: return 3;
+                case BeatmapDifficulty.Hard: return 5;
+                case BeatmapDifficulty.Expert: return 7;
+                case BeatmapDifficulty.ExpertPlus: return 9;
+                default: return 0;
+            }
         }
 
     }

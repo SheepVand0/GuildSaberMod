@@ -1,7 +1,7 @@
-﻿using GuildSaberProfile.UI.Card;
+﻿using GuildSaber.UI.Card;
 using UnityEngine;
 
-namespace GuildSaberProfile.Time;
+namespace GuildSaber.Time;
 
 /// <summary>
 ///     Monobehaviours (scripts) are added to GameObjects.

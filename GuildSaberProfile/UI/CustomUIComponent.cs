@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 using BeatSaberMarkupLanguage.Attributes;
-using GuildSaberProfile.UI.Card;
+using GuildSaber.UI.Card;
 using UnityEngine.UI;
 
-namespace GuildSaberProfile.UI
+namespace GuildSaber.UI
 {
     public struct ItemParam
     {
@@ -88,16 +88,7 @@ namespace GuildSaberProfile.UI
         #region Destroy
         public void DestroyItem()
         {
-            foreach (var l_Current in transform.GetComponentsInChildren<HorizontalLayoutGroup>())
-                GameObject.DestroyImmediate(l_Current);
-
-            foreach (var l_Current in transform.GetComponentsInChildren<VerticalLayoutGroup>())
-                GameObject.DestroyImmediate(l_Current);
-
-            foreach (var l_Current in transform.GetComponentsInChildren<GridLayoutGroup>())
-                GameObject.DestroyImmediate(l_Current);
-
-            GameObject.Destroy(this);
+            GameObject.Destroy(gameObject);
         }
         #endregion
 

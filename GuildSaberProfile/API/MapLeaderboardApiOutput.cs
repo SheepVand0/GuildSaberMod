@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using GuildSaberProfile.Utils.Color;
+using GuildSaber.Utils.Color;
 
-namespace GuildSaberProfile.API
+namespace GuildSaber.API
 {
     public struct ApiMapLeaderboardCollectionStruct
     {

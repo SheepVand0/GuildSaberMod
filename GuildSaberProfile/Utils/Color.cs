@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace GuildSaberProfile.Utils.Color;
+namespace GuildSaber.Utils.Color;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Color

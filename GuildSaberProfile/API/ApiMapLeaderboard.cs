@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GuildSaberProfile.API
+namespace GuildSaber.API
 {
     public struct MapLeaderboardContent
     {
         public int ID { get; set; }
-        public int ScoreSaberID { get; set; }
-        public int BeatLeaderID { get; set; }
+        public string ScoreSaberID { get; set; }
+        public string BeatLeaderID { get; set; }
         public int Rank { get; set; }
         public string Name { get; set; }
         public string Country { get; set; }

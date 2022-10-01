@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GuildSaberProfile.API
+namespace GuildSaber.API
 {
     public struct RankData
     {

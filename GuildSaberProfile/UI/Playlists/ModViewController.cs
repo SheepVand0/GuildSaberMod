@@ -9,18 +9,18 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberMarkupLanguage.ViewControllers;
 using BeatSaberMarkupLanguage.Components.Settings;
-using GuildSaberProfile.Configuration;
-using GuildSaberProfile.Utils;
+using GuildSaber.Configuration;
+using GuildSaber.Utils;
 using HMUI;
 using IPA.Utilities;
 using Newtonsoft.Json;
 using SongCore;
 using UnityEngine;
 using UnityEngine.UI;
-using GuildSaberProfile.API;
+using GuildSaber.API;
 using TMPro;
 
-namespace GuildSaberProfile.UI.GuildSaber
+namespace GuildSaber.UI.GuildSaber
 {
 
     public class CategoryUI
@@ -192,7 +192,7 @@ namespace GuildSaberProfile.UI.GuildSaber
     }
 
     [HotReload(RelativePathToLayout = @"ModViewController.bsml")]
-    [ViewDefinition("GuildSaberProfile.UI.GuildSaber.View.ModViewController.bsml")]
+    [ViewDefinition("GuildSaber.UI.GuildSaber.View.ModViewController.bsml")]
     public class ModViewController : BSMLAutomaticViewController
     {
         #region Properties
@@ -300,7 +300,7 @@ namespace GuildSaberProfile.UI.GuildSaber
                     GameObject.DestroyImmediate(l_Current.m_HorizontalElems.gameObject);
                 }
                 m_ListCategories.Clear();
-                List<CategoryData> l_Categories = GuildApi.GetPlayerCategoriesDataForGuild(GuildSaberProfile.GuildSaber.m_SSPlayerId, GuildId);
+                List<CategoryData> l_Categories = GuildApi.GetPlayerCategoriesDataForGuild(BSPModule.GuildSaber.m_SSPlayerId, GuildId);
                 foreach (CategoryData l_Current in l_Categories)
                 {
                     m_ListCategories.Add(new CategoryUI(l_Current, GuildId, m_OnlyUnPassedMaps));
@@ -357,7 +357,7 @@ namespace GuildSaberProfile.UI.GuildSaber
         [UIValue("SelectedGuild")]
         public string SelectedGuild
         {
-            get => GuildSaberProfile.GuildSaber.m_PlaylistDownloadSelectedGuild.Name;
+            get => BSPModule.GuildSaber.m_PlaylistDownloadSelectedGuild.Name;
             set { }
         }
 
