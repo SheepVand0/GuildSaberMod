@@ -9,11 +9,14 @@ using System.Collections.Generic;
 using GuildSaber.UI.Card;
 using CP_SDK.Network;
 using OVR.OpenVR;
+using GuildSaber.UI.CustomLevelSelection;
 
 namespace GuildSaber.API;
 
 public static class GuildApi
 {
+    //public static
+
     public static PlayerGuildsInfo GetPlayerGuildsInfo()
     {
         ApiPlayerData l_Player = default(ApiPlayerData);

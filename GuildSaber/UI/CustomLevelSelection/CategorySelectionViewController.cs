@@ -8,6 +8,8 @@ using BeatSaberMarkupLanguage.Components;
 using UnityEngine.UI;
 using GuildSaber.API;
 using GuildSaber.Configuration;
+using System.Diagnostics;
+using OVR.OpenVR;
 
 namespace GuildSaber.UI.CustomLevelSelection
 {
@@ -28,7 +30,11 @@ namespace GuildSaber.UI.CustomLevelSelection
 
         List<LevelSelectionCustomCategory> m_CustomCategories = new List<LevelSelectionCustomCategory>();
 
+        internal static List<Category> m_Categories = new List<Category>();
+
         public int m_SelectedGuild = GSConfig.Instance.SelectedGuild;
+
+        public static int m_SelectedCategoryId = 0;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -57,46 +63,67 @@ namespace GuildSaber.UI.CustomLevelSelection
 
     internal struct Category
     {
+        public Category(ApiCategory p_Category)
+        {
+            m_ApiCategory = p_Category;
+            m_Levels = default(List<Level>);
+        }
+
+        public Category(ApiCategory p_Category, List<Level> p_Levels)
+        {
+            m_ApiCategory = p_Category;
+            m_Levels = p_Levels;
+        }
+
         public ApiCategory m_ApiCategory;
+        public List<Level> m_Levels;
     }
 
     internal struct Level
     {
+        public Level(ApiRankingLevel p_Level)
+        {
+            m_ApiLevel = p_Level;
+            m_Maps = default(List<CategoryMap>);
+        }
+
+        public Level(ApiRankingLevel p_Level, List<CategoryMap> p_Maps)
+        {
+            m_ApiLevel = p_Level;
+            m_Maps = p_Maps;
+        }
+
         public ApiRankingLevel m_ApiLevel;
         public List<CategoryMap> m_Maps;
     }
 
     internal struct CategoryMap
     {
-        public CategoryMap(string p_Hash, IBeatmapLevel p_Level, List<IDifficultyBeatmap> p_DifficultiesBeatmap, List<BeatmapDifficulty> p_Difficulties)
+        public CategoryMap(RankedDifficultyCollection.RankedMapData p_MapData, BeatmapDifficulty p_Difficulty)
         {
-            m_Hash = p_Hash;
-            m_Level = p_Level;
-            m_DifficultyBeatmps = p_DifficultiesBeatmap;
-            m_CategoryRankedDifficulties = p_Difficulties;
-            Setup(p_Hash, m_CategoryRankedDifficulties);
+            m_MapData = p_MapData;
+            m_Difficulty = p_Difficulty;
         }
 
-        internal string m_Hash { get; set; }
-        internal IBeatmapLevel m_Level { get; set; }
-        internal List<IDifficultyBeatmap> m_DifficultyBeatmps { get; set; }
-        internal List<BeatmapDifficulty> m_CategoryRankedDifficulties { get; set; }
-        public static CategoryMap Setup(string p_Hash, List<BeatmapDifficulty> p_CategoryRankedDifficulties)
+        RankedDifficultyCollection.RankedMapData m_MapData { get; set; }
+        BeatmapDifficulty m_Difficulty { get; set; }
+
+        public IDifficultyBeatmap GetBeatmapDifficulty()
         {
             IBeatmapLevel l_Level = null;
-            List<IDifficultyBeatmap> l_DifficultiesBeatmap = new List<IDifficultyBeatmap>();
+            IDifficultyBeatmap l_DifficultyBeatmap = null;
+            BeatmapDifficulty l_Difficulty = m_Difficulty;
 
-            BeatSaberPlus.SDK.Game.Levels.LoadSong($"custom_level_{p_Hash}", (p_Beatmap) =>
+            BeatSaberPlus.SDK.Game.Levels.LoadSong($"custom_level_{m_MapData.BeatSaverHash}", (p_Beatmap) =>
             {
                 l_Level = p_Beatmap;
 
-                foreach (var l_Diff in p_CategoryRankedDifficulties)
                     foreach (var l_Current in p_Beatmap.beatmapLevelData.difficultyBeatmapSets)
                         foreach (var l_DiffBeatmap in l_Current.difficultyBeatmaps)
-                            if (l_DiffBeatmap.difficulty == l_Diff)
-                                l_DifficultiesBeatmap.Add(l_DiffBeatmap);
+                            if (l_DiffBeatmap.difficulty == l_Difficulty)
+                                l_DifficultyBeatmap = l_DiffBeatmap;
             });
-            return new CategoryMap(p_Hash, l_Level, l_DifficultiesBeatmap, p_CategoryRankedDifficulties);
+            return l_DifficultyBeatmap;
         }
     }
 }

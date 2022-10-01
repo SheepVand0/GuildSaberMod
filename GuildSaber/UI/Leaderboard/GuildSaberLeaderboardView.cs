@@ -16,28 +16,20 @@ using GuildSaber.Configuration;
 using Polyglot;
 using System.Collections;
 
-/*
-*
-*
-*Fix leaderboard Panel not working correctly, still stay in loading mode,
-*add a not ranked map text
-*fix leaderboard cell distance
-*
-*/
 namespace GuildSaber.UI.GuildSaber.Leaderboard
 {
     [HotReload(RelativePathToLayout = @"LeaderboardView.bsml")]
     [ViewDefinition("GuildSaber.UI.GuildSaber.View.LeaderboardView.bsml")]
     public class GuildSaberLeaderboardView : BSMLAutomaticViewController, INotifyLeaderboardSet, INotifyScoreUpload
     {
-        #region
+        #region Elems
         #region Layouts
         [UIComponent("VerticalElems")] VerticalLayoutGroup m_VerticalElems = null;
         [UIComponent("ScoreParamsLayout")] VerticalLayoutGroup m_ScoreParamsLayout = null;
         [UIComponent("WorldSelection")] VerticalLayoutGroup m_ScopeSelectionLayout = null;
         [UIComponent("ElemsHorizontal")] HorizontalLayoutGroup m_HorizontalElems = null;
-        [UIComponent("PageUpImage")] ClickableImage m_PageUpImage = null;
-        [UIComponent("PageDownImage")] ClickableImage m_PageDownImage = null;
+        [UIComponent("PageUpImage")] Button m_PageUpImage = null;
+        [UIComponent("PageDownImage")] Button m_PageDownImage = null;
         #endregion
         [UIComponent("NotRankedText")] TextMeshProUGUI m_NotRankedText = null;
         [UIComponent("ErrorText")] TextMeshProUGUI m_ErrorText = null;
@@ -54,7 +46,8 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         public string m_CurrentMapHash { get; internal set; }
         public static IDifficultyBeatmap m_CurrentBeatmap { get; internal set; }
         public ApiMapLeaderboardCollection m_Leaderboard { get; private set; }
-        public int Page { get => 1; internal set { } }
+        public int Page = 1;
+
         #region Setup
         [UIAction("#post-parse")]
         private void PostParse()
@@ -80,6 +73,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
             Events.m_Instance.e_OnScopeSelected += OnScopeSelected;
         }
         #endregion
+
         #region Leaderboard
         public void GetLeaderboard(int p_Guild)
         {
@@ -104,17 +98,21 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
             {
                 SetLeaderboardViewMode(ELeaderboardViewMode.Unpassed);
                 ChangeHeaderText($"Level {m_Leaderboard.CustomData.LevelValue} - {m_Leaderboard.CustomData.CategoryName.VerifiedCategory()}");
+                m_PageDownImage.interactable = false;
+                m_PageUpImage.interactable = false;
                 yield break;
             }
 
             ChangeHeaderText($"Level {m_Leaderboard.CustomData.LevelValue} - {m_Leaderboard.CustomData.CategoryName.VerifiedCategory()}");
-            /*m_PageUpImage.enabled = true;
-            m_PageDownImage.enabled = false;
+
+            m_PageUpImage.interactable = true;
+            m_PageDownImage.interactable = false;
 
             if (Page == m_Leaderboard.Metadata.MaxPage)
-                m_PageDownImage.enabled = false;
+                m_PageDownImage.interactable = false;
+
             if (Page == 1)
-                m_PageUpImage.enabled = true;*/
+                m_PageUpImage.interactable = false;
 
             m_ScoresList.SetScores(m_Leaderboard.CustomData, m_Leaderboard.Leaderboards, m_CurrentPointsName);
             SetLeaderboardViewMode(ELeaderboardViewMode.Scores);
@@ -140,6 +138,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         {
             m_CurrentBeatmap = difficultyBeatmap;
 
+            Page = 1;
             if (Events.m_IsGuildSaberLeaderboardShown)
                 GetLeaderboard(GuildSaberLeaderboardPanel.m_Instance.m_SelectedGuild);
         }

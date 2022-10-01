@@ -8,8 +8,8 @@
     <ProjectGuid>{42A9AF69-B42B-403D-ADC4-9C3694991007}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GuildSaberProfile</RootNamespace>
-    <AssemblyName>GuildSaberProfile</AssemblyName>
+    <RootNamespace>GuildSaber</RootNamespace>
+    <AssemblyName>GuildSaber</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <DebugSymbols>true</DebugSymbols>
@@ -269,7 +269,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="GuildSaberProfile.csproj.user" />
+    <Content Include="GuildSaber.csproj.user" />
     <EmbeddedResource Include="Resources\GuildSaberLogoOrange4.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogo3.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogoOrange2.png" />

@@ -127,9 +127,6 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
 
                 l_BackgroundView.overrideSprite = Sprite.Create(l_ResultTexture, new Rect(0, 0, l_ResultTexture.width, l_ResultTexture.height), new Vector2(0, 0));
 
-                LeaderboardHeaderManager.m_Color0 = BSPModule.GuildSaber.m_LeaderboardSelectedGuild.Color.ToUnityColor();
-                LeaderboardHeaderManager.m_Instance.ChangeColors();
-
                 //----------------------------------------------------------------------------------
                 l_BackgroundView.color = new(0.7f, 0.7f, 0.7f, 0.9f);
                 l_BackgroundView.color0 = new(0.7f, 0.7f, 0.7f, 0.9f);
@@ -137,6 +134,9 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
                 l_BackgroundView.SetField("_gradientDirection", ImageView.GradientDirection.Horizontal);
                 l_BackgroundView.SetField("_flipGradientColors", false);
             }
+
+            LeaderboardHeaderManager.m_Color0 = BSPModule.GuildSaber.m_LeaderboardSelectedGuild.Color.ToUnityColor();
+            LeaderboardHeaderManager.m_Instance.ChangeColors();
 
             Events.m_Instance.SelectGuild(m_SelectedGuild);
 
