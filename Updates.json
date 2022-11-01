@@ -1,4 +1,6 @@
 {
   "Version" : "0.2.0",
-  "FileLink" : ""
+  "FileLink" : "",
+  "BSPlusVersion": "5.0.2",
+  "BSPlusFileLink" : ""
 }
