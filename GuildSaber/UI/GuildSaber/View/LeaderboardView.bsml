@@ -1,8 +1,8 @@
-﻿<vertical id="VerticalElems" vertical-fit="PreferredSize" min-width="95" preferred-width="95" anchor-pos-x="3" anchor-pos-y="5" pad-right="5" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+﻿<vertical vertical-fit="PreferredSize" min-width="95" preferred-width="95" anchor-pos-x="-8" anchor-pos-y="5" pad-right="5" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
-	<horizontal id='ElemsHorizontal'>
-		<page-button ignore-layout='true' on-click='PageUp' id='PageUpImage' dir='Up' anchor-pos-x='-38' anchor-pos-y='15' preferred-height='2.5' ></page-button>
+	<horizontal>
+		<page-button ignore-layout='true' on-click='PageUp' id='PageUpImage' dir='Up' anchor-pos-x='-38' anchor-pos-y='13' preferred-height='2.5' ></page-button>
 		<vertical ignore-layout='true' child-align='MiddleCenter' id='WorldSelection' anchor-pos-x='-40' anchor-pos-y='0' />
 		<page-button ignore-layout='true' on-click='PageDown' id='PageDownImage' dir='Down' anchor-pos-x='-38' anchor-pos-y='-12' preferred-height='2.5'></page-button>
 		<vertical ignore-layout='true' child-align='UpperCenter' id ='ScoreParamsLayout' anchor-pos-x='20' anchor-pos-y='24' />

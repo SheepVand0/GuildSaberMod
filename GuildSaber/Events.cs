@@ -14,8 +14,6 @@ public class Events : IInitializable
 {
     public static Events m_Instance { get; private set; }
 
-    public static bool m_IsGuildSaberLeaderboardShown = false;
-
     public bool m_LeaderboardViewHasBeenLoaded = false;
 
     #region Events
@@ -43,7 +41,6 @@ public class Events : IInitializable
     {
         BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
 
-        Plugin.Log.Info("Defining Events Manager");
         m_Instance = this;
     }
     #endregion
@@ -68,13 +65,11 @@ public class Events : IInitializable
 
     public static void OnLeaderboardShow(bool p_FirstActivation)
     {
-        m_IsGuildSaberLeaderboardShown = true;
         e_OnLeaderboardShown?.Invoke(p_FirstActivation);
     }
 
     public static void OnLeaderboardIsHide()
     {
-        m_IsGuildSaberLeaderboardShown = false;
         e_OnLeaderboardHide?.Invoke();
     }
 

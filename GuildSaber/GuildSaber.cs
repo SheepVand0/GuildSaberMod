@@ -6,10 +6,12 @@ using GuildSaber.UI.Card;
 using System.Runtime.Remoting.Messaging;
 using System.Net.Http;
 using GuildSaber.API;
+using UnityEngine;
+using GuildSaber.UI.GuildSaber.Leaderboard;
 
 namespace GuildSaber.BSPModule
 {
-    internal class GuildSaber : BSPModuleBase<GuildSaber>
+    internal class GuildSaberModule : BSPModuleBase<GuildSaberModule>
     {
         public override EIModuleBaseType Type => EIModuleBaseType.Integrated;
 
@@ -23,7 +25,10 @@ namespace GuildSaber.BSPModule
 
         public override EIModuleBaseActivationType ActivationType => EIModuleBaseActivationType.OnMenuSceneLoaded;
 
-        #nullable enable
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+#nullable enable
         public static int? m_GSPlayerId = null;
         public static long m_SSPlayerId = 0;
 
@@ -33,10 +38,22 @@ namespace GuildSaber.BSPModule
         public static GuildData m_GuildSaberPlayingMenuSelectedGuild = default(GuildData);
         public static GuildData m_LevelSelectionMenuSelectedGuild = default(GuildData);
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        public const int SCORES_BY_PAGE = 10;
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         protected override (ViewController?, ViewController?, ViewController?) GetSettingsUIImplementation()
         {
             return (null, null, null);
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         protected override void OnEnable()
         {
             Plugin.AvailableGuilds = GuildApi.GetPlayerGuildsInfo().m_AvailableGuilds;

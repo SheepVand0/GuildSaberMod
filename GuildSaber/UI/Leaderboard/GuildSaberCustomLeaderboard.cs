@@ -7,6 +7,10 @@ using System;
 using UnityEngine;
 using TMPro;
 using System.Threading.Tasks;
+using System.Collections;
+using CP_SDK.Unity;
+using GuildSaber.Utils;
+using System.Collections.Generic;
 
 namespace GuildSaber.UI.GuildSaber.Leaderboard
 {
@@ -17,9 +21,10 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         public readonly GuildSaberLeaderboardPanel _panelViewController;
         public readonly GuildSaberLeaderboardView _leaderboardViewController;
 
-        public LeaderboardHeaderManager m_HeaderManager;
         protected override ViewController panelViewController => _panelViewController;
         protected override ViewController leaderboardViewController => _leaderboardViewController;
+
+        public static bool IsShow = false;
 
         public GuildSaberCustomLeaderboard(CustomLeaderboardManager customLeaderboardManager,
                                            GuildSaberLeaderboardPanel panelViewController,
@@ -29,8 +34,13 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
             _panelViewController = panelViewController;
             _leaderboardViewController = leaderboardViewController;
 
-            Events.e_OnLeaderboardShown += OnShow;
             Events.e_OnLeaderboardHide += OnHide;
+            Events.e_OnLeaderboardShown += OnShow;
+        }
+
+        private void OnShow(bool p_FirstActivation)
+        {
+            IsShow = true;
         }
 
         public void Initialize()
@@ -43,80 +53,59 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
             _customLeaderboardManager.Unregister(this);
         }
 
-        private void OnShow(bool p_FirstActivation)
-        {
-            if (m_HeaderManager == null)
-                m_HeaderManager = new GameObject("Leaderboardheader").AddComponent<LeaderboardHeaderManager>();
-
-            m_HeaderManager.ChangeColors();
-        }
-
         private void OnHide()
         {
-            m_HeaderManager.StopChangingColors();
+            IsShow = false;
+            LeaderboardHeaderManager.SetColors(Color.gray, Color.clear);
         }
     }
 
-    public class LeaderboardHeaderManager : MonoBehaviour
+    public class LeaderboardHeaderManager
     {
         public static LeaderboardHeaderManager m_Instance;
 
-        public ImageView _HeaderImageView;
+        public static ImageView _HeaderImageView;
 
-        GameObject m_Header;
-
-        public bool m_Idle = false;
+        static GameObject m_Header;
 
         public static Color m_Color0 = new Color(1, 0.5f, 0, 3);
         public static readonly Color m_Color1 = new Color(0.2f, 0.1f, 1, 0.75f);
+
+        public static async void GetPanel()
+        {
+            if (m_Header != null && _HeaderImageView != null) return;
+
+            await WaitUtils.WaitUntil(() => (m_Header = GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.HeaderPanel")) != null, 10);
+
+            _HeaderImageView = m_Header.GetComponentInChildren<ImageView>();
+        }
         public void ChangeColors()
         {
-            try
-            {
-                m_Idle = false;
-            } catch(Exception p_E)
-            {
-                Plugin.Log.Error($"An Error occurred when changing leaderboard colors -> {p_E.Message}");
-            }
+            GetPanel();
+            SetColors(m_Color0, m_Color1);
         }
 
-        public void Awake()
+        public async static void SetColors(Color p_Color0, Color p_Color1)
         {
-            m_Instance = this;
+            await WaitUtils.WaitUntil(() => m_Header != null, 100);
+
+            _HeaderImageView.color0 = p_Color0;
+            _HeaderImageView.color1 = p_Color1;
         }
 
-        public void StopChangingColors()
+        public static async void ChangeText(string p_Text)
         {
-            m_Idle = true;
+            GetPanel();
+
+            await WaitUtils.WaitUntil(() => m_Header != null, 100);
+
+            m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
         }
 
-        public void Update()
+        public static void ChangeTextForced(string p_Text)
         {
-            if (m_Idle == true) return;
-
-            if (_HeaderImageView == null)
-            {
-                var l_ScreenTransform = GameObject.Find("RightScreen").transform;
-                m_Header = l_ScreenTransform.FindChildRecursive("HeaderPanel").gameObject;
-
-                _HeaderImageView = m_Header.GetComponentInChildren<ImageView>();
-            }
-
-            _HeaderImageView.color0 = m_Color0;
-            _HeaderImageView.color1 = m_Color1;
-
-            if (_HeaderImageView.color1 == m_Color0 && _HeaderImageView.color1 == m_Color1)
-                m_Idle = true;
-        }
-
-        public async void ChangeText(string p_Text)
-        {
-            if (m_Header == null) return;
-
-            await Task.Run(delegate
-            {
-                m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
-            });
+            GetPanel();
+            m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
         }
     }
 }

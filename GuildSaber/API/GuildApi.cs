@@ -76,13 +76,13 @@ public static class GuildApi
             Task<string> l_Result = null;
             string l_ScoreSaberID = (p_ScoreSaberId != 0) ? $"&player-ssid={p_ScoreSaberId}" : string.Empty;
             string l_Country = (p_Country != string.Empty) ? $"&country={p_Country}" : string.Empty;
-            Plugin.Log.Info($"https://api.guildsaber.com/maps/leaderboard/by-hash/{p_Hash}/{GSBeatmapUtils.DifficultyToNumber(p_Beatmap.difficulty)}?guild-id={p_Guild}&page={p_Page}&countperpage={p_CountPerPage}{l_ScoreSaberID}{l_Country}");
+            //Plugin.Log.Info($"https://api.guildsaber.com/maps/leaderboard/by-hash/{p_Hash}/{GSBeatmapUtils.DifficultyToNumber(p_Beatmap.difficulty)}?guild-id={p_Guild}&page={p_Page}&countperpage={p_CountPerPage}{l_ScoreSaberID}{l_Country}");
             l_Result = l_Client.GetStringAsync(
                 $"https://api.guildsaber.com/maps/leaderboard/by-hash/{p_Hash}/{GSBeatmapUtils.DifficultyToNumber(p_Beatmap.difficulty)}?guild-id={p_Guild}&page={p_Page}&countperpage={p_CountPerPage}{l_ScoreSaberID}{l_Country}");
             l_Result.Wait();
             l_Leaderboard = JsonConvert.DeserializeObject<ApiMapLeaderboardCollection>(l_Result.Result);
-        } catch(AggregateException p_E) {
-            Plugin.Log.Error(p_E.Message);
+        } catch(AggregateException l_E) {
+            //Plugin.Log.Error(p_E.Message);
             return default(ApiMapLeaderboardCollection);
         }
         return l_Leaderboard;
@@ -98,7 +98,7 @@ public static class GuildApi
         if (l_PlayerId == 0)
         { Plugin.Log.Error("Cannot get Player ID, not creating card"); return default(ApiPlayerData); }
 
-        BSPModule.GuildSaber.m_SSPlayerId = l_PlayerId;
+        BSPModule.GuildSaberModule.m_SSPlayerId = l_PlayerId;
         int l_SelectedGuildId = 0;
         if (p_UseGuild == true)
         {
@@ -114,19 +114,19 @@ public static class GuildApi
         {
             using (HttpClient l_Client = new HttpClient())
             {
-                if (BSPModule.GuildSaber.m_GSPlayerId == null)
+                if (BSPModule.GuildSaberModule.m_GSPlayerId == null)
                 {
                     Task<string> l_SerializedPlayer =
-                        l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{BSPModule.GuildSaber.m_SSPlayerId}/1");
+                        l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{BSPModule.GuildSaberModule.m_SSPlayerId}/1");
                     l_SerializedPlayer.Wait();
                     ApiPlayerData l_Player = JsonConvert.DeserializeObject<ApiPlayerData>(l_SerializedPlayer.Result);
                     l_DefinedPlayer = l_Player;
-                    BSPModule.GuildSaber.m_GSPlayerId = l_Player.ID;
+                    BSPModule.GuildSaberModule.m_GSPlayerId = l_Player.ID;
                 }
                 else {
                     //Plugin.Log.Info($"https://api.guildsaber.com/player/data/by-ssid/{GuildSaber.m_SSPlayerId}/1{(p_UseGuild == true ? "?guild-id=" + l_SelectedGuildId : string.Empty)}");
                     Task<string> l_SerializedPlayer
-                        = l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{BSPModule.GuildSaber.m_SSPlayerId}/1{(p_UseGuild == true ? "?guild-id=" + l_SelectedGuildId : string.Empty)}");
+                        = l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{BSPModule.GuildSaberModule.m_SSPlayerId}/1{(p_UseGuild == true ? "?guild-id=" + l_SelectedGuildId : string.Empty)}");
                     l_SerializedPlayer.Wait();
                     ApiPlayerData l_Player = JsonConvert.DeserializeObject<ApiPlayerData>(l_SerializedPlayer.Result);
                     l_DefinedPlayer = l_Player;

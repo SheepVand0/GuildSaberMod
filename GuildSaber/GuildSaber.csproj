@@ -209,8 +209,9 @@
     <Compile Include="API\MapLeaderboardApiOutput.cs" />
     <Compile Include="AssetBundles\AssetBundleLoader.cs" />
     <Compile Include="Events.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GuildSaber.cs" />
-    <Compile Include="GuildSaberProfileController.cs" />
+    <Compile Include="GuildSaberController.cs" />
     <Compile Include="Harmony\OnMenuInstallerPatch.cs" />
     <Compile Include="Harmony\SecretPatches.cs" />
     <Compile Include="Installers\MenuInstaller.cs" />
@@ -239,6 +240,7 @@
     <Compile Include="Utils\Color.cs" />
     <Compile Include="Utils\GSBeatmapUtils.cs" />
     <Compile Include="Utils\GuildSaberUtils.cs" />
+    <Compile Include="Utils\WaitUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="manifest.json" />
@@ -270,6 +272,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GuildSaber.csproj.user" />
+    <EmbeddedResource Include="Resources\GsWhiteLogo.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogoOrange4.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogo3.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogoOrange2.png" />

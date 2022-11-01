@@ -10,6 +10,7 @@ using UnityEngine;
 using TMPro;
 using System;
 using System.Security.Policy;
+using System.Collections;
 
 namespace GuildSaber.Utils
 {
@@ -78,6 +79,20 @@ namespace GuildSaber.Utils
             if (p_Cat.StringIsNullOrEmpty()) return "Default";
             return p_Cat;
         }
+
+        private static IEnumerator DelayCoroutine(IEnumerator p_NewCoroutine, float p_Seconds)
+        {
+            yield return new WaitForSeconds(p_Seconds);
+
+            CP_SDK.Unity.MTCoroutineStarter.Start(p_NewCoroutine);
+
+            yield return null;
+        }
+
+        public static Coroutine StartCoroutineWithDelay(IEnumerator p_Coroutine, float p_Seconds)
+        {
+            return CP_SDK.Unity.MTCoroutineStarter.Start(DelayCoroutine(p_Coroutine, p_Seconds));
+        }
         #endregion
 
         #region Zenject
@@ -105,10 +120,10 @@ namespace GuildSaber.Utils
         {
             return p_ColorToCheck.r > p_Base.r && p_ColorToCheck.g > p_Base.g && p_ColorToCheck.b > p_Base.b;
         }
-        public static VertexGradient GenerateGradient(this UnityEngine.Color p_Base, float p_Difference)
+        public static VertexGradient GenerateGradient(this UnityEngine.Color p_Base, float p_Difference, float p_Multiplier = 1f)
         {
-            UnityEngine.Color l_Color0 = new(p_Base.r * (1 + p_Difference), p_Base.g * (1 + p_Difference), p_Base.b * (1 + p_Difference));
-            UnityEngine.Color l_Color1 = new(p_Base.r * (1 - p_Difference), p_Base.g * (1 - p_Difference), p_Base.b * (1 - p_Difference));
+            UnityEngine.Color l_Color0 = new((p_Base.r * (1 + p_Difference)) * p_Multiplier, (p_Base.g * (1 + p_Difference)) * p_Multiplier, (p_Base.b * (1 + p_Difference)) * p_Multiplier);
+            UnityEngine.Color l_Color1 = new((p_Base.r * (1 - p_Difference)) * p_Multiplier, (p_Base.g * (1 - p_Difference)) * p_Multiplier, (p_Base.b * (1 - p_Difference)) * p_Multiplier);
             return new(l_Color1, l_Color1, l_Color0, l_Color0);
         }
 
@@ -136,6 +151,25 @@ namespace GuildSaber.Utils
         public static bool StringIsNullOrEmpty(this string p_Value)
         {
             return p_Value == null || p_Value == string.Empty;
+        }
+
+        public static GameObject FindGm(string p_Query)
+        {
+            GameObject l_lastGM = null;
+            string[] l_Gms = p_Query.Split('.');
+            foreach (string l_Current in l_Gms)
+            {
+                if (l_lastGM == null)
+                {
+                    l_lastGM = GameObject.Find(l_Gms[0]);
+                    continue;
+                }
+
+                l_lastGM = l_lastGM.transform.Find(l_Current).gameObject;
+
+            }
+
+            return l_lastGM;
         }
         #endregion
 

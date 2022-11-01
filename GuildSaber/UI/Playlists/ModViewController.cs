@@ -300,7 +300,7 @@ namespace GuildSaber.UI.GuildSaber
                     GameObject.DestroyImmediate(l_Current.m_HorizontalElems.gameObject);
                 }
                 m_ListCategories.Clear();
-                List<CategoryData> l_Categories = GuildApi.GetPlayerCategoriesDataForGuild(BSPModule.GuildSaber.m_SSPlayerId, GuildId);
+                List<CategoryData> l_Categories = GuildApi.GetPlayerCategoriesDataForGuild(BSPModule.GuildSaberModule.m_SSPlayerId, GuildId);
                 foreach (CategoryData l_Current in l_Categories)
                 {
                     m_ListCategories.Add(new CategoryUI(l_Current, GuildId, m_OnlyUnPassedMaps));
@@ -357,7 +357,7 @@ namespace GuildSaber.UI.GuildSaber
         [UIValue("SelectedGuild")]
         public string SelectedGuild
         {
-            get => BSPModule.GuildSaber.m_PlaylistDownloadSelectedGuild.Name;
+            get => BSPModule.GuildSaberModule.m_PlaylistDownloadSelectedGuild.Name;
             set { }
         }
 

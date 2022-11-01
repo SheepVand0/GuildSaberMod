@@ -40,7 +40,7 @@ namespace GuildSaber.API
         public string? Country { get; set; }
         public int? LastScoreTime { get; set; }
         public int? TotalPlayCount { get; set; }
-        public int? GuildPassCount { get; set; }
+        public int? GuildValidPassCount { get; set; }
         public string? Avatar { get; set; }
         public Utils.Color.Color? Color { get; set; }
         public List<Badges>? Badges { get; set; }

@@ -10,6 +10,8 @@ using GuildSaber.Utils;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
+using System.Collections;
+using GuildSaber.BSPModule;
 
 namespace GuildSaber.UI.Components
 {
@@ -41,32 +43,29 @@ namespace GuildSaber.UI.Components
             Events.m_Instance.SelectPointsTypes(m_SelectedPoints);
         }
 
-        private void OnGuildSelected(int p_SelectedGuild)
+        private async void OnGuildSelected(int p_SelectedGuild)
         {
             RefreshPoints();
+            await Task.Delay(100);
             RefreshSelected();
         }
 
-        [UIValue("DefaultPoints")] private readonly List<object> m_DefaultsPoints = new List<object>() { Plugin.NOT_DEFINED };
+        [UIValue("DefaultPoints")] private List<object> m_DefaultsPoints = new List<object>() { Plugin.NOT_DEFINED };
         [UIValue("SelectedPoints")] public string m_SelectedPoints = Plugin.NOT_DEFINED;
 
         [UIAction("OnPointsSelected")]
         private async void OnPointsSelected(string p_Selected)
         {
-            await Task.Run(delegate
-            {
-                m_SelectedPoints = p_Selected;
-                Events.m_Instance.SelectPointsTypes(m_SelectedPoints);
-            });
+            m_SelectedPoints = p_Selected;
+            Events.m_Instance.SelectPointsTypes(m_SelectedPoints);
+            await Task.Delay(100);
             RefreshSelected();
         }
 
         public void RefreshSelected()
         {
-            if (string.IsNullOrEmpty(GuildSaberLeaderboardPanel.m_Instance.m_PlayerData.Name)) return;
-            m_Player = GuildSaberLeaderboardPanel.m_Instance.m_PlayerData;
             m_PointsText.enableVertexGradient = true;
-            m_PointsText.colorGradient = ((Color)m_Player.Color.ToUnityColor()).GenerateGradient(0.2f);
+            m_PointsText.colorGradient = (GuildSaberModule.m_LeaderboardSelectedGuild.Color.ToUnityColor()).GenerateGradient(0.2f);
             foreach (RankData l_Rank in m_Player.RankData)
                 if (l_Rank.PointsName == m_SelectedPoints)
                     m_PointsText.text = $"{l_Rank.Points} {l_Rank.PointsName}";
@@ -74,11 +73,13 @@ namespace GuildSaber.UI.Components
 
         public void RefreshPoints()
         {
-            m_Player = GuildSaberLeaderboardPanel.m_Instance.m_PlayerData;
-            if (m_Player.Name == string.Empty) return;
-            m_Selector.values.Clear();
+            if (GuildSaberLeaderboardPanel.Instance.m_PlayerData.Equals(default(PlayerData))) return;
+            m_Player = GuildSaberLeaderboardPanel.Instance.m_PlayerData;
+            m_DefaultsPoints.Clear();
             foreach (RankData l_Current in m_Player.RankData)
-                m_Selector.values.Add($"{l_Current.PointsName}");
+            {
+                m_DefaultsPoints.Add($"{l_Current.PointsName}");
+            }
             m_Selector.UpdateChoices();
             m_SelectedPoints = (string)m_Selector.values[0];
             m_Selector.Value = m_SelectedPoints;

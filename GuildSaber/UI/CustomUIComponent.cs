@@ -8,6 +8,8 @@ using System;
 using BeatSaberMarkupLanguage.Attributes;
 using GuildSaber.UI.Card;
 using UnityEngine.UI;
+using System.Collections;
+using CP_SDK.Unity;
 
 namespace GuildSaber.UI
 {
@@ -42,6 +44,15 @@ namespace GuildSaber.UI
                 p_Callback?.Invoke(l_Item);
             };
             return l_Item;
+        }
+
+        private static IEnumerator _PostCreate(CustomUIComponent p_Item)
+        {
+            yield return new WaitForSeconds(0.1f);
+
+            p_Item.PostCreate();
+
+            yield return null;
         }
 
         public static TItem CreateItemWithParams<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, List<ItemParam> p_Params, Action<TItem> p_Callback = null) where TItem : CustomUIComponent
@@ -86,9 +97,8 @@ namespace GuildSaber.UI
         #endregion
 
         #region Destroy
-        public void DestroyItem()
+        public virtual void DestroyItem()
         {
-            GameObject.Destroy(gameObject);
         }
         #endregion
 
@@ -98,6 +108,7 @@ namespace GuildSaber.UI
         protected virtual void OnDestroy() { }
         private void PostParse() { OnPostParse?.Invoke(); AfterViewCreation();   }
         protected virtual void AfterViewCreation() { }
+        public virtual void ResetComponent() { }
         #endregion
 
         #region Init
@@ -109,7 +120,7 @@ namespace GuildSaber.UI
                 name = GetType().Name;
                 if (p_Parse) m_ParserParams = Parse(p_Parent);
                 gameObject.transform.SetParent(p_UnderParent ? p_Parent : p_Parent.parent, false);
-                PostCreate();
+                MTCoroutineStarter.Start(_PostCreate(this));
             }
             catch (Exception l_E)
             {

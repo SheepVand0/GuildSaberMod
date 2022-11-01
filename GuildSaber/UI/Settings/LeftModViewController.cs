@@ -23,7 +23,7 @@ public class LeftModViewController : BSMLAutomaticViewController
     {
         m_ErrorText.gameObject.SetActive(p_Visible);
         m_ErrorText2.gameObject.SetActive(p_Visible);
-        m_ErrorText.text = "Error during getting data from " + BSPModule.GuildSaber.m_CardSelectedGuild.Name;
+        m_ErrorText.text = "Error during getting data from " + BSPModule.GuildSaberModule.m_CardSelectedGuild.Name;
     }
 
     #region Components

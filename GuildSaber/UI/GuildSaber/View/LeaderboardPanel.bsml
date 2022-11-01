@@ -8,7 +8,7 @@
 
 				<horizontal horizontal-fit='PreferredSize' spacing='1'>
 					<grid cell-size-x='14' cell-size-y='14'>
-						<img id='GSImage' src='GuildSaber.Resources.GuildSaberLogoOrange4.png'/>
+						<img id='GSImage' src='GuildSaber.Resources.GsWhiteLogo.png'/>
 					</grid>
 
 					<vertical spacing='0' horizontal-fit='PreferredSize'>

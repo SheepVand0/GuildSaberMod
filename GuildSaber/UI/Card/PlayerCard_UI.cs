@@ -13,6 +13,7 @@ using System;
 using System.Threading.Tasks;
 using CP_SDK_WebSocketSharp;
 using GuildSaber.Utils;
+using System.Diagnostics;
 
 namespace GuildSaber.UI.Card;
 
@@ -20,10 +21,10 @@ public class PlayerLevelUI : CustomUIComponent
 {
     protected override string m_ViewResourceName => "GuildSaber.UI.Card.View.PlayerLevelUI.bsml";
 
-    [UIComponent("ElemsLayout")] VerticalLayoutGroup m_Elems = null;
+    [UIComponent("ElemsLayout")] private  VerticalLayoutGroup m_Elems = null;
 
-    [UIComponent("LevelNameText")] TextMeshProUGUI m_LevelNameText = null;
-    [UIComponent("LevelText")] TextMeshProUGUI m_LevelText = null;
+    [UIComponent("LevelNameText")] private TextMeshProUGUI m_LevelNameText = null;
+    [UIComponent("LevelText")] private TextMeshProUGUI m_LevelText = null;
 
     #region Properties
     // ReSharper disable once MemberInitializerValueIgnored
@@ -37,37 +38,55 @@ public class PlayerLevelUI : CustomUIComponent
     // ReSharper disable once MemberInitializerValueIgnored
     public string LevelName { get; set; }
     #endregion
+
+    public void SetValues(string p_LevelName, string p_Level)
+    {
+        LevelName = p_LevelName;
+        Level = p_Level;
+        m_LevelNameText.text = p_LevelName;
+        m_LevelText.text = p_Level;
+    }
+
+    public override void ResetComponent()
+    {
+        Level = string.Empty;
+        LevelName = string.Empty;
+        m_LevelNameText.text = string.Empty;
+        m_LevelText.text = string.Empty;
+    }
 }
 
 public class PlayerRankUI : CustomUIComponent
 {
     protected override string m_ViewResourceName => "GuildSaber.UI.Card.View.PlayerRankUI.bsml";
 
-    #region UIComponents
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    ///
     [UIComponent("ElemsLayout")] HorizontalLayoutGroup m_Elems = null;
     // ReSharper disable once FieldCanBeMadeReadOnly.Local
     [UIComponent("CategoryText")] TextMeshProUGUI m_CategoryText = null;
     // ReSharper disable once FieldCanBeMadeReadOnly.Local
     [UIComponent("PlayerRankText")] TextMeshProUGUI m_PlayerRankText = null;
     [UIComponent("Hastag")] TextMeshProUGUI m_Hastag = null;
-    #endregion
 
-    #region Properties
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
-    // ReSharper disable once MemberInitializerValueIgnored
-    public string PointsName { get; set; }
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
-    // ReSharper disable once MemberInitializerValueIgnored
-    public string PlayerRank { get; set; }
-    #endregion
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
-    #region Setup
-    protected override void AfterViewCreation()
+    public string PointsName { get; private set; } = string.Empty;
+
+    public string PlayerRank { get; private set; } = string.Empty;
+
+    public async void SetValues(string p_PointsName, string p_PlayerRank, Color p_Color)
     {
-        if (m_Hastag != null && PointsName.IsNullOrEmpty() && PlayerRank.IsNullOrEmpty())
-            GameObject.DestroyImmediate(m_Hastag.gameObject);
+        await WaitUtils.WaitUntil(() => m_CategoryText != null, 100, 20);
 
-        Color l_PlayerColor = PlayerCardUI.m_Player.Color.ToUnityColor();
+        PointsName = p_PointsName;
+        PlayerRank = p_PlayerRank;
+        /*if (m_Hastag != null && PointsName.IsNullOrEmpty() && PlayerRank.IsNullOrEmpty())
+            GameObject.DestroyImmediate(m_Hastag.gameObject);*/
+
+        Color l_PlayerColor = p_Color;
         Color l_BeforePlayerColor = new Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
         Color l_NewPlayerColor = new Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
 
@@ -77,76 +96,48 @@ public class PlayerRankUI : CustomUIComponent
         m_CategoryText.enableVertexGradient = true;
         m_PlayerRankText.colorGradient = l_TextGradient;
         m_CategoryText.colorGradient = l_TextGradient;
+
+        m_CategoryText.text = PointsName;
+        m_PlayerRankText.text = PlayerRank;
+
+        m_Hastag.text = "#";
     }
-    #endregion
+
+    public override void ResetComponent()
+    {
+        m_CategoryText.text = string.Empty;
+        m_PlayerRankText.text = string.Empty;
+        m_Hastag.text = string.Empty;
+    }
 }
 
-public class PlayerCardUI
+internal class PlayerCardUI
 {
-    public static PlayerCardUI m_Instance;
+    public static PlayerCardUI m_Instance = null;
 
-    public static ApiPlayerData m_Player;
+    public static ApiPlayerData m_Player = default(ApiPlayerData);
 
-    public static TimeManager m_TimeManager;
+    public static TimeManager m_TimeManager = null;
 
     private static bool IsCardActive = true;
 
-    #region Properties
-    // ReSharper disable once FieldCanBeMadeReadOnly.Global
-    public PlayerCardViewController CardViewController;
-    // ReSharper disable once FieldCanBeMadeReadOnly.Global
-    // ReSharper disable once MemberCanBePrivate.Global
-    public FloatingScreen FloatingScreen;
-    #endregion
+    public PlayerCardViewController CardViewController { get; private set; }
 
-    #region Setup
-    public static PlayerCardUI CreateCard()
-    {
-        if (Plugin.AvailableGuilds.Count == 0) return null;
+    private FloatingScreen FloatingScreen = null;
 
-        if (!GuildSaberUtils.GuildsListContainsId(Plugin.AvailableGuilds, GSConfig.Instance.SelectedGuild))
-        {
-            GSConfig.Instance.SelectedGuild = Plugin.AvailableGuilds[0].ID;
-            BSPModule.GuildSaber.m_CardSelectedGuild = Plugin.AvailableGuilds[0];
-        }
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
-        ApiPlayerData l_Player = GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: false, GSConfig.Instance.SelectedGuild, p_UseGuild: true);
-
-        if (l_Player.Equals(default(PlayerGuildsInfo)) || l_Player.Equals(null)) { Plugin.Log.Error("Failed Getting Player Info"); return null; }
-
-        m_Player = l_Player;
-
-        Plugin.Log.Info(m_Player.Name);
-        Plugin.Log.Info(m_Player.Country);
-        Plugin.Log.Info(m_Player.LevelValue.ToString());
-
-        Plugin.Log.Info(Plugin.AvailableGuilds.Count.ToString());
-
-        new PlayerCardUI();
-
-        return m_Instance;
-    }
-
-    public static void SetCardActive(bool p_Active)
-    {
-        if (m_Instance == null) return;
-
-        if (m_Instance.CardViewController != null) m_Instance.CardViewController.gameObject.SetActive(p_Active);
-        else return;
-
-        IsCardActive = p_Active;
-        m_Instance.FloatingScreen.gameObject.SetActive(p_Active);
-    }
-
+    /// <summary>
+    /// Card Constructor
+    /// </summary>
     public PlayerCardUI()
     {
-
         Plugin.Log.Info("Loading Player Card");
 
         if (m_TimeManager == null)
         {
             m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
-            //If i put Object it will do an "ambïgue" reference Between System.object and UnityEngine.Object
             GameObject.DontDestroyOnLoad(m_TimeManager);
         }
 
@@ -177,16 +168,63 @@ public class PlayerCardUI
 
         RefreshCard(false);
     }
-    #endregion
 
-    #region Updates
+    /// <summary>
+    /// Create Player Card
+    /// </summary>
+    /// <returns></returns>
+    public static PlayerCardUI CreateCard()
+    {
+        if (Plugin.AvailableGuilds.Count == 0) return null;
+
+        if (!GuildSaberUtils.GuildsListContainsId(Plugin.AvailableGuilds, GSConfig.Instance.SelectedGuild))
+        {
+            GSConfig.Instance.SelectedGuild = Plugin.AvailableGuilds[0].ID;
+            BSPModule.GuildSaberModule.m_CardSelectedGuild = Plugin.AvailableGuilds[0];
+        }
+
+        ApiPlayerData l_Player = GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: false, GSConfig.Instance.SelectedGuild, p_UseGuild: true);
+
+        if (l_Player.Equals(default(PlayerGuildsInfo)) || l_Player.Equals(null)) { Plugin.Log.Error("Failed Getting Player Info"); return null; }
+
+        m_Player = l_Player;
+
+        new PlayerCardUI();
+
+        return m_Instance;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Change card active
+    /// </summary>
+    /// <param name="p_Active"></param>
+    public static void SetCardActive(bool p_Active)
+    {
+        if (m_Instance == null) return;
+
+        if (m_Instance.CardViewController != null) m_Instance.CardViewController.gameObject.SetActive(p_Active);
+        else return;
+
+        IsCardActive = p_Active;
+        m_Instance.FloatingScreen.gameObject.SetActive(p_Active);
+    }
+
+    /// <summary>
+    /// Update card need to show handle
+    /// </summary>
     public void UpdateCardHandleVisibility()
     {
         if (FloatingScreen == null) return;
         FloatingScreen.ShowHandle = GSConfig.Instance.CardHandleVisible;
         FloatingScreen.UpdateHandle();
     }
-    // ReSharper disable once MemberCanBePrivate.Global
+
+    /// <summary>
+    /// Udpate card visibility by current scene
+    /// </summary>
     public void UpdateCardVisibility()
     {
         switch (Plugin.CurrentSceneName)
@@ -199,6 +237,13 @@ public class PlayerCardUI
                 break;
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Update card position by scene
+    /// </summary>
     public void UpdateCardPosition()
     {
         switch (Plugin.CurrentSceneName)
@@ -213,8 +258,14 @@ public class PlayerCardUI
                 break;
         }
     }
-    #endregion
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Refresh card elements
+    /// </summary>
+    /// <param name="p_RegetPlayerInfo"></param>
     public static void RefreshCard(bool p_RegetPlayerInfo)
     {
         if (p_RegetPlayerInfo == true)
@@ -233,7 +284,14 @@ public class PlayerCardUI
         m_Instance.UpdateCardHandleVisibility();
     }
 
-    #region Events
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Event called when card handle is released
+    /// </summary>
+    /// <param name="p_Sender"></param>
+    /// <param name="p_EventArgs"></param>
     private static void OnCardHandleReleased(object p_Sender, FloatingScreenHandleEventArgs p_EventArgs)
     {
         switch (BeatSaberPlus.SDK.Game.Logic.ActiveScene)
@@ -248,9 +306,13 @@ public class PlayerCardUI
                 break;
         }
     }
-    #endregion
 
-    #region Reset
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Reset card menu position
+    /// </summary>
     public static void ResetMenuCardPosition()
     {
         GSConfig.Instance.CardPosition = SerializableVector3.FromUnityVector3(GSConfig.ConfigDefaults.DefaultCardPosition);
@@ -258,6 +320,10 @@ public class PlayerCardUI
         if (PlayerCardUI.m_Instance != null)
             PlayerCardUI.m_Instance.UpdateCardPosition();
     }
+
+    /// <summary>
+    /// Reset card game position
+    /// </summary>
     public static void ResetInGameCardPosition()
     {
         GSConfig.Instance.InGameCardPosition = SerializableVector3.FromUnityVector3(GSConfig.ConfigDefaults.DefaultInGameCardPosition);
@@ -265,15 +331,23 @@ public class PlayerCardUI
         if (BeatSaberPlus.SDK.Game.Logic.ActiveScene == BeatSaberPlus.SDK.Game.Logic.SceneType.Playing && PlayerCardUI.m_Instance != null)
             PlayerCardUI.m_Instance.UpdateCardPosition();
     }
-    #endregion
 
-    #region Destroying Card
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Destroy card
+    /// </summary>
+    [Obsolete("No recommended to use this, can cause bugs")]
     public void Destroy()
     {
         GameObject.DestroyImmediate(CardViewController.gameObject);
         GameObject.DestroyImmediate(FloatingScreen.gameObject);
     }
 
+    /// <summary>
+    /// Destroy card
+    /// </summary>
     public static void DestroyCard()
     {
         if (m_Instance != null && m_Instance.CardViewController != null)
@@ -281,7 +355,13 @@ public class PlayerCardUI
             m_Instance.Destroy();
         }
     }
-    #endregion
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Get is card active
+    /// </summary>
+    /// <returns></returns>
     internal static bool GetIsCardActive() => IsCardActive;
 }

@@ -1,0 +1,7 @@
+﻿<bg>
+	<button on-click="ShowUpdates"/>
+
+	<modal id="UdpatesModal">
+		<horizontal id="Horizontal" />
+	</modal>
+</bg>

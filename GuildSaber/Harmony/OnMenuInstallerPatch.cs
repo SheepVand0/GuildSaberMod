@@ -10,6 +10,7 @@ using UnityEngine;
 using TMPro;
 using HMUI;
 using Polyglot;
+using CP_SDK.Unity;
 
 namespace GuildSaber.Harmony
 {
@@ -41,8 +42,6 @@ namespace GuildSaber.Harmony
             {
                 GuildSaberCustomLeaderboard l_Leaderboard = (GuildSaberCustomLeaderboard)__instance;
                 Events.OnLeaderboardShow(l_Leaderboard._panelViewController.m_IsFirtActivation);
-                if (l_Leaderboard._panelViewController.m_IsFirtActivation)
-                    l_Leaderboard._panelViewController.Reload(ReloadMode.FromCurrent, true, true);
             }
         }
     }
@@ -55,9 +54,8 @@ namespace GuildSaber.Harmony
             //Checking if showed Leaderboard is the GuildSaber one
             if (__instance.GetType() == typeof(GuildSaberCustomLeaderboard))
             {
-                GuildSaberCustomLeaderboard l_Leaderboard = (GuildSaberCustomLeaderboard)__instance;
                 Events.OnLeaderboardIsHide();
-                LeaderboardHeaderManager.m_Instance.ChangeText(Localization.Get("TITLE_HIGHSCORES"));
+                LeaderboardHeaderManager.ChangeTextForced(Localization.Get("TITLE_HIGHSCORES"));
             }
         }
     }

@@ -55,11 +55,11 @@ namespace GuildSaber.UI.GuildSaber.Components
         #region Events
         protected override void AfterViewCreation()
         {
-            ApiPlayerData l_Player = GuildSaberLeaderboardPanel.m_Instance.m_PlayerData;
+            ApiPlayerData l_Player = GuildSaberLeaderboardPanel.Instance.m_PlayerData;
             if (string.IsNullOrEmpty(l_Player.Avatar)) return;
 
             m_AvatarGrid.cellSize = new Vector2(17, 17);
-            Setup(l_Player.Avatar, l_Player.Color.ToUnityColor());
+            Setup(l_Player.Avatar, l_Player.Color.ToUnityColor32());
         }
         #endregion
     }

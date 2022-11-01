@@ -15,21 +15,22 @@ namespace GuildSaber.UI.Components
         [UIComponent("Horizontal")] HorizontalLayoutGroup m_CHorizontal = null;
         #endregion
 
-        #region properties
+
         public float FontSize { get; set; }
         public float AnchorPosX { get; set; }
-        public string Text { get => string.Empty; set { } }
+        public string Text { get; set; } = string.Empty;
+        public bool EnableRichText { get; set; } = false;
         public string RichText { get; set; }
         public TextAlignmentOptions Alignment { get; set; }
         public TextAnchor LayoutAlignment { get; set; }
         public Color Color { get; set; }
         public bool Italic { get; set; }
-        #endregion
+
 
         protected override void PostCreate()
         {
             m_CText.fontSize = FontSize;
-            m_CText.text = $"{RichText}{Text}";
+            m_CText.text = $"{(EnableRichText ? RichText : string.Empty)}{Text}";
             m_CText.alignment = Alignment;
             m_CText.color = Color;
             m_CText.overflowMode = TextOverflowModes.Overflow;
@@ -45,7 +46,7 @@ namespace GuildSaber.UI.Components
 
         public void SetColor(Color p_Color)
         {
-            m_CText.richText = true;
+            m_CText.richText = EnableRichText;
             m_CText.color = p_Color;
         }
     }

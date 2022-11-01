@@ -23,11 +23,15 @@ public class Color
         B = p_B;
     }
 
-    public Color32 ToUnityColor()
+    public Color32 ToUnityColor32()
     {
-        return new Color32(Convert.ToByte(R), Convert.ToByte(G), Convert.ToByte(B), 155);
+        return new Color32(Convert.ToByte(R), Convert.ToByte(G), Convert.ToByte(B), 255);
     }
 
+    public UnityEngine.Color ToUnityColor()
+    {
+        return new UnityEngine.Color((float)R / 255, (float)G / 255, (float)B / 255);
+    }
 
 }
 
