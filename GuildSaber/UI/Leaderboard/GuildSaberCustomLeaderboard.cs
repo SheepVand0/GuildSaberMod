@@ -11,15 +11,16 @@ using System.Collections;
 using CP_SDK.Unity;
 using GuildSaber.Utils;
 using System.Collections.Generic;
+using GuildSaber.UI.Components;
 
 namespace GuildSaber.UI.GuildSaber.Leaderboard
 {
     [UsedImplicitly]
     class GuildSaberCustomLeaderboard : CustomLeaderboard, IInitializable, IDisposable
     {
-        public readonly CustomLeaderboardManager _customLeaderboardManager;
-        public readonly GuildSaberLeaderboardPanel _panelViewController;
-        public readonly GuildSaberLeaderboardView _leaderboardViewController;
+        public readonly CustomLeaderboardManager _customLeaderboardManager = null;
+        public readonly GuildSaberLeaderboardPanel _panelViewController = null;
+        public readonly GuildSaberLeaderboardView _leaderboardViewController = null;
 
         protected override ViewController panelViewController => _panelViewController;
         protected override ViewController leaderboardViewController => _leaderboardViewController;
@@ -62,20 +63,37 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
 
     public class LeaderboardHeaderManager
     {
-        public static LeaderboardHeaderManager m_Instance;
+        public static LeaderboardHeaderManager m_Instance = null;
 
-        public static ImageView _HeaderImageView;
+        public static ImageView _HeaderImageView = null;
 
-        static GameObject m_Header;
+        static GameObject m_Header = null;
 
         public static Color m_Color0 = new Color(1, 0.5f, 0, 3);
         public static readonly Color m_Color1 = new Color(0.2f, 0.1f, 1, 0.75f);
 
+        static UpdateView m_UpdatesModal = null;
+
         public static async void GetPanel()
         {
-            if (m_Header != null && _HeaderImageView != null) return;
+            if (m_Header != null && _HeaderImageView != null)
+            {
+                if (m_UpdatesModal == null)
+                {
+                    m_UpdatesModal = CustomUIComponent.CreateItem<UpdateView>(m_Header.transform, true, true);
+                    Transform l_UpdatesTransform = m_UpdatesModal.transform;
+                    m_UpdatesModal.transform.localPosition = new Vector3(l_UpdatesTransform.localPosition.x - 0.5f, l_UpdatesTransform.transform.localPosition.y, l_UpdatesTransform.transform.localScale.z + 0.1f);
+                }
+                else
+                {
+                    m_UpdatesModal.Show();
+                }
+                return;
+            }
 
             await WaitUtils.WaitUntil(() => (m_Header = GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.HeaderPanel")) != null, 10);
+
+
 
             _HeaderImageView = m_Header.GetComponentInChildren<ImageView>();
         }
@@ -91,6 +109,13 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
 
             _HeaderImageView.color0 = p_Color0;
             _HeaderImageView.color1 = p_Color1;
+        }
+
+        public static void ResetColors()
+        {
+            _HeaderImageView.color0 = Color.gray;
+            _HeaderImageView.color0 = Color.clear;
+            m_UpdatesModal.Hide();
         }
 
         public static async void ChangeText(string p_Text)

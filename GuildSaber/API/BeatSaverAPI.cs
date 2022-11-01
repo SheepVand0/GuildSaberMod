@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 
 namespace GuildSaber.API;
-
+/*
 internal static class BeatSaverAPI
 {
     #nullable enable
@@ -39,7 +39,7 @@ internal static class BeatSaverAPI
                     case HttpStatusCode.InternalServerError:
                         Logs.Info.Log("InternalServerError");
                         return null;
-                }*/
+                }
                 Plugin.Log.Error($"FetchBeatMap: Error during getting map, key : {p_Key}");
             }
             else
@@ -81,7 +81,7 @@ internal static class BeatSaverAPI
                     case HttpStatusCode.InternalServerError:
                         Logs.Info.Log("InternalServerError");
                         return null;
-                }*/
+                }
             }
             else
             {
@@ -203,4 +203,4 @@ public class ParitySummary
     public int errors { get; set; }
     public int warns { get; set; }
     public int resets { get; set; }
-}
+}*/

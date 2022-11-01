@@ -48,8 +48,7 @@ public static class GuildApi
 
         try
         {
-            Task<string> l_Result = null;
-            l_Result = l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{p_ID}/full?guild={p_Guild}");
+            Task<string> l_Result = l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{p_ID}/full?guild={p_Guild}");
             l_Result.Wait();
             l_ResultPlayer = JsonConvert.DeserializeObject<ApiPlayerData>(l_Result.Result);
         }

@@ -9,8 +9,8 @@ namespace GuildSaber.UI.GuildSaber;
 
 public struct GuildCategories
 {
-    public int GuildId { get; set; }
-    public List<CategoryData> Categories { get; set; }
+    public int GuildId { get; set; } = 0;
+    public List<CategoryData> Categories { get; set; } = default(List<CategoryData>);
 
     public GuildCategories(int p_GuildId, List<CategoryData> p_Categories)
     {
@@ -23,11 +23,11 @@ public struct GuildCategories
 [ViewDefinition("GuildSaber.UI.Card.View.PlayerCard_UI.bsml")]
 public class ModFlowCoordinator : FlowCoordinator
 {
-    public ModViewController _modViewController;
+    public ModViewController _modViewController = null;
 
-    public LeftModViewController _LeftModViewController;
+    public LeftModViewController _LeftModViewController = null;
 
-    private FlowCoordinator _LastFlow;
+    private FlowCoordinator _LastFlow = null;
 
     public void Awake()
     {

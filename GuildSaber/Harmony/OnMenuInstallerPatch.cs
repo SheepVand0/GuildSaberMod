@@ -56,6 +56,7 @@ namespace GuildSaber.Harmony
             {
                 Events.OnLeaderboardIsHide();
                 LeaderboardHeaderManager.ChangeTextForced(Localization.Get("TITLE_HIGHSCORES"));
+                LeaderboardHeaderManager.ResetColors();
             }
         }
     }

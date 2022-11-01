@@ -26,18 +26,13 @@ public class PlayerLevelUI : CustomUIComponent
     [UIComponent("LevelNameText")] private TextMeshProUGUI m_LevelNameText = null;
     [UIComponent("LevelText")] private TextMeshProUGUI m_LevelText = null;
 
-    #region Properties
-    // ReSharper disable once MemberInitializerValueIgnored
-    // ReSharper disable once FieldCanBeMadeReadOnly.Global
-    // ReSharper disable once MemberCanBePrivate.Global
-    public int FontSize { get; set; }
-    // ReSharper disable once MemberCanBePrivate.Global
-    // ReSharper disable once MemberInitializerValueIgnored
-    public string Level { get; set; }
-    // ReSharper disable once MemberCanBePrivate.Global
-    // ReSharper disable once MemberInitializerValueIgnored
-    public string LevelName { get; set; }
-    #endregion
+
+    public int FontSize { get; private set; } = 0;
+
+    public string Level { get; set; } = string.Empty;
+
+    public string LevelName { get; set; } = string.Empty;
+
 
     public void SetValues(string p_LevelName, string p_Level)
     {
@@ -345,6 +340,7 @@ internal class PlayerCardUI
         GameObject.DestroyImmediate(FloatingScreen.gameObject);
     }
 
+    [Obsolete("Not Recommanded too, can cause bugs")]
     /// <summary>
     /// Destroy card
     /// </summary>

@@ -110,7 +110,7 @@ namespace GuildSaber.UI.GuildSaber
             DownloadPlaylist();
         }
 
-        private async void DownloadPlaylist()
+        private void DownloadPlaylist()
         {
             if (Category.CategoryName == Plugin.NOT_DEFINED || m_ValidPlaylists.Count == 0) return;
 
@@ -199,7 +199,7 @@ namespace GuildSaber.UI.GuildSaber
         public bool m_OnlyUnPassedMaps;
         public int GuildId = GSConfig.Instance.SelectedGuild;
         public delegate void OnOnlyPassedMapsChange(bool p_OnlyUnPassed);
-        public event OnOnlyPassedMapsChange e_OnUnPassedOnlyValueChanged;
+        public event OnOnlyPassedMapsChange e_OnUnPassedOnlyValueChanged = null;
         public CategoryUI CategoryInterface;
         public List<GuildCategories> m_Guilds = new List<GuildCategories>();
         #endregion
@@ -392,7 +392,7 @@ namespace GuildSaber.UI.GuildSaber
 
 public class LevelIDs
 {
-    public List<int> LevelID { get; set; }
+    public List<int> LevelID { get; set; } = default(List<int>);
 }
 
 public enum PlaylistsVerificationType

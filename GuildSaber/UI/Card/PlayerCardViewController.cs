@@ -28,12 +28,12 @@ namespace GuildSaber.UI.Card;
 internal class PlayerCardViewController : BSMLAutomaticViewController
 {
     [UIComponent("PlayerNameText")] public TextMeshProUGUI m_PlayerNameText;
-    [UIComponent("DetailsLevelsLayout")] private readonly GridLayoutGroup m_DetailsLevelsLayout = null;
-    [UIComponent("ElemGrid")] private readonly GridLayoutGroup m_ElementsGrid = null;
-    [UIComponent("NeonBackground")] private readonly Transform m_NeonBackground = null;
-    [UIComponent("PlayTimeText")] private readonly TextMeshProUGUI m_PlayTimeText = null;
-    [UIComponent("RankUIVertical")] private readonly VerticalLayoutGroup m_RankUIVertical = null;
-    [UIComponent("PlayerNumberOfPasses")] private readonly TextMeshProUGUI m_PlayerNumberOfPasses = null;
+    [UIComponent("DetailsLevelsLayout")] private GridLayoutGroup m_DetailsLevelsLayout = null;
+    [UIComponent("ElemGrid")] private GridLayoutGroup m_ElementsGrid = null;
+    [UIComponent("NeonBackground")] private Transform m_NeonBackground = null;
+    [UIComponent("PlayTimeText")] private TextMeshProUGUI m_PlayTimeText = null;
+    [UIComponent("RankUIVertical")] private VerticalLayoutGroup m_RankUIVertical = null;
+    [UIComponent("PlayerNumberOfPasses")] private TextMeshProUGUI m_PlayerNumberOfPasses = null;
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -287,8 +287,8 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
 
     #region Settings
     #region UIComponents
-    [UIComponent("ToggleShowHandle")] private readonly ToggleSetting m_ToggleShowHandle = null;
-    [UIComponent("CustomColorSettings")] private readonly ColorSetting m_CustomColorSettings = null;
+    [UIComponent("ToggleShowHandle")] private ToggleSetting m_ToggleShowHandle = null;
+    [UIComponent("CustomColorSettings")] private ColorSetting m_CustomColorSettings = null;
     [UIComponent("SettingsModal")] public ModalView m_ModalView = null;
     [UIComponent("GuildList")] public DropDownListSetting m_GuildSelector = null;
     #endregion

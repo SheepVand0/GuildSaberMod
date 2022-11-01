@@ -25,15 +25,15 @@ namespace GuildSaber;
 public class Plugin
 {
     #region Properties
-    private static Plugin Instance { get; set; }
+    private static Plugin Instance { get; set; } = null;
 
-    internal static IPALogger Log { get; private set; }
+    internal static IPALogger Log { get; private set; } = null;
     public HarmonyLib.Harmony m_HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber"); }
 
     public const string NOT_DEFINED = "Undefined";
     public static string CurrentSceneName = "MainMenu";
     public static List<GuildData> AvailableGuilds = new List<GuildData>();
-    public static ModFlowCoordinator _modFlowCoordinator;
+    public static ModFlowCoordinator _modFlowCoordinator = null;
     public static string m_PlayerId = string.Empty;
     public static int m_ScoresPerPage = 10;
 
@@ -101,6 +101,6 @@ public struct PlayerGuildsInfo
         m_AvailableGuilds = p_AvailableGuilds;
     }
 
-    public ApiPlayerData m_ReturnPlayer { get; set; }
-    public List<GuildData> m_AvailableGuilds { get; set; }
+    public ApiPlayerData m_ReturnPlayer { get; set; } = default(ApiPlayerData);
+    public List<GuildData> m_AvailableGuilds { get; set; } = default(List<GuildData>);
 }

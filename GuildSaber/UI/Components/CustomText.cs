@@ -16,15 +16,15 @@ namespace GuildSaber.UI.Components
         #endregion
 
 
-        public float FontSize { get; set; }
-        public float AnchorPosX { get; set; }
+        public float FontSize { get; set; } = 0f;
+        public float AnchorPosX { get; set; } = 0f;
         public string Text { get; set; } = string.Empty;
         public bool EnableRichText { get; set; } = false;
-        public string RichText { get; set; }
-        public TextAlignmentOptions Alignment { get; set; }
-        public TextAnchor LayoutAlignment { get; set; }
-        public Color Color { get; set; }
-        public bool Italic { get; set; }
+        public string RichText { get; set; } = string.Empty;
+        public TextAlignmentOptions Alignment { get; set; } = TextAlignmentOptions.Center;
+        public TextAnchor LayoutAlignment { get; set; } = TextAnchor.MiddleCenter;
+        public Color Color { get; set; } = Color.clear;
+        public bool Italic { get; set; } = false;
 
 
         protected override void PostCreate()

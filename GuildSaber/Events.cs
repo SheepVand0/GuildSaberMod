@@ -12,28 +12,28 @@ namespace GuildSaber;
 
 public class Events : IInitializable
 {
-    public static Events m_Instance { get; private set; }
+    public static Events m_Instance { get; private set; } = null;
 
     public bool m_LeaderboardViewHasBeenLoaded = false;
 
     #region Events
     public delegate void OnLeaderboardViewPostLoad();
-    public event OnLeaderboardViewPostLoad e_OnLeaderboardPostLoad;
+    public event OnLeaderboardViewPostLoad e_OnLeaderboardPostLoad = null;
 
     public delegate void OnGuildSelected(int p_GuildId);
-    public event OnGuildSelected e_OnGuildSelected;
+    public event OnGuildSelected e_OnGuildSelected = null;
 
     public delegate void OnPointsTypeChange(string p_PointsName);
-    public event OnPointsTypeChange e_OnPointsTypeChange;
+    public event OnPointsTypeChange e_OnPointsTypeChange = null;
 
     public delegate void OnLeaderboardShown(bool p_FirstActivation);
-    public static event OnLeaderboardShown e_OnLeaderboardShown;
+    public static event OnLeaderboardShown e_OnLeaderboardShown = null;
 
     public delegate void OnLeaderboardHide();
-    public static event OnLeaderboardHide e_OnLeaderboardHide;
+    public static event OnLeaderboardHide e_OnLeaderboardHide = null;
 
     public delegate void OnScopeSelected(ELeaderboardScope p_Scope);
-    public event OnScopeSelected e_OnScopeSelected;
+    public event OnScopeSelected e_OnScopeSelected = null;
     #endregion
 
     #region Setup

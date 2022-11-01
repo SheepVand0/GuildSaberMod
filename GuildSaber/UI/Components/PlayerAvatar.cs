@@ -11,25 +11,21 @@ namespace GuildSaber.UI.GuildSaber.Components
 {
     class PlayerAvatar : CustomUIComponent
     {
-        #region Defaults
+
         protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.PlayerAvatar.bsml";
 
-        private Material _PlayerAvatarMaskInstance;
+        private Material _PlayerAvatarMaskInstance = null;
 
         [UIComponent("AvatarImage")] private ImageView m_Avatar = null;
         [UIComponent("AvatarGrid")] private GridLayoutGroup m_AvatarGrid = null;
-        #endregion
 
-        #region Setup
         public void Setup(string p_AvatarLink, Color p_ProfileColor)
         {
             m_Avatar.SetImage(p_AvatarLink);
 
             UpdateShader(p_ProfileColor);
         }
-        #endregion
 
-        #region Update
         public void UpdateShader(Color p_ProfileColor)
         {
             if (m_Avatar == null) { Plugin.Log.Error("Avatar Is Null"); return; }
@@ -50,9 +46,8 @@ namespace GuildSaber.UI.GuildSaber.Components
             _PlayerAvatarMaskInstance.SetFloat(Shader.PropertyToID("_FadeStart"), 1f);
             _PlayerAvatarMaskInstance.SetFloat(Shader.PropertyToID("_FadeEnd"), 0.97f);
         }
-        #endregion
 
-        #region Events
+
         protected override void AfterViewCreation()
         {
             ApiPlayerData l_Player = GuildSaberLeaderboardPanel.Instance.m_PlayerData;
@@ -61,6 +56,6 @@ namespace GuildSaber.UI.GuildSaber.Components
             m_AvatarGrid.cellSize = new Vector2(17, 17);
             Setup(l_Player.Avatar, l_Player.Color.ToUnityColor32());
         }
-        #endregion
+
     }
 }

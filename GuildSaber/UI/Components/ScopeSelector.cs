@@ -11,21 +11,26 @@ namespace GuildSaber.UI.Components
     {
         protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.ScopeSelector.bsml";
 
-        #region UIComponents
-        [UIComponent("ScopesLayout")] VerticalLayoutGroup m_Layout = null;
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        //[UIComponent("ScopesLayout")] private readonly VerticalLayoutGroup m_Layout = null;
         [UIComponent("Global")] ClickableImage m_GlobalImage = null;
         [UIComponent("Around")] ClickableImage m_AroundImage = null;
         //[UIComponent("Friends")] ClickableImage m_FriendsImage = null;
         [UIComponent("Country")] ClickableImage m_CountryImage = null;
-        #endregion
 
-        #region Properties
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         private float IconHeight { get => 5; set { } }
 
         private static Color m_Blue = new Color(0f, 0.7f, 1f, 0.8f);
         private static Color m_Grey = new Color(1, 1, 1, 0.8f);
         private List<ClickableImage> m_Scopes = new List<ClickableImage>();
-        #endregion
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
         [UIAction("#post-parse")]
         public void PostParse()
@@ -41,6 +46,9 @@ namespace GuildSaber.UI.Components
 
             m_GlobalImage.DefaultColor = m_Blue;
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
         public void SelectScope(ELeaderboardScope p_Scope)
         {
@@ -61,12 +69,15 @@ namespace GuildSaber.UI.Components
                 Plugin.Log.Error($"Invalid scope provided : {p_Scope}");
         }
 
-        #region UIActions
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         [UIAction("GlobalClick")] private void GlobalOnClick() { SelectScope(ELeaderboardScope.Global); }
         [UIAction("AroundClick")] private void AroundOnClick() { SelectScope(ELeaderboardScope.Around); }
         //[UIAction("FriendsClick")] private void FriendsOnClick() { SelectScope("Friends"); }
         [UIAction("LocationClick")] private void LocationOnClick() { SelectScope(ELeaderboardScope.Country); }
-        #endregion
+
     }
 }
 

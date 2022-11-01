@@ -142,7 +142,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
                 l_BackgroundView.SetField("_skew", 0.0f);
 
                 ///-----------------------------------------Croping Icon to fit to panel-----------------------------------------
-                Texture2D l_IconTexture = Utilities.FindTextureInAssembly("GuildSaber.Resources.BSCCIconOrange.png");
+                Texture2D l_IconTexture = Utilities.FindTextureInAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
                 Color[] l_Texture = l_IconTexture.GetPixels(0, (int)(l_IconTexture.height / 2.25f), l_IconTexture.width, (int)(l_IconTexture.height / 4.5f));
 
                 Texture2D l_ResultTexture = new(l_IconTexture.width, (int)(l_IconTexture.height / 4.5f - (l_IconTexture.width / l_IconTexture.height) - 1));

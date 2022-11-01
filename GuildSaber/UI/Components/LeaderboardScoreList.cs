@@ -52,14 +52,14 @@ namespace GuildSaber.UI.Components
 
         public bool HasBeenParsed { get; private set; } = false;
 
-        float BasePoints { get; set; }
-        public string Rank { get; set; }
-        public string PlayerName { get; set; }
-        public string Points { get; set; }
-        public string Score { get; set; }
-        public string Acc { get; set; }
-        public string Id { get; set; }
-        public string Modifiers { get; set; }
+        float BasePoints { get; set; } = 0f;
+        public string Rank { get; set; } = string.Empty;
+        public string PlayerName { get; set; } = string.Empty;
+        public string Points { get; set; } = string.Empty;
+        public string Score { get; set; } = string.Empty;
+        public string Acc { get; set; } = string.Empty;
+        public string Id { get; set; } = string.Empty;
+        public string Modifiers { get; set; } = string.Empty;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -283,6 +283,8 @@ namespace GuildSaber.UI.Components
             {
                 l_Current.Reset();
             }
+
+            await Task.Delay(100);
 
             for (int l_i = 0; l_i < p_Scores.Count; l_i++)
             {

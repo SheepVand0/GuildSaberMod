@@ -253,6 +253,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AssetBundles\gsbundle" />
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
     <EmbeddedResource Include="UI\Card\View\PlayerCard_UI.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\ModViewController.bsml" />
@@ -279,6 +282,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GuildSaber.csproj.user" />
+    <EmbeddedResource Include="Resources\Arrow.png" />
     <EmbeddedResource Include="Resources\GsWhiteLogo.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogoOrange4.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogo3.png" />

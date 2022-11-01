@@ -135,7 +135,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
             m_ScoresList.SetScores(m_Leaderboard.CustomData, m_Leaderboard.Leaderboards, m_CurrentPointsName);
 
             if (p_WithDelay)
-                await Task.Delay(800);
+                await Task.Delay(700);
 
             SetHeader(false);
         }
