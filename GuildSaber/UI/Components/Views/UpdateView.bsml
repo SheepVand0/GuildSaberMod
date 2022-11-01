@@ -2,6 +2,7 @@
 	<button on-click="ShowUpdates"/>
 
 	<modal id="UdpatesModal">
+		<text id="UdpateText" />
 		<horizontal id="Horizontal" />
 	</modal>
 </bg>

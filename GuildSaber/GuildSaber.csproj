@@ -80,6 +80,11 @@
       <HintPath>$(BeatSaberDir)\Plugins\HitScoreVisualizer.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Hive.Versioning">
+      <HintPath>$(BeatSaberDir)\Libs\Hive.Versioning.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="HMLibAttributes">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\HMLibAttributes.dll</HintPath>
       <Private>False</Private>
@@ -228,6 +233,7 @@
     <Compile Include="UI\Components\LevelSelectionCustomCategory.cs" />
     <Compile Include="UI\Components\PointsType.cs" />
     <Compile Include="UI\Components\ScopeSelector.cs" />
+    <Compile Include="UI\Components\UpdateView.cs" />
     <Compile Include="UI\CustomLevelSelection\CategorySelectionViewController.cs" />
     <Compile Include="UI\CustomUIComponent.cs" />
     <Compile Include="UI\Components\PlayerAvatar.cs" />
@@ -262,6 +268,7 @@
     <EmbeddedResource Include="UI\Components\Views\ScopeSelector.bsml" />
     <EmbeddedResource Include="UI\CustomLevelSelection\Views\CategorySelectionViewController.bsml" />
     <EmbeddedResource Include="UI\Components\Views\LevelSelectionCustomCategory.bsml" />
+    <EmbeddedResource Include="UI\Components\Views\UpdateView.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">
