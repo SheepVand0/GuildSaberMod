@@ -20,6 +20,7 @@ using UnityEngine.UI;
 using System;
 using System.Linq;
 using GuildSaber.BSPModule;
+using BeatSaberPlus.SDK.Game;
 
 namespace GuildSaber.UI.Card;
 //PlayerCard variables
@@ -83,7 +84,7 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
         if (PlayerCardUI.m_Player.Equals(null)) return;
 
         m_DropdownAvailableGuilds.Clear();
-        foreach (GuildData l_Current in Plugin.AvailableGuilds)
+        foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
         {
             m_DropdownAvailableGuilds.Add(l_Current.Name);
         }
@@ -168,7 +169,7 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
         {
             foreach (var l_Current in PlayerCardUI.m_Player.CategoryData)
             {
-                if (l_MaxLevel < l_Current.MaxLevelValue) l_MaxLevel = l_Current.MaxLevelValue;
+                if (l_MaxLevel < l_Current.MaxLevelValue) l_MaxLevel = l_Current.MaxLevelValue ?? 0;
             }
         }
 
@@ -216,7 +217,7 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
             int l_CategoryDataCount = PlayerCardUI.m_Player.CategoryData.Count;
             for (int l_i = 0; l_i < l_CategoryDataCount;l_i++)
             {
-                CategoryData l_Cat = PlayerCardUI.m_Player.CategoryData[l_i];
+                ApiAPlayerCategory l_Cat = PlayerCardUI.m_Player.CategoryData[l_i];
                 int l_FontSize = (int)(2 / (l_CategoryDataCount * 0.11f));
                 if (l_FontSize < 1) l_FontSize = 2;
                 if (l_FontSize == 5) l_FontSize = 4;
@@ -226,7 +227,7 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
                 {
                     List<ItemParam> l_Params = new List<ItemParam>()
                         {
-                            new ItemParam("Level", l_Cat.LevelValue.ToString("0.0")),
+                            new ItemParam("Level", l_Cat.LevelValue?.ToString("0.0")),
                             new ItemParam("LevelName", l_Cat.CategoryName),
                             new ItemParam("FontSize", l_FontSize)
                         };
@@ -236,7 +237,7 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
                 else
                 {
                     ///Else just set the value
-                    Levels[l_i].SetValues(l_Cat.CategoryName, l_Cat.LevelValue.ToString("0.0"));
+                    Levels[l_i].SetValues(l_Cat.CategoryName, l_Cat.LevelValue?.ToString("0.0"));
                 }
             }
 
@@ -253,6 +254,9 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
         }
     }
 
+    /// <summary>
+    /// Update levels details
+    /// </summary>
     public void UpdateLevelsDetails()
     {
         bool l_ShowDetaislLevels = GSConfig.Instance.ShowDetailsLevels;
@@ -277,23 +281,33 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
         }
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Time
+    /// </summary>
+    /// <param name="p_Time"></param>
     public void UpdateTime(OptimizedDateTime p_Time)
     {
         //Let's go
         m_PlayTimeText.text = GSConfig.Instance.ShowPlayTime ? string.Join(":", p_Time.Hours.ToString("00"), p_Time.Minutes.ToString("00"), p_Time.Seconds.ToString("00")) : " ";
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    /// Settings
 
 
-    #region Settings
-    #region UIComponents
     [UIComponent("ToggleShowHandle")] private ToggleSetting m_ToggleShowHandle = null;
     [UIComponent("CustomColorSettings")] private ColorSetting m_CustomColorSettings = null;
     [UIComponent("SettingsModal")] public ModalView m_ModalView = null;
     [UIComponent("GuildList")] public DropDownListSetting m_GuildSelector = null;
-    #endregion
 
-    #region Updates
+    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
     public void UpdateShowPlayerCustomColorUISetting()
     {
         m_CustomColorSettings.interactable = AllowCustomCardColors;
@@ -309,21 +323,21 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
 
     public void UpdateToggleCardHandleUISettingVisibility()
     {
-        if (Plugin.CurrentSceneName == "GameCore")
+        if (Logic.ActiveScene == Logic.SceneType.Playing)
             m_ToggleShowHandle.gameObject.SetActive(GSConfig.Instance.CardHandleVisible);
         else
             m_ToggleShowHandle.gameObject.SetActive(true);
     }
-    #endregion
 
-    #region Show
+
     public void ShowSettings()
     {
         m_ModalView.Show(true, false, null);
     }
-    #endregion
 
-    #region UIValues
+    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
     [UIValue("SelectedGuild")]
     protected string SelectedGuild
     {
@@ -372,9 +386,9 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
         }
     }
 
-    #endregion
+    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
-    #region UIActions
     [UIAction("RefreshCard")]
     protected void OnButtonRefreshCardClicked()
     {
@@ -384,9 +398,9 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
     [UIAction("UpdateCard")]
     private void UpdateCard(string p_Selected)
     {
-        if (!Plugin.AvailableGuilds.ElementAt(m_GuildSelector.dropdown.selectedIndex).Equals(null))
+        if (!GuildSaberModule.AvailableGuilds.ElementAt(m_GuildSelector.dropdown.selectedIndex).Equals(null))
         {
-            GuildData l_CurrentGuild = Plugin.AvailableGuilds[m_GuildSelector.dropdown.selectedIndex];
+            GuildData l_CurrentGuild = GuildSaberModule.AvailableGuilds[m_GuildSelector.dropdown.selectedIndex];
             GSConfig.Instance.SelectedGuild = l_CurrentGuild.ID;
             BSPModule.GuildSaberModule.m_CardSelectedGuild = l_CurrentGuild;
         }
@@ -410,6 +424,5 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
         PlayerCardUI.ResetInGameCardPosition();
     }
 
-    #endregion
-    #endregion
+
 }

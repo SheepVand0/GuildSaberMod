@@ -11,6 +11,9 @@ using TMPro;
 using System;
 using System.Security.Policy;
 using System.Collections;
+using System.Net;
+using System.IO;
+using GuildSaber.BSPModule;
 
 namespace GuildSaber.Utils
 {
@@ -31,7 +34,7 @@ namespace GuildSaber.Utils
         }
         public static GuildData GetGuildFromId(int p_Id)
         {
-            foreach (GuildData l_Current in Plugin.AvailableGuilds)
+            foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
             {
                 if (l_Current.ID != p_Id)
                     continue;
@@ -43,7 +46,7 @@ namespace GuildSaber.Utils
         public static bool IsGuildValidForPlayer(int p_Guild)
         {
             bool l_IsValid = false;
-            foreach (GuildData l_Current in Plugin.AvailableGuilds)
+            foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
             {
                 if (l_Current.ID == p_Guild)
                 {
@@ -179,6 +182,41 @@ namespace GuildSaber.Utils
             StackTrace, Message
         }
         #endregion
+
+        public async static Task<Texture2D> GetImage(string p_Url)
+        {
+            Texture2D l_NewTexture = new Texture2D(100, 100);
+
+            float l_Time = UnityEngine.Time.realtimeSinceStartup;
+            string l_Link = $"UserData/BeatSaberPlus/GuildSaber/TempImg{l_Time.ToString("0")}.png";
+
+            using (WebClient l_Client = new WebClient())
+            {
+                bool l_MoveNext = false;
+                l_Client.DownloadFileAsync(new System.Uri(p_Url), l_Link);
+                l_Client.DownloadFileCompleted += (p_Sender, p_EventArgs) =>
+                {
+                    if (p_EventArgs.Error != null)
+                    {
+                        l_MoveNext = true;
+                        return;
+                    }
+
+                    using (FileStream l_Reader = new FileStream(l_Link, FileMode.Open)) {
+                        byte[] l_StreamBytes = new byte[l_Reader.Length];
+                        l_Reader.Read(l_StreamBytes, 0, (int)l_Reader.Length);
+                        l_NewTexture.LoadImage(l_StreamBytes,false);
+                        l_MoveNext = true;
+                    }
+                };
+
+                await WaitUtils.WaitUntil(() => l_MoveNext, 10);
+            }
+
+            File.Delete(l_Link);
+
+            return l_NewTexture;
+        }
 
     }
 }

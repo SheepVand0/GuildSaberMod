@@ -16,7 +16,11 @@ public class Events : IInitializable
 
     public bool m_LeaderboardViewHasBeenLoaded = false;
 
-    #region Events
+    internal static bool m_EventsEnabled = true;
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
     public delegate void OnLeaderboardViewPostLoad();
     public event OnLeaderboardViewPostLoad e_OnLeaderboardPostLoad = null;
 
@@ -34,30 +38,39 @@ public class Events : IInitializable
 
     public delegate void OnScopeSelected(ELeaderboardScope p_Scope);
     public event OnScopeSelected e_OnScopeSelected = null;
-    #endregion
 
-    #region Setup
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
     public void Initialize()
     {
-        BSEvents.lateMenuSceneLoadedFresh += OnMenuSceneLoadedFresh;
-
         m_Instance = this;
     }
-    #endregion
 
-    #region Events Invoker
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
     public void SelectGuild(int p_GuildId)
     {
+        if (!m_EventsEnabled)
+            return;
+
         e_OnGuildSelected?.Invoke(p_GuildId);
     }
 
     public void SelectPointsTypes(string p_PointsNames)
     {
+        if (!m_EventsEnabled)
+            return;
+
         e_OnPointsTypeChange?.Invoke(p_PointsNames);
     }
 
     public void EventOnPostLoadLeaderboard()
     {
+        if (!m_EventsEnabled)
+            return;
+
         if (m_LeaderboardViewHasBeenLoaded) return;
         e_OnLeaderboardPostLoad?.Invoke();
         m_LeaderboardViewHasBeenLoaded = true;
@@ -65,46 +78,28 @@ public class Events : IInitializable
 
     public static void OnLeaderboardShow(bool p_FirstActivation)
     {
+        if (!m_EventsEnabled)
+            return;
+
         e_OnLeaderboardShown?.Invoke(p_FirstActivation);
     }
 
     public static void OnLeaderboardIsHide()
     {
+        if (!m_EventsEnabled)
+            return;
+
         e_OnLeaderboardHide?.Invoke();
     }
 
     public void SelectScope(ELeaderboardScope p_Scope)
     {
+        if (!m_EventsEnabled)
+            return;
         e_OnScopeSelected?.Invoke(p_Scope);
     }
-    #endregion
 
-    #region Defaults Events Handlers
-    private void OnMenuSceneLoadedFresh(ScenesTransitionSetupDataSO p_Obj)
-    {
-        try
-        {
-            SceneManager.activeSceneChanged += OnSceneChanged;
-        }
-        catch (Exception l_E)
-        {
-            Plugin.Log.Error($"Exception caught when creating card : {l_E.Message}");
-            Plugin.Log.Error("------------------------------------------------------------");
-            Plugin.Log.Error($"Stack trace : {l_E.StackTrace}");
-            Plugin.Log.Error("------------------------------------------------------------");
-            Plugin.Log.Error($"Inner : {l_E.InnerException}");
-            Plugin.Log.Error("------------------------------------------------------------");
-            Plugin.Log.Error($"TargetSite : {l_E.TargetSite}");
-        }
-    }
-    private static void OnSceneChanged(Scene p_CurrentScene, Scene p_NextScene)
-    {
-        if (p_NextScene == null) return;
-
-        Plugin.CurrentSceneName = p_NextScene.name;
-        PlayerCardUI.m_Instance.UpdateCardVisibility();
-        PlayerCardUI.m_Instance.UpdateCardPosition();
-    }
-    #endregion
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 }
 

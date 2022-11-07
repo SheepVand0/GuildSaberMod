@@ -18,6 +18,8 @@ internal class GSConfig : CP_SDK.Config.JsonConfig<GSConfig>
     }
 
     [JsonProperty] internal bool Enabled = true;
+    [JsonProperty] internal bool CardEnabled = true;
+    [JsonProperty] internal bool LeaderboardEnabled = true;
 
     [JsonProperty] internal bool ShowCardInMenu = true;
     [JsonProperty] internal bool ShowCardInGame = true;

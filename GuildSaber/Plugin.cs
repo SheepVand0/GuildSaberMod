@@ -16,6 +16,7 @@ using IPA.Config.Stores;
 using System;
 using Config = IPA.Config.Config;
 using IPALogger = IPA.Logging.Logger;
+using GuildSaber.BSPModule;
 #endregion
 
 namespace GuildSaber;
@@ -24,24 +25,17 @@ namespace GuildSaber;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class Plugin
 {
-    #region Properties
     private static Plugin Instance { get; set; } = null;
 
     internal static IPALogger Log { get; private set; } = null;
-    public HarmonyLib.Harmony m_HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber"); }
 
     public const string NOT_DEFINED = "Undefined";
-    public static string CurrentSceneName = "MainMenu";
-    public static List<GuildData> AvailableGuilds = new List<GuildData>();
+
     public static ModFlowCoordinator _modFlowCoordinator = null;
-    public static string m_PlayerId = string.Empty;
-    public static int m_ScoresPerPage = 10;
 
-    public static bool m_IsHsvInstalled = false;
-    // ReSharper disable once UnusedAutoPropertyAccessor.Local
-    #endregion
 
-    #region On mod start
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     [Init]
     /// <summary>
@@ -56,15 +50,12 @@ public class Plugin
         Log.Info("GuildSaber initialized.");
 
         MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
+
+        GuildSaberModule.m_HarmonyInstance.PatchAll();
     }
 
-    [OnStart]
-    public void OnApplicationStart()
-    {
-        Log.Debug("OnApplicationStart");
-
-        m_HarmonyInstance.PatchAll();
-    }
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     public void ShowGuildFlow()
     {
@@ -73,9 +64,7 @@ public class Plugin
 
         _modFlowCoordinator.ShowFlow(false);
     }
-    #endregion
 
-    #region On Game exit
     [OnExit]
     public void OnApplicationQuit()
     {
@@ -87,20 +76,6 @@ public class Plugin
         {
             GameObject.DestroyImmediate(l_Current.gameObject);
         }
-
-        m_HarmonyInstance.UnpatchSelf();
-    }
-    #endregion
-}
-
-public struct PlayerGuildsInfo
-{
-    public PlayerGuildsInfo(ApiPlayerData p_Player = default(ApiPlayerData), List<GuildData> p_AvailableGuilds = null)
-    {
-        m_ReturnPlayer = p_Player;
-        m_AvailableGuilds = p_AvailableGuilds;
     }
 
-    public ApiPlayerData m_ReturnPlayer { get; set; } = default(ApiPlayerData);
-    public List<GuildData> m_AvailableGuilds { get; set; } = default(List<GuildData>);
 }

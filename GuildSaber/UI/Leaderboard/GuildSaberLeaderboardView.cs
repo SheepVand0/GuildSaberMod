@@ -46,7 +46,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         public string m_CurrentPointsName { get; internal set; } = string.Empty;
         public string m_CurrentMapHash { get; internal set; } = string.Empty;
         public static IDifficultyBeatmap m_CurrentBeatmap { get; internal set; } = null;
-        public ApiMapLeaderboardCollection m_Leaderboard { get; private set; } = default(ApiMapLeaderboardCollection);
+        public ApiMapLeaderboardCollectionStruct m_Leaderboard { get; private set; } = default(ApiMapLeaderboardCollectionStruct);
         public int Page = 1;
 
         ////////////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
             await Task.Run(delegate
             {
                 string l_Hash = GSBeatmapUtils.DifficultyBeatmapToHash(m_CurrentBeatmap);
-                long l_Id = 0;
+                ulong l_Id = 0;
                 string l_Country =
                     (GuildSaberLeaderboardPanel.Instance.m_PlayerData.Country != string.Empty && m_SelectedScope == ELeaderboardScope.Country) ?
                     GuildSaberLeaderboardPanel.Instance.m_PlayerData.Country : string.Empty;
@@ -115,8 +115,8 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
                 m_Leaderboard = GuildApi.GetLeaderboard(p_Guild, l_Hash, m_CurrentBeatmap, l_Page, l_Id, p_Country: l_Country, 10);
             });
 
-            if (m_Leaderboard.Equals(default(ApiMapLeaderboardCollection))) { SetLeaderboardViewMode(ELeaderboardViewMode.NotRanked); SetHeader(true); return; }
-            else if (!m_Leaderboard.Equals(default(ApiMapLeaderboardCollection)) && m_Leaderboard.Leaderboards.Count == 0)
+            if (m_Leaderboard.Equals(default(ApiMapLeaderboardCollectionStruct))) { SetLeaderboardViewMode(ELeaderboardViewMode.NotRanked); SetHeader(true); return; }
+            else if (!m_Leaderboard.Equals(default(ApiMapLeaderboardCollectionStruct)) && m_Leaderboard.Leaderboards.Count == 0)
             {
                 SetLeaderboardViewMode(ELeaderboardViewMode.Unpassed);
                 ChangeHeaderText($"Level {m_Leaderboard.CustomData.LevelValue} - {m_Leaderboard.CustomData.CategoryName.VerifiedCategory()}");
@@ -266,7 +266,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         public void SetLeaderboardViewMode(ELeaderboardViewMode p_Mode)
         {
             m_ScoreParamsLayout.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores);
-            m_ScopeSelectionLayout.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores || p_Mode == ELeaderboardViewMode.Unpassed);
+            m_ScopeSelectionLayout.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores || (p_Mode == ELeaderboardViewMode.Unpassed && m_SelectedScope != ELeaderboardScope.Global));
             m_NotRankedText.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Unpassed || p_Mode == ELeaderboardViewMode.NotRanked);
             m_ErrorText.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Error);
             m_LoadingLayout.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Loading);

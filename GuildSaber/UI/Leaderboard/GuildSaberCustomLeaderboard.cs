@@ -12,6 +12,7 @@ using CP_SDK.Unity;
 using GuildSaber.Utils;
 using System.Collections.Generic;
 using GuildSaber.UI.Components;
+using GuildSaber.Configuration;
 
 namespace GuildSaber.UI.GuildSaber.Leaderboard
 {
@@ -27,6 +28,8 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
 
         public static bool IsShow = false;
 
+        public static GuildSaberCustomLeaderboard Instance = null;
+
         public GuildSaberCustomLeaderboard(CustomLeaderboardManager customLeaderboardManager,
                                            GuildSaberLeaderboardPanel panelViewController,
                                            GuildSaberLeaderboardView leaderboardViewController)
@@ -37,6 +40,8 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
 
             Events.e_OnLeaderboardHide += OnHide;
             Events.e_OnLeaderboardShown += OnShow;
+
+            Instance = this;
         }
 
         private void OnShow(bool p_FirstActivation)
@@ -46,7 +51,8 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
 
         public void Initialize()
         {
-            _customLeaderboardManager.Register(this);
+            if (GSConfig.Instance.LeaderboardEnabled)
+               _customLeaderboardManager.Register(this);
         }
 
         public void Dispose()
@@ -81,12 +87,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
                 if (m_UpdatesModal == null)
                 {
                     m_UpdatesModal = CustomUIComponent.CreateItem<UpdateView>(m_Header.transform, true, true);
-                    Transform l_UpdatesTransform = m_UpdatesModal.transform;
-                    m_UpdatesModal.transform.localPosition = new Vector3(l_UpdatesTransform.localPosition.x - 0.5f, l_UpdatesTransform.transform.localPosition.y, l_UpdatesTransform.transform.localScale.z + 0.1f);
-                }
-                else
-                {
-                    m_UpdatesModal.Show();
+                    m_UpdatesModal.CheckUpdates();
                 }
                 return;
             }
@@ -115,7 +116,6 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         {
             _HeaderImageView.color0 = Color.gray;
             _HeaderImageView.color0 = Color.clear;
-            m_UpdatesModal.Hide();
         }
 
         public static async void ChangeText(string p_Text)
@@ -132,5 +132,10 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
             GetPanel();
             m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
         }
+    }
+
+    class LeaderboardLevelStatsViewManager
+    {
+
     }
 }

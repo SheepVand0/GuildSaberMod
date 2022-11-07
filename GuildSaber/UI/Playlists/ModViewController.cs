@@ -19,6 +19,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using GuildSaber.API;
 using TMPro;
+using GuildSaber.BSPModule;
+using BeatSaberPlus.SDK.UI;
+using System.Reflection;
+using OVR.OpenVR;
 
 namespace GuildSaber.UI.GuildSaber
 {
@@ -33,15 +37,19 @@ namespace GuildSaber.UI.GuildSaber
             { 1, 2, 3 };
         public int PlaylistsCountInCategory;
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         [UIComponent("CategoryNameText")]
         private TextMeshProUGUI m_CategoryNameText = null;
 
-        #region UIComponents
-        [UIComponent("DownloadBut")] private readonly Button m_DownloadButton = null;
+        [UIComponent("DownloadBut")] private readonly UnityEngine.UI.Button m_DownloadButton = null;
         [UIComponent("ElemsHorizontal")] public readonly HorizontalLayoutGroup m_HorizontalElems = null;
-        #endregion
 
-        public CategoryUI(CategoryData p_Category, int p_GuildId, bool p_DownloadOnlyUnpassed)
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        public CategoryUI(ApiAPlayerCategory p_Category, int p_GuildId, bool p_DownloadOnlyUnpassed)
         {
             Category = p_Category;
             m_GuildId = p_GuildId;
@@ -51,10 +59,11 @@ namespace GuildSaber.UI.GuildSaber
             {
                 try
                 {
-                    Task<string> l_SerializedObject = l_Client.GetStringAsync($"https://api.guildsaber.com/levels/data/all?guild=1{Category}");
+                    Task<string> l_SerializedObject = l_Client.GetStringAsync($"https://api.guildsaber.com/levels/data/all?guild-id={p_GuildId}&category-id={p_Category.CategoryID}");
                     l_SerializedObject.Wait();
-                    LevelIDs l_TempValidLevels = JsonConvert.DeserializeObject<LevelIDs>(l_SerializedObject.Result);
-                    m_ValidPlaylists = l_TempValidLevels.LevelID;
+                    List<ApiRankingLevel> l_TempValidLevels = JsonConvert.DeserializeObject<List<ApiRankingLevel>>(l_SerializedObject.Result);
+                    foreach (var l_Index in l_TempValidLevels)
+                        m_ValidPlaylists.Add((int)l_Index.ID);
                 }
                 catch (HttpRequestException p_E)
                 {
@@ -64,7 +73,7 @@ namespace GuildSaber.UI.GuildSaber
             }
 
             PlaylistsCountInCategory = m_ValidPlaylists.Count;
-            m_CategoryDirectory = $"./Playlists/GuildSaber/{m_GuildId}/{Category}";
+            m_CategoryDirectory = $"./Playlists/GuildSaber/{m_GuildId}/{Category.CategoryName}";
 
             if (PlaylistsCountInCategory == 0)
             {
@@ -72,12 +81,22 @@ namespace GuildSaber.UI.GuildSaber
                 m_DownloadButton.SetButtonText("Error");
             }
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         public void UnbindEvent()
         {
             Plugin._modFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged -= OnUnpassedOnlyChanged;
         }
 
-        public CategoryData Category { get; set; }
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        public ApiAPlayerCategory Category { get; set; }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
         [UIAction("#post-parse")]
         private void PostParse()
@@ -97,11 +116,18 @@ namespace GuildSaber.UI.GuildSaber
             if (Category.CategoryName == string.Empty)
                 m_CategoryNameText.text = "Default";
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         private void OnUnpassedOnlyChanged(bool p_UnPassedOnly)
         {
             Plugin.Log.Info($"Updating On Un Passed Only: {p_UnPassedOnly}");
             DownloadOnlyUnPassed = p_UnPassedOnly;
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
         [UIAction("DownloadPlaylist")]
         private void PreDownloadPlaylist()
@@ -109,6 +135,9 @@ namespace GuildSaber.UI.GuildSaber
             CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.FolderOnly);
             DownloadPlaylist();
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
         private void DownloadPlaylist()
         {
@@ -118,26 +147,26 @@ namespace GuildSaber.UI.GuildSaber
             {
                 m_DownloadButton.SetButtonText("Finished");
                 m_DownloadButton.interactable = false;
-                Loader.Instance.RefreshSongs();
+                Loader.Instance.RefreshLevelPacks();
                 return;
             }
 
             using (WebClient l_Client = new WebClient())
             {
-                Plugin.Log.Info((CurrentPlaylistIndex / (float)PlaylistsCountInCategory).ToString());
+                //Plugin.Log.Info((CurrentPlaylistIndex / (float)PlaylistsCountInCategory).ToString());
                 m_DownloadButton.SetButtonText($"Downloading {CurrentPlaylistIndex / (float)PlaylistsCountInCategory * 100:00}%");
                 m_DownloadButton.interactable = false;
                 string l_QueryString = string.Empty;
                 if (!DownloadOnlyUnPassed)
                     l_QueryString = !Category.CategoryName.StringIsNullOrEmpty()
-                        ? $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Category}"
+                        ? $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Category.CategoryName}"
                         : $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}";
                 else
                     l_QueryString = !Category.CategoryName.StringIsNullOrEmpty()
-                        ? $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Category}/{Plugin.m_PlayerId}"
-                        : $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Plugin.m_PlayerId}";
+                        ? $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}/{Category}/{GuildSaberModule.m_GSPlayerId}"
+                        : $"https://api.guildsaber.com/level/{m_ValidPlaylists[CurrentPlaylistIndex]}/{GuildSaberModule.m_GSPlayerId}";
 
-                Plugin.Log.Info(l_QueryString);
+                //Plugin.Log.Info(l_QueryString);
                 try
                 {
                     CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.PlaylistsOnly);
@@ -191,38 +220,49 @@ namespace GuildSaber.UI.GuildSaber
         }
     }
 
-    [HotReload(RelativePathToLayout = @"ModViewController.bsml")]
-    [ViewDefinition("GuildSaber.UI.GuildSaber.View.ModViewController.bsml")]
-    public class ModViewController : BSMLAutomaticViewController
+
+    public class PlaylistViewController : ViewController<PlaylistViewController>
     {
-        #region Properties
+        protected override string GetViewContentDescription()
+        {
+            return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.GuildSaber.View.ModViewController.bsml");
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         public bool m_OnlyUnPassedMaps;
         public int GuildId = GSConfig.Instance.SelectedGuild;
         public delegate void OnOnlyPassedMapsChange(bool p_OnlyUnPassed);
         public event OnOnlyPassedMapsChange e_OnUnPassedOnlyValueChanged = null;
         public CategoryUI CategoryInterface;
         public List<GuildCategories> m_Guilds = new List<GuildCategories>();
-        #endregion
 
-        #region UIComponents
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         [UIComponent("CategoryList")] public CustomCellListTableData m_CategoriesTableList = null;
-        [UIComponent("Dropdown")] public DropDownListSetting m_GuildChoiceDropdown = null;
+        [UIComponent("Dropdown")] public BeatSaberMarkupLanguage.Components.Settings.DropDownListSetting m_GuildChoiceDropdown = null;
         [UIComponent("LoadingLayout")] public GridLayoutGroup m_LoadingGrid = null;
         [UIComponent("Elems")] public VerticalLayoutGroup m_ElemsLayout = null;
-        #endregion
 
-        #region UIActions
-        [UIAction("#post-parse")]
-        private void PostParse()
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+        protected override void OnViewCreation()
         {
-            try
-            {
-                UpdateCategories();
-            } catch (Exception l_E)
-            {
-                Plugin.Log.Error(l_E.StackTrace);
-            }
+            UpdateCategories();
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////s
+
+        public void Init(int p_GuildId)
+        {
+            GuildId = p_GuildId;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
         [UIAction("OnGuildChange")]
         public async void OnGuildChange(string p_Selected)
@@ -233,38 +273,24 @@ namespace GuildSaber.UI.GuildSaber
             await RefreshList();
             SetLoadingMode(LoadingMode.normal);
         }
-        #endregion
 
-        public void SetLoadingMode(LoadingMode p_Mode)
-        {
-            switch (p_Mode)
-            {
-                case LoadingMode.loading:
-                    m_LoadingGrid.gameObject.SetActive(true);
-                    m_GuildChoiceDropdown.interactable = false;
-                    break;
-                case LoadingMode.normal:
-                    m_GuildChoiceDropdown.interactable = true;
-                    m_LoadingGrid.gameObject.SetActive(false);
-                    break;
-                default: return;
-            }
-        }
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
         public async void UpdateCategories()
         {
+            SetLoadingMode(LoadingMode.loading);
             await Task.Run(delegate
             {
-                SetLoadingMode(LoadingMode.loading);
-                List<CategoryData> l_Categories = new List<CategoryData>();
-                foreach (GuildData l_CurrentGuild in Plugin.AvailableGuilds)
+                List<ApiAPlayerCategory> l_Categories = new List<ApiAPlayerCategory>();
+                foreach (GuildData l_CurrentGuild in GuildSaberModule.AvailableGuilds)
                 {
                     PlayerGuildsInfo l_Player = GuildApi.GetPlayerGuildsInfo();
                     if (l_Player.m_AvailableGuilds.Count == 0)
                         continue;
 
-                    GuildCategories l_Guild = new GuildCategories(l_CurrentGuild.ID, new List<CategoryData>());
-                    foreach (CategoryData l_Current in l_Player.m_ReturnPlayer.CategoryData)
+                    GuildCategories l_Guild = new(l_CurrentGuild.ID, new List<ApiAPlayerCategory>());
+                    foreach (ApiAPlayerCategory l_Current in l_Player.m_ReturnPlayer.CategoryData)
                         l_Guild.Categories.Add(l_Current);
                     m_Guilds.Add(l_Guild);
                 }
@@ -273,6 +299,9 @@ namespace GuildSaber.UI.GuildSaber
             await RefreshList();
             SetLoadingMode(LoadingMode.normal);
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
         public async Task<Task> RefreshDropdown()
         {
@@ -290,6 +319,18 @@ namespace GuildSaber.UI.GuildSaber
             return Task.CompletedTask;
         }
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        public void SetLoadingMode(LoadingMode p_Mode)
+        {
+            m_LoadingGrid.gameObject.SetActive(p_Mode == LoadingMode.loading);
+            m_GuildChoiceDropdown.interactable = p_Mode == LoadingMode.normal;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////s
+
         public async Task<Task> RefreshList()
         {
             await Task.Run(delegate
@@ -300,8 +341,8 @@ namespace GuildSaber.UI.GuildSaber
                     GameObject.DestroyImmediate(l_Current.m_HorizontalElems.gameObject);
                 }
                 m_ListCategories.Clear();
-                List<CategoryData> l_Categories = GuildApi.GetPlayerCategoriesDataForGuild(BSPModule.GuildSaberModule.m_SSPlayerId, GuildId);
-                foreach (CategoryData l_Current in l_Categories)
+                List<ApiAPlayerCategory> l_Categories = GuildApi.GetPlayerCategoriesDataForGuild(BSPModule.GuildSaberModule.m_SSPlayerId, GuildId);
+                foreach (ApiAPlayerCategory l_Current in l_Categories)
                 {
                     m_ListCategories.Add(new CategoryUI(l_Current, GuildId, m_OnlyUnPassedMaps));
                 }
@@ -311,14 +352,12 @@ namespace GuildSaber.UI.GuildSaber
             return Task.CompletedTask;
         }
 
-        public void Init(int p_GuildId)
-        {
-            GuildId = p_GuildId;
-        }
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////s
 
-        public GuildData GetGuildFromName(string p_Name)
+        /*public GuildData GetGuildFromName(string p_Name)
         {
-            foreach (GuildData l_Current in Plugin.AvailableGuilds)
+            foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
             {
                 if (l_Current.Name != p_Name)
                     continue;
@@ -327,17 +366,22 @@ namespace GuildSaber.UI.GuildSaber
             }
 
             return default(GuildData);
-        }
+        }*/
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
         public List<string> GetGuildsName()
         {
             List<string> l_Temp = new List<string>();
-            foreach (GuildData l_Current in Plugin.AvailableGuilds)
+            foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
                 l_Temp.Add(l_Current.Name);
             return l_Temp;
         }
 
-        #region UIValues
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         [UIValue("AvailableCategories")]
         public List<object> m_ListCategories = new List<object>();
 
@@ -380,7 +424,6 @@ namespace GuildSaber.UI.GuildSaber
             get => GSConfig.Instance.UwUMode;
             set => GSConfig.Instance.UwUMode = value;
         }
-        #endregion
 
         public async void RefreshFromUnpassed()
         {

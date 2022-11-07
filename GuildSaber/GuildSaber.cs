@@ -8,6 +8,9 @@ using System.Net.Http;
 using GuildSaber.API;
 using UnityEngine;
 using GuildSaber.UI.GuildSaber.Leaderboard;
+using GuildSaber.UI.BeatSaberPlusSettings;
+using BeatSaberMarkupLanguage;
+using System.Collections.Generic;
 
 namespace GuildSaber.BSPModule
 {
@@ -30,13 +33,17 @@ namespace GuildSaber.BSPModule
 
 #nullable enable
         public static int? m_GSPlayerId = null;
-        public static long m_SSPlayerId = 0;
+        public static ulong m_SSPlayerId = 0;
 
         public static GuildData m_CardSelectedGuild = default(GuildData);
         public static GuildData m_PlaylistDownloadSelectedGuild = default(GuildData);
         public static GuildData m_LeaderboardSelectedGuild = default(GuildData);
         public static GuildData m_GuildSaberPlayingMenuSelectedGuild = default(GuildData);
         public static GuildData m_LevelSelectionMenuSelectedGuild = default(GuildData);
+
+        public static List<GuildData> AvailableGuilds = new List<GuildData>();
+
+        public static HarmonyLib.Harmony m_HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber"); }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -46,9 +53,14 @@ namespace GuildSaber.BSPModule
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
+        Settings m_SettingsView;
+
         protected override (ViewController?, ViewController?, ViewController?) GetSettingsUIImplementation()
         {
-            return (null, null, null);
+            if (m_SettingsView == null)
+                m_SettingsView = BeatSaberUI.CreateViewController<Settings>();
+
+            return (m_SettingsView, null, null);
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -56,15 +68,25 @@ namespace GuildSaber.BSPModule
 
         protected override void OnEnable()
         {
-            Plugin.AvailableGuilds = GuildApi.GetPlayerGuildsInfo().m_AvailableGuilds;
+            AvailableGuilds = GuildApi.GetPlayerGuildsInfo().m_AvailableGuilds;
 
-            if (PlayerCardUI.m_Instance == null)
+            if (PlayerCardUI.m_Instance == null && GSConfig.Instance.CardEnabled)
                 PlayerCardUI.CreateCard();
+
+            if (PlayerCardUI.m_Instance != null)
+                PlayerCardUI.SetCardActive(GSConfig.Instance.CardEnabled);
+
+            Events.m_EventsEnabled = true;
         }
 
         protected override void OnDisable()
         {
+            Events.m_EventsEnabled = false;
+
             PlayerCardUI.DestroyCard();
+            GuildSaberCustomLeaderboard.Instance.Dispose();
+
+            m_HarmonyInstance.UnpatchSelf();
         }
     }
 }

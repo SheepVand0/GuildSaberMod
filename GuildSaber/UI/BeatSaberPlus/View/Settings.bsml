@@ -1,0 +1,14 @@
+﻿<vertical child-control-height='false'>
+	<horizontal bg='panel-top' pad-left='15' pad-right='15' horizontal-fit='PreferredSize'>
+		<text text='Guild Saber' align='Center' font-size='4.2'/>
+	</horizontal>
+
+	<vertical pref-height='65' spacing='15' pad='0'>
+
+		<text font-size='3.5' align='Center' font-color='yellow' text='Enable Leaderboard : ' />
+		<bool-setting id='BoolLeaderboardEnabled'/>
+		<text font-size='3.5' align='Center' font-color='yellow' text='Enable Card : ' />
+		<bool-setting id='BoolCardEnabled'/>
+
+	</vertical>
+</vertical>

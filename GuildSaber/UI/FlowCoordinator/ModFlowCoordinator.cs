@@ -7,23 +7,9 @@ using HMUI;
 
 namespace GuildSaber.UI.GuildSaber;
 
-public struct GuildCategories
-{
-    public int GuildId { get; set; } = 0;
-    public List<CategoryData> Categories { get; set; } = default(List<CategoryData>);
-
-    public GuildCategories(int p_GuildId, List<CategoryData> p_Categories)
-    {
-        GuildId = p_GuildId;
-        Categories = p_Categories;
-    }
-}
-
-[HotReload(RelativePathToLayout = @"PlayerCard_UI.bsml")]
-[ViewDefinition("GuildSaber.UI.Card.View.PlayerCard_UI.bsml")]
 public class ModFlowCoordinator : FlowCoordinator
 {
-    public ModViewController _modViewController = null;
+    public PlaylistViewController _modViewController = null;
 
     public LeftModViewController _LeftModViewController = null;
 
@@ -32,7 +18,7 @@ public class ModFlowCoordinator : FlowCoordinator
     public void Awake()
     {
         if (_modViewController == null)
-            _modViewController = BeatSaberUI.CreateViewController<ModViewController>();
+            _modViewController = BeatSaberUI.CreateViewController<PlaylistViewController>();
 
         if (_LeftModViewController == null)
             _LeftModViewController = BeatSaberUI.CreateViewController<LeftModViewController>();

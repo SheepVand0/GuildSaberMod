@@ -14,6 +14,8 @@ using System.Threading.Tasks;
 using CP_SDK_WebSocketSharp;
 using GuildSaber.Utils;
 using System.Diagnostics;
+using GuildSaber.BSPModule;
+using BeatSaberPlus.SDK.Game;
 
 namespace GuildSaber.UI.Card;
 
@@ -161,6 +163,11 @@ internal class PlayerCardUI
 
         m_Instance = this;
 
+        BeatSaberPlus.SDK.Game.Logic.OnSceneChange += (p_SceneType) =>
+        {
+            UpdateCardPosition();
+        };
+
         RefreshCard(false);
     }
 
@@ -170,12 +177,14 @@ internal class PlayerCardUI
     /// <returns></returns>
     public static PlayerCardUI CreateCard()
     {
-        if (Plugin.AvailableGuilds.Count == 0) return null;
+        if (m_Instance != null) return m_Instance;
 
-        if (!GuildSaberUtils.GuildsListContainsId(Plugin.AvailableGuilds, GSConfig.Instance.SelectedGuild))
+        if (GuildSaberModule.AvailableGuilds.Count == 0) return null;
+
+        if (!GuildSaberUtils.GuildsListContainsId(GuildSaberModule.AvailableGuilds, GSConfig.Instance.SelectedGuild))
         {
-            GSConfig.Instance.SelectedGuild = Plugin.AvailableGuilds[0].ID;
-            BSPModule.GuildSaberModule.m_CardSelectedGuild = Plugin.AvailableGuilds[0];
+            GSConfig.Instance.SelectedGuild = GuildSaberModule.AvailableGuilds[0].ID;
+            BSPModule.GuildSaberModule.m_CardSelectedGuild = GuildSaberModule.AvailableGuilds[0];
         }
 
         ApiPlayerData l_Player = GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: false, GSConfig.Instance.SelectedGuild, p_UseGuild: true);
@@ -198,7 +207,7 @@ internal class PlayerCardUI
     /// <param name="p_Active"></param>
     public static void SetCardActive(bool p_Active)
     {
-        if (m_Instance == null) return;
+        if (m_Instance == null) {  return; }
 
         if (m_Instance.CardViewController != null) m_Instance.CardViewController.gameObject.SetActive(p_Active);
         else return;
@@ -222,12 +231,12 @@ internal class PlayerCardUI
     /// </summary>
     public void UpdateCardVisibility()
     {
-        switch (Plugin.CurrentSceneName)
+        switch (Logic.ActiveScene)
         {
-            case "MainMenu":
+            case Logic.SceneType.Menu:
                 FloatingScreen.gameObject.SetActive(GSConfig.Instance.ShowCardInMenu);
                 break;
-            case "GameCore":
+            case Logic.SceneType.Playing:
                 FloatingScreen.gameObject.SetActive(GSConfig.Instance.ShowCardInGame);
                 break;
         }
@@ -241,13 +250,13 @@ internal class PlayerCardUI
     /// </summary>
     public void UpdateCardPosition()
     {
-        switch (Plugin.CurrentSceneName)
+        switch (BeatSaberPlus.SDK.Game.Logic.ActiveScene)
         {
-            case "MainMenu":
+            case BeatSaberPlus.SDK.Game.Logic.SceneType.Menu:
                 FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.CardPosition.ToUnityVector3();
                 FloatingScreen.gameObject.transform.localRotation = GSConfig.Instance.CardRotation.ToUnityQuat();
                 break;
-            case "GameCore":
+            case BeatSaberPlus.SDK.Game.Logic.SceneType.Playing:
                 FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.InGameCardPosition.ToUnityVector3();
                 FloatingScreen.gameObject.transform.localRotation = GSConfig.Instance.InGameCardRotation.ToUnityQuat();
                 break;
@@ -333,14 +342,12 @@ internal class PlayerCardUI
     /// <summary>
     /// Destroy card
     /// </summary>
-    [Obsolete("No recommended to use this, can cause bugs")]
     public void Destroy()
     {
         GameObject.DestroyImmediate(CardViewController.gameObject);
         GameObject.DestroyImmediate(FloatingScreen.gameObject);
     }
 
-    [Obsolete("Not Recommanded too, can cause bugs")]
     /// <summary>
     /// Destroy card
     /// </summary>
@@ -349,6 +356,7 @@ internal class PlayerCardUI
         if (m_Instance != null && m_Instance.CardViewController != null)
         {
             m_Instance.Destroy();
+            m_Instance = null;
         }
     }
 

@@ -51,13 +51,14 @@ namespace GuildSaber.UI.Components
 
         private List<FileToDownload> m_FileToDownload = new List<FileToDownload>();
 
+        public bool m_NeedUpdate = false;
+
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         private void ShowUpdates()
         {
             m_UpdatesModal.Show(true, true);
-            DownloadUpdatesFile();
         }
 
         [UIAction("CloseModal")]
@@ -76,7 +77,7 @@ namespace GuildSaber.UI.Components
 
         public void Show()
         {
-            m_ShowUpdatesButton.gameObject.SetActive(true);
+            m_ShowUpdatesButton.gameObject.SetActive(m_NeedUpdate);
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -111,9 +112,22 @@ namespace GuildSaber.UI.Components
             {
                 Process.Start("https://github.com/SheepVand0/GuildSaberProfile/releases");
             }, p_PreferedWidth: 20);
+
+            Events.e_OnLeaderboardShown += (p_First) =>
+            {
+                Show();
+            };
+
+            Events.e_OnLeaderboardHide += () =>
+            {
+                Hide();
+            };
         }
 
-        private void DownloadUpdatesFile()
+        /// <summary>
+        /// Check GuildSaber and BSPlus updates
+        /// </summary>
+        public void CheckUpdates()
         {
             using (WebClient l_Client = new WebClient())
             {
@@ -122,6 +136,11 @@ namespace GuildSaber.UI.Components
             }
         }
 
+        /// <summary>
+        /// Process update file
+        /// </summary>
+        /// <param name="p_Sender"></param>
+        /// <param name="p_EventArgs"></param>
         private void ProcessFile(object p_Sender, System.ComponentModel.AsyncCompletedEventArgs p_EventArgs)
         {
             if (p_EventArgs.Error != null)
@@ -162,12 +181,15 @@ namespace GuildSaber.UI.Components
 
             if (m_FileToDownload.Count > 0)
             {
+                m_NeedUpdate = true;
+                Show();
                 m_UpdateText.text = l_NewText + " need to be updated";
                 m_UpdateText.color = UnityEngine.Color.yellow;
                 m_DirectDownloadButton.interactable = true;
             }
             else
             {
+                Hide();
                 m_UpdateText.text = "No updates needed";
                 m_UpdateText.color = UnityEngine.Color.green;
                 m_DirectDownloadButton.interactable = false;
@@ -179,6 +201,9 @@ namespace GuildSaber.UI.Components
             System.IO.File.Delete(UPDATE_FILE_LOCATION);
         }
 
+        /// <summary>
+        /// Download new versions
+        /// </summary>
         private async void DownloadUpdates()
         {
             m_DirectDownloadButton.interactable = false;
@@ -196,6 +221,11 @@ namespace GuildSaber.UI.Components
             }
         }
 
+        /// <summary>
+        /// Transform version to int
+        /// </summary>
+        /// <param name="p_Version"></param>
+        /// <returns></returns>
         private static int ParseVersion(string p_Version)
         {
             int l_Current = 0;

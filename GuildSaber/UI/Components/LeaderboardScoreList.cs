@@ -20,6 +20,7 @@ using ModestTree;
 using CP_SDK.Unity;
 using GuildSaber.BSPModule;
 using OVR.OpenVR;
+using System.Diagnostics;
 
 namespace GuildSaber.UI.Components
 {
@@ -38,6 +39,12 @@ namespace GuildSaber.UI.Components
         [UIValue("ScoreText")] private CustomText m_CScore = null;
         [UIValue("AccText")] private CustomText m_CAcc = null;
         [UIValue("Modifiers")] private CustomText m_CModifiers = null;
+
+        [UIComponent("ModalPlayerName")] TextMeshProUGUI m_ModalPlayerNameText = null;
+        [UIComponent("ModalBadCuts")] TextMeshProUGUI m_ModalBadCutsText = null;
+        [UIComponent("ModalMissedNotes")] TextMeshProUGUI m_ModalMissedNotesText = null;
+        [UIComponent("ModalModifiedScore")] TextMeshProUGUI m_ModalModifiedScoreText = null;
+        [UIComponent("ModalPassState")] TextMeshProUGUI m_ModalPassState = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -60,6 +67,13 @@ namespace GuildSaber.UI.Components
         public string Acc { get; set; } = string.Empty;
         public string Id { get; set; } = string.Empty;
         public string Modifiers { get; set; } = string.Empty;
+
+        public int BadCuts { get; set; } = 0;
+        public int MissedNotes { get; set; } = 0;
+        public int ModifiedScore { get; set; } = 0;
+        public API.PassState.EState PassState { get; set; } = API.PassState.EState.Allowed;
+
+        private List<string> BannedModifiers = new List<string>();
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -86,6 +100,15 @@ namespace GuildSaber.UI.Components
             Id = p_Id;
             Modifiers = GuildSaberUtils.GetPlayerNameToFit(p_Modfiers, 4);
             Show();
+        }
+
+        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int p_ModifiedScore, List<string> p_BannedModifiers, API.PassState.EState p_PassState)
+        {
+            BadCuts = p_BadCuts;
+            MissedNotes = p_MissedNotes;
+            ModifiedScore = p_ModifiedScore;
+            PassState = p_PassState;
+            BannedModifiers = p_BannedModifiers;
         }
 
         /// <summary>
@@ -231,11 +254,49 @@ namespace GuildSaber.UI.Components
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        internal void SetInfo(string p_ScoreSaberId)
+        [UIAction("ShowInfo")]
+        private void ShowInfo()
         {
-            ApiPlayerData l_Info = GuildApi.GetPlayerByScoreSaberIdAndGuild(p_ScoreSaberId, GuildSaberLeaderboardPanel.Instance.m_SelectedGuild);
+            m_InfoModal.Show(true, true);
+            m_ModalPlayerNameText.text = PlayerName;
+            m_ModalBadCutsText.text = $"<color=#adadad>Bad cuts : </color>{(BadCuts == 0 ? $"<color=#ffffff>0</color>" : $"<color=#b50000>{BadCuts}</color>")}";
+            m_ModalMissedNotesText.text = $"<color=#adadad>Missed Notes : </color>{(MissedNotes == 0 ? $"<color=#ffffff>0</color>" : $"<color=#b50000>{MissedNotes}</color>")}";
+            m_ModalModifiedScoreText.gameObject.SetActive(ModifiedScore != int.Parse(Score));
+            m_ModalModifiedScoreText.text = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}> Modified score : </color>{ModifiedScore}";
+
+            foreach (var l_BannedModifier in BannedModifiers)
+            {
+                if (!Modifiers.Contains(l_BannedModifier)) continue;
+
+                PassState = API.PassState.EState.Denied;
+            }
+
+            m_ModalPassState.text = "Pass state : " + $"<color=#{GetColorFromPassState(PassState)}>{PassState}</color>";
         }
 
+        [UIAction("CloseModal")]
+        private void CloseModal()
+        {
+            m_InfoModal.Hide(true);
+        }
+
+        public static string GetColorFromPassState(API.PassState.EState p_State)
+        {
+            switch (p_State)
+            {
+                case API.PassState.EState.Allowed: return ColorUtility.ToHtmlStringRGBA(Color.green);
+                case API.PassState.EState.NeedConfirmation: return ColorUtility.ToHtmlStringRGBA(Color.yellow);
+                case API.PassState.EState.Denied:    return ColorUtility.ToHtmlStringRGBA(Color.red);
+                ///Others with same color
+                case API.PassState.EState.NewScore: return GetColorFromPassState(API.PassState.EState.NeedConfirmation);
+                case API.PassState.EState.UpdatedScore: return GetColorFromPassState(API.PassState.EState.Allowed);
+                case API.PassState.EState.UnVerified: return GetColorFromPassState(API.PassState.EState.NeedConfirmation);
+                case API.PassState.EState.MinScoreRequirement: return GetColorFromPassState(API.PassState.EState.Denied);
+                case API.PassState.EState.MissingModifiers: return GetColorFromPassState(API.PassState.EState.Denied);
+                case API.PassState.EState.ProhibitedModifiers: return GetColorFromPassState(API.PassState.EState.Denied);
+                default: return ColorUtility.ToHtmlStringRGBA(Color.white);
+            }
+        }
     }
 
     class LeaderboardScoreList : CustomUIComponent
@@ -259,7 +320,7 @@ namespace GuildSaber.UI.Components
         /// <param name="p_CustomData"></param>
         /// <param name="p_Scores"></param>
         /// <param name="p_PointsNames"></param>
-        public async void SetScores(MapLeaderboardCustomData p_CustomData, List<MapLeaderboardContent> p_Scores, string p_PointsNames)
+        public async void SetScores(ApiCustomDataStruct p_CustomData, List<ApiMapLeaderboardContentStruct> p_Scores, string p_PointsNames)
         {
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Scores);
 
@@ -288,23 +349,24 @@ namespace GuildSaber.UI.Components
 
             for (int l_i = 0; l_i < p_Scores.Count; l_i++)
             {
-                MapLeaderboardContent l_Score = p_Scores[l_i];
-                RankData l_RankData = new RankData();
+                ApiMapLeaderboardContentStruct l_Score = p_Scores[l_i];
+                PointsData l_PointData = default(PointsData);
 
-                if (string.IsNullOrEmpty(p_PointsNames)) l_RankData = l_Score.RankData[0];
+                if (string.IsNullOrEmpty(p_PointsNames)) l_PointData = l_Score.PointsData[0];
                 else
                 {
-                    foreach (RankData l_Current in l_Score.RankData)
+                    foreach (PointsData l_Current in l_Score.PointsData)
                     {
                         if (l_Current.PointsName == p_PointsNames)
                         {
-                            l_RankData = l_Current;
+                            l_PointData = l_Current;
                         }
                     }
                 }
                 LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)m_Scores[l_i];
-                l_CurrentCell.Init(l_Score.Rank, l_Score.Name, l_RankData.Points, l_RankData.PointsName, l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString(), l_Score.Modifiers);
-                if (l_Score.ID == BSPModule.GuildSaberModule.m_GSPlayerId)
+                l_CurrentCell.Init((int)l_Score.Rank, l_Score.Name, l_PointData.Points, l_PointData.PointsName, (int)l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString(), l_Score.Modifiers);
+                l_CurrentCell.SetModalInfo((int)l_Score.BadCuts, (int)l_Score.MissedNotes, (int)l_Score.ModifiedScore, new List<string> { "NF", "SS", "NA", "NO", "NB", "ZM" } , (PassState.EState)l_Score.State);
+                if (l_Score.ScoreSaberID == BSPModule.GuildSaberModule.m_SSPlayerId.ToString())
                 {
                     l_CurrentCell.SetCellToCurrentPlayer();
                 }
