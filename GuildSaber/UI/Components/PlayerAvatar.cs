@@ -6,6 +6,7 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using HMUI;
 using GuildSaber.API;
+using GuildSaber.Logger;
 
 namespace GuildSaber.UI.GuildSaber.Components
 {
@@ -28,7 +29,7 @@ namespace GuildSaber.UI.GuildSaber.Components
 
         public void UpdateShader(Color p_ProfileColor)
         {
-            if (m_Avatar == null) { Plugin.Log.Error("Avatar Is Null"); return; }
+            if (m_Avatar == null) { GSLogger.Instance.Error(new System.Exception("Avatar Is Null"), nameof(PlayerAvatar), nameof(UpdateShader)); return; }
 
             //_PlayerAvatarMaskInstance = Object.Instantiate(AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask"));
 
@@ -50,7 +51,7 @@ namespace GuildSaber.UI.GuildSaber.Components
 
         protected override void AfterViewCreation()
         {
-            ApiPlayerData l_Player = GuildSaberLeaderboardPanel.Instance.m_PlayerData;
+            ApiPlayerData l_Player = GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData;
             if (string.IsNullOrEmpty(l_Player.Avatar)) return;
 
             m_AvatarGrid.cellSize = new Vector2(17, 17);

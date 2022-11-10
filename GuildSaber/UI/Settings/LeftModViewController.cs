@@ -1,16 +1,29 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
+using BeatSaberPlus.SDK.UI;
 using GuildSaber.API;
 using GuildSaber.Configuration;
 using GuildSaber.UI.Card;
 using TMPro;
+using System.Reflection;
 
 namespace GuildSaber.UI.GuildSaber;
 
-[HotReload(RelativePathToLayout = @"ModViewController.bsml")]
-[ViewDefinition("GuildSaber.UI.GuildSaber.View.LeftModViewController.bsml")]
-public class LeftModViewController : BSMLAutomaticViewController
+public class LeftModViewController : ViewController<LeftModViewController>
 {
+
+    protected override string GetViewContentDescription()
+    {
+        return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.GuildSaber.View.LeftModViewController.bsml");
+    }
+
+    [UIComponent("ErrorText")] private readonly TextMeshProUGUI m_ErrorText = null;
+    [UIComponent("ErrorText2")] private readonly TextMeshProUGUI m_ErrorText2 = null;
+    [UIObject("BG")] UnityEngine.GameObject m_BG = null;
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     [UIValue("ShowSettingsModal")]
     public bool ShowSettingsModal
@@ -19,6 +32,17 @@ public class LeftModViewController : BSMLAutomaticViewController
         set => GSConfig.Instance.ShowSettingsModal = value;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    protected override void OnViewCreation()
+    {
+        BeatSaberPlus.SDK.UI.Backgroundable.SetOpacity(m_BG, 0.5f);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
     public void ShowError(bool p_Visible)
     {
         m_ErrorText.gameObject.SetActive(p_Visible);
@@ -26,14 +50,8 @@ public class LeftModViewController : BSMLAutomaticViewController
         m_ErrorText.text = "Error during getting data from " + BSPModule.GuildSaberModule.m_CardSelectedGuild.Name;
     }
 
-    #region Components
-
-    [UIComponent("ErrorText")] private readonly TextMeshProUGUI m_ErrorText = null;
-    [UIComponent("ErrorText2")] private readonly TextMeshProUGUI m_ErrorText2 = null;
-
-    #endregion
-
-    #region UIValues
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     [UIValue("ShowCardInMenu")]
     protected bool ShowCardInMenu
@@ -54,9 +72,8 @@ public class LeftModViewController : BSMLAutomaticViewController
         set => GSConfig.Instance.ShowCardInGame = value;
     }
 
-    #endregion
-
-    #region UIActions
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     [UIAction("RefreshCard")]
     private void RefreshCard()
@@ -80,7 +97,4 @@ public class LeftModViewController : BSMLAutomaticViewController
     {
         PlayerCardUI.ResetInGameCardPosition();
     }
-
-    #endregion
-
 }

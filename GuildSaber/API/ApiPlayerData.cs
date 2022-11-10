@@ -31,7 +31,7 @@ namespace GuildSaber.API
         public UInt32? LevelID { get; set; }
         public bool IsBanned { get; set; }
         public List<RankData>? RankData;
-        public List<ApiAPlayerCategory>? CategoryData { get; set; }
+        public List<ApiPlayerCategory>? CategoryData { get; set; }
     }
 
     public struct RankData
@@ -56,7 +56,7 @@ namespace GuildSaber.API
         public UInt32 Count { get; set; }
     }
 
-    public struct ApiAPlayerCategory
+    public struct ApiPlayerCategory
     {
         public string CategoryName { get; set; }
         public UInt32 CategoryID { get; set; }

@@ -1,7 +1,5 @@
-﻿<bg bg="round-rect-panel" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
-	>
-	<vertical anchor-pos-y='-4' id='Elems' child-control-height='true' child-expand-height='true' vertical-fit='PreferredSize'>
+﻿<bg bg="round-rect-panel" id="BG" pref-width="100" pref-height="75">
+	<vertical id='Elems' pref-width='100' pref-height='65' vertical-fit='PreferredSize'>
 		<clickable-text text='Playlists : ' underlined='true' event-click='ShowUwUSetting'></clickable-text>
 		<modal show-event='ShowUwUSetting' hide-event='HideUwU' size-delta-x='80' size-delta-y='20'>
 			<vertical vertical-fit='PreferredSize'>
@@ -12,10 +10,10 @@
 		<dropdown-list-setting id='Dropdown' text='Selected Guild : ' choices='AvailableGuilds' value='SelectedGuild' on-change='OnGuildChange' bind-value='true'/>
 		<vertical min-width='25' spacing='2'>
 			<toggle-setting text='Playlists contains only unpassed maps' value='UnPassedMaps' apply-on-change='true'></toggle-setting>
-			<custom-list id='CategoryList' contents='AvailableCategories'>
+			<custom-list id='CategoryList' contents='AvailableCategories' pref-height='40' show-scrollbar='true'>
 				<horizontal spacing='5' child-align='MiddleCenter' bg='panel-top' id='ElemsHorizontal' background-color='white'>
-					<text align='Center' id='CategoryNameText' text='~CategoryName'></text>
-					<button align='Center' text='Download' id='DownloadBut' on-click='DownloadPlaylist'></button>
+					<text align='Center' id='CategoryNameText' text='CategoryName'></text>
+					<button align='Center' text='Download' id='DownloadBut'></button>
 				</horizontal>
 			</custom-list>
 		</vertical>

@@ -11,10 +11,11 @@ using GuildSaber.UI.GuildSaber.Leaderboard;
 using GuildSaber.UI.BeatSaberPlusSettings;
 using BeatSaberMarkupLanguage;
 using System.Collections.Generic;
+using System.Security.Permissions;
 
 namespace GuildSaber.BSPModule
 {
-    internal class GuildSaberModule : BSPModuleBase<GuildSaberModule>
+    public class GuildSaberModule : BSPModuleBase<GuildSaberModule>
     {
         public override EIModuleBaseType Type => EIModuleBaseType.Integrated;
 
@@ -31,17 +32,20 @@ namespace GuildSaber.BSPModule
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-#nullable enable
-        public static int? m_GSPlayerId = null;
-        public static ulong m_SSPlayerId = 0;
+        #nullable enable
+        public static int? m_GSPlayerId { get; internal set; } = null;
+        public static ulong m_SSPlayerId { get; internal set; } = 0;
 
-        public static GuildData m_CardSelectedGuild = default(GuildData);
-        public static GuildData m_PlaylistDownloadSelectedGuild = default(GuildData);
-        public static GuildData m_LeaderboardSelectedGuild = default(GuildData);
-        public static GuildData m_GuildSaberPlayingMenuSelectedGuild = default(GuildData);
-        public static GuildData m_LevelSelectionMenuSelectedGuild = default(GuildData);
+        public static GuildData m_CardSelectedGuild { get; internal set; } = default(GuildData);
+        public static GuildData m_PlaylistDownloadSelectedGuild { get; internal set; } = default(GuildData);
+        public static GuildData m_LeaderboardSelectedGuild { get; internal set; } = default(GuildData);
+        public static GuildData m_GuildSaberPlayingMenuSelectedGuild { get; internal set; } = default(GuildData);
+        public static GuildData m_LevelSelectionMenuSelectedGuild { get; internal set; } = default(GuildData);
 
-        public static List<GuildData> AvailableGuilds = new List<GuildData>();
+        public static List<GuildData> AvailableGuilds { get; internal set; } = new List<GuildData>();
+
+        public static EModState ModState { get; internal set; } = EModState.Fonctionnal;
+        public static EModErrorState ModErrorState { get; internal set; } = EModErrorState.NoError;
 
         public static HarmonyLib.Harmony m_HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber"); }
 
@@ -70,10 +74,10 @@ namespace GuildSaber.BSPModule
         {
             AvailableGuilds = GuildApi.GetPlayerGuildsInfo().m_AvailableGuilds;
 
-            if (PlayerCardUI.m_Instance == null && GSConfig.Instance.CardEnabled)
+            if (PlayerCardUI.m_Instance == null && GSConfig.Instance.CardEnabled && ModState == EModState.Fonctionnal)
                 PlayerCardUI.CreateCard();
 
-            if (PlayerCardUI.m_Instance != null)
+            if (PlayerCardUI.m_Instance != null && ModState == EModState.Fonctionnal)
                 PlayerCardUI.SetCardActive(GSConfig.Instance.CardEnabled);
 
             Events.m_EventsEnabled = true;
@@ -87,6 +91,22 @@ namespace GuildSaber.BSPModule
             GuildSaberCustomLeaderboard.Instance.Dispose();
 
             m_HarmonyInstance.UnpatchSelf();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        public enum EModState
+        {
+            APIError = 0,
+            Fonctionnal = 1 << 1
+        }
+
+        public enum EModErrorState
+        {
+            NoError = 0,
+            BadRequest_400 = 1 << 1,
+            NotFound_404 = 1 << 2
         }
     }
 }

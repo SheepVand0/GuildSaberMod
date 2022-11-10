@@ -1,5 +1,6 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
+using GuildSaber.Logger;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace GuildSaber.UI.Components
 
         //[UIComponent("ScopesLayout")] private readonly VerticalLayoutGroup m_Layout = null;
         [UIComponent("Global")] ClickableImage m_GlobalImage = null;
-        [UIComponent("Around")] ClickableImage m_AroundImage = null;
+        [UIComponent("Around")] public ClickableImage m_AroundImage = null;
         //[UIComponent("Friends")] ClickableImage m_FriendsImage = null;
         [UIComponent("Country")] ClickableImage m_CountryImage = null;
 
@@ -66,7 +67,7 @@ namespace GuildSaber.UI.Components
             if (l_IsScopeValid)
                 Events.m_Instance.SelectScope(p_Scope);
             else
-                Plugin.Log.Error($"Invalid scope provided : {p_Scope}");
+                GSLogger.Instance.Error(new Exception($"Invalid scope provided : {p_Scope}"), nameof(ScopeSelector), nameof(SelectScope));
         }
 
 

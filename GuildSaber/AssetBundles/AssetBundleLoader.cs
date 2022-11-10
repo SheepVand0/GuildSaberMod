@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.IO;
 using JetBrains.Annotations;
+using GuildSaber.Logger;
 
 namespace GuildSaber.AssetBundles
 {
@@ -16,7 +17,7 @@ namespace GuildSaber.AssetBundles
                 return l_Bundle;
             } catch (System.Exception l_E)
             {
-                Plugin.Log.Error(l_E);
+                GSLogger.Instance.Error(l_E, nameof(AssetBundleLoader), nameof(LoadBundle));
             }
             return null;
         }
@@ -24,7 +25,7 @@ namespace GuildSaber.AssetBundles
         public static T LoadElement<T>(string p_Name) where T : Object
         {
             AssetBundle l_GSBundle = LoadBundle();
-            if (l_GSBundle == null) { Plugin.Log.Info("GuildSaber Bundle is null"); return null; }
+            if (l_GSBundle == null) { GSLogger.Instance.Error(new System.Exception("GuildSaber Bundle is null"), nameof(AssetBundleLoader), nameof(LoadElement)); return null; }
             T[] l_Objects = l_GSBundle.LoadAllAssets<T>();
             T l_Object = null;
             foreach (var l_Current in l_Objects)

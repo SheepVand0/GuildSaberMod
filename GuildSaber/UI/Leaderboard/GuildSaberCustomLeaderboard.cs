@@ -13,6 +13,7 @@ using GuildSaber.Utils;
 using System.Collections.Generic;
 using GuildSaber.UI.Components;
 using GuildSaber.Configuration;
+using GuildSaber.BSPModule;
 
 namespace GuildSaber.UI.GuildSaber.Leaderboard
 {
@@ -26,9 +27,12 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         protected override ViewController panelViewController => _panelViewController;
         protected override ViewController leaderboardViewController => _leaderboardViewController;
 
-        public static bool IsShow = false;
+        public static bool IsShown = false;
+
+        public static bool Initialized { get; private set; } = false;
 
         public static GuildSaberCustomLeaderboard Instance = null;
+
 
         public GuildSaberCustomLeaderboard(CustomLeaderboardManager customLeaderboardManager,
                                            GuildSaberLeaderboardPanel panelViewController,
@@ -38,15 +42,15 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
             _panelViewController = panelViewController;
             _leaderboardViewController = leaderboardViewController;
 
-            Events.e_OnLeaderboardHide += OnHide;
-            Events.e_OnLeaderboardShown += OnShow;
-
             Instance = this;
+
+            Events.e_OnLeaderboardPostLoad += OnLeaderboardPostLoad;
         }
 
-        private void OnShow(bool p_FirstActivation)
+        private void OnLeaderboardPostLoad()
         {
-            IsShow = true;
+            Initialized = true;
+            LeaderboardLevelStatsViewManager.Setup();
         }
 
         public void Initialize()
@@ -58,12 +62,6 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         public void Dispose()
         {
             _customLeaderboardManager.Unregister(this);
-        }
-
-        private void OnHide()
-        {
-            IsShow = false;
-            LeaderboardHeaderManager.SetColors(Color.gray, Color.clear);
         }
     }
 
@@ -94,18 +92,19 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
 
             await WaitUtils.WaitUntil(() => (m_Header = GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.HeaderPanel")) != null, 10);
 
-
-
             _HeaderImageView = m_Header.GetComponentInChildren<ImageView>();
         }
         public void ChangeColors()
         {
+            if (!GuildSaberCustomLeaderboard.Initialized) return;
             GetPanel();
             SetColors(m_Color0, m_Color1);
         }
 
         public async static void SetColors(Color p_Color0, Color p_Color1)
         {
+            if (!GuildSaberCustomLeaderboard.Initialized) return;
+
             await WaitUtils.WaitUntil(() => m_Header != null, 100);
 
             _HeaderImageView.color0 = p_Color0;
@@ -114,12 +113,15 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
 
         public static void ResetColors()
         {
+            if (!GuildSaberCustomLeaderboard.Initialized || _HeaderImageView == null || GuildSaberModule.ModState == GuildSaberModule.EModState.APIError) return;
+
             _HeaderImageView.color0 = Color.gray;
-            _HeaderImageView.color0 = Color.clear;
+            _HeaderImageView.color1 = Color.clear;
         }
 
         public static async void ChangeText(string p_Text)
         {
+            if (!GuildSaberCustomLeaderboard.Initialized) return;
             GetPanel();
 
             await WaitUtils.WaitUntil(() => m_Header != null, 100);
@@ -127,15 +129,53 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
             m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
         }
 
-        public static void ChangeTextForced(string p_Text)
+        public static void ChangeTextForced(string p_Text, bool p_ChangeReallyForce)
         {
+            if (!p_ChangeReallyForce)
+                if (!GuildSaberCustomLeaderboard.Initialized) return;
+            if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
+                return;
             GetPanel();
             m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
         }
+
+        public static void ChangeTextForced(string p_Text)
+        {
+            ChangeTextForced(p_Text, false);
+        }
     }
 
-    class LeaderboardLevelStatsViewManager
+    internal class LeaderboardLevelStatsViewManager
     {
+        public static GameObject GameLevelStatsView = null;
 
+        public static void Setup()
+        {
+            GameLevelStatsView = Utils.GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView");
+            Events.e_OnLeaderboardShown += (p_FirstActivation) =>
+            {
+                if (!GuildSaberCustomLeaderboard.Initialized) return;
+
+                Show();
+            };
+            Events.e_OnLeaderboardHide += () =>
+            {
+                if (!GuildSaberCustomLeaderboard.Initialized) return;
+
+                Hide();
+            };
+        }
+
+        public static void Show()
+        {
+            foreach (Transform l_Transform in GameLevelStatsView.transform)
+                l_Transform.gameObject.SetActive(false);
+        }
+
+        public static void Hide()
+        {
+            foreach (Transform l_Transform in GameLevelStatsView.transform)
+                l_Transform.gameObject.SetActive(true);
+        }
     }
 }

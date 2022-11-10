@@ -14,6 +14,7 @@ using System.Collections;
 using System.Net;
 using System.IO;
 using GuildSaber.BSPModule;
+using GuildSaber.Logger;
 
 namespace GuildSaber.Utils
 {
@@ -50,7 +51,6 @@ namespace GuildSaber.Utils
             {
                 if (l_Current.ID == p_Guild)
                 {
-                    Plugin.Log.Info("Selected guild is valid for this player not changing");
                     l_IsValid = true;
                     break;
                 }

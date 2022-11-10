@@ -3,12 +3,12 @@
 		<text text='Guild Saber' align='Center' font-size='4.2'/>
 	</horizontal>
 
-	<vertical pref-height='65' spacing='15' pad='0'>
-
-		<text font-size='3.5' align='Center' font-color='yellow' text='Enable Leaderboard : ' />
-		<bool-setting id='BoolLeaderboardEnabled'/>
-		<text font-size='3.5' align='Center' font-color='yellow' text='Enable Card : ' />
-		<bool-setting id='BoolCardEnabled'/>
-
-	</vertical>
+	<horizontal pref-height='65' spacing='0' pad='0'>
+		<vertical>
+			<text font-size='3.5' align='Center' font-color='yellow' text='Enable Leaderboard : ' />
+			<bool-setting id='BoolLeaderboardEnabled'/>
+			<text font-size='3.5' align='Center' font-color='yellow' text='Enable Card : ' />
+			<bool-setting id='BoolCardEnabled'/>
+		</vertical>
+	</horizontal>
 </vertical>

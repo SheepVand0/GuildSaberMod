@@ -10,6 +10,7 @@ using GuildSaber.UI.Card;
 using UnityEngine.UI;
 using System.Collections;
 using CP_SDK.Unity;
+using GuildSaber.Logger;
 
 namespace GuildSaber.UI
 {
@@ -63,7 +64,7 @@ namespace GuildSaber.UI
                 PropertyInfo p_PropertyInfo = typeof(TItem).GetProperty(l_Param.m_ParamName, BindingFlags.Public | BindingFlags.Instance);
                 if (p_PropertyInfo != null && p_PropertyInfo.CanWrite && p_PropertyInfo.PropertyType == l_Param.m_Value.GetType())
                     p_PropertyInfo.SetValue(l_Item, l_Param.m_Value, null);
-                else Plugin.Log.Error($"Property not valid -> Gived Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}");
+                else GSLogger.Instance.Error(new Exception($"Property not valid -> Gived Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}"), nameof(CustomUIComponent), nameof(CustomUIComponent.CreateItemWithParams));
             }
             l_Item.Init(true, p_Parent, p_UnderParent, p_NeedParse);
             l_Item.OnPostParse += () =>
@@ -124,7 +125,7 @@ namespace GuildSaber.UI
             }
             catch (Exception l_E)
             {
-                Plugin.Log.Error(l_E);
+                GSLogger.Instance.Error(l_E, nameof(CustomUIComponent), nameof(Init));
             }
         }
 
@@ -138,8 +139,7 @@ namespace GuildSaber.UI
             }
             catch (Exception l_Ex)
             {
-                Plugin.Log.Error($"Error during parsing, here the Complete error : {l_Ex.StackTrace}");
-                Plugin.Log.Error($"Host name : {name}");
+                GSLogger.Instance.Error(l_Ex, nameof(CustomUIComponent), nameof(Parse));
                 Exception l_NewEx = new("Error during parsing bsml : maybe path is invalid ?"); throw l_NewEx;
             }
         }

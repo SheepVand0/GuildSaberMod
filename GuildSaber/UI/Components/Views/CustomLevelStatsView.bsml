@@ -1,3 +1,5 @@
-﻿<horizontal pref-width="~CellWidth" id="MainHorizontal">
-
+﻿<horizontal ignore-layout="true" anchor-pos-x="-2" anchor-pos-y="-65"  pref-width='70' pref-height='20' id="MainHorizontal" horizontal-fit="PreferredSize" >
+	<text id='Rank' />
+	<text id='Name' />
+	<text id='PassState' />
 </horizontal>

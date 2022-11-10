@@ -16,6 +16,7 @@ using GuildSaber.Utils;
 using System.Diagnostics;
 using GuildSaber.BSPModule;
 using BeatSaberPlus.SDK.Game;
+using GuildSaber.Logger;
 
 namespace GuildSaber.UI.Card;
 
@@ -130,7 +131,7 @@ internal class PlayerCardUI
     /// </summary>
     public PlayerCardUI()
     {
-        Plugin.Log.Info("Loading Player Card");
+        //Plugin.Log.Info("Loading Player Card");
 
         if (m_TimeManager == null)
         {
@@ -189,7 +190,7 @@ internal class PlayerCardUI
 
         ApiPlayerData l_Player = GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: false, GSConfig.Instance.SelectedGuild, p_UseGuild: true);
 
-        if (l_Player.Equals(default(PlayerGuildsInfo)) || l_Player.Equals(null)) { Plugin.Log.Error("Failed Getting Player Info"); return null; }
+        if (l_Player.Equals(default(PlayerGuildsInfo)) || l_Player.Equals(null)) { GSLogger.Instance.Error(new Exception("Failed Getting Player Info"), nameof(PlayerCardUI), nameof(CreateCard)); return null; }
 
         m_Player = l_Player;
 

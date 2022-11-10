@@ -1,6 +1,4 @@
-﻿<bg bg="round-rect-panel" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
-	>
+﻿<bg bg="round-rect-panel" id="BG">
 
 	<settings-container child-control-height='true' child-expand-height='true'>
 		<horizontal anchor-pos-y='47' bg='panel-top' background-color='#0054ad' size-delta-y='7'>

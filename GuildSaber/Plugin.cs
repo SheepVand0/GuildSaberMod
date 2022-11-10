@@ -17,6 +17,7 @@ using System;
 using Config = IPA.Config.Config;
 using IPALogger = IPA.Logging.Logger;
 using GuildSaber.BSPModule;
+using GuildSaber.Logger;
 #endregion
 
 namespace GuildSaber;
@@ -26,8 +27,6 @@ namespace GuildSaber;
 public class Plugin
 {
     private static Plugin Instance { get; set; } = null;
-
-    internal static IPALogger Log { get; private set; } = null;
 
     public const string NOT_DEFINED = "Undefined";
 
@@ -46,11 +45,10 @@ public class Plugin
     public void Init(IPALogger p_Logger)
     {
         Instance = this;
-        Log = p_Logger;
-        Log.Info("GuildSaber initialized.");
+
+        new GSLogger(p_Logger);
 
         MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
-
         GuildSaberModule.m_HarmonyInstance.PatchAll();
     }
 
@@ -68,8 +66,6 @@ public class Plugin
     [OnExit]
     public void OnApplicationQuit()
     {
-        Log.Debug("OnApplicationQuit");
-
         CustomUIComponent[] l_Components = Resources.FindObjectsOfTypeAll<CustomUIComponent>();
 
         foreach (CustomUIComponent l_Current in l_Components)

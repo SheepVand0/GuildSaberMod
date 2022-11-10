@@ -10,11 +10,14 @@ namespace GuildSaber.UI.Components
     {
         protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.CustomText.bsml";
 
-        #region UIComponents
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         [UIComponent("Text")] TextMeshProUGUI m_CText = null;
         [UIComponent("Horizontal")] HorizontalLayoutGroup m_CHorizontal = null;
-        #endregion
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
         public float FontSize { get; set; } = 0f;
         public float AnchorPosX { get; set; } = 0f;
@@ -26,7 +29,12 @@ namespace GuildSaber.UI.Components
         public Color Color { get; set; } = Color.clear;
         public bool Italic { get; set; } = false;
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
+        /// <summary>
+        /// On Post Create
+        /// </summary>
         protected override void PostCreate()
         {
             m_CText.fontSize = FontSize;
@@ -39,11 +47,20 @@ namespace GuildSaber.UI.Components
             m_CHorizontal.childAlignment = LayoutAlignment;
         }
 
+        /// <summary>
+        /// Set Text
+        /// </summary>
+        /// <param name="p_Text"></param>
         public void SetText(string p_Text)
         {
+            Text = p_Text;
             m_CText.text = p_Text;
         }
 
+        /// <summary>
+        /// Set Color
+        /// </summary>
+        /// <param name="p_Color"></param>
         public void SetColor(Color p_Color)
         {
             m_CText.richText = EnableRichText;

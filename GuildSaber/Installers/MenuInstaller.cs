@@ -3,6 +3,7 @@ using GuildSaber.UI.GuildSaber.Leaderboard;
 using GuildSaber.Managers;
 using UnityEngine;
 using GuildSaber.Utils;
+using GuildSaber.Logger;
 
 namespace GuildSaber.Installers
 {
@@ -10,7 +11,7 @@ namespace GuildSaber.Installers
     {
         public override void InstallBindings()
         {
-            Plugin.Log.Notice("Installing GuildSaber Bindings");
+            GSLogger.Instance.Log("Installing GuildSaber Bindings", IPA.Logging.Logger.LogLevel.NoticeUp);
             Container.BindInterfacesAndSelfTo<Events>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<GuildSaberLeaderboardView>().FromNewComponentAsViewController().AsSingle();

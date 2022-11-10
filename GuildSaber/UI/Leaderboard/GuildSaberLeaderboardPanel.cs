@@ -19,6 +19,9 @@ using System;
 using System.Linq;
 using System.Collections;
 using GuildSaber.BSPModule;
+using OVR.OpenVR;
+using System.Reflection;
+using GuildSaber.Logger;
 
 namespace GuildSaber.UI.GuildSaber.Leaderboard
 {
@@ -26,7 +29,8 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
     [ViewDefinition("GuildSaber.UI.GuildSaber.View.LeaderboardPanel.bsml")]
     internal class GuildSaberLeaderboardPanel : BSMLAutomaticViewController
     {
-        public static GuildSaberLeaderboardPanel Instance;
+
+        public static GuildSaberLeaderboardPanel PanelInstance;
 
         [UIComponent("PlayerErrorTxt")] private readonly TextMeshProUGUI m_ErrorText = null;
         [UIComponent("Elems")] private readonly HorizontalLayoutGroup m_ElemsLayout = null;
@@ -55,7 +59,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         /// </summary>
         [UIAction("#post-parse")] private void PostParse()
         {
-            Instance = this;
+            PanelInstance = this;
             Reload(ReloadMode.FromCurrent, true, true);
         }
 
@@ -64,6 +68,12 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         /// </summary>
         internal async void SetColors()
         {
+            if(GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
+            {
+                LeaderboardHeaderManager.SetColors(Color.red, Color.clear);
+                return;
+            }
+
             await WaitUtils.WaitUntil(() => m_SelectedGuild == GuildSaberModule.m_LeaderboardSelectedGuild.ID, 100);
 
             VertexGradient l_Gradient = BSPModule.GuildSaberModule.m_LeaderboardSelectedGuild.Color.ToUnityColor().GenerateGradient(0.25f, 1f);
@@ -95,7 +105,13 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         /// <param name="p_ReloadStyle">Reload shaders</param>
         public async void Reload(ReloadMode p_ReloadMode, bool p_SetLoadingModeBeforeGettingData, bool p_ReloadStyle)
         {
-            Instance = this;
+            PanelInstance = this;
+
+            if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
+            {
+                SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Error);
+                return;
+            }
 
             if (p_SetLoadingModeBeforeGettingData)
                 SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Loading);
@@ -149,8 +165,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
                     l_IconTexture = await GuildSaberUtils.GetImage(GuildSaberModule.m_LeaderboardSelectedGuild.Logo);
                 } catch(Exception l_E)
                 {
-                    Plugin.Log.Error($"Error setting banner with this link : {GuildSaberModule.m_LeaderboardSelectedGuild.Logo}");
-                    Plugin.Log.Error(l_E.Message);
+                    GSLogger.Instance.Error(l_E, nameof(GuildSaberLeaderboardPanel), nameof(Reload));
                     l_IconTexture = Utilities.FindTextureInAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
                 }
 

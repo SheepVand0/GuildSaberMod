@@ -22,7 +22,7 @@ public class Events : IInitializable
     ////////////////////////////////////////////////////////////////////////////
 
     public delegate void OnLeaderboardViewPostLoad();
-    public event OnLeaderboardViewPostLoad e_OnLeaderboardPostLoad = null;
+    public static event OnLeaderboardViewPostLoad e_OnLeaderboardPostLoad = null;
 
     public delegate void OnGuildSelected(int p_GuildId);
     public event OnGuildSelected e_OnGuildSelected = null;

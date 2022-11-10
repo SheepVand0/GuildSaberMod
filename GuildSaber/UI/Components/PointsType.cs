@@ -35,7 +35,7 @@ namespace GuildSaber.UI.Components
             RefreshPoints();
             RefreshSelected();
             Events.m_Instance.e_OnGuildSelected += OnGuildSelected;
-            Events.m_Instance.e_OnLeaderboardPostLoad += OnLeaderboardViewPostLoad;
+            Events.e_OnLeaderboardPostLoad += OnLeaderboardViewPostLoad;
         }
 
         private void OnLeaderboardViewPostLoad()
@@ -73,8 +73,8 @@ namespace GuildSaber.UI.Components
 
         public void RefreshPoints()
         {
-            if (GuildSaberLeaderboardPanel.Instance.m_PlayerData.Equals(default(PlayerData))) return;
-            m_Player = GuildSaberLeaderboardPanel.Instance.m_PlayerData;
+            if (GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData.Equals(default(PlayerData))) return;
+            m_Player = GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData;
             m_DefaultsPoints.Clear();
             foreach (RankData l_Current in m_Player.RankData)
             {

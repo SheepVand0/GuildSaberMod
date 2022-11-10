@@ -54,7 +54,7 @@ namespace GuildSaber.UI.Components
 
         public static float ScaleFactor { get => 1.2f; }
         private float InteractableScaleY { get => (6.5f * ScaleFactor) * 0.9f; }
-        private float ScoreFontSize { get => 2.5f * ScaleFactor; }
+        public static float ScoreFontSize { get => 2.5f * ScaleFactor; }
         private float LeaderWidth { get => 90 * ScaleFactor + (7 * 1.4f); }
 
         public bool HasBeenParsed { get; private set; } = false;
@@ -271,7 +271,7 @@ namespace GuildSaber.UI.Components
                 PassState = API.PassState.EState.Denied;
             }
 
-            m_ModalPassState.text = "Pass state : " + $"<color=#{GetColorFromPassState(PassState)}>{PassState}</color>";
+            m_ModalPassState.text = "Pass state : " + $"<color=#{API.PassState.GetColorFromPassState(PassState)}>{PassState}</color>";
         }
 
         [UIAction("CloseModal")]
@@ -280,23 +280,7 @@ namespace GuildSaber.UI.Components
             m_InfoModal.Hide(true);
         }
 
-        public static string GetColorFromPassState(API.PassState.EState p_State)
-        {
-            switch (p_State)
-            {
-                case API.PassState.EState.Allowed: return ColorUtility.ToHtmlStringRGBA(Color.green);
-                case API.PassState.EState.NeedConfirmation: return ColorUtility.ToHtmlStringRGBA(Color.yellow);
-                case API.PassState.EState.Denied:    return ColorUtility.ToHtmlStringRGBA(Color.red);
-                ///Others with same color
-                case API.PassState.EState.NewScore: return GetColorFromPassState(API.PassState.EState.NeedConfirmation);
-                case API.PassState.EState.UpdatedScore: return GetColorFromPassState(API.PassState.EState.Allowed);
-                case API.PassState.EState.UnVerified: return GetColorFromPassState(API.PassState.EState.NeedConfirmation);
-                case API.PassState.EState.MinScoreRequirement: return GetColorFromPassState(API.PassState.EState.Denied);
-                case API.PassState.EState.MissingModifiers: return GetColorFromPassState(API.PassState.EState.Denied);
-                case API.PassState.EState.ProhibitedModifiers: return GetColorFromPassState(API.PassState.EState.Denied);
-                default: return ColorUtility.ToHtmlStringRGBA(Color.white);
-            }
-        }
+
     }
 
     class LeaderboardScoreList : CustomUIComponent
@@ -306,6 +290,8 @@ namespace GuildSaber.UI.Components
         [UIComponent("ScoreList")] CustomCellListTableData m_ScoreList = null;
 
         [UIValue("ScoreCells")] List<object> m_Scores = new List<object>();
+
+        public CustomLevelStatsView CustomLevelStatsView = null;
 
         public bool Initialized { get; private set; }
 

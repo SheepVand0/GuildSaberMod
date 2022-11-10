@@ -21,6 +21,8 @@ using System;
 using System.Linq;
 using GuildSaber.BSPModule;
 using BeatSaberPlus.SDK.Game;
+using System.Security.Cryptography;
+using GuildSaber.Logger;
 
 namespace GuildSaber.UI.Card;
 //PlayerCard variables
@@ -97,7 +99,7 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
 
         Refresh();
 
-        Plugin.Log.Debug("Card loaded");
+        //Plugin.Log.Debug("Card loaded");
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -186,6 +188,8 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
     {
         try
         {
+            if (GuildSaberModule.m_CardSelectedGuild.Equals(default(GuildData))) return;
+
             ///Checking
             bool l_SetCardActive = !BSPModule.GuildSaberModule.m_CardSelectedGuild.Equals(default(GuildData));
             if (l_SetCardActive)
@@ -217,7 +221,7 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
             int l_CategoryDataCount = PlayerCardUI.m_Player.CategoryData.Count;
             for (int l_i = 0; l_i < l_CategoryDataCount;l_i++)
             {
-                ApiAPlayerCategory l_Cat = PlayerCardUI.m_Player.CategoryData[l_i];
+                ApiPlayerCategory l_Cat = PlayerCardUI.m_Player.CategoryData[l_i];
                 int l_FontSize = (int)(2 / (l_CategoryDataCount * 0.11f));
                 if (l_FontSize < 1) l_FontSize = 2;
                 if (l_FontSize == 5) l_FontSize = 4;
@@ -246,11 +250,10 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
             UpdateCanPlayerUseCustomColors();
             UpdateCardColor();
             UpdateLevelsDetails();
-
         }
         catch (Exception l_E)
         {
-            Plugin.Log.Error(l_E);
+            GSLogger.Instance.Error(l_E, nameof(PlayerCardViewController), nameof(Refresh));
         }
     }
 
