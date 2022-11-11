@@ -16,7 +16,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 namespace GuildSaber.UI.Leaderboard
 {
     [UsedImplicitly]
-    class GuildSaberCustomLeaderboard : CustomLeaderboard, IInitializable, IDisposable, INotifyLeaderboardLoad, INotifyLeaderboardSet
+    class GuildSaberCustomLeaderboard : CustomLeaderboard, IInitializable, IDisposable, INotifyLeaderboardLoad
     {
         public static GuildSaberCustomLeaderboard Instance = null;
 
@@ -54,8 +54,6 @@ namespace GuildSaber.UI.Leaderboard
             _leaderboardViewController = leaderboardViewController;
 
             Instance = this;
-
-            Events.e_OnLeaderboardShown += OnLeaderboardShow;
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -88,44 +86,12 @@ namespace GuildSaber.UI.Leaderboard
             {
                 if (Initialized) return;
 
-                Events.m_Instance.EventOnPostLoadLeaderboard();
+                Events.m_Instance.EventOnLeaderboardPostLoad();
 
                 Initialized = true;
                 LeaderboardLevelStatsViewManager.Setup();
             }
         }
 
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
-
-        /// <summary>
-        /// When the leaderboard is shown
-        /// </summary>
-        /// <param name="p_FirstActivation"></param>
-        private void OnLeaderboardShow(bool p_FirstActivation)
-        {
-            if (p_FirstActivation)
-                GuildSaberLeaderboardView.m_CurrentBeatmap = Resources.FindObjectsOfTypeAll<LevelCollectionNavigationController>()[0].selectedDifficultyBeatmap;
-            else
-                _leaderboardViewController.SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, true);
-
-            if (GuildSaberLeaderboardView.m_CurrentBeatmap == null) { _leaderboardViewController.SetLeaderboardViewMode(ELeaderboardViewMode.Error); return; }
-        }
-
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
-
-        /// <summary>
-        /// On beatmap selected
-        /// </summary>
-        /// <param name="difficultyBeatmap"></param>
-        public void OnLeaderboardSet(IDifficultyBeatmap difficultyBeatmap)
-        {
-            GuildSaberLeaderboardView.m_CurrentBeatmap = difficultyBeatmap;
-
-            _leaderboardViewController.Page = 1;
-            if (GuildSaberCustomLeaderboard.IsShown)
-                _leaderboardViewController.SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, false);
-        }
     }
 }

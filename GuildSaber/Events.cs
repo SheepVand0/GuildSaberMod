@@ -66,7 +66,7 @@ public class Events : IInitializable
         e_OnPointsTypeChange?.Invoke(p_PointsNames);
     }
 
-    public void EventOnPostLoadLeaderboard()
+    public void EventOnLeaderboardPostLoad()
     {
         if (!m_EventsEnabled)
             return;

@@ -10,6 +10,8 @@ using HMUI;
 using GuildSaber.UI.Leaderboard;
 using GuildSaber.Utils;
 using GuildSaber.BSPModule;
+using GuildSaber.Logger;
+using System;
 
 namespace GuildSaber.UI.Components
 {
@@ -370,14 +372,17 @@ namespace GuildSaber.UI.Components
                         }
                     }
                 }
+
                 LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)m_Scores[l_i];
                 l_CurrentCell.Init((int)l_Score.Rank, l_Score.Name, l_PointData.Points, l_PointData.PointsName, (int)l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString(), l_Score.Modifiers);
-                l_CurrentCell.SetModalInfo((int)l_Score.BadCuts, (int)l_Score.MissedNotes, (l_Score.ScoreStatistic != null) ? (int)l_Score.ScoreStatistic?.PauseCount : null, (int)l_Score.ModifiedScore, new List<string> { "NF", "SS", "NA", "NO", "NB", "ZM" } , (PassState.EState)l_Score.State, (EHMD)l_Score.HMD);
+                l_CurrentCell.SetModalInfo((int)l_Score.BadCuts, (int)l_Score.MissedNotes, (l_Score.ScoreStatistic != null) ? (int)l_Score.ScoreStatistic?.PauseCount : null, (int)l_Score.ModifiedScore, new List<string> { "NF", "SS", "NA", "NO", "NB", "ZM" }, (PassState.EState)l_Score.State, (EHMD)l_Score.HMD);
                 if (l_Score.ScoreSaberID == BSPModule.GuildSaberModule.m_SSPlayerId.ToString())
                 {
                     l_CurrentCell.SetCellToCurrentPlayer();
                 }
+
             }
+
         }
     }
 }
