@@ -56,11 +56,9 @@ namespace GuildSaber.UI.Components
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        private void ShowUpdates()
-        {
-            m_UpdatesModal.Show(true, true);
-        }
-
+        /// <summary>
+        /// Close Modal
+        /// </summary>
         [UIAction("CloseModal")]
         private void Close()
         {
@@ -70,11 +68,17 @@ namespace GuildSaber.UI.Components
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
+        /// <summary>
+        /// Hide
+        /// </summary>
         public void Hide()
         {
             m_ShowUpdatesButton.gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// Show
+        /// </summary>
         public void Show()
         {
             m_ShowUpdatesButton.gameObject.SetActive(m_NeedUpdate);
@@ -189,7 +193,6 @@ namespace GuildSaber.UI.Components
             }
             else
             {
-                Hide();
                 m_UpdateText.text = "No updates needed";
                 m_UpdateText.color = UnityEngine.Color.green;
                 m_DirectDownloadButton.interactable = false;

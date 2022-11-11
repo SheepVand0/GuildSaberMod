@@ -66,10 +66,8 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
         set { }
     }
 
-    // ReSharper disable once CollectionNeverQueried.Global
-    // ReSharper disable once FieldCanBeMadeReadOnly.Global
+
     public List<PlayerRankUI> Ranks = new List<PlayerRankUI>();
-    // ReSharper disable once FieldCanBeMadeReadOnly.Global
     public List<PlayerLevelUI> Levels = new List<PlayerLevelUI>();
     public FloatingScreen m_CardScreen;
     public bool AllowCustomCardColors = false;
@@ -311,6 +309,9 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
     ////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
 
+    /// <summary>
+    /// Show color setting if player can use it
+    /// </summary>
     public void UpdateShowPlayerCustomColorUISetting()
     {
         m_CustomColorSettings.interactable = AllowCustomCardColors;
@@ -324,6 +325,9 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
             l_Rect.sizeDelta = new Vector2(100, 60);
     }
 
+    /// <summary>
+    /// Cannot show a handle ingame
+    /// </summary>
     public void UpdateToggleCardHandleUISettingVisibility()
     {
         if (Logic.ActiveScene == Logic.SceneType.Playing)
@@ -332,7 +336,9 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
             m_ToggleShowHandle.gameObject.SetActive(true);
     }
 
-
+    /// <summary>
+    /// Show
+    /// </summary>
     public void ShowSettings()
     {
         m_ModalView.Show(true, false, null);

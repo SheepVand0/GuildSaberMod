@@ -1,26 +1,15 @@
 ﻿using System.Collections.Generic;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.Components.Settings;
-using BeatSaberMarkupLanguage.Parser;
-using BeatSaberMarkupLanguage;
 using GuildSaber.API;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine;
 using System.Threading.Tasks;
-using System.Linq;
 using HMUI;
-using GuildSaber.AssetBundles;
-using IPA.Utilities;
-using System.Collections;
-using GuildSaber.UI.GuildSaber.Leaderboard;
+using GuildSaber.UI.Leaderboard;
 using GuildSaber.Utils;
-using ModestTree;
-using CP_SDK.Unity;
 using GuildSaber.BSPModule;
-using OVR.OpenVR;
-using System.Diagnostics;
 
 namespace GuildSaber.UI.Components
 {
@@ -30,8 +19,6 @@ namespace GuildSaber.UI.Components
         [UIComponent("Elems")] public HorizontalLayoutGroup m_ElemsLayout = null;
         [UIComponent("Interactable")] public Button m_Interactable = null;
         [UIComponent("Info")] public ModalView m_InfoModal = null;
-        //[UIComponent("InfoName")] private TextMeshProUGUI m_InfoName = null;
-        //[UIComponent("InfoRank")]
 
         [UIValue("Rank")] private CustomText m_CRank = null;
         [UIValue("Name")] private CustomText m_CPlayerName = null;
@@ -45,6 +32,8 @@ namespace GuildSaber.UI.Components
         [UIComponent("ModalMissedNotes")] TextMeshProUGUI m_ModalMissedNotesText = null;
         [UIComponent("ModalModifiedScore")] TextMeshProUGUI m_ModalModifiedScoreText = null;
         [UIComponent("ModalPassState")] TextMeshProUGUI m_ModalPassState = null;
+        [UIComponent("ModalPauseCount")] TextMeshProUGUI m_ModalPauseCount = null;
+        [UIComponent("ModalHMD")] TextMeshProUGUI m_ModalHMD = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -71,6 +60,8 @@ namespace GuildSaber.UI.Components
         public int BadCuts { get; set; } = 0;
         public int MissedNotes { get; set; } = 0;
         public int ModifiedScore { get; set; } = 0;
+        public int? Pauses { get; set; } = 0;
+        public EHMD HMD { get; set; } = EHMD.Unk;
         public API.PassState.EState PassState { get; set; } = API.PassState.EState.Allowed;
 
         private List<string> BannedModifiers = new List<string>();
@@ -102,13 +93,25 @@ namespace GuildSaber.UI.Components
             Show();
         }
 
-        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int p_ModifiedScore, List<string> p_BannedModifiers, API.PassState.EState p_PassState)
+        /// <summary>
+        /// Set Score Modal Informations
+        /// </summary>
+        /// <param name="p_BadCuts"></param>
+        /// <param name="p_MissedNotes"></param>
+        /// <param name="p_Pauses"></param>
+        /// <param name="p_ModifiedScore"></param>
+        /// <param name="p_BannedModifiers"></param>
+        /// <param name="p_PassState"></param>
+        /// <param name="p_Hmd"></param>
+        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, API.PassState.EState p_PassState, EHMD p_Hmd)
         {
             BadCuts = p_BadCuts;
             MissedNotes = p_MissedNotes;
             ModifiedScore = p_ModifiedScore;
+            Pauses = p_Pauses;
             PassState = p_PassState;
             BannedModifiers = p_BannedModifiers;
+            HMD = p_Hmd;
         }
 
         /// <summary>
@@ -259,10 +262,24 @@ namespace GuildSaber.UI.Components
         {
             m_InfoModal.Show(true, true);
             m_ModalPlayerNameText.text = PlayerName;
-            m_ModalBadCutsText.text = $"<color=#adadad>Bad cuts : </color>{(BadCuts == 0 ? $"<color=#ffffff>0</color>" : $"<color=#b50000>{BadCuts}</color>")}";
-            m_ModalMissedNotesText.text = $"<color=#adadad>Missed Notes : </color>{(MissedNotes == 0 ? $"<color=#ffffff>0</color>" : $"<color=#b50000>{MissedNotes}</color>")}";
+            if (BadCuts == 0 && MissedNotes == 0)
+            {
+                m_ModalBadCutsText.color = Color.green;
+                m_ModalBadCutsText.text = "Full Combo";
+                m_ModalMissedNotesText.text = string.Empty;
+            }
+            else
+            {
+                m_ModalBadCutsText.text = $"<color=#adadad>Bad cuts : <color=#b50000>{BadCuts}</color>";
+                m_ModalMissedNotesText.text = $"<color=#adadad>Missed Notes : <color=#b50000>{MissedNotes}</color>";
+            }
+
             m_ModalModifiedScoreText.gameObject.SetActive(ModifiedScore != int.Parse(Score));
             m_ModalModifiedScoreText.text = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}> Modified score : </color>{ModifiedScore}";
+            if (Pauses != null)
+                m_ModalPauseCount.text = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.white)}>Pauses : <color=#{(Pauses == 0 ? ColorUtility.ToHtmlStringRGB(Color.green) : ColorUtility.ToHtmlStringRGB(Color.red))}>{Pauses}";
+            else
+                m_ModalPauseCount.text = "Pauses : ?";
 
             foreach (var l_BannedModifier in BannedModifiers)
             {
@@ -272,8 +289,12 @@ namespace GuildSaber.UI.Components
             }
 
             m_ModalPassState.text = "Pass state : " + $"<color=#{API.PassState.GetColorFromPassState(PassState)}>{PassState}</color>";
+            m_ModalHMD.text = $"Set on : {HMD}";
         }
 
+        /// <summary>
+        /// On Close Modal button pressed
+        /// </summary>
         [UIAction("CloseModal")]
         private void CloseModal()
         {
@@ -351,7 +372,7 @@ namespace GuildSaber.UI.Components
                 }
                 LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)m_Scores[l_i];
                 l_CurrentCell.Init((int)l_Score.Rank, l_Score.Name, l_PointData.Points, l_PointData.PointsName, (int)l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString(), l_Score.Modifiers);
-                l_CurrentCell.SetModalInfo((int)l_Score.BadCuts, (int)l_Score.MissedNotes, (int)l_Score.ModifiedScore, new List<string> { "NF", "SS", "NA", "NO", "NB", "ZM" } , (PassState.EState)l_Score.State);
+                l_CurrentCell.SetModalInfo((int)l_Score.BadCuts, (int)l_Score.MissedNotes, (l_Score.ScoreStatistic != null) ? (int)l_Score.ScoreStatistic?.PauseCount : null, (int)l_Score.ModifiedScore, new List<string> { "NF", "SS", "NA", "NO", "NB", "ZM" } , (PassState.EState)l_Score.State, (EHMD)l_Score.HMD);
                 if (l_Score.ScoreSaberID == BSPModule.GuildSaberModule.m_SSPlayerId.ToString())
                 {
                     l_CurrentCell.SetCellToCurrentPlayer();

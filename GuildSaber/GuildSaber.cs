@@ -3,15 +3,12 @@ using CP_SDK;
 using HMUI;
 using GuildSaber.Configuration;
 using GuildSaber.UI.Card;
-using System.Runtime.Remoting.Messaging;
-using System.Net.Http;
 using GuildSaber.API;
-using UnityEngine;
-using GuildSaber.UI.GuildSaber.Leaderboard;
+using GuildSaber.UI.Leaderboard;
 using GuildSaber.UI.BeatSaberPlusSettings;
 using BeatSaberMarkupLanguage;
 using System.Collections.Generic;
-using System.Security.Permissions;
+using System;
 
 namespace GuildSaber.BSPModule
 {
@@ -44,7 +41,7 @@ namespace GuildSaber.BSPModule
 
         public static List<GuildData> AvailableGuilds { get; internal set; } = new List<GuildData>();
 
-        public static EModState ModState { get; internal set; } = EModState.Fonctionnal;
+        public static EModState ModState { get; internal set; } = EModState.APIError;
         public static EModErrorState ModErrorState { get; internal set; } = EModErrorState.NoError;
 
         public static HarmonyLib.Harmony m_HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber"); }
@@ -70,12 +67,12 @@ namespace GuildSaber.BSPModule
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        protected override void OnEnable()
+        protected async override void OnEnable()
         {
-            AvailableGuilds = GuildApi.GetPlayerGuildsInfo().m_AvailableGuilds;
+            AvailableGuilds = (await GuildApi.GetPlayerGuildsInfo()).m_AvailableGuilds;
 
             if (PlayerCardUI.m_Instance == null && GSConfig.Instance.CardEnabled && ModState == EModState.Fonctionnal)
-                PlayerCardUI.CreateCard();
+                await PlayerCardUI.CreateCard();
 
             if (PlayerCardUI.m_Instance != null && ModState == EModState.Fonctionnal)
                 PlayerCardUI.SetCardActive(GSConfig.Instance.CardEnabled);
@@ -91,6 +88,24 @@ namespace GuildSaber.BSPModule
             GuildSaberCustomLeaderboard.Instance.Dispose();
 
             m_HarmonyInstance.UnpatchSelf();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        public static bool IsStateError()
+        {
+            return ModState == EModState.APIError;
+        }
+
+        internal static void SetState(EModState p_State)
+        {
+            ModState = p_State;
+        }
+
+        internal static void SetErrorState(Exception p_E)
+        {
+            ModErrorState = p_E.Message.Contains("400") ? EModErrorState.BadRequest_400 : EModErrorState.NotFound_404;
         }
 
         ////////////////////////////////////////////////////////////////////////////

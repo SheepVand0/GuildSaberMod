@@ -19,6 +19,7 @@ namespace GuildSaber.API
     {
         public string PointsType { get; set; }
         public string PointsName { get; set; }
+        public byte PointsIndex { get; set; }
         public float Points { get; set; }
     }
 
@@ -86,47 +87,18 @@ namespace GuildSaber.API
         public UInt32 MaxScore { get; set; }
     }
 
-    public static class GuildSaberLeaderboardUtils
+    public enum EHMD
     {
-        public static UInt32 StringToDifficulty(string p_Input)
-        {
-            return p_Input switch
-            {
-                "Easy" => 1,
-                "Normal" => 3,
-                "Hard" => 5,
-                "Expert" => 7,
-                "ExpertPlus" => 9,
-                _ => 0
-            };
-        }
-
-        public static UInt32 BeatmapDifficultyToDifficultyInOrder(BeatmapDifficulty p_Difficulty)
-        {
-
-            return (UInt32)p_Difficulty switch
-            {
-                0 => 1,
-                1 => 3,
-                2 => 5,
-                3 => 7,
-                4 => 9,
-                _ => 0
-            };
-
-        }
-
-        public static string DifficultyToString(UInt32 p_Input)
-        {
-            return p_Input switch
-            {
-                1 => "Easy",
-                3 => "Normal",
-                5 => "Hard",
-                7 => "Expert",
-                9 => "ExpertPlus",
-                _ => string.Empty
-            };
-        }
+        Unk = 0,
+        CV1 = 1 << 0,
+        Vive = 1 << 1,
+        VivePro = 1 << 2,
+        MixedReality = 1 << 3,
+        RiftS = 1 << 4,
+        Quest1 = 1 << 5,
+        ValveIndex = 1 << 6,
+        ViveCosmos = 1 << 7,
+        Quest2 = 1 << 8
     }
+
 }

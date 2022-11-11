@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using GuildSaber.AssetBundles;
-using GuildSaber.UI.GuildSaber.Leaderboard;
+using GuildSaber.UI.Leaderboard;
 using UnityEngine.UI;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
@@ -8,7 +8,7 @@ using HMUI;
 using GuildSaber.API;
 using GuildSaber.Logger;
 
-namespace GuildSaber.UI.GuildSaber.Components
+namespace GuildSaber.UI.Components
 {
     class PlayerAvatar : CustomUIComponent
     {
@@ -17,9 +17,35 @@ namespace GuildSaber.UI.GuildSaber.Components
 
         private Material _PlayerAvatarMaskInstance = null;
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         [UIComponent("AvatarImage")] private ImageView m_Avatar = null;
         [UIComponent("AvatarGrid")] private GridLayoutGroup m_AvatarGrid = null;
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// After View Creation
+        /// </summary>
+        protected override void AfterViewCreation()
+        {
+            ApiPlayerData l_Player = GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData;
+            if (string.IsNullOrEmpty(l_Player.Avatar)) return;
+
+            m_AvatarGrid.cellSize = new Vector2(17, 17);
+            Setup(l_Player.Avatar, l_Player.Color.ToUnityColor32());
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Set defaults
+        /// </summary>
+        /// <param name="p_AvatarLink"></param>
+        /// <param name="p_ProfileColor"></param>
         public void Setup(string p_AvatarLink, Color p_ProfileColor)
         {
             m_Avatar.SetImage(p_AvatarLink);
@@ -27,6 +53,13 @@ namespace GuildSaber.UI.GuildSaber.Components
             UpdateShader(p_ProfileColor);
         }
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Update profile color
+        /// </summary>
+        /// <param name="p_ProfileColor"></param>
         public void UpdateShader(Color p_ProfileColor)
         {
             if (m_Avatar == null) { GSLogger.Instance.Error(new System.Exception("Avatar Is Null"), nameof(PlayerAvatar), nameof(UpdateShader)); return; }
@@ -47,16 +80,5 @@ namespace GuildSaber.UI.GuildSaber.Components
             _PlayerAvatarMaskInstance.SetFloat(Shader.PropertyToID("_FadeStart"), 1f);
             _PlayerAvatarMaskInstance.SetFloat(Shader.PropertyToID("_FadeEnd"), 0.97f);
         }
-
-
-        protected override void AfterViewCreation()
-        {
-            ApiPlayerData l_Player = GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData;
-            if (string.IsNullOrEmpty(l_Player.Avatar)) return;
-
-            m_AvatarGrid.cellSize = new Vector2(17, 17);
-            Setup(l_Player.Avatar, l_Player.Color.ToUnityColor32());
-        }
-
     }
 }

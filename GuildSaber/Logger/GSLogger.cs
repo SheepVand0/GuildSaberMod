@@ -13,12 +13,24 @@ namespace GuildSaber.Logger
 
         internal static GSLogger Instance = null;
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Init
+        /// </summary>
+        /// <param name="p_Logger"></param>
         public GSLogger(IPA.Logging.Logger p_Logger)
         {
             IPALogger = p_Logger;
             Instance = this;
         }
 
+        /// <summary>
+        /// Log something
+        /// </summary>
+        /// <param name="p_Message"></param>
+        /// <param name="p_LogType"></param>
         internal void Log(string p_Message, StandardLogger.LogLevel p_LogType)
         {
             switch (p_LogType)
@@ -38,6 +50,12 @@ namespace GuildSaber.Logger
             }
         }
 
+        /// <summary>
+        /// Log Error
+        /// </summary>
+        /// <param name="p_E"></param>
+        /// <param name="p_Class"></param>
+        /// <param name="p_Function"></param>
         internal void Error(Exception p_E, string p_Class, string p_Function)
         {
             Log($"[GuildSaber.{p_Class}][{p_Function}] : {p_E}", StandardLogger.LogLevel.ErrorUp);

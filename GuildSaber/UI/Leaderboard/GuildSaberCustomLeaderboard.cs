@@ -6,20 +6,23 @@ using JetBrains.Annotations;
 using System;
 using UnityEngine;
 using TMPro;
-using System.Threading.Tasks;
-using System.Collections;
-using CP_SDK.Unity;
 using GuildSaber.Utils;
-using System.Collections.Generic;
 using GuildSaber.UI.Components;
 using GuildSaber.Configuration;
 using GuildSaber.BSPModule;
+using LeaderboardCore.Interfaces;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-namespace GuildSaber.UI.GuildSaber.Leaderboard
+namespace GuildSaber.UI.Leaderboard
 {
     [UsedImplicitly]
-    class GuildSaberCustomLeaderboard : CustomLeaderboard, IInitializable, IDisposable
+    class GuildSaberCustomLeaderboard : CustomLeaderboard, IInitializable, IDisposable, INotifyLeaderboardLoad, INotifyLeaderboardSet
     {
+        public static GuildSaberCustomLeaderboard Instance = null;
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         public readonly CustomLeaderboardManager _customLeaderboardManager = null;
         public readonly GuildSaberLeaderboardPanel _panelViewController = null;
         public readonly GuildSaberLeaderboardView _leaderboardViewController = null;
@@ -27,13 +30,21 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         protected override ViewController panelViewController => _panelViewController;
         protected override ViewController leaderboardViewController => _leaderboardViewController;
 
-        public static bool IsShown = false;
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
+        public static bool IsShown = false;
         public static bool Initialized { get; private set; } = false;
 
-        public static GuildSaberCustomLeaderboard Instance = null;
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-
+        /// <summary>
+        /// Zenject lol
+        /// </summary>
+        /// <param name="customLeaderboardManager"></param>
+        /// <param name="panelViewController"></param>
+        /// <param name="leaderboardViewController"></param>
         public GuildSaberCustomLeaderboard(CustomLeaderboardManager customLeaderboardManager,
                                            GuildSaberLeaderboardPanel panelViewController,
                                            GuildSaberLeaderboardView leaderboardViewController)
@@ -44,138 +55,77 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
 
             Instance = this;
 
-            Events.e_OnLeaderboardPostLoad += OnLeaderboardPostLoad;
+            Events.e_OnLeaderboardShown += OnLeaderboardShow;
         }
 
-        private void OnLeaderboardPostLoad()
-        {
-            Initialized = true;
-            LeaderboardLevelStatsViewManager.Setup();
-        }
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
+        /// <summary>
+        /// On Initialize
+        /// </summary>
         public void Initialize()
         {
             if (GSConfig.Instance.LeaderboardEnabled)
                _customLeaderboardManager.Register(this);
         }
 
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public void Dispose()
         {
             _customLeaderboardManager.Unregister(this);
         }
-    }
 
-    public class LeaderboardHeaderManager
-    {
-        public static LeaderboardHeaderManager m_Instance = null;
-
-        public static ImageView _HeaderImageView = null;
-
-        static GameObject m_Header = null;
-
-        public static Color m_Color0 = new Color(1, 0.5f, 0, 3);
-        public static readonly Color m_Color1 = new Color(0.2f, 0.1f, 1, 0.75f);
-
-        static UpdateView m_UpdatesModal = null;
-
-        public static async void GetPanel()
+        /// <summary>
+        /// On Load
+        /// </summary>
+        /// <param name="loaded"></param>
+        public void OnLeaderboardLoaded(bool loaded)
         {
-            if (m_Header != null && _HeaderImageView != null)
+            if (loaded)
             {
-                if (m_UpdatesModal == null)
-                {
-                    m_UpdatesModal = CustomUIComponent.CreateItem<UpdateView>(m_Header.transform, true, true);
-                    m_UpdatesModal.CheckUpdates();
-                }
-                return;
+                if (Initialized) return;
+
+                Events.m_Instance.EventOnPostLoadLeaderboard();
+
+                Initialized = true;
+                LeaderboardLevelStatsViewManager.Setup();
             }
-
-            await WaitUtils.WaitUntil(() => (m_Header = GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.HeaderPanel")) != null, 10);
-
-            _HeaderImageView = m_Header.GetComponentInChildren<ImageView>();
-        }
-        public void ChangeColors()
-        {
-            if (!GuildSaberCustomLeaderboard.Initialized) return;
-            GetPanel();
-            SetColors(m_Color0, m_Color1);
         }
 
-        public async static void SetColors(Color p_Color0, Color p_Color1)
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// When the leaderboard is shown
+        /// </summary>
+        /// <param name="p_FirstActivation"></param>
+        private void OnLeaderboardShow(bool p_FirstActivation)
         {
-            if (!GuildSaberCustomLeaderboard.Initialized) return;
+            if (p_FirstActivation)
+                GuildSaberLeaderboardView.m_CurrentBeatmap = Resources.FindObjectsOfTypeAll<LevelCollectionNavigationController>()[0].selectedDifficultyBeatmap;
+            else
+                _leaderboardViewController.SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, true);
 
-            await WaitUtils.WaitUntil(() => m_Header != null, 100);
-
-            _HeaderImageView.color0 = p_Color0;
-            _HeaderImageView.color1 = p_Color1;
+            if (GuildSaberLeaderboardView.m_CurrentBeatmap == null) { _leaderboardViewController.SetLeaderboardViewMode(ELeaderboardViewMode.Error); return; }
         }
 
-        public static void ResetColors()
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// On beatmap selected
+        /// </summary>
+        /// <param name="difficultyBeatmap"></param>
+        public void OnLeaderboardSet(IDifficultyBeatmap difficultyBeatmap)
         {
-            if (!GuildSaberCustomLeaderboard.Initialized || _HeaderImageView == null || GuildSaberModule.ModState == GuildSaberModule.EModState.APIError) return;
+            GuildSaberLeaderboardView.m_CurrentBeatmap = difficultyBeatmap;
 
-            _HeaderImageView.color0 = Color.gray;
-            _HeaderImageView.color1 = Color.clear;
-        }
-
-        public static async void ChangeText(string p_Text)
-        {
-            if (!GuildSaberCustomLeaderboard.Initialized) return;
-            GetPanel();
-
-            await WaitUtils.WaitUntil(() => m_Header != null, 100);
-
-            m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
-        }
-
-        public static void ChangeTextForced(string p_Text, bool p_ChangeReallyForce)
-        {
-            if (!p_ChangeReallyForce)
-                if (!GuildSaberCustomLeaderboard.Initialized) return;
-            if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
-                return;
-            GetPanel();
-            m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
-        }
-
-        public static void ChangeTextForced(string p_Text)
-        {
-            ChangeTextForced(p_Text, false);
-        }
-    }
-
-    internal class LeaderboardLevelStatsViewManager
-    {
-        public static GameObject GameLevelStatsView = null;
-
-        public static void Setup()
-        {
-            GameLevelStatsView = Utils.GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView");
-            Events.e_OnLeaderboardShown += (p_FirstActivation) =>
-            {
-                if (!GuildSaberCustomLeaderboard.Initialized) return;
-
-                Show();
-            };
-            Events.e_OnLeaderboardHide += () =>
-            {
-                if (!GuildSaberCustomLeaderboard.Initialized) return;
-
-                Hide();
-            };
-        }
-
-        public static void Show()
-        {
-            foreach (Transform l_Transform in GameLevelStatsView.transform)
-                l_Transform.gameObject.SetActive(false);
-        }
-
-        public static void Hide()
-        {
-            foreach (Transform l_Transform in GameLevelStatsView.transform)
-                l_Transform.gameObject.SetActive(true);
+            _leaderboardViewController.Page = 1;
+            if (GuildSaberCustomLeaderboard.IsShown)
+                _leaderboardViewController.SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, false);
         }
     }
 }

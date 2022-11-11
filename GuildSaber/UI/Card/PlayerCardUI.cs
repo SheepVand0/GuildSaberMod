@@ -29,6 +29,8 @@ public class PlayerLevelUI : CustomUIComponent
     [UIComponent("LevelNameText")] private TextMeshProUGUI m_LevelNameText = null;
     [UIComponent("LevelText")] private TextMeshProUGUI m_LevelText = null;
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     public int FontSize { get; private set; } = 0;
 
@@ -36,7 +38,14 @@ public class PlayerLevelUI : CustomUIComponent
 
     public string LevelName { get; set; } = string.Empty;
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
+    /// <summary>
+    /// Set values
+    /// </summary>
+    /// <param name="p_LevelName"></param>
+    /// <param name="p_Level"></param>
     public void SetValues(string p_LevelName, string p_Level)
     {
         LevelName = p_LevelName;
@@ -45,6 +54,9 @@ public class PlayerLevelUI : CustomUIComponent
         m_LevelText.text = p_Level;
     }
 
+    /// <summary>
+    /// Reset
+    /// </summary>
     public override void ResetComponent()
     {
         Level = string.Empty;
@@ -61,12 +73,10 @@ public class PlayerRankUI : CustomUIComponent
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     ///
-    [UIComponent("ElemsLayout")] HorizontalLayoutGroup m_Elems = null;
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
-    [UIComponent("CategoryText")] TextMeshProUGUI m_CategoryText = null;
-    // ReSharper disable once FieldCanBeMadeReadOnly.Local
-    [UIComponent("PlayerRankText")] TextMeshProUGUI m_PlayerRankText = null;
-    [UIComponent("Hastag")] TextMeshProUGUI m_Hastag = null;
+    [UIComponent("ElemsLayout")] private readonly HorizontalLayoutGroup m_Elems = null;
+    [UIComponent("CategoryText")] private readonly TextMeshProUGUI m_CategoryText = null;
+    [UIComponent("PlayerRankText")] private readonly TextMeshProUGUI m_PlayerRankText = null;
+    [UIComponent("Hastag")] private readonly TextMeshProUGUI m_Hastag = null;
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -75,6 +85,15 @@ public class PlayerRankUI : CustomUIComponent
 
     public string PlayerRank { get; private set; } = string.Empty;
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Set Values
+    /// </summary>
+    /// <param name="p_PointsName"></param>
+    /// <param name="p_PlayerRank"></param>
+    /// <param name="p_Color"></param>
     public async void SetValues(string p_PointsName, string p_PlayerRank, Color p_Color)
     {
         await WaitUtils.WaitUntil(() => m_CategoryText != null, 100, 20);
@@ -101,6 +120,9 @@ public class PlayerRankUI : CustomUIComponent
         m_Hastag.text = "#";
     }
 
+    /// <summary>
+    /// Reset
+    /// </summary>
     public override void ResetComponent()
     {
         m_CategoryText.text = string.Empty;
@@ -167,6 +189,7 @@ internal class PlayerCardUI
         BeatSaberPlus.SDK.Game.Logic.OnSceneChange += (p_SceneType) =>
         {
             UpdateCardPosition();
+            m_Instance.UpdateCardVisibility();
         };
 
         RefreshCard(false);
@@ -176,7 +199,7 @@ internal class PlayerCardUI
     /// Create Player Card
     /// </summary>
     /// <returns></returns>
-    public static PlayerCardUI CreateCard()
+    public async static Task<PlayerCardUI> CreateCard()
     {
         if (m_Instance != null) return m_Instance;
 
@@ -188,7 +211,7 @@ internal class PlayerCardUI
             BSPModule.GuildSaberModule.m_CardSelectedGuild = GuildSaberModule.AvailableGuilds[0];
         }
 
-        ApiPlayerData l_Player = GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: false, GSConfig.Instance.SelectedGuild, p_UseGuild: true);
+        ApiPlayerData l_Player = await GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: false, GSConfig.Instance.SelectedGuild, p_UseGuild: true);
 
         if (l_Player.Equals(default(PlayerGuildsInfo)) || l_Player.Equals(null)) { GSLogger.Instance.Error(new Exception("Failed Getting Player Info"), nameof(PlayerCardUI), nameof(CreateCard)); return null; }
 
@@ -271,13 +294,13 @@ internal class PlayerCardUI
     /// Refresh card elements
     /// </summary>
     /// <param name="p_RegetPlayerInfo"></param>
-    public static void RefreshCard(bool p_RegetPlayerInfo)
+    public async static void RefreshCard(bool p_RegetPlayerInfo)
     {
         if (p_RegetPlayerInfo == true)
         {
-            if (m_Instance == null) { CreateCard(); return; }
+            if (m_Instance == null) { await CreateCard(); return; }
 
-            ApiPlayerData l_Player = GuildApi.GetPlayerInfoFromAPI();
+            ApiPlayerData l_Player = await GuildApi.GetPlayerInfoFromAPI();
             if (l_Player.Equals(null)) { if (m_Instance != null) SetCardActive(false); return; }
             m_Player = l_Player;
 

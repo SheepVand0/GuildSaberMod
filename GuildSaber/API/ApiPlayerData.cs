@@ -38,6 +38,7 @@ namespace GuildSaber.API
     {
         public string PointsType { get; set; }
         public string PointsName { get; set; }
+        public byte PointsIndex { get; set; }
         public float Points { get; set; }
         public UInt32 Rank { get; set; }
     }

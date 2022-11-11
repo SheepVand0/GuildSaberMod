@@ -60,6 +60,7 @@ public class LeftModViewController : ViewController<LeftModViewController>
         set
         {
             GSConfig.Instance.ShowCardInMenu = value;
+            GSConfig.Instance.Save();
             if (PlayerCardUI.m_Instance != null)
                 PlayerCardUI.m_Instance.UpdateCardVisibility();
         }
@@ -69,19 +70,19 @@ public class LeftModViewController : ViewController<LeftModViewController>
     protected bool ShowCardInGame
     {
         get => GSConfig.Instance.ShowCardInGame;
-        set => GSConfig.Instance.ShowCardInGame = value;
+        set { GSConfig.Instance.ShowCardInGame = value; GSConfig.Instance.Save(); }
     }
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
     [UIAction("RefreshCard")]
-    private void RefreshCard()
+    private async void RefreshCard()
     {
         if (!PlayerCardUI.GetIsCardActive()) return;
 
         if (PlayerCardUI.m_Instance == null)
-            PlayerCardUI.CreateCard();
+            await PlayerCardUI.CreateCard();
         else
             PlayerCardUI.RefreshCard(true);
     }

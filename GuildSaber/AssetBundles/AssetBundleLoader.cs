@@ -8,7 +8,10 @@ namespace GuildSaber.AssetBundles
 {
     class AssetBundleLoader
     {
-
+        /// <summary>
+        /// Load Bundle
+        /// </summary>
+        /// <returns></returns>
         public static AssetBundle LoadBundle()
         {
             try
@@ -22,6 +25,12 @@ namespace GuildSaber.AssetBundles
             return null;
         }
 
+        /// <summary>
+        /// Load one element
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="p_Name"></param>
+        /// <returns></returns>
         public static T LoadElement<T>(string p_Name) where T : Object
         {
             AssetBundle l_GSBundle = LoadBundle();

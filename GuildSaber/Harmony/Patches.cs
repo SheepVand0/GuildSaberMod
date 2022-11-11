@@ -1,6 +1,6 @@
 ﻿using HarmonyLib;
 using GuildSaber.Installers;
-using GuildSaber.UI.GuildSaber.Leaderboard;
+using GuildSaber.UI.Leaderboard;
 using GuildSaber.Utils;
 using GuildSaber.Configuration;
 using System;
@@ -16,7 +16,7 @@ using GuildSaber.Logger;
 namespace GuildSaber.Harmony
 {
     [HarmonyPatch(typeof(MainSettingsMenuViewControllersInstaller), nameof(MainSettingsMenuViewControllersInstaller.InstallBindings))]
-    public static class OnMenuInstallerPatch
+    public static class MenuInstallerPatch
     {
         private static void Postfix(MainSettingsMenuViewControllersInstaller __instance)
         {

@@ -3,18 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
-using BeatSaberMarkupLanguage.ViewControllers;
-using BeatSaberMarkupLanguage.Components.Settings;
 using GuildSaber.Configuration;
-using GuildSaber.Utils;
 using HMUI;
 using IPA.Utilities;
 using Newtonsoft.Json;
-using SongCore;
 using UnityEngine;
 using UnityEngine.UI;
 using GuildSaber.API;
@@ -22,8 +17,6 @@ using TMPro;
 using GuildSaber.BSPModule;
 using BeatSaberPlus.SDK.UI;
 using System.Reflection;
-using OVR.OpenVR;
-using GuildSaber.UI.CustomLevelSelection;
 using PlaylistManager.Utilities;
 using GuildSaber.Logger;
 using PlaylistManager.UI;
@@ -37,8 +30,7 @@ namespace GuildSaber.UI.GuildSaber
         public bool DownloadOnlyUnPassed = false;
         public string m_CategoryDirectory = Plugin.NOT_DEFINED;
         public int m_GuildId = 1;
-        internal List<ApiRankingLevel> m_CategoryLevels = new List<ApiRankingLevel>
-        { };
+        internal List<ApiRankingLevel> m_CategoryLevels = new() { };
         public int PlaylistsCountInCategory = 0;
 
         public bool Inited = false;
@@ -299,7 +291,7 @@ namespace GuildSaber.UI.GuildSaber
 
         public void UpdateCategories()
         {
-            if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
+            if (GuildSaberModule.IsStateError())
             {
                 ShowMessageModal("<color=#ff0000>Error on getting info</color>");
                 return;
@@ -346,7 +338,7 @@ namespace GuildSaber.UI.GuildSaber
 
         public async void RefreshList()
         {
-            if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
+            if (GuildSaberModule.IsStateError())
                 return;
 
             foreach (CategoryUI l_Current in m_ListCategories)
@@ -369,26 +361,10 @@ namespace GuildSaber.UI.GuildSaber
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        /*public GuildData GetGuildFromName(string p_Name)
-        {
-            foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
-            {
-                if (l_Current.Name != p_Name)
-                    continue;
-
-                return l_Current;
-            }
-
-            return default(GuildData);
-        }*/
-
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
-
         public List<string> GetGuildsName()
         {
-            if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
-                return new List<string>();
+            if (GuildSaberModule.IsStateError())
+                return new List<string> { "Undefined" };
             List<string> l_Temp = new List<string>();
             foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
                 l_Temp.Add(l_Current.Name);
@@ -435,7 +411,7 @@ namespace GuildSaber.UI.GuildSaber
             set
             {
                 m_OnlyUnPassedMaps = value;
-                if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
+                if (GuildSaberModule.IsStateError())
                     return;
                 SetLoadingMode(LoadingMode.loading);
                 e_OnUnPassedOnlyValueChanged?.Invoke(m_OnlyUnPassedMaps);

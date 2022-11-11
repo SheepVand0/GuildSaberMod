@@ -28,13 +28,24 @@ namespace GuildSaber.UI
 
     public abstract class CustomUIComponent : MonoBehaviour
     {
-        #region Defaults
+
         protected abstract string m_ViewResourceName { get; }
         public BSMLParserParams m_ParserParams;
         public Action OnPostParse;
-        #endregion
 
-        #region Creation
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Add Item to specific Transform
+        /// </summary>
+        /// <typeparam name="TItem">Item type</typeparam>
+        /// <param name="p_Parent"></param>
+        /// <param name="p_UnderParent"></param>
+        /// <param name="p_NeedParse"></param>
+        /// <param name="p_Init"></param>
+        /// <param name="p_Callback"></param>
+        /// <returns></returns>
         public static TItem CreateItem<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, bool p_Init = true, Action<TItem> p_Callback = null) where TItem : CustomUIComponent
         {
             TItem l_Item = new GameObject($"Parent_{nameof(TItem)}").AddComponent<TItem>();
@@ -47,6 +58,11 @@ namespace GuildSaber.UI
             return l_Item;
         }
 
+        /// <summary>
+        /// Private postcreate
+        /// </summary>
+        /// <param name="p_Item"></param>
+        /// <returns></returns>
         private static IEnumerator _PostCreate(CustomUIComponent p_Item)
         {
             yield return new WaitForSeconds(0.1f);
@@ -56,6 +72,16 @@ namespace GuildSaber.UI
             yield return null;
         }
 
+        /// <summary>
+        /// Create item with predefined params
+        /// </summary>
+        /// <typeparam name="TItem"></typeparam>
+        /// <param name="p_Parent"></param>
+        /// <param name="p_UnderParent"></param>
+        /// <param name="p_NeedParse"></param>
+        /// <param name="p_Params"></param>
+        /// <param name="p_Callback"></param>
+        /// <returns></returns>
         public static TItem CreateItemWithParams<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, List<ItemParam> p_Params, Action<TItem> p_Callback = null) where TItem : CustomUIComponent
         {
             TItem l_Item = CreateItem<TItem>(p_Parent, p_UnderParent, p_NeedParse, false);
@@ -73,51 +99,31 @@ namespace GuildSaber.UI
             };
             return l_Item;
         }
-        public TComponent CreateSubComponent<TComponent>(bool p_Under, bool p_NeedParse = false, Action<TComponent> p_Callback = null) where TComponent : MonoBehaviour
-        {
-            TComponent l_Comp = gameObject.AddComponent<TComponent>();
-            l_Comp.name = $"Sub_{l_Comp.name}_{nameof(TComponent)}";
-            l_Comp.transform.SetParent(p_Under ? transform : transform.parent, false);
-            if (l_Comp.GetType() == typeof(CustomUIComponent))
-            {
-                CustomUIComponent l_CustomComp = l_Comp as CustomUIComponent;
-                l_CustomComp.OnCreate();
-                if (p_NeedParse) l_CustomComp.Parse(l_Comp.transform.parent);
-            }
-            p_Callback?.Invoke(l_Comp);
-            return l_Comp;
-        }
-        public static CustomUIComponent RecreateUIComponent<TType>(CustomUIComponent p_Component, bool p_UnderParent, bool p_NeedParse, Action<TType> p_Callback = null) where TType : CustomUIComponent
-        {
-            Transform l_CurrentTransform = p_Component.transform.parent;
-            DestroyImmediate(p_Component.gameObject);
-            p_Component = CreateItem<TType>(l_CurrentTransform, p_UnderParent, p_NeedParse);
-            p_Callback?.Invoke((TType)p_Component);
-            return p_Component;
-        }
-        #endregion
 
-        #region Destroy
-        public virtual void DestroyItem()
-        {
-        }
-        #endregion
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
 
-        #region Events
+        private void PostParse() { OnPostParse?.Invoke(); AfterViewCreation(); }
         protected virtual void OnCreate() { }
         protected virtual void PostCreate() { }
-        protected virtual void OnDestroy() { }
-        private void PostParse() { OnPostParse?.Invoke(); AfterViewCreation();   }
         protected virtual void AfterViewCreation() { }
+        protected virtual void OnDestroy() { }
+        public virtual void DestroyItem() { }
         public virtual void ResetComponent() { }
-        #endregion
 
-        #region Init
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        /// <summary>
+        /// Init
+        /// </summary>
+        /// <param name="p_Enable"></param>
+        /// <param name="p_Parent"></param>
+        /// <param name="p_UnderParent"></param>
+        /// <param name="p_Parse"></param>
         public void Init(bool p_Enable, Transform p_Parent, bool p_UnderParent, bool p_Parse)
         {
             try {
-                //if (p_Enable == false) { PostParse(); return; }
-
                 name = GetType().Name;
                 if (p_Parse) m_ParserParams = Parse(p_Parent);
                 gameObject.transform.SetParent(p_UnderParent ? p_Parent : p_Parent.parent, false);
@@ -129,6 +135,11 @@ namespace GuildSaber.UI
             }
         }
 
+        /// <summary>
+        /// Parse current component from m_ViewResourceName
+        /// </summary>
+        /// <param name="p_Parent"></param>
+        /// <returns></returns>
         public BSMLParserParams Parse(Transform p_Parent)
         {
             try
@@ -143,6 +154,6 @@ namespace GuildSaber.UI
                 Exception l_NewEx = new("Error during parsing bsml : maybe path is invalid ?"); throw l_NewEx;
             }
         }
-        #endregion
+
     }
 }

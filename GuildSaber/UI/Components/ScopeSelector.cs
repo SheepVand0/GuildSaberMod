@@ -15,10 +15,8 @@ namespace GuildSaber.UI.Components
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        //[UIComponent("ScopesLayout")] private readonly VerticalLayoutGroup m_Layout = null;
         [UIComponent("Global")] ClickableImage m_GlobalImage = null;
         [UIComponent("Around")] public ClickableImage m_AroundImage = null;
-        //[UIComponent("Friends")] ClickableImage m_FriendsImage = null;
         [UIComponent("Country")] ClickableImage m_CountryImage = null;
 
         ////////////////////////////////////////////////////////////////////////////
@@ -38,11 +36,10 @@ namespace GuildSaber.UI.Components
         {
             m_GlobalImage.name = "Global";
             m_AroundImage.name = "Around";
-            //m_FriendsImage.name = "Friends";
             m_CountryImage.name = "Country";
+
             m_Scopes.Add(m_GlobalImage);
             m_Scopes.Add(m_AroundImage);
-            //m_Scopes.Add(m_FriendsImage);
             m_Scopes.Add(m_CountryImage);
 
             m_GlobalImage.DefaultColor = m_Blue;
@@ -76,7 +73,6 @@ namespace GuildSaber.UI.Components
 
         [UIAction("GlobalClick")] private void GlobalOnClick() { SelectScope(ELeaderboardScope.Global); }
         [UIAction("AroundClick")] private void AroundOnClick() { SelectScope(ELeaderboardScope.Around); }
-        //[UIAction("FriendsClick")] private void FriendsOnClick() { SelectScope("Friends"); }
         [UIAction("LocationClick")] private void LocationOnClick() { SelectScope(ELeaderboardScope.Country); }
 
     }

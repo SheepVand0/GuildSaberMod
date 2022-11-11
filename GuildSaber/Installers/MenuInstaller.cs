@@ -1,8 +1,5 @@
 ﻿using Zenject;
-using GuildSaber.UI.GuildSaber.Leaderboard;
-using GuildSaber.Managers;
-using UnityEngine;
-using GuildSaber.Utils;
+using GuildSaber.UI.Leaderboard;
 using GuildSaber.Logger;
 
 namespace GuildSaber.Installers
@@ -17,8 +14,6 @@ namespace GuildSaber.Installers
             Container.BindInterfacesAndSelfTo<GuildSaberLeaderboardView>().FromNewComponentAsViewController().AsSingle();
             Container.BindInterfacesAndSelfTo<GuildSaberLeaderboardPanel>().FromNewComponentAsViewController().AsSingle();
             Container.BindInterfacesAndSelfTo<GuildSaberCustomLeaderboard>().AsSingle();
-
-            Container.BindInterfacesAndSelfTo<LeaderboardManager>().AsSingle();
         }
     }
 }

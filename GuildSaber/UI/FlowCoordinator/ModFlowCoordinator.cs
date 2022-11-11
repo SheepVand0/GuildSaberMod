@@ -15,6 +15,12 @@ public class ModFlowCoordinator : FlowCoordinator
 
     private FlowCoordinator _LastFlow = null;
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Awake
+    /// </summary>
     public void Awake()
     {
         if (_modViewController == null)
@@ -24,6 +30,15 @@ public class ModFlowCoordinator : FlowCoordinator
             _LeftModViewController = BeatSaberUI.CreateViewController<LeftModViewController>();
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// On activate
+    /// </summary>
+    /// <param name="firstActivation"></param>
+    /// <param name="addedToHierarchy"></param>
+    /// <param name="screenSystemEnabling"></param>
     protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
     {
         if (!firstActivation)
@@ -35,6 +50,13 @@ public class ModFlowCoordinator : FlowCoordinator
         ProvideInitialViewControllers(_modViewController, _LeftModViewController);
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// Show Flow
+    /// </summary>
+    /// <param name="p_IsFromChildFlowCoordinator"></param>
     public void ShowFlow(bool p_IsFromChildFlowCoordinator)
     {
         if (!p_IsFromChildFlowCoordinator)
@@ -44,6 +66,13 @@ public class ModFlowCoordinator : FlowCoordinator
         _LastFlow.PresentFlowCoordinator(this, null, ViewController.AnimationDirection.Vertical);
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    /// On Back button pressed
+    /// </summary>
+    /// <param name="topViewController"></param>
     protected override void BackButtonWasPressed(ViewController topViewController)
     {
         base.BackButtonWasPressed(topViewController);

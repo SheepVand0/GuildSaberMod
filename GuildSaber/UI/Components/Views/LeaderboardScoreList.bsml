@@ -11,7 +11,7 @@
 	</horizontal>
 	<button anchor-pos-y='-2' on-click='ShowInfo' ignore-layout='true' pref-width='~LeaderWidth' id='Interactable' preferred-height='~InteractableScaleY' text=''>
 	</button>
-	<modal size-delta-x='50' size-delta-y='40' id='Info'>
+	<modal size-delta-x='50' size-delta-y='60' id='Info'>
 		<vertical vertical-fit='PreferredSize' spacing='2'>
 			<text id='ModalPlayerName' align='Center' />
 			<horizontal spacing='2'>
@@ -20,6 +20,8 @@
 			</horizontal>
 			<text id='ModalPassState' rich-text='true'/>
 			<text id='ModalModifiedScore' rich-text='true'/>
+			<text id='ModalPauseCount' rich-text='true'/>
+			<text id='ModalHMD' rich-text='true'/>
 			<button text='Close' on-click='CloseModal'/>
 		</vertical>
 	</modal>

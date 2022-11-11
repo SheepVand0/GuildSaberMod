@@ -26,6 +26,15 @@ public class OptimizedDateTime
     public float Seconds;
     public int Year;
 
+    /// <summary>
+    /// Init
+    /// </summary>
+    /// <param name="p_Year"></param>
+    /// <param name="p_Month"></param>
+    /// <param name="p_Day"></param>
+    /// <param name="p_Hour"></param>
+    /// <param name="p_Minutes"></param>
+    /// <param name="p_Seconds"></param>
     public void Init(int p_Year, int p_Month, int p_Day, int p_Hour, int p_Minutes, int p_Seconds)
     {
         Year = p_Year;
@@ -36,47 +45,53 @@ public class OptimizedDateTime
         Seconds = p_Seconds;
     }
 
+    /// <summary>
+    /// Add Second and update
+    /// </summary>
+    /// <param name="p_Value"></param>
+    /// <returns></returns>
     public bool AddSecondAndUpdateClock(float p_Value)
     {
         bool l_ShouldUpdate = Seconds + p_Value > (int)Seconds + 1;
 
-        Seconds = Seconds + p_Value;
-
-        #region Recalcul time
+        Seconds += p_Value;
 
         if (!(Seconds >= 60)) return l_ShouldUpdate;
 
-        Minutes = Minutes + (int)(Seconds / 60);
+        Minutes += (int)(Seconds / 60);
         Seconds = 0;
 
         if (!(Minutes >= 60))
             return l_ShouldUpdate;
 
-        Hours = Hours + Minutes / 60;
+        Hours += Minutes / 60;
         Minutes = 0;
 
         if (!(Hours >= 24))
             return l_ShouldUpdate;
 
-        Day = Day + Hours / 24;
+        Day += Hours / 24;
         Hours = 0;
 
         if (!(Day >= GetCurrentMonthDayCount()))
             return l_ShouldUpdate;
 
-        Month = Month + Day / GetCurrentMonthDayCount();
+        Month += Day / GetCurrentMonthDayCount();
         Day = 0;
 
         if (!(Month >= 12))
             return l_ShouldUpdate;
 
-        Year = Year + Month / 12;
+        Year += Month / 12;
         Month = 0;
-
-        #endregion
 
         return l_ShouldUpdate;
     }
+
+    /// <summary>
+    /// Get the day count in current month
+    /// </summary>
+    /// <returns></returns>
     private int GetCurrentMonthDayCount()
     {
         return m_DaysInMonth[Month];

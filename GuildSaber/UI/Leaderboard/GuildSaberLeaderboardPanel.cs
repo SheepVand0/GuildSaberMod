@@ -9,7 +9,6 @@ using IPA.Utilities;
 using UnityEngine;
 using System.Collections.Generic;
 using GuildSaber.Configuration;
-using GuildSaber.UI.GuildSaber.Components;
 using GuildSaber.UI.Components;
 using GuildSaber.Utils;
 using GuildSaber.API;
@@ -23,7 +22,7 @@ using OVR.OpenVR;
 using System.Reflection;
 using GuildSaber.Logger;
 
-namespace GuildSaber.UI.GuildSaber.Leaderboard
+namespace GuildSaber.UI.Leaderboard
 {
     [HotReload(RelativePathToLayout = @"LeaderboardPanel.bsml")]
     [ViewDefinition("GuildSaber.UI.GuildSaber.View.LeaderboardPanel.bsml")]
@@ -107,7 +106,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
         {
             PanelInstance = this;
 
-            if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
+            if (GuildSaberModule.IsStateError())
             {
                 SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Error);
                 return;
@@ -129,7 +128,7 @@ namespace GuildSaber.UI.GuildSaber.Leaderboard
                     else { Reload(ReloadMode.FromApi, true, true); return; }
                     break;
                 case ReloadMode.FromApi:
-                    m_PlayerData = GuildApi.GetPlayerInfoFromAPI(false, m_SelectedGuild, true);
+                    m_PlayerData = await GuildApi.GetPlayerInfoFromAPI(false, m_SelectedGuild, true);
                     break;
             }
 

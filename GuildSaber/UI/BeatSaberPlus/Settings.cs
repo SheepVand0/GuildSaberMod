@@ -12,7 +12,7 @@ using GuildSaber.Configuration;
 using BeatSaberMarkupLanguage.Parser;
 using GuildSaber.UI.Card;
 using BeatmapEditor3D;
-using GuildSaber.UI.GuildSaber.Leaderboard;
+using GuildSaber.UI.Leaderboard;
 
 namespace GuildSaber.UI.BeatSaberPlusSettings
 {
