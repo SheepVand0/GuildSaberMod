@@ -9,11 +9,13 @@
 		</modal>
 		<dropdown-list-setting id='Dropdown' text='Selected Guild : ' choices='AvailableGuilds' value='SelectedGuild' on-change='OnGuildChange' bind-value='true'/>
 		<vertical min-width='25' spacing='2'>
-			<toggle-setting text='Playlists contains only un passed maps' value='UnPassedMaps' apply-on-change='true' />
+				<toggle-setting text='Playlists contains only un passed maps' value='UnPassedMaps' apply-on-change='true' />
 			<custom-list id='CategoryList' contents='AvailableCategories' pref-height='40' show-scrollbar='true'>
 				<horizontal spacing='5' child-align='MiddleCenter' bg='panel-top' id='ElemsHorizontal' background-color='white'>
 					<text align='Center' id='CategoryNameText' text='CategoryName' />
+					<horizontal pref-width="2" />
 					<button align='Center' text='Download' id='DownloadBut' />
+					<button align="Center" text="Clear" id="ClearCategoryButton" on-click="ClearCategoryFolder" />
 				</horizontal>
 			</custom-list>
 		</vertical>

@@ -80,19 +80,21 @@ namespace GuildSaber.Harmony
             //GSLogger.Instance.Log("here", IPA.Logging.Logger.LogLevel.NoticeUp);
 
             // ReSharper disable once SimplifyConditionalTernaryExpression
-            if (GSConfig.Instance.LeaderboardEnabled && Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0) == null ? true : !Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0).isActivated)
-            {
-                if (LeaderboardHeaderManager.m_HeaderImageView != null)
-                {
+            if (GSConfig.Instance.LeaderboardEnabled &&
+                Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0) == null ?
+                    false :
+                    Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0).isActivated)
+                return;
 
-                    if (LeaderboardHeaderManager.m_HeaderImageView.gameObject.activeInHierarchy)
-                    {
-                        LeaderboardHeaderManager.ChangeTextForced(Localization.Get("TITLE_HIGHSCORES"), false);
-                        LeaderboardHeaderManager.ResetColors();
-                    }
+            if (LeaderboardHeaderManager.m_HeaderImageView != null)
+            {
+                if (LeaderboardHeaderManager.m_HeaderImageView.gameObject.activeInHierarchy)
+                {
+                    LeaderboardHeaderManager.ChangeTextForced(Localization.Get("TITLE_HIGHSCORES"), false);
+                    LeaderboardHeaderManager.ResetColors();
                 }
-                GuildSaberCustomLeaderboard.Instance.Dispose();
             }
+            GuildSaberCustomLeaderboard.Instance.Dispose();
         }
     }
 
@@ -106,19 +108,22 @@ namespace GuildSaber.Harmony
 
             if (Logic.ActiveScene is Logic.SceneType.Menu or Logic.SceneType.None) return;
 
-            await WaitUtils.Wait(() => Logic.ActiveScene == Logic.SceneType.Menu, 100, 500);
+            await WaitUtils.Wait(() => Logic.ActiveScene == Logic.SceneType.Menu, 100);
 
             await WaitUtils.Wait(() => GameObject.Find("LeaderboardNavigationButtonsPanel") != null, 100);
-            await WaitUtils.Wait(() => GameObject.Find("LeaderboardNavigationButtonsPanel").gameObject.activeInHierarchy, 100, 50);
+            await WaitUtils.Wait(() => GameObject.Find("LeaderboardNavigationButtonsPanel").gameObject.activeInHierarchy, 100);
 
             // ReSharper disable once SimplifyConditionalTernaryExpression
-            await WaitUtils.Wait(() => Resources.FindObjectsOfTypeAll<ResultsViewController>().ElementAt(0) == null ? true : !Resources.FindObjectsOfTypeAll<ResultsViewController>().ElementAt(0).gameObject.activeInHierarchy,10);
+            //await WaitUtils.Wait(() => Resources.FindObjectsOfTypeAll<ResultsViewController>().ElementAt(0) == null ? true : !Resources.FindObjectsOfTypeAll<ResultsViewController>().ElementAt(0).gameObject.activeInHierarchy,10);
 
             GuildSaberCustomLeaderboard.Instance.Initialize();
         }
     }
 
-    [HarmonyPatch(typeof(FlowCoordinator), "SetTitle", new Type[] {  typeof(string), typeof(ViewController.AnimationType) })]
+    [HarmonyPatch(typeof(FlowCoordinator), "SetTitle", new Type[]
+    {
+        typeof(string), typeof(ViewController.AnimationType)
+    })]
     class UwUModeSoloCoordinatorPatch
     {
         private static void Prefix(FlowCoordinator __instance, ref string value, ref ViewController.AnimationType animationType)

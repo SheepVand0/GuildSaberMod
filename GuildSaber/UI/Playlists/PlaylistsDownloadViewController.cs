@@ -12,6 +12,7 @@ using GuildSaber.API;
 using GuildSaber.BSPModule;
 using GuildSaber.Configuration;
 using GuildSaber.Logger;
+using GuildSaber.Utils;
 using HMUI;
 using IPA.Utilities;
 using Newtonsoft.Json;
@@ -39,25 +40,24 @@ namespace GuildSaber.UI.GuildSaber
         };
         public int PlaylistsCountInCategory = 0;
 
-        public bool Inited = false;
-
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         [UIComponent("CategoryNameText")]
-        private TextMeshProUGUI m_CategoryNameText = null;
+        private readonly TextMeshProUGUI m_CategoryNameText = null;
 
         [UIComponent("DownloadBut")] private readonly Button m_DownloadButton = null;
         [UIComponent("ElemsHorizontal")] public readonly HorizontalLayoutGroup m_HorizontalElems = null;
+        [UIComponent("ClearCategoryButton")] private readonly Button m_ClearCategoryButton = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        public CategoryUI(ApiCategory p_Category, int p_GuildId, bool p_DownloadOnlyUnpassed)
+        public CategoryUI(ApiCategory p_Category, int p_GuildId, bool p_DownloadOnlyUnPassed)
         {
             Category = p_Category;
             m_GuildId = p_GuildId;
-            DownloadOnlyUnPassed = p_DownloadOnlyUnpassed;
+            DownloadOnlyUnPassed = p_DownloadOnlyUnPassed;
         }
 
         private async void Init()
@@ -86,7 +86,15 @@ namespace GuildSaber.UI.GuildSaber
                 m_DownloadButton.interactable = false;
                 m_DownloadButton.SetButtonText("Error");
             }
-            Inited = true;
+
+            CheckCategoryForButton();
+        }
+
+        private async void CheckCategoryForButton()
+        {
+            await WaitUtils.Wait(() => m_ClearCategoryButton != null, 1);
+
+            m_ClearCategoryButton.gameObject.SetActive(Directory.Exists(m_CategoryDirectory));
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -127,6 +135,19 @@ namespace GuildSaber.UI.GuildSaber
             new ButtonBinder().AddBinding(m_DownloadButton, PreDownloadPlaylist);
         }
 
+        [UIAction("ClearCategoryFolder")]
+        private void ClearCategory()
+        {
+            if (Directory.Exists(m_CategoryDirectory))
+            {
+                foreach (var l_File in Directory.GetFiles(m_CategoryDirectory))
+                {
+                    File.Delete(l_File);
+                }
+                Directory.Delete(m_CategoryDirectory);
+            }
+        }
+
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
@@ -155,6 +176,7 @@ namespace GuildSaber.UI.GuildSaber
             {
                 m_DownloadButton.SetButtonText("Finished");
                 m_DownloadButton.interactable = false;
+                CheckCategoryForButton();
                 PlaylistLibUtils.playlistManager.RefreshPlaylists(true);
                 return;
             }
@@ -209,15 +231,24 @@ namespace GuildSaber.UI.GuildSaber
                         Directory.CreateDirectory(m_CategoryDirectory);
                     break;
                 case PlaylistsVerificationType.PlaylistsOnly:
-                    if (File.Exists($"{m_CategoryDirectory}/{m_CategoryLevels[CurrentPlaylistIndex].LevelNumber:000}_{m_GuildId}_{Category}.bplist"))
-                        File.Delete($"{m_CategoryDirectory}/{m_CategoryLevels[CurrentPlaylistIndex].LevelNumber:000}_{m_GuildId}_{Category}.bplist");
+                    if (File.Exists(BuildLevelPath(m_CategoryDirectory, m_CategoryLevels[CurrentPlaylistIndex].LevelNumber, m_GuildId, Category.Name)))
+                        File.Delete(BuildLevelPath(m_CategoryDirectory, m_CategoryLevels[CurrentPlaylistIndex].LevelNumber, m_GuildId, Category.Name));
                     break;
                 case PlaylistsVerificationType.All:
                     CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.FolderOnly);
+                    // ReSharper disable once TailRecursiveCall
                     CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.PlaylistsOnly);
                     break;
                 default: return;
             }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        string BuildLevelPath(string p_CategoryDirectory, float p_LevelNumber, int p_GuildId, string p_CategoryName)
+        {
+            return $"{p_CategoryDirectory}/{p_LevelNumber:000}_{p_GuildId}_{p_CategoryName}.bplist";
         }
     }
 

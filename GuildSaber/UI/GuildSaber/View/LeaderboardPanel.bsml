@@ -18,7 +18,6 @@
 						<dropdown-list-setting anchor-pos-x='2' preferred-width='5' text='' id='GuildSelector' value='LeaderboardGuild' choices='LeaderGuilds' on-change='OnGuildSelected'/>
 					</vertical>
 				</horizontal>
-
 			</horizontal>
 			<grid cell-size-x='17' cell-size-y='17' id='LoadingGrid' active='true'>
 				<loading-indicator pref-height='1' pref-width='1'/>
