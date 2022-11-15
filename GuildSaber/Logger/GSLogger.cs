@@ -1,9 +1,4 @@
-﻿using IPA.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace GuildSaber.Logger
 {
@@ -31,20 +26,23 @@ namespace GuildSaber.Logger
         /// </summary>
         /// <param name="p_Message"></param>
         /// <param name="p_LogType"></param>
-        internal void Log(string p_Message, StandardLogger.LogLevel p_LogType)
+        internal void Log(string p_Message, IPA.Logging.Logger.LogLevel p_LogType)
         {
             switch (p_LogType)
             {
-                case StandardLogger.LogLevel.InfoUp:
+                case IPA.Logging.Logger.LogLevel.InfoUp:
                     IPALogger.Info(p_Message);
                     break;
-                case StandardLogger.LogLevel.WarningUp:
+                case IPA.Logging.Logger.LogLevel.NoticeUp:
+                    IPALogger.Notice(p_Message);
+                    break;
+                case IPA.Logging.Logger.LogLevel.WarningUp:
                     IPALogger.Warn(p_Message);
                     break;
-                case StandardLogger.LogLevel.ErrorUp:
+                case IPA.Logging.Logger.LogLevel.ErrorUp:
                     IPALogger.Error(p_Message);
                     break;
-                case StandardLogger.LogLevel.DebugUp:
+                case IPA.Logging.Logger.LogLevel.DebugUp:
                     IPALogger.Debug(p_Message);
                     break;
             }
@@ -58,7 +56,7 @@ namespace GuildSaber.Logger
         /// <param name="p_Function"></param>
         internal void Error(Exception p_E, string p_Class, string p_Function)
         {
-            Log($"[GuildSaber.{p_Class}][{p_Function}] : {p_E}", StandardLogger.LogLevel.ErrorUp);
+            Log($"[GuildSaber.{p_Class}][{p_Function}] : {p_E}", IPA.Logging.Logger.LogLevel.ErrorUp);
         }
 
     }

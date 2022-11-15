@@ -39,6 +39,15 @@
     <DisableCopyToPlugins>True</DisableCopyToPlugins>
     <DisableZipRelease>True</DisableZipRelease>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'UwU|AnyCPU' ">
+    <OutputPath>C:\Users\user\Desktop\BS1.18.3\BSLegacyLauncher\Installed Versions\Beat Saber 1.25.1\Plugins\</OutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(BeatSaberDir)\Libs\0Harmony.dll</HintPath>
@@ -274,14 +283,14 @@
     <Compile Include="UI\BeatSaberPlus\Settings.cs" />
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCardUI.cs" />
-    <Compile Include="UI\Components\CustomLevelStatsView.cs" />
-    <Compile Include="UI\Components\CustomText.cs" />
-    <Compile Include="UI\Components\LeaderboardScoreList.cs" />
-    <Compile Include="UI\Components\PointsType.cs" />
-    <Compile Include="UI\Components\ScopeSelector.cs" />
-    <Compile Include="UI\Components\UpdateView.cs" />
+    <Compile Include="UI\Leaderboard\Components\CustomLevelStatsView.cs" />
+    <Compile Include="UI\Leaderboard\Components\CustomText.cs" />
+    <Compile Include="UI\Leaderboard\Components\LeaderboardScoreList.cs" />
+    <Compile Include="UI\Leaderboard\Components\PointsType.cs" />
+    <Compile Include="UI\Leaderboard\Components\ScopeSelector.cs" />
+    <Compile Include="UI\Leaderboard\Components\UpdateView.cs" />
     <Compile Include="UI\CustomUIComponent.cs" />
-    <Compile Include="UI\Components\PlayerAvatar.cs" />
+    <Compile Include="UI\Leaderboard\Components\PlayerAvatar.cs" />
     <Compile Include="UI\Leaderboard\GuildSaberCustomLeaderboard.cs" />
     <Compile Include="UI\Leaderboard\GuildSaberLeaderboardPanel.cs" />
     <Compile Include="UI\Leaderboard\GuildSaberLeaderboardView.cs" />
@@ -309,16 +318,16 @@
     <EmbeddedResource Include="UI\GuildSaber\View\LeftModViewController.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardPanel.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardView.bsml" />
-    <EmbeddedResource Include="UI\Components\Views\PlayerAvatar.bsml" />
-    <EmbeddedResource Include="UI\Components\Views\PointsType.bsml" />
-    <EmbeddedResource Include="UI\Components\Views\LeaderboardScoreList.bsml" />
-    <EmbeddedResource Include="UI\Components\Views\CustomText.bsml" />
+    <EmbeddedResource Include="UI\Leaderboard\Components\Views\PlayerAvatar.bsml" />
+    <EmbeddedResource Include="UI\Leaderboard\Components\Views\PointsType.bsml" />
+    <EmbeddedResource Include="UI\Leaderboard\Components\Views\LeaderboardScoreList.bsml" />
+    <EmbeddedResource Include="UI\Leaderboard\Components\Views\CustomText.bsml" />
     <EmbeddedResource Include="UI\Card\View\PlayerLevelUI.bsml" />
     <EmbeddedResource Include="UI\Card\View\PlayerRankUI.bsml" />
-    <EmbeddedResource Include="UI\Components\Views\ScopeSelector.bsml" />
-    <EmbeddedResource Include="UI\Components\Views\UpdateView.bsml" />
+    <EmbeddedResource Include="UI\Leaderboard\Components\Views\ScopeSelector.bsml" />
+    <EmbeddedResource Include="UI\Leaderboard\Components\Views\UpdateView.bsml" />
     <EmbeddedResource Include="UI\BeatSaberPlus\View\Settings.bsml" />
-    <EmbeddedResource Include="UI\Components\Views\CustomLevelStatsView.bsml" />
+    <EmbeddedResource Include="UI\Leaderboard\Components\Views\CustomLevelStatsView.bsml" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">

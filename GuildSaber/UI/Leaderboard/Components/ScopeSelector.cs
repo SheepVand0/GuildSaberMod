@@ -1,16 +1,15 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
+﻿using System;
+using System.Collections.Generic;
+using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using GuildSaber.Logger;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-namespace GuildSaber.UI.Components
+namespace GuildSaber.UI.Leaderboard.Components
 {
     class ScopeSelector : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.ScopeSelector.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.ScopeSelector.bsml";
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -43,6 +42,8 @@ namespace GuildSaber.UI.Components
             m_Scopes.Add(m_CountryImage);
 
             m_GlobalImage.DefaultColor = m_Blue;
+
+            gameObject.SetActive(false);
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -62,7 +63,7 @@ namespace GuildSaber.UI.Components
                     l_Current.DefaultColor = m_Grey;
 
             if (l_IsScopeValid)
-                Events.m_Instance.SelectScope(p_Scope);
+                Events.Instance.SelectScope(p_Scope);
             else
                 GSLogger.Instance.Error(new Exception($"Invalid scope provided : {p_Scope}"), nameof(ScopeSelector), nameof(SelectScope));
         }

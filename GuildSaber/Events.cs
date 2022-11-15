@@ -1,18 +1,11 @@
-﻿using BS_Utils.Utilities;
-using UnityEngine;
-using GuildSaber.Time;
-using UnityEngine.SceneManagement;
-using GuildSaber.Utils;
-using GuildSaber.UI.Card;
+﻿using System;
 using Zenject;
-using System;
-using IPA.Loader;
 
 namespace GuildSaber;
 
 public class Events : IInitializable
 {
-    public static Events m_Instance { get; private set; } = null;
+    public static Events? Instance { get; private set; } = new Events();
 
     public bool m_LeaderboardViewHasBeenLoaded = false;
 
@@ -21,30 +14,25 @@ public class Events : IInitializable
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public delegate void OnLeaderboardViewPostLoad();
-    public static event OnLeaderboardViewPostLoad e_OnLeaderboardPostLoad = null;
 
-    public delegate void OnGuildSelected(int p_GuildId);
-    public event OnGuildSelected e_OnGuildSelected = null;
+    public static event Action e_OnLeaderboardPostLoad = null;
 
-    public delegate void OnPointsTypeChange(string p_PointsName);
-    public event OnPointsTypeChange e_OnPointsTypeChange = null;
+    public event Action<int> e_OnGuildSelected = null;
 
-    public delegate void OnLeaderboardShown(bool p_FirstActivation);
-    public static event OnLeaderboardShown e_OnLeaderboardShown = null;
+    public event Action<string> e_OnPointsTypeChange = null;
 
-    public delegate void OnLeaderboardHide();
-    public static event OnLeaderboardHide e_OnLeaderboardHide = null;
+    public static event Action<bool> e_OnLeaderboardShown = null;
 
-    public delegate void OnScopeSelected(ELeaderboardScope p_Scope);
-    public event OnScopeSelected e_OnScopeSelected = null;
+    public static event Action e_OnLeaderboardHide = null;
+
+    public event Action<ELeaderboardScope> e_OnScopeSelected = null;
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
     public void Initialize()
     {
-        m_Instance = this;
+        Instance = this;
     }
 
     ////////////////////////////////////////////////////////////////////////////

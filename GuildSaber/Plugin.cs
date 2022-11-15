@@ -1,23 +1,15 @@
 ﻿#region Usings
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.MenuButtons;
-using BS_Utils.Gameplay;
-using GuildSaber.API;
-using GuildSaber.Configuration;
-using GuildSaber.Time;
-using GuildSaber.UI.Card;
-using GuildSaber.UI.GuildSaber;
-using GuildSaber.UI;
-using UnityEngine;
-using IPA;
-using IPA.Config.Stores;
-using System;
-using Config = IPA.Config.Config;
-using IPALogger = IPA.Logging.Logger;
 using GuildSaber.BSPModule;
 using GuildSaber.Logger;
+using GuildSaber.UI;
+using GuildSaber.UI.GuildSaber;
+using IPA;
+using UnityEngine;
+using IPALogger = IPA.Logging.Logger;
+
 #endregion
 
 namespace GuildSaber;
@@ -49,7 +41,7 @@ public class Plugin
         new GSLogger(p_Logger);
 
         MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
-        GuildSaberModule.m_HarmonyInstance.PatchAll();
+        GuildSaberModule.HarmonyInstance.PatchAll();
     }
 
     ////////////////////////////////////////////////////////////////////////////

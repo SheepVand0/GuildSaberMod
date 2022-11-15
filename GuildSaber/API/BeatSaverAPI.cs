@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-
-namespace GuildSaber.API;
+﻿namespace GuildSaber.API;
 /*
 internal static class BeatSaverAPI
 {

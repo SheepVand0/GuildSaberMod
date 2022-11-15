@@ -13,9 +13,9 @@
 
 					<vertical spacing='0' horizontal-fit='PreferredSize'>
 						<horizontal preferred-width='17' id='NameLayout' horizontal-fit='PreferredSize' spacing='32'>
-							<text font-size='5' id='PlayerName' text='GuildSaber'></text>
+							<text font-size='5' id='PlayerName' text='GuildSaber'/>
 						</horizontal>
-						<dropdown-list-setting anchor-pos-x='2' preferred-width='5' text='' id='GuildSelector' value='LeaderboardGuild' choices='LeaderGuilds' on-change='OnGuildSelected'></dropdown-list-setting>
+						<dropdown-list-setting anchor-pos-x='2' preferred-width='5' text='' id='GuildSelector' value='LeaderboardGuild' choices='LeaderGuilds' on-change='OnGuildSelected'/>
 					</vertical>
 				</horizontal>
 

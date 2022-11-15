@@ -2,14 +2,14 @@
 	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
 	>
 	<horizontal>
-		<page-button ignore-layout='true' on-click='PageUp' id='PageUpImage' dir='Up' anchor-pos-x='-38' anchor-pos-y='13' preferred-height='2.5' ></page-button>
+		<page-button ignore-layout='true' on-click='PageUp' id='PageUpImage' dir='Up' anchor-pos-x='-38' anchor-pos-y='13' preferred-height='2.5'/>
 		<vertical ignore-layout='true' child-align='MiddleCenter' id='WorldSelection' anchor-pos-x='-40' anchor-pos-y='0' />
-		<page-button ignore-layout='true' on-click='PageDown' id='PageDownImage' dir='Down' anchor-pos-x='-38' anchor-pos-y='-12' preferred-height='2.5'></page-button>
+		<page-button ignore-layout='true' on-click='PageDown' id='PageDownImage' dir='Down' anchor-pos-x='-38' anchor-pos-y='-12' preferred-height='2.5'/>
 		<vertical ignore-layout='true' child-align='UpperCenter' id ='ScoreParamsLayout' anchor-pos-x='20' anchor-pos-y='24' />
-		<text id='NotRankedText' align='Center' text='Map not ranked' color='red' font-size='6' active='false'></text>
-		<text id='ErrorText' text='Error during loading leaderboard' align='Center' active='false' font-size='6'></text>
+		<text id='NotRankedText' align='Center' text='Map not ranked' color='red' font-size='6' active='false'/>
+		<text id='ErrorText' text='Error during loading leaderboard' align='Center' active='false' font-size='6'/>
 		<grid id='Loading' cell-size-x='20' cell-size-y='20' child-align='MiddleCenter'>
-			<loading-indicator></loading-indicator>
+			<loading-indicator/>
 		</grid>
 	</horizontal>
 </vertical>

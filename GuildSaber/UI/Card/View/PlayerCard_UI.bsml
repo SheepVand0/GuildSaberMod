@@ -14,7 +14,7 @@
 						</horizontal>
 						<horizontal child-align="MiddleLeft" horizontal-fit="PreferredSize" child-control-width="true" child-expand-width="true">
 							<text text="Level:" font-size="3" align="MidlineLeft"/>
-							<text text="~PlayerGlobalLevel" font-size="3" align="MidlineLeft"/>
+							<text text="~PlayerGlobalLevel" id="PlayerGlobalLevelText" font-size="3" align="MidlineLeft"/>
 						</horizontal>
 						<vertical child-control-height="true" child-expand-height="true" id="RankUIVertical" vertical-fit="PreferredSize">
 						</vertical>

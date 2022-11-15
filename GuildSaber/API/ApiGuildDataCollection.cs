@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using GuildSaber.Utils.Color;
 
 namespace GuildSaber.API
 {
@@ -14,10 +11,10 @@ namespace GuildSaber.API
         public string Logo { get; set; }
         public string Banner { get; set; }
         public string Description { get; set; }
-        public Utils.Color.Color Color { get; set; }
-        public Utils.Color.Color RankingTeamColor { get; set; }
-        public Utils.Color.Color ScoringTeamColor { get; set; }
-        public Utils.Color.Color ManagerTeamColor { get; set; }
+        public Color Color { get; set; }
+        public Color RankingTeamColor { get; set; }
+        public Color ScoringTeamColor { get; set; }
+        public Color ManagerTeamColor { get; set; }
         public int MemberCount { get; set; }
         public int RankedDiffCount { get; set; }
         public int PlaylistCount { get; set; }
@@ -66,7 +63,7 @@ namespace GuildSaber.API
         public string Logo { get; set; }
         public string Banner { get; set; }
         public string Description { get; set; }
-        public Utils.Color.Color Color { get; set; }
+        public Color Color { get; set; }
         public int MemberCount { get; set; }
         public int RankedDiffCount { get; set; }
         public int PlaylistCount { get; set; }

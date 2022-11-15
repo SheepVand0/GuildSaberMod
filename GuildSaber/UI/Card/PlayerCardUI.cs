@@ -1,22 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
+using BeatSaberPlus.SDK.Game;
 using GuildSaber.API;
+using GuildSaber.BSPModule;
 using GuildSaber.Configuration;
+using GuildSaber.Logger;
 using GuildSaber.Time;
+using GuildSaber.Utils;
 using HMUI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using System.Threading.Tasks;
-using CP_SDK_WebSocketSharp;
-using GuildSaber.Utils;
-using System.Diagnostics;
-using GuildSaber.BSPModule;
-using BeatSaberPlus.SDK.Game;
-using GuildSaber.Logger;
+using Object = UnityEngine.Object;
 
 namespace GuildSaber.UI.Card;
 
@@ -96,7 +94,7 @@ public class PlayerRankUI : CustomUIComponent
     /// <param name="p_Color"></param>
     public async void SetValues(string p_PointsName, string p_PlayerRank, Color p_Color)
     {
-        await WaitUtils.WaitUntil(() => m_CategoryText != null, 100, 20);
+        await WaitUtils.Wait(() => m_CategoryText != null, 100, 20);
 
         PointsName = p_PointsName;
         PlayerRank = p_PlayerRank;
@@ -133,17 +131,17 @@ public class PlayerRankUI : CustomUIComponent
 
 internal class PlayerCardUI
 {
-    public static PlayerCardUI m_Instance = null;
+    public static PlayerCardUI? m_Instance = null;
 
     public static ApiPlayerData m_Player = default(ApiPlayerData);
 
     public static TimeManager m_TimeManager = null;
 
-    private static bool IsCardActive = true;
+    private static bool s_IsCardActive = true;
 
     public PlayerCardViewController CardViewController { get; private set; }
 
-    private FloatingScreen FloatingScreen = null;
+    private readonly FloatingScreen m_FloatingScreen = null;
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -158,48 +156,50 @@ internal class PlayerCardUI
         if (m_TimeManager == null)
         {
             m_TimeManager = new GameObject("CardPlayTime").AddComponent<TimeManager>();
-            GameObject.DontDestroyOnLoad(m_TimeManager);
+            Object.DontDestroyOnLoad(m_TimeManager);
         }
 
         CardViewController = BeatSaberUI.CreateViewController<PlayerCardViewController>();
-        FloatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40f, 40f), true, GSConfig.Instance.CardPosition.ToUnityVector3(), GSConfig.Instance.CardRotation.ToUnityQuat());
-        FloatingScreen.HighlightHandle = true;
-        FloatingScreen.HandleSide = FloatingScreen.Side.Right;
-        FloatingScreen.HandleReleased += OnCardHandleReleased;
+        m_FloatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40f, 40f), true, GSConfig.Instance.CardPosition.ToUnityVector3(), GSConfig.Instance.CardRotation.ToUnityQuat());
+        m_FloatingScreen.HighlightHandle = true;
+        m_FloatingScreen.HandleSide = FloatingScreen.Side.Right;
+        m_FloatingScreen.HandleReleased += OnCardHandleReleased;
 
-        CardViewController.SetReferences(FloatingScreen);
+        CardViewController.SetReferences(m_FloatingScreen);
 
-        #region Debug with a lot
+        ////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////// Debug with a lot
         /// For debug purpose with lots of levels
         /*for (int l_i = 0; l_i < 50; l_i++)
         {
           CardViewController.Levels.Add(new PlayerLevelUI("Vibro", "31", 50));
         }
         }*/
-        #endregion
 
-        FloatingScreen.SetRootViewController(CardViewController, ViewController.AnimationType.None);
+////////////////////////////////////////////////////////////////////////////egion
+
+        m_FloatingScreen.SetRootViewController(CardViewController, ViewController.AnimationType.None);
 
         m_TimeManager.SetPlayerCardViewControllerRef(CardViewController);
 
-        GameObject.DontDestroyOnLoad(FloatingScreen);
+        Object.DontDestroyOnLoad(m_FloatingScreen);
 
         m_Instance = this;
 
-        BeatSaberPlus.SDK.Game.Logic.OnSceneChange += (p_SceneType) =>
+        RefreshCard(false);
+
+        Logic.OnSceneChange += (p_SceneType) =>
         {
             UpdateCardPosition();
             m_Instance.UpdateCardVisibility();
         };
-
-        RefreshCard(false);
     }
 
     /// <summary>
     /// Create Player Card
     /// </summary>
     /// <returns></returns>
-    public async static Task<PlayerCardUI> CreateCard()
+    public static async Task<PlayerCardUI> CreateCard()
     {
         if (m_Instance != null) return m_Instance;
 
@@ -208,15 +208,16 @@ internal class PlayerCardUI
         if (!GuildSaberUtils.GuildsListContainsId(GuildSaberModule.AvailableGuilds, GSConfig.Instance.SelectedGuild))
         {
             GSConfig.Instance.SelectedGuild = GuildSaberModule.AvailableGuilds[0].ID;
-            BSPModule.GuildSaberModule.m_CardSelectedGuild = GuildSaberModule.AvailableGuilds[0];
+            GuildSaberModule.CardSelectedGuild = GuildSaberModule.AvailableGuilds[0];
         }
 
         ApiPlayerData l_Player = await GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: false, GSConfig.Instance.SelectedGuild, p_UseGuild: true);
 
-        if (l_Player.Equals(default(PlayerGuildsInfo)) || l_Player.Equals(null)) { GSLogger.Instance.Error(new Exception("Failed Getting Player Info"), nameof(PlayerCardUI), nameof(CreateCard)); return null; }
+        if (l_Player.Equals(null)) { GSLogger.Instance.Error(new Exception("Failed Getting Player Info"), nameof(PlayerCardUI), nameof(CreateCard)); return null; }
 
         m_Player = l_Player;
 
+        // ReSharper disable once ObjectCreationAsStatement
         new PlayerCardUI();
 
         return m_Instance;
@@ -236,8 +237,8 @@ internal class PlayerCardUI
         if (m_Instance.CardViewController != null) m_Instance.CardViewController.gameObject.SetActive(p_Active);
         else return;
 
-        IsCardActive = p_Active;
-        m_Instance.FloatingScreen.gameObject.SetActive(p_Active);
+        s_IsCardActive = p_Active;
+        m_Instance.m_FloatingScreen.gameObject.SetActive(p_Active);
     }
 
     /// <summary>
@@ -245,23 +246,28 @@ internal class PlayerCardUI
     /// </summary>
     public void UpdateCardHandleVisibility()
     {
-        if (FloatingScreen == null) return;
-        FloatingScreen.ShowHandle = GSConfig.Instance.CardHandleVisible;
-        FloatingScreen.UpdateHandle();
+        if (m_FloatingScreen == null) return;
+        m_FloatingScreen.ShowHandle = GSConfig.Instance.CardHandleVisible;
+        m_FloatingScreen.UpdateHandle();
     }
 
     /// <summary>
-    /// Udpate card visibility by current scene
+    /// Update card visibility by current scene
     /// </summary>
     public void UpdateCardVisibility()
     {
         switch (Logic.ActiveScene)
         {
             case Logic.SceneType.Menu:
-                FloatingScreen.gameObject.SetActive(GSConfig.Instance.ShowCardInMenu);
+                m_FloatingScreen.gameObject.SetActive(GSConfig.Instance.ShowCardInMenu);
                 break;
             case Logic.SceneType.Playing:
-                FloatingScreen.gameObject.SetActive(GSConfig.Instance.ShowCardInGame);
+                m_FloatingScreen.gameObject.SetActive(GSConfig.Instance.ShowCardInGame);
+                break;
+            case Logic.SceneType.None:
+                break;
+            default:
+                GSLogger.Instance.Error( new Exception("Scene not valid"),nameof(PlayerCardUI), nameof(UpdateCardVisibility));
                 break;
         }
     }
@@ -272,17 +278,17 @@ internal class PlayerCardUI
     /// <summary>
     /// Update card position by scene
     /// </summary>
-    public void UpdateCardPosition()
+    protected void UpdateCardPosition()
     {
-        switch (BeatSaberPlus.SDK.Game.Logic.ActiveScene)
+        switch (Logic.ActiveScene)
         {
-            case BeatSaberPlus.SDK.Game.Logic.SceneType.Menu:
-                FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.CardPosition.ToUnityVector3();
-                FloatingScreen.gameObject.transform.localRotation = GSConfig.Instance.CardRotation.ToUnityQuat();
+            case Logic.SceneType.Menu:
+                m_FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.CardPosition.ToUnityVector3();
+                m_FloatingScreen.gameObject.transform.localRotation = GSConfig.Instance.CardRotation.ToUnityQuat();
                 break;
-            case BeatSaberPlus.SDK.Game.Logic.SceneType.Playing:
-                FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.InGameCardPosition.ToUnityVector3();
-                FloatingScreen.gameObject.transform.localRotation = GSConfig.Instance.InGameCardRotation.ToUnityQuat();
+            case Logic.SceneType.Playing:
+                m_FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.InGameCardPosition.ToUnityVector3();
+                m_FloatingScreen.gameObject.transform.localRotation = GSConfig.Instance.InGameCardRotation.ToUnityQuat();
                 break;
         }
     }
@@ -293,15 +299,19 @@ internal class PlayerCardUI
     /// <summary>
     /// Refresh card elements
     /// </summary>
-    /// <param name="p_RegetPlayerInfo"></param>
-    public async static void RefreshCard(bool p_RegetPlayerInfo)
+    /// <param name="p_GetPlayerInfoFromApi">Get info from current or api</param>
+    public static async void RefreshCard(bool p_GetPlayerInfoFromApi)
     {
-        if (p_RegetPlayerInfo == true)
+        if (p_GetPlayerInfoFromApi == true)
         {
             if (m_Instance == null) { await CreateCard(); return; }
 
             ApiPlayerData l_Player = await GuildApi.GetPlayerInfoFromAPI();
-            if (l_Player.Equals(null)) { if (m_Instance != null) SetCardActive(false); return; }
+            if (l_Player.Equals(null))
+            {
+                SetCardActive(false);
+                return;
+            }
             m_Player = l_Player;
 
             m_Instance.CardViewController.Refresh();
@@ -322,13 +332,13 @@ internal class PlayerCardUI
     /// <param name="p_EventArgs"></param>
     private static void OnCardHandleReleased(object p_Sender, FloatingScreenHandleEventArgs p_EventArgs)
     {
-        switch (BeatSaberPlus.SDK.Game.Logic.ActiveScene)
+        switch (Logic.ActiveScene)
         {
-            case BeatSaberPlus.SDK.Game.Logic.SceneType.Menu:
+            case Logic.SceneType.Menu:
                 GSConfig.Instance.CardPosition = SerializableVector3.FromUnityVector3(p_EventArgs.Position);
                 GSConfig.Instance.CardRotation = SerializableQuaternion.FromUnityQuat(p_EventArgs.Rotation);
                 break;
-            case BeatSaberPlus.SDK.Game.Logic.SceneType.Playing:
+            case Logic.SceneType.Playing:
                 GSConfig.Instance.InGameCardPosition = SerializableVector3.FromUnityVector3(p_EventArgs.Position);
                 GSConfig.Instance.InGameCardRotation = SerializableQuaternion.FromUnityQuat(p_EventArgs.Rotation);
                 break;
@@ -345,8 +355,8 @@ internal class PlayerCardUI
     {
         GSConfig.Instance.CardPosition = SerializableVector3.FromUnityVector3(GSConfig.ConfigDefaults.DefaultCardPosition);
         GSConfig.Instance.CardRotation = SerializableQuaternion.FromUnityQuat(GSConfig.ConfigDefaults.DefaultCardRotation);
-        if (PlayerCardUI.m_Instance != null)
-            PlayerCardUI.m_Instance.UpdateCardPosition();
+        if (m_Instance != null)
+            m_Instance.UpdateCardPosition();
     }
 
     /// <summary>
@@ -356,8 +366,8 @@ internal class PlayerCardUI
     {
         GSConfig.Instance.InGameCardPosition = SerializableVector3.FromUnityVector3(GSConfig.ConfigDefaults.DefaultInGameCardPosition);
         GSConfig.Instance.InGameCardRotation = SerializableQuaternion.FromUnityQuat(GSConfig.ConfigDefaults.DefaultInGameCardRotation);
-        if (BeatSaberPlus.SDK.Game.Logic.ActiveScene == BeatSaberPlus.SDK.Game.Logic.SceneType.Playing && PlayerCardUI.m_Instance != null)
-            PlayerCardUI.m_Instance.UpdateCardPosition();
+        if (Logic.ActiveScene == Logic.SceneType.Playing && m_Instance != null)
+            m_Instance.UpdateCardPosition();
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -369,7 +379,7 @@ internal class PlayerCardUI
     public void Destroy()
     {
         GameObject.DestroyImmediate(CardViewController.gameObject);
-        GameObject.DestroyImmediate(FloatingScreen.gameObject);
+        GameObject.DestroyImmediate(m_FloatingScreen.gameObject);
     }
 
     /// <summary>
@@ -391,5 +401,5 @@ internal class PlayerCardUI
     /// Get is card active
     /// </summary>
     /// <returns></returns>
-    internal static bool GetIsCardActive() => IsCardActive;
+    internal static bool GetIsCardActive() => s_IsCardActive;
 }

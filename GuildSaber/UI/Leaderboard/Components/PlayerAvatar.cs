@@ -1,19 +1,19 @@
-﻿using UnityEngine;
-using GuildSaber.AssetBundles;
-using GuildSaber.UI.Leaderboard;
-using UnityEngine.UI;
+﻿using System;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
-using HMUI;
 using GuildSaber.API;
+using GuildSaber.AssetBundles;
 using GuildSaber.Logger;
+using HMUI;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace GuildSaber.UI.Components
+namespace GuildSaber.UI.Leaderboard.Components
 {
     class PlayerAvatar : CustomUIComponent
     {
 
-        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.PlayerAvatar.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.PlayerAvatar.bsml";
 
         private Material _PlayerAvatarMaskInstance = null;
 
@@ -62,7 +62,7 @@ namespace GuildSaber.UI.Components
         /// <param name="p_ProfileColor"></param>
         public void UpdateShader(Color p_ProfileColor)
         {
-            if (m_Avatar == null) { GSLogger.Instance.Error(new System.Exception("Avatar Is Null"), nameof(PlayerAvatar), nameof(UpdateShader)); return; }
+            if (m_Avatar == null) { GSLogger.Instance.Error(new Exception("Avatar Is Null"), nameof(PlayerAvatar), nameof(UpdateShader)); return; }
 
             //_PlayerAvatarMaskInstance = Object.Instantiate(AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask"));
 

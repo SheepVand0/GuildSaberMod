@@ -1,28 +1,26 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.ViewControllers;
+using BeatSaberPlus.SDK.Game;
 using GuildSaber.API;
+using GuildSaber.BSPModule;
 using GuildSaber.Configuration;
+using GuildSaber.Logger;
 using GuildSaber.Time;
 using GuildSaber.Utils;
 using GuildSaber.Utils.Color;
-using BeatSaberMarkupLanguage.Components.Settings;
-using BeatSaberMarkupLanguage.Components;
 using HMUI;
 using IPA.Utilities;
 using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
-using System.Linq;
-using GuildSaber.BSPModule;
-using BeatSaberPlus.SDK.Game;
-using System.Security.Cryptography;
-using GuildSaber.Logger;
+using Color = UnityEngine.Color;
 
 namespace GuildSaber.UI.Card;
 //PlayerCard variables
@@ -30,7 +28,8 @@ namespace GuildSaber.UI.Card;
 [ViewDefinition("GuildSaber.UI.Card.View.PlayerCard_UI.bsml")]
 internal class PlayerCardViewController : BSMLAutomaticViewController
 {
-    [UIComponent("PlayerNameText")] public TextMeshProUGUI m_PlayerNameText;
+    [UIComponent("PlayerNameText")] public TextMeshProUGUI m_PlayerNameText = null;
+    [UIComponent("PlayerGlobalLevelText")] public TextMeshProUGUI m_playerGlobalLevelText = null;
     [UIComponent("DetailsLevelsLayout")] private GridLayoutGroup m_DetailsLevelsLayout = null;
     [UIComponent("ElemGrid")] private GridLayoutGroup m_ElementsGrid = null;
     [UIComponent("NeonBackground")] private Transform m_NeonBackground = null;
@@ -93,7 +92,7 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
         m_GuildSelector.Value = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild).Name;
         m_GuildSelector.ApplyValue();
 
-        BSPModule.GuildSaberModule.m_CardSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild);
+        GuildSaberModule.CardSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild);
 
         Refresh();
 
@@ -111,9 +110,9 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
         if (AllowCustomCardColors == true)
             PlayerCardUI.m_Player.Color = GSConfig.Instance.CustomColor.ToGSProfileColor();
 
-        UnityEngine.Color l_PlayerColor = PlayerCardUI.m_Player.Color.ToUnityColor32();
-        UnityEngine.Color l_BeforePlayerColor = new UnityEngine.Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
-        UnityEngine.Color l_NewPlayerColor = new UnityEngine.Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
+        Color l_PlayerColor = PlayerCardUI.m_Player.Color.ToUnityColor32();
+        Color l_BeforePlayerColor = new Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
+        Color l_NewPlayerColor = new Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
 
         m_PlayerNameText.enableVertexGradient = true;
         m_PlayerNameText.colorGradient = new VertexGradient(l_BeforePlayerColor, l_BeforePlayerColor, l_NewPlayerColor, l_NewPlayerColor);
@@ -186,10 +185,10 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
     {
         try
         {
-            if (GuildSaberModule.m_CardSelectedGuild.Equals(default(GuildData))) return;
+            if (GuildSaberModule.CardSelectedGuild.Equals(default(GuildData))) return;
 
             ///Checking
-            bool l_SetCardActive = !BSPModule.GuildSaberModule.m_CardSelectedGuild.Equals(default(GuildData));
+            bool l_SetCardActive = !GuildSaberModule.CardSelectedGuild.Equals(default(GuildData));
             if (l_SetCardActive)
                 PlayerCardUI.SetCardActive(true);
             else
@@ -245,6 +244,8 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
 
             m_PlayerNumberOfPasses.text = PlayerCardUI.m_Player.GuildValidPassCount.ToString();
             m_PlayerNameText.text = GuildSaberUtils.GetPlayerNameToFit(PlayerCardUI.m_Player.Name, 16);
+
+            m_playerGlobalLevelText.text = PlayerCardUI.m_Player.LevelValue?.ToString("0.0");
             UpdateCanPlayerUseCustomColors();
             UpdateCardColor();
             UpdateLevelsDetails();
@@ -385,7 +386,7 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
     }
 
     [UIValue("CustomColor")]
-    protected UnityEngine.Color CustomColor
+    protected Color CustomColor
     {
         get => GSConfig.Instance.CustomColor;
         set
@@ -411,12 +412,12 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
         {
             GuildData l_CurrentGuild = GuildSaberModule.AvailableGuilds[m_GuildSelector.dropdown.selectedIndex];
             GSConfig.Instance.SelectedGuild = l_CurrentGuild.ID;
-            BSPModule.GuildSaberModule.m_CardSelectedGuild = l_CurrentGuild;
+            GuildSaberModule.CardSelectedGuild = l_CurrentGuild;
         }
         else
         {
             GSConfig.Instance.SelectedGuild = 0;
-            BSPModule.GuildSaberModule.m_CardSelectedGuild = default(GuildData);
+            GuildSaberModule.CardSelectedGuild = default(GuildData);
         }
         OnButtonRefreshCardClicked();
     }

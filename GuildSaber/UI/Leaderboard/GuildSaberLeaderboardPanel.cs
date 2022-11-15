@@ -1,26 +1,21 @@
-﻿using BeatSaberMarkupLanguage.ViewControllers;
-using BeatSaberMarkupLanguage.Attributes;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
-using TMPro;
-using UnityEngine.UI;
+using BeatSaberMarkupLanguage.ViewControllers;
+using GuildSaber.API;
+using GuildSaber.BSPModule;
+using GuildSaber.Configuration;
+using GuildSaber.Logger;
+using GuildSaber.UI.Leaderboard.Components;
+using GuildSaber.Utils;
 using HMUI;
 using IPA.Utilities;
+using TMPro;
 using UnityEngine;
-using System.Collections.Generic;
-using GuildSaber.Configuration;
-using GuildSaber.UI.Components;
-using GuildSaber.Utils;
-using GuildSaber.API;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Collections;
-using GuildSaber.BSPModule;
-using OVR.OpenVR;
-using System.Reflection;
-using GuildSaber.Logger;
+using UnityEngine.UI;
 
 namespace GuildSaber.UI.Leaderboard
 {
@@ -73,10 +68,10 @@ namespace GuildSaber.UI.Leaderboard
                 return;
             }
 
-            await WaitUtils.WaitUntil(() => m_SelectedGuild == GuildSaberModule.m_LeaderboardSelectedGuild.ID, 100);
+            await WaitUtils.Wait(() => m_SelectedGuild == GuildSaberModule.LeaderboardSelectedGuild.ID, 100);
 
-            VertexGradient l_Gradient = BSPModule.GuildSaberModule.m_LeaderboardSelectedGuild.Color.ToUnityColor().GenerateGradient(0.25f, 1f);
-            VertexGradient l_Gradient1 = BSPModule.GuildSaberModule.m_LeaderboardSelectedGuild.Color.ToUnityColor().GenerateGradient(0.2f, 1f);
+            VertexGradient l_Gradient = GuildSaberModule.LeaderboardSelectedGuild.Color.ToUnityColor().GenerateGradient(0.25f, 1f);
+            VertexGradient l_Gradient1 = GuildSaberModule.LeaderboardSelectedGuild.Color.ToUnityColor().GenerateGradient(0.2f, 1f);
             LeaderboardHeaderManager.SetColors(l_Gradient.topLeft, l_Gradient.bottomLeft);
             m_GSImage.gradient = true;
             m_GSImage.color0 = l_Gradient1.topLeft;
@@ -92,7 +87,7 @@ namespace GuildSaber.UI.Leaderboard
         {
             GuildData l_Guild = GuildApi.GetGuildFromName(p_Selected);
             m_SelectedGuild = l_Guild.ID;
-            BSPModule.GuildSaberModule.m_LeaderboardSelectedGuild = l_Guild;
+            GuildSaberModule.LeaderboardSelectedGuild = l_Guild;
             Reload(ReloadMode.FromApi, true, true);
         }
 
@@ -118,7 +113,7 @@ namespace GuildSaber.UI.Leaderboard
             if (m_IsFirtActivation)
                 m_SelectedGuild = GSConfig.Instance.SelectedGuild;
             await Task.Run(delegate {
-                BSPModule.GuildSaberModule.m_LeaderboardSelectedGuild = GuildSaberUtils.GetGuildFromId(m_SelectedGuild);
+                GuildSaberModule.LeaderboardSelectedGuild = GuildSaberUtils.GetGuildFromId(m_SelectedGuild);
             });
             ///-----------------------------------------Panel Style-----------------------------------------
             switch (p_ReloadMode)
@@ -161,14 +156,14 @@ namespace GuildSaber.UI.Leaderboard
                 Texture2D l_IconTexture = null;
                 try
                 {
-                    l_IconTexture = await GuildSaberUtils.GetImage(GuildSaberModule.m_LeaderboardSelectedGuild.Logo);
+                    l_IconTexture = await GuildSaberUtils.GetImage(GuildSaberModule.LeaderboardSelectedGuild.Logo);
                 } catch(Exception l_E)
                 {
                     GSLogger.Instance.Error(l_E, nameof(GuildSaberLeaderboardPanel), nameof(Reload));
                     l_IconTexture = Utilities.FindTextureInAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
                 }
 
-                await WaitUtils.WaitUntil(() => l_IconTexture != null, 10);
+                await WaitUtils.Wait(() => l_IconTexture != null, 10);
 
                 Color[] l_Texture = l_IconTexture.GetPixels(0, (int)(l_IconTexture.height / 2.25f), l_IconTexture.width, (int)(l_IconTexture.height / 4.5f));
 
@@ -186,7 +181,7 @@ namespace GuildSaber.UI.Leaderboard
                 l_BackgroundView.SetField("_flipGradientColors", false);
             }
 
-            Events.m_Instance.SelectGuild(m_SelectedGuild);
+            Events.Instance.SelectGuild(m_SelectedGuild);
 
             SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Normal);
         }

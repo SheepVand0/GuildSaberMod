@@ -1,15 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using GuildSaber.Utils;
-using GuildSaber.Configuration;
 using BS_Utils.Gameplay;
-using System.Collections.Generic;
-using GuildSaber.UI.Card;
 using GuildSaber.BSPModule;
-using UnityEngine;
+using GuildSaber.Configuration;
 using GuildSaber.Logger;
+using GuildSaber.UI.Card;
+using GuildSaber.Utils;
+using Newtonsoft.Json;
+using UnityEngine;
 
 namespace GuildSaber.API;
 
@@ -20,7 +20,6 @@ public static class GuildApi
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     /// Player Info
-
     /// <summary>
     /// Get Player Info from API
     /// </summary>
@@ -28,17 +27,26 @@ public static class GuildApi
     /// <param name="p_GuildId">Guild ID</param>
     /// <param name="p_UseGuild">Info from a guild or defaut ?</param>
     /// <returns></returns>
-    public async static Task<ApiPlayerData> GetPlayerInfoFromAPI(bool p_GuildFromConfig = true, int p_GuildId = 0, bool p_UseGuild = true)
+    public static async Task<ApiPlayerData> GetPlayerInfoFromAPI(bool p_GuildFromConfig = true, int p_GuildId = 0, bool p_UseGuild = true)
     {
         /// We don't care if it return null because this function is loaded on the MenuSceneLoadedFresh, and the UserID will most likely be fetched way before that happen.
 #pragma warning disable CS0618
-        ulong l_PlayerId = (ulong)long.Parse(GetUserInfo.GetUserID())/*76561199187029281*/;
+
+        // ReSharper disable once JoinDeclarationAndInitializer
+        ulong l_PlayerId
+            /*76561199187029281*/;
+        l_PlayerId = (ulong)long.Parse(GetUserInfo.GetUserID());
+
 #pragma warning restore CS0618
 
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         if (l_PlayerId == 0)
-        { GSLogger.Instance.Error(new Exception("Cannot get player Id"), nameof(GuildApi), nameof(GetPlayerInfoFromAPI)); return default; }
+        {
+            GSLogger.Instance.Error(new Exception("Cannot get player Id"), nameof(GuildApi), nameof(GetPlayerInfoFromAPI));
+            return default;
+        }
 
-        GuildSaberModule.m_SSPlayerId = l_PlayerId;
+        GuildSaberModule.SsPlayerId = l_PlayerId;
 
         int l_SelectedGuildId = 0;
 
@@ -50,23 +58,22 @@ public static class GuildApi
                 l_SelectedGuildId = GuildSaberModule.AvailableGuilds[0].ID;
         }
 
-        ApiPlayerData l_DefinedPlayer = default;
-
         try
         {
             using HttpClient l_Client = new HttpClient();
-            if (BSPModule.GuildSaberModule.m_GSPlayerId == null)
+            ApiPlayerData l_DefinedPlayer;
+            if (GuildSaberModule.GSPlayerId == null)
             {
                 string l_SerializedPlayer =
-                    await l_Client.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{BSPModule.GuildSaberModule.m_SSPlayerId}/1");
+                    await l_Client.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{GuildSaberModule.SsPlayerId}/1");
                 ApiPlayerData l_Player = JsonConvert.DeserializeObject<ApiPlayerData>(l_SerializedPlayer);
                 l_DefinedPlayer = l_Player;
-                BSPModule.GuildSaberModule.m_GSPlayerId = (int)l_Player.ID;
+                GuildSaberModule.GSPlayerId = (int)l_Player.ID;
             }
             else
             {
                 string l_SerializedPlayer
-                    = await l_Client.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{BSPModule.GuildSaberModule.m_SSPlayerId}/1{(p_UseGuild == true ? "?guild-id=" + l_SelectedGuildId : string.Empty)}");
+                    = await l_Client.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{GuildSaberModule.SsPlayerId}/1{(p_UseGuild == true ? "?guild-id=" + l_SelectedGuildId : string.Empty)}");
                 ApiPlayerData l_Player = JsonConvert.DeserializeObject<ApiPlayerData>(l_SerializedPlayer);
                 l_DefinedPlayer = l_Player;
             }
@@ -86,20 +93,19 @@ public static class GuildApi
     /// Get player and all guilds
     /// </summary>
     /// <returns></returns>
-    public async static Task<PlayerGuildsInfo> GetPlayerGuildsInfo()
+    public static async Task<PlayerGuildsInfo> GetPlayerGuildsInfo()
     {
         try
         {
             ApiPlayerData l_Player = default;
-            List<GuildData> l_Guilds = new();
-            ApiPlayerData l_NoGuildsPlayer = await GuildApi.GetPlayerInfoFromAPI(p_UseGuild: false);
+            ApiPlayerData l_NoGuildsPlayer = await GetPlayerInfoFromAPI(p_UseGuild: false);
 
             HttpClient l_Client = new();
 
             Task<string> l_SerializedGuilds = l_Client.GetStringAsync($"https://api.guildsaber.com/guilds/data/all?player-id={l_NoGuildsPlayer.ID}");
             l_SerializedGuilds.Wait();
             ApiGuildCollection l_GuildCollection = JsonConvert.DeserializeObject<ApiGuildCollection>(l_SerializedGuilds.Result);
-            l_Guilds = l_GuildCollection.Guilds;
+            List<GuildData> l_Guilds = l_GuildCollection.Guilds;
             l_Player = l_NoGuildsPlayer;
 
 
@@ -150,7 +156,6 @@ public static class GuildApi
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     /// Guilds
-
     /// <summary>
     /// Get guild categories
     /// </summary>
@@ -161,7 +166,7 @@ public static class GuildApi
         try
         {
             using HttpClient l_Client = new();
-            string l_SerializedCat = await l_Client.GetStringAsync(new System.Uri($"https://api.guildsaber.com/categories/data/all?guild-id={p_GuildID}"));
+            string l_SerializedCat = await l_Client.GetStringAsync(new Uri($"https://api.guildsaber.com/categories/data/all?guild-id={p_GuildID}"));
             List<ApiCategory> l_Cats = JsonConvert.DeserializeObject<List<ApiCategory>>(l_SerializedCat);
             GuildSaberModule.SetState(GuildSaberModule.EModState.Fonctionnal);
             return l_Cats;
@@ -245,39 +250,35 @@ public static class GuildApi
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
     /// Leaderboards
-
     /// <summary>
     /// Get leaderboard from hash
     /// </summary>
     /// <param name="p_Guild">GuildID</param>
     /// <param name="p_Hash">Hash</param>
-    /// <param name="p_Beatmap">Difficulty beatmap</param>
+    /// <param name="p_BeatMap">Difficulty beatmap</param>
     /// <param name="p_Page">Page</param>
     /// <param name="p_GSId">Player GuildSaber ID</param>
     /// <param name="p_Country">Country</param>
     /// <param name="p_CountPerPage">Score count per page</param>
     /// <returns>The leaderboard</returns>
-    public async static Task<ApiMapLeaderboardCollectionStruct> GetLeaderboard(
-        int p_Guild, string p_Hash, IDifficultyBeatmap p_Beatmap,
+    public static async Task<ApiMapLeaderboardCollectionStruct> GetLeaderboard(
+        int p_Guild, string p_Hash, IDifficultyBeatmap p_BeatMap,
         int p_Page, int p_GSId, string p_Country, string p_Mode,
         int p_CountPerPage = 10, int p_SearchType = 1)
     {
         try
         {
-            ApiMapLeaderboardCollectionStruct l_Leaderboard = default;
             using HttpClient l_Client = new HttpClient();
             string l_Result = null;
-            string l_GSID = (p_GSId != 0) ? $"&PlayerID={p_GSId}" : string.Empty;
             string l_Country = (p_Country != string.Empty) ? $"&Country={p_Country}" : string.Empty;
-            string l_Link = $"https://api.guildsaber.com/leaderboards/map/by-hash/{p_Hash}/{GSBeatmapUtils.DifficultyToNumber(p_Beatmap.difficulty)}/{p_Mode}?guild-id={p_Guild}{((p_Page > 0) ? "&Page=" + p_Page : string.Empty)}&PlayerID={p_GSId}{l_Country}&CountPerPage={p_CountPerPage}&AroundMe=false&SearchType={p_SearchType}";
-            GSLogger.Instance.Log(l_Link, IPA.Logging.Logger.LogLevel.InfoUp);
+            string l_Link = $"https://api.guildsaber.com/leaderboards/map/by-hash/{p_Hash}/{GSBeatmapUtils.DifficultyToNumber(p_BeatMap.difficulty)}/{p_Mode}?guild-id={p_Guild}{((p_Page > 0) ? "&Page=" + p_Page : string.Empty)}&PlayerID={p_GSId}{l_Country}&CountPerPage={p_CountPerPage}&AroundMe=false&SearchType={p_SearchType}";
+            GSLogger.Instance.Log(l_Link, IPA.Logging.Logger.LogLevel.DebugUp);
             l_Result = await l_Client.GetStringAsync(l_Link);
-            l_Leaderboard = JsonConvert.DeserializeObject<ApiMapLeaderboardCollectionStruct>(l_Result);
+            var l_Leaderboard = JsonConvert.DeserializeObject<ApiMapLeaderboardCollectionStruct>(l_Result);
             return l_Leaderboard;
         }
         catch (Exception l_E)
         {
-            /*GSLogger.Instance.Error(l_E, nameof(GuildApi), nameof(GetLeaderboard));*/
             return default;
         }
     }
@@ -294,28 +295,16 @@ public static class GuildApi
 
 }
 
-public struct GuildCategories
-{
-    public int GuildId { get; set; } = 0;
-    public List<ApiPlayerCategory> Categories { get; set; } = default(List<ApiPlayerCategory>);
-
-    public GuildCategories(int p_GuildId, List<ApiPlayerCategory> p_Categories)
-    {
-        GuildId = p_GuildId;
-        Categories = p_Categories;
-    }
-}
-
 public struct PlayerGuildsInfo
 {
     public PlayerGuildsInfo(ApiPlayerData p_Player = default(ApiPlayerData), List<GuildData> p_AvailableGuilds = null)
     {
-        m_ReturnPlayer = p_Player;
-        m_AvailableGuilds = p_AvailableGuilds;
+        ReturnPlayer = p_Player;
+        AvailableGuilds = p_AvailableGuilds;
     }
 
-    public ApiPlayerData m_ReturnPlayer { get; set; } = default(ApiPlayerData);
-    public List<GuildData> m_AvailableGuilds { get; set; } = default(List<GuildData>);
+    public ApiPlayerData ReturnPlayer { get; } = default(ApiPlayerData);
+    public List<GuildData> AvailableGuilds { get; } = default(List<GuildData>);
 }
 
 class PassState
@@ -334,7 +323,7 @@ class PassState
         UpdatedScore = 1 << 7,
     }
 
-    public static string GetColorFromPassState(API.PassState.EState p_State)
+    public static string GetColorFromPassState(EState p_State)
     {
         return p_State switch
         {
@@ -351,4 +340,3 @@ class PassState
         };
     }
 }
-

@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BeatSaberMarkupLanguage.Attributes;
-using HMUI;
-using UnityEngine.UI;
-using TMPro;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Net;
-using GuildSaber.Utils;
-using IPA.Utilities;
 using System.IO;
+using System.Net;
 using BeatSaberMarkupLanguage;
+using BeatSaberMarkupLanguage.Attributes;
+using GuildSaber.Utils;
+using HMUI;
+using IPA.Loader;
+using IPA.Utilities;
+using Newtonsoft.Json;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
-namespace GuildSaber.UI.Components
+namespace GuildSaber.UI.Leaderboard.Components
 {
     internal struct UpdateData
     {
@@ -39,7 +40,7 @@ namespace GuildSaber.UI.Components
     {
         public const string UPDATE_FILE_LOCATION = "UserData/BeatSaberPlus/GuildSaber/Updates.json";
 
-        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.UpdateView.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.UpdateView.bsml";
 
         [UIComponent("ShowUpdatesButton")] Button m_ShowUpdatesButton = null;
         [UIComponent("UdpatesModal")] private ModalView m_UpdatesModal = null;
@@ -71,16 +72,21 @@ namespace GuildSaber.UI.Components
         /// <summary>
         /// Hide
         /// </summary>
-        public void Hide()
+        public async void Hide()
         {
+            await WaitUtils.Wait(() => m_ShowUpdatesButton != null, 100);
+
             m_ShowUpdatesButton.gameObject.SetActive(false);
         }
 
         /// <summary>
         /// Show
         /// </summary>
-        public void Show()
+        public async void Show()
         {
+            await WaitUtils.Wait(() => LeaderboardHeaderManager.m_HeaderImageView != null, 100);
+            await WaitUtils.Wait(() => m_ShowUpdatesButton != null, 100);
+
             m_ShowUpdatesButton.gameObject.SetActive(m_NeedUpdate);
         }
 
@@ -95,20 +101,20 @@ namespace GuildSaber.UI.Components
             ImageView l_Back = m_ShowUpdatesButton.GetComponentsInChildren<ImageView>()[0];
             l_Back.gradient = false;
 
-            ImageView l_NewBack = UnityEngine.GameObject.Instantiate(l_Back);
+            ImageView l_NewBack = Instantiate(l_Back);
             l_NewBack.transform.SetParent(l_Back.transform.parent);
             l_NewBack.transform.localScale = l_Back.transform.localScale;
             l_NewBack.transform.localPosition = l_Back.transform.localPosition;
 
-            l_Back.transform.localScale = UnityEngine.Vector3.zero;
+            l_Back.transform.localScale = Vector3.zero;
 
             l_NewBack.SetImage("GuildSaber.Resources.Arrow.png");
             l_NewBack.gradient = false;
-            l_NewBack.color = UnityEngine.Color.white.ColorWithAlpha(0.7f);
+            l_NewBack.color = Color.white.ColorWithAlpha(0.7f);
             l_NewBack.SetField("_skew", 0f);
 
             ImageView l_OtherBack = m_ShowUpdatesButton.GetComponentsInChildren<ImageView>()[1];
-            l_OtherBack.transform.localScale = UnityEngine.Vector3.zero;
+            l_OtherBack.transform.localScale = Vector3.zero;
 
             m_DirectDownloadButton = BeatSaberPlus.SDK.UI.Button.Create(m_Horizontal.transform, "Direct", DownloadUpdates, p_PreferedWidth: 20);
             m_DirectDownloadButton.interactable = false;
@@ -135,7 +141,7 @@ namespace GuildSaber.UI.Components
         {
             using (WebClient l_Client = new WebClient())
             {
-                l_Client.DownloadFileAsync(new System.Uri("https://github.com/SheepVand0/GuildSaberMod/raw/main/Updates.json"), UPDATE_FILE_LOCATION);
+                l_Client.DownloadFileAsync(new Uri("https://github.com/SheepVand0/GuildSaberMod/raw/main/Updates.json"), UPDATE_FILE_LOCATION);
                 l_Client.DownloadFileCompleted += ProcessFile;
             }
         }
@@ -145,7 +151,7 @@ namespace GuildSaber.UI.Components
         /// </summary>
         /// <param name="p_Sender"></param>
         /// <param name="p_EventArgs"></param>
-        private void ProcessFile(object p_Sender, System.ComponentModel.AsyncCompletedEventArgs p_EventArgs)
+        private void ProcessFile(object p_Sender, AsyncCompletedEventArgs p_EventArgs)
         {
             if (p_EventArgs.Error != null)
             {
@@ -162,10 +168,10 @@ namespace GuildSaber.UI.Components
                     l_UpdatesText += l_CurrentLine;
             }
 
-            UpdateData l_UpdateData = Newtonsoft.Json.JsonConvert.DeserializeObject<UpdateData>(l_UpdatesText);
+            UpdateData l_UpdateData = JsonConvert.DeserializeObject<UpdateData>(l_UpdatesText);
 
-            string l_CurrentVersion = IPA.Loader.PluginManager.GetPluginFromId("GuildSaber").HVersion.ToString();
-            string l_BSPlusVersion = IPA.Loader.PluginManager.GetPluginFromId("BeatSaberPlusCORE").HVersion.ToString();
+            string l_CurrentVersion = PluginManager.GetPluginFromId("GuildSaber").HVersion.ToString();
+            string l_BSPlusVersion = PluginManager.GetPluginFromId("BeatSaberPlusCORE").HVersion.ToString();
 
             m_FileToDownload.Clear();
 
@@ -188,20 +194,21 @@ namespace GuildSaber.UI.Components
                 m_NeedUpdate = true;
                 Show();
                 m_UpdateText.text = l_NewText + " need to be updated";
-                m_UpdateText.color = UnityEngine.Color.yellow;
+                m_UpdateText.color = Color.yellow;
                 m_DirectDownloadButton.interactable = true;
             }
             else
             {
+                Hide();
                 m_UpdateText.text = "No updates needed";
-                m_UpdateText.color = UnityEngine.Color.green;
+                m_UpdateText.color = Color.green;
                 m_DirectDownloadButton.interactable = false;
             }
 
-            if (!System.IO.Directory.Exists("IPA/Pending/Plugins"))
-                System.IO.Directory.CreateDirectory("IPA/Pending/Plugins");
+            if (!Directory.Exists("IPA/Pending/Plugins"))
+                Directory.CreateDirectory("IPA/Pending/Plugins");
 
-            System.IO.File.Delete(UPDATE_FILE_LOCATION);
+            File.Delete(UPDATE_FILE_LOCATION);
         }
 
         /// <summary>
@@ -210,17 +217,15 @@ namespace GuildSaber.UI.Components
         private async void DownloadUpdates()
         {
             m_DirectDownloadButton.interactable = false;
-            using (WebClient l_Client = new WebClient())
+            using WebClient l_Client = new();
+            bool l_MoveNext = false;
+            l_Client.DownloadFileCompleted += (p_Sender, p_EventArgs) => { l_MoveNext = true; };
+            foreach (var l_FileInfo in m_FileToDownload)
             {
-                bool l_MoveNext = false;
-                l_Client.DownloadFileCompleted += (p_Sender, p_EventArgs) => { l_MoveNext = true; };
-                foreach (var l_FileInfo in m_FileToDownload)
-                {
-                    l_MoveNext = false;
-                    l_Client.DownloadFileAsync(new System.Uri(l_FileInfo.FileLink), $"IPA/Pending/Plugins/{l_FileInfo.FileName}");
-                    await WaitUtils.WaitUntil(() => l_MoveNext, 100);
-                    continue;
-                }
+                l_MoveNext = false;
+                l_Client.DownloadFileAsync(new Uri(l_FileInfo.FileLink), $"IPA/Pending/Plugins/{l_FileInfo.FileName}");
+                await WaitUtils.Wait(() => l_MoveNext, 100);
+                continue;
             }
         }
 

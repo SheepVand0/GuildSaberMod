@@ -1,4 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
+using CP_SDK;
+using CP_SDK.Config;
 using IPA.Config.Stores;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -7,7 +9,7 @@ using UnityEngine;
 namespace GuildSaber.Configuration;
 
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-internal class GSConfig : CP_SDK.Config.JsonConfig<GSConfig>
+internal class GSConfig : JsonConfig<GSConfig>
 {
     internal static class ConfigDefaults
     {
@@ -40,7 +42,7 @@ internal class GSConfig : CP_SDK.Config.JsonConfig<GSConfig>
     [JsonProperty] internal bool  UwUMode     = false;
 
     public override string GetRelativePath()
-        => $"{CP_SDK.ChatPlexSDK.ProductName}/GuildSaber/Config";
+        => $"{ChatPlexSDK.ProductName}/GuildSaber/Config";
 
     protected override void OnInit(bool p_OnCreation)
     {

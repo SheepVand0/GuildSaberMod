@@ -1,16 +1,16 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using GuildSaber.API;
+using HMUI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using HMUI;
 
-namespace GuildSaber.UI.Components
+namespace GuildSaber.UI.Leaderboard.Components
 {
 
     internal class CustomLevelStatsView : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.CustomLevelStatsView.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.CustomLevelStatsView.bsml";
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ namespace GuildSaber.UI.Components
         /// <param name="p_Rank"></param>
         /// <param name="p_Name"></param>
         /// <param name="p_State"></param>
-        public void Init(int p_Rank, string p_Name, API.PassState.EState p_State)
+        public void Init(int p_Rank, string p_Name, PassState.EState p_State)
         {
             m_MainButton.gameObject.SetActive(true);
             m_CRank.SetText($"#{p_Rank}");

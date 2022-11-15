@@ -1,16 +1,12 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Parser;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
-using BeatSaberMarkupLanguage.Attributes;
-using GuildSaber.UI.Card;
-using UnityEngine.UI;
-using System.Collections;
 using CP_SDK.Unity;
 using GuildSaber.Logger;
+using UnityEngine;
 
 namespace GuildSaber.UI
 {
@@ -90,7 +86,7 @@ namespace GuildSaber.UI
                 PropertyInfo p_PropertyInfo = typeof(TItem).GetProperty(l_Param.m_ParamName, BindingFlags.Public | BindingFlags.Instance);
                 if (p_PropertyInfo != null && p_PropertyInfo.CanWrite && p_PropertyInfo.PropertyType == l_Param.m_Value.GetType())
                     p_PropertyInfo.SetValue(l_Item, l_Param.m_Value, null);
-                else GSLogger.Instance.Error(new Exception($"Property not valid -> Gived Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}"), nameof(CustomUIComponent), nameof(CustomUIComponent.CreateItemWithParams));
+                else GSLogger.Instance.Error(new Exception($"Property not valid -> Gived Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}"), nameof(CustomUIComponent), nameof(CreateItemWithParams));
             }
             l_Item.Init(true, p_Parent, p_UnderParent, p_NeedParse);
             l_Item.OnPostParse += () =>

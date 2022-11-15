@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SongCore.Utilities;
 
 namespace GuildSaber.Utils
 {
@@ -12,7 +8,7 @@ namespace GuildSaber.Utils
         {
             if (difficultyBeatmap.level is CustomPreviewBeatmapLevel p_CustomLevel)
             {
-                var l_Hash = SongCore.Utilities.Hashing.GetCustomLevelHash(p_CustomLevel);
+                var l_Hash = Hashing.GetCustomLevelHash(p_CustomLevel);
                 return l_Hash;
             }
             return null;

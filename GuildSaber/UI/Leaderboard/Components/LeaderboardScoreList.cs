@@ -1,19 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using GuildSaber.API;
-using TMPro;
-using UnityEngine.UI;
-using UnityEngine;
-using System.Threading.Tasks;
-using HMUI;
-using GuildSaber.UI.Leaderboard;
-using GuildSaber.Utils;
 using GuildSaber.BSPModule;
-using GuildSaber.Logger;
-using System;
+using GuildSaber.Utils;
+using HMUI;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
 
-namespace GuildSaber.UI.Components
+namespace GuildSaber.UI.Leaderboard.Components
 {
     internal class LeaderboardScoreCell
     {
@@ -29,24 +27,36 @@ namespace GuildSaber.UI.Components
         [UIValue("AccText")] private CustomText m_CAcc = null;
         [UIValue("Modifiers")] private CustomText m_CModifiers = null;
 
-        [UIComponent("ModalPlayerName")] TextMeshProUGUI m_ModalPlayerNameText = null;
-        [UIComponent("ModalBadCuts")] TextMeshProUGUI m_ModalBadCutsText = null;
-        [UIComponent("ModalMissedNotes")] TextMeshProUGUI m_ModalMissedNotesText = null;
-        [UIComponent("ModalModifiedScore")] TextMeshProUGUI m_ModalModifiedScoreText = null;
-        [UIComponent("ModalPassState")] TextMeshProUGUI m_ModalPassState = null;
-        [UIComponent("ModalPauseCount")] TextMeshProUGUI m_ModalPauseCount = null;
-        [UIComponent("ModalHMD")] TextMeshProUGUI m_ModalHMD = null;
+        [UIComponent("ModalPlayerName")] private readonly TextMeshProUGUI m_ModalPlayerNameText = null;
+        [UIComponent("ModalBadCuts")] private readonly TextMeshProUGUI m_ModalBadCutsText = null;
+        [UIComponent("ModalMissedNotes")] private readonly TextMeshProUGUI m_ModalMissedNotesText = null;
+        [UIComponent("ModalModifiedScore")] private readonly TextMeshProUGUI m_ModalModifiedScoreText = null;
+        [UIComponent("ModalPassState")] private readonly TextMeshProUGUI m_ModalPassState = null;
+        [UIComponent("ModalPauseCount")] private readonly TextMeshProUGUI m_ModalPauseCount = null;
+        [UIComponent("ModalHMD")] private readonly TextMeshProUGUI m_ModalHMD = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        UnityEngine.Color m_Red = new Utils.Color.Color(255, 0, 55).ToUnityColor32();
-        private static UnityEngine.Color m_Blue = new(0f, 0.8f, 1f, 0.8f);
+        Color m_Red = new Utils.Color.Color(255, 0, 55).ToUnityColor32();
+        private static Color m_Blue = new(0f, 0.8f, 1f, 0.8f);
 
-        public static float ScaleFactor { get => 1.2f; }
-        private float InteractableScaleY { get => (6.5f * ScaleFactor) * 0.9f; }
-        public static float ScoreFontSize { get => 2.5f * ScaleFactor; }
-        private float LeaderWidth { get => 90 * ScaleFactor + (7 * 1.4f); }
+        public static float ScaleFactor
+        {
+            get => 1.2f;
+        }
+        private float InteractableScaleY
+        {
+            get => (6.5f * ScaleFactor) * 0.9f;
+        }
+        public static float ScoreFontSize
+        {
+            get => 2.5f * ScaleFactor;
+        }
+        private float LeaderWidth
+        {
+            get => 90 * ScaleFactor + (7 * 1.4f);
+        }
 
         public bool HasBeenParsed { get; private set; } = false;
 
@@ -64,7 +74,7 @@ namespace GuildSaber.UI.Components
         public int ModifiedScore { get; set; } = 0;
         public int? Pauses { get; set; } = 0;
         public EHMD HMD { get; set; } = EHMD.Unk;
-        public API.PassState.EState PassState { get; set; } = API.PassState.EState.Allowed;
+        public PassState.EState PassState { get; set; } = API.PassState.EState.Allowed;
 
         private List<string> BannedModifiers = new List<string>();
 
@@ -87,16 +97,16 @@ namespace GuildSaber.UI.Components
             Rank = $"{p_Rank}";
             PlayerName = p_Name;
             BasePoints = p_Points;
-            Points = $"{p_Points.ToString("0.00")} {p_PointsName}";
+            Points = $"{p_Points:0.00} {p_PointsName}";
             Score = p_Score.ToString();
-            Acc = $"{p_Acc.ToString("00.00")}%";
+            Acc = $"{p_Acc:00.00}%";
             Id = p_Id;
             Modifiers = GuildSaberUtils.GetPlayerNameToFit(p_Modfiers, 4);
             Show();
         }
 
         /// <summary>
-        /// Set Score Modal Informations
+        /// Set Score Modal Information
         /// </summary>
         /// <param name="p_BadCuts"></param>
         /// <param name="p_MissedNotes"></param>
@@ -105,7 +115,7 @@ namespace GuildSaber.UI.Components
         /// <param name="p_BannedModifiers"></param>
         /// <param name="p_PassState"></param>
         /// <param name="p_Hmd"></param>
-        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, API.PassState.EState p_PassState, EHMD p_Hmd)
+        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd)
         {
             BadCuts = p_BadCuts;
             MissedNotes = p_MissedNotes;
@@ -123,21 +133,21 @@ namespace GuildSaber.UI.Components
         private void _PostParse()
         {
             List<ItemParam> l_CurrentParams = new List<ItemParam>()
-                {
-                    new ItemParam("FontSize", ScoreFontSize),
-                    new ItemParam("AnchorPosX", 2f),
-                    new ItemParam("Alignment", TextAlignmentOptions.Left),
-                    new ItemParam("LayoutAlignment", TextAnchor.MiddleLeft),
-                    new ItemParam("Color", UnityEngine.Color.white),
-                    new ItemParam("Italic", true),
-                    new ItemParam("RichText", string.Empty),
-                    new ItemParam("EnableRichText", true)
-                };
+            {
+                new ItemParam("FontSize", ScoreFontSize),
+                new ItemParam("AnchorPosX", 2f),
+                new ItemParam("Alignment", TextAlignmentOptions.Left),
+                new ItemParam("LayoutAlignment", TextAnchor.MiddleLeft),
+                new ItemParam("Color", Color.white),
+                new ItemParam("Italic", true),
+                new ItemParam("RichText", string.Empty),
+                new ItemParam("EnableRichText", true)
+            };
 
             float l_OffsetFromRank = 7f;
             float l_NameOffset = -1f;
 
-            Color l_StartColor = GuildSaberModule.m_LeaderboardSelectedGuild.Color.ToUnityColor();
+            Color l_StartColor = GuildSaberModule.LeaderboardSelectedGuild.Color.ToUnityColor();
 
             m_CRank = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
 
@@ -154,7 +164,7 @@ namespace GuildSaber.UI.Components
 
             l_CurrentParams[1] = new ItemParam("AnchorPosX", (-40f + l_OffsetFromRank + l_NameOffset) + (ScaleFactor * 1.04f));
             l_CurrentParams[2] = new ItemParam("Alignment", TextAlignmentOptions.Right);
-            l_CurrentParams[4] = new ItemParam("Color", UnityEngine.Color.white);
+            l_CurrentParams[4] = new ItemParam("Color", Color.white);
             l_CurrentParams[6] = new ItemParam("RichText", "<mspace=0.5em>");
 
             m_CScore = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
@@ -175,7 +185,9 @@ namespace GuildSaber.UI.Components
 
             HasBeenParsed = true;
 
-            Events.m_Instance.e_OnGuildSelected += OnGuildSelected;
+            Events.Instance.e_OnGuildSelected += OnGuildSelected;
+
+            Reset();
         }
 
         /// <summary>
@@ -193,12 +205,12 @@ namespace GuildSaber.UI.Components
         }
 
         /// <summary>
-        /// Reset cell colors
+        /// Reset cell colors, texts, and hide button
         /// </summary>
         internal void Reset()
         {
             SetEmpty();
-            UnityEngine.Color l_White = UnityEngine.Color.white;
+            Color l_White = Color.white;
             m_CRank.SetColor(l_White);
             m_CPlayerName.SetColor(l_White);
             m_CScore.SetColor(l_White);
@@ -251,7 +263,7 @@ namespace GuildSaber.UI.Components
         private void OnGuildSelected(int p_Guild)
         {
             //m_CAcc, m_CPoints
-            Color l_NewColor = GuildSaberModule.m_LeaderboardSelectedGuild.Color.ToUnityColor();
+            Color l_NewColor = GuildSaberModule.LeaderboardSelectedGuild.Color.ToUnityColor();
             m_CAcc.SetColor(l_NewColor);
             m_CPoints.SetColor(l_NewColor);
         }
@@ -272,7 +284,9 @@ namespace GuildSaber.UI.Components
             }
             else
             {
+                // ReSharper disable once StringLiteralTypo
                 m_ModalBadCutsText.text = $"<color=#adadad>Bad cuts : <color=#b50000>{BadCuts}</color>";
+                // ReSharper disable once StringLiteralTypo
                 m_ModalMissedNotesText.text = $"<color=#adadad>Missed Notes : <color=#b50000>{MissedNotes}</color>";
             }
 
@@ -308,17 +322,21 @@ namespace GuildSaber.UI.Components
 
     class LeaderboardScoreList : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.LeaderboardScoreList.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.LeaderboardScoreList.bsml";
 
-        [UIComponent("ScoreList")] CustomCellListTableData m_ScoreList = null;
+        [UIComponent("ScoreList")] readonly CustomCellListTableData m_ScoreList = null;
 
-        [UIValue("ScoreCells")] List<object> m_Scores = new List<object>();
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        [UIValue("ScoreCells")] List<object> m_ListComponentScores = new List<object>();
 
-        public CustomLevelStatsView CustomLevelStatsView = null;
+        public CustomLevelStatsView m_CustomLevelStatsView = null;
 
         public bool Initialized { get; private set; }
 
-        private float ListCellSize { get => 4 * LeaderboardScoreCell.ScaleFactor; }
+        private float ListCellSize
+        {
+            get => 4 * LeaderboardScoreCell.ScaleFactor;
+        }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -336,20 +354,23 @@ namespace GuildSaber.UI.Components
             if (Initialized == false)
             {
                 for (int l_i = 0; l_i < GuildSaberModule.SCORES_BY_PAGE; l_i++)
-                    m_Scores.Add(new LeaderboardScoreCell());
+                {
+                    var l_CurrentCell = new LeaderboardScoreCell();
+                    m_ListComponentScores.Add(l_CurrentCell);
+                }
 
                 m_ScoreList.tableView.ReloadData();
 
                 Initialized = true;
             }
 
-            LeaderboardScoreCell l_Cell = (LeaderboardScoreCell)m_Scores[GuildSaberModule.SCORES_BY_PAGE - 1];
+            LeaderboardScoreCell l_Cell = (LeaderboardScoreCell)m_ListComponentScores[GuildSaberModule.SCORES_BY_PAGE - 1];
 
             if (l_Cell.HasBeenParsed == false)
-                await WaitUtils.WaitUntil(() => l_Cell.HasBeenParsed, 50, 0);
+                await WaitUtils.Wait(() => l_Cell.HasBeenParsed, 50, 0);
 
 
-            foreach (LeaderboardScoreCell l_Current in m_Scores)
+            foreach (LeaderboardScoreCell l_Current in m_ListComponentScores)
             {
                 l_Current.Reset();
             }
@@ -366,17 +387,25 @@ namespace GuildSaber.UI.Components
                 {
                     foreach (PointsData l_Current in l_Score.PointsData)
                     {
-                        if (l_Current.PointsName == p_PointsNames)
-                        {
-                            l_PointData = l_Current;
-                        }
+                        if (l_Current.PointsName != p_PointsNames) continue;
+
+                        l_PointData = l_Current;
+                        break;
                     }
                 }
 
-                LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)m_Scores[l_i];
+                LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)m_ListComponentScores[l_i];
                 l_CurrentCell.Init((int)l_Score.Rank, l_Score.Name, l_PointData.Points, l_PointData.PointsName, (int)l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString(), l_Score.Modifiers);
-                l_CurrentCell.SetModalInfo((int)l_Score.BadCuts, (int)l_Score.MissedNotes, (l_Score.ScoreStatistic != null) ? (int)l_Score.ScoreStatistic?.PauseCount : null, (int)l_Score.ModifiedScore, new List<string> { "NF", "SS", "NA", "NO", "NB", "ZM" }, (PassState.EState)l_Score.State, (EHMD)l_Score.HMD);
-                if (l_Score.ScoreSaberID == BSPModule.GuildSaberModule.m_SSPlayerId.ToString())
+                l_CurrentCell.SetModalInfo((int)l_Score.BadCuts, (int)l_Score.MissedNotes, (l_Score.ScoreStatistic != null) ? (int)l_Score.ScoreStatistic?.PauseCount! : null, (int)l_Score.ModifiedScore, new List<string>
+                {
+                    "NF",
+                    "SS",
+                    "NA",
+                    "NO",
+                    "NB",
+                    "ZM"
+                }, (PassState.EState)l_Score.State, (EHMD)l_Score.HMD);
+                if (l_Score.ScoreSaberID == GuildSaberModule.SsPlayerId.ToString())
                 {
                     l_CurrentCell.SetCellToCurrentPlayer();
                 }

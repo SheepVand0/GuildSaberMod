@@ -1,6 +1,6 @@
-﻿using Zenject;
+﻿using GuildSaber.Logger;
 using GuildSaber.UI.Leaderboard;
-using GuildSaber.Logger;
+using Zenject;
 
 namespace GuildSaber.Installers
 {
@@ -9,7 +9,6 @@ namespace GuildSaber.Installers
         public override void InstallBindings()
         {
             GSLogger.Instance.Log("Installing GuildSaber Bindings", IPA.Logging.Logger.LogLevel.NoticeUp);
-            Container.BindInterfacesAndSelfTo<Events>().AsSingle();
 
             Container.BindInterfacesAndSelfTo<GuildSaberLeaderboardView>().FromNewComponentAsViewController().AsSingle();
             Container.BindInterfacesAndSelfTo<GuildSaberLeaderboardPanel>().FromNewComponentAsViewController().AsSingle();

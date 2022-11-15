@@ -1,40 +1,37 @@
-﻿using HMUI;
-using LeaderboardCore.Models;
-using LeaderboardCore.Managers;
-using Zenject;
-using JetBrains.Annotations;
-using System;
-using UnityEngine;
-using TMPro;
-using GuildSaber.Utils;
-using GuildSaber.UI.Components;
+﻿using System;
+using System.Linq;
 using GuildSaber.Configuration;
-using GuildSaber.BSPModule;
+using GuildSaber.Utils;
+using HMUI;
+using JetBrains.Annotations;
 using LeaderboardCore.Interfaces;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using LeaderboardCore.Managers;
+using LeaderboardCore.Models;
+using UnityEngine;
+using Zenject;
 
 namespace GuildSaber.UI.Leaderboard
 {
     [UsedImplicitly]
     class GuildSaberCustomLeaderboard : CustomLeaderboard, IInitializable, IDisposable, INotifyLeaderboardLoad
     {
-        public static GuildSaberCustomLeaderboard Instance = null;
+        public static GuildSaberCustomLeaderboard? Instance = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        public readonly CustomLeaderboardManager _customLeaderboardManager = null;
-        public readonly GuildSaberLeaderboardPanel _panelViewController = null;
-        public readonly GuildSaberLeaderboardView _leaderboardViewController = null;
+        public readonly CustomLeaderboardManager? m_CustomLeaderboardManager = null;
+        public readonly GuildSaberLeaderboardPanel? m_PanelViewController = null;
+        public readonly GuildSaberLeaderboardView? m_LeaderboardViewController = null;
 
-        protected override ViewController panelViewController => _panelViewController;
-        protected override ViewController leaderboardViewController => _leaderboardViewController;
+        protected override ViewController panelViewController => m_PanelViewController;
+        protected override ViewController leaderboardViewController => m_LeaderboardViewController;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         public static bool IsShown = false;
-        public static bool Initialized { get; private set; } = false;
+        public static bool Initialized { get; internal set; } = false;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -42,16 +39,16 @@ namespace GuildSaber.UI.Leaderboard
         /// <summary>
         /// Zenject lol
         /// </summary>
-        /// <param name="customLeaderboardManager"></param>
-        /// <param name="panelViewController"></param>
-        /// <param name="leaderboardViewController"></param>
-        public GuildSaberCustomLeaderboard(CustomLeaderboardManager customLeaderboardManager,
-                                           GuildSaberLeaderboardPanel panelViewController,
-                                           GuildSaberLeaderboardView leaderboardViewController)
+        /// <param name="p_CustomLeaderboardManager"></param>
+        /// <param name="p_PanelViewController"></param>
+        /// <param name="p_LeaderboardViewController"></param>
+        public GuildSaberCustomLeaderboard(CustomLeaderboardManager p_CustomLeaderboardManager,
+                                           GuildSaberLeaderboardPanel p_PanelViewController,
+                                           GuildSaberLeaderboardView p_LeaderboardViewController)
         {
-            _customLeaderboardManager = customLeaderboardManager;
-            _panelViewController = panelViewController;
-            _leaderboardViewController = leaderboardViewController;
+            m_CustomLeaderboardManager = p_CustomLeaderboardManager;
+            m_PanelViewController = p_PanelViewController;
+            m_LeaderboardViewController = p_LeaderboardViewController;
 
             Instance = this;
         }
@@ -65,7 +62,7 @@ namespace GuildSaber.UI.Leaderboard
         public void Initialize()
         {
             if (GSConfig.Instance.LeaderboardEnabled)
-               _customLeaderboardManager.Register(this);
+               m_CustomLeaderboardManager.Register(this);
         }
 
         /// <summary>
@@ -73,24 +70,27 @@ namespace GuildSaber.UI.Leaderboard
         /// </summary>
         public void Dispose()
         {
-            _customLeaderboardManager.Unregister(this);
+            m_CustomLeaderboardManager.Unregister(this);
         }
 
         /// <summary>
         /// On Load
         /// </summary>
-        /// <param name="loaded"></param>
-        public void OnLeaderboardLoaded(bool loaded)
+        /// <param name="p_Loaded"></param>
+        public async void OnLeaderboardLoaded(bool p_Loaded)
         {
-            if (loaded)
-            {
-                if (Initialized) return;
+            if (!p_Loaded)  return;
 
-                Events.m_Instance.EventOnLeaderboardPostLoad();
+            if (Initialized) return;
 
-                Initialized = true;
-                LeaderboardLevelStatsViewManager.Setup();
-            }
+            Initialized = true;
+            LeaderboardLevelStatsViewManager.Setup();
+
+            Events.Instance.EventOnLeaderboardPostLoad();
+
+            await WaitUtils.Wait(() => IsShown, 100, 0, 5);
+
+            LeaderboardLevelStatsViewManager.Hide();
         }
 
     }

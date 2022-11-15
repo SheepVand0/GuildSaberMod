@@ -3,11 +3,11 @@
 		<vertical>
 			<horizontal>
 				<horizontal pref-width="2"/>
-				<text id='Rank' />
+				<text id='Rank' text='' />
 				<horizontal pref-width="1.5"/>
-				<text id='Name' />
+				<text id='Name' text='' />
 				<horizontal pref-width="1.5"/>
-				<text id='PassState' />
+				<text id='PassState' text='' />
 				<horizontal pref-width="2"/>
 			</horizontal>
 		</vertical>

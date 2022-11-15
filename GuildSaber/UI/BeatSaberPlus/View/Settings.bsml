@@ -9,6 +9,7 @@
 			<bool-setting id='BoolLeaderboardEnabled'/>
 			<text font-size='3.5' align='Center' font-color='yellow' text='Enable Card : ' />
 			<bool-setting id='BoolCardEnabled'/>
+			<horizontal pref-height='40'/>
 		</vertical>
 	</horizontal>
 </vertical>

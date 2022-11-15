@@ -1,24 +1,26 @@
-﻿using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Components.Settings;
-using GuildSaber.UI.Leaderboard;
-using HMUI;
-using GuildSaber.API;
-using GuildSaber.Utils;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using TMPro;
+using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Components.Settings;
+using GuildSaber.API;
 using GuildSaber.BSPModule;
+using GuildSaber.Utils;
+using HMUI;
+using TMPro;
 
-namespace GuildSaber.UI.Components
+namespace GuildSaber.UI.Leaderboard.Components
 {
     public class PointsType : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaber.UI.Components.Views.PointsType.bsml";
+        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.PointsType.bsml";
 
         [UIComponent("PointsDropdown")] DropDownListSetting m_Selector = null;
         TextMeshProUGUI m_PointsText;
 
-        [UIValue("DefaultPoints")] private List<object> m_DefaultsPoints = new List<object>() { Plugin.NOT_DEFINED };
+        [UIValue("DefaultPoints")] private List<object> m_DefaultsPoints = new List<object>()
+        {
+            Plugin.NOT_DEFINED
+        };
         [UIValue("SelectedPoints")] public string m_SelectedPoints = Plugin.NOT_DEFINED;
 
         public ApiPlayerData m_Player = default;
@@ -31,7 +33,7 @@ namespace GuildSaber.UI.Components
         /// </summary>
         private void OnLeaderboardViewPostLoad()
         {
-            Events.m_Instance.SelectPointsTypes(m_SelectedPoints);
+            Events.Instance.SelectPointsTypes(m_SelectedPoints);
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -47,7 +49,7 @@ namespace GuildSaber.UI.Components
             l_ImageView.gameObject.SetActive(false);
             RefreshPoints();
             RefreshSelected();
-            Events.m_Instance.e_OnGuildSelected += OnGuildSelected;
+            Events.Instance.e_OnGuildSelected += OnGuildSelected;
             Events.e_OnLeaderboardPostLoad += OnLeaderboardViewPostLoad;
         }
 
@@ -57,10 +59,14 @@ namespace GuildSaber.UI.Components
         /// <summary>
         /// Refresh selected points color and text
         /// </summary>
-        public void RefreshSelected()
+        public async void RefreshSelected()
         {
+            await WaitUtils.Wait(() => m_Selector != null, 100);
+            await WaitUtils.Wait(() => m_PointsText != null, 100);
+            await WaitUtils.Wait(() => GuildSaberLeaderboardPanel.PanelInstance != null, 100);
+
             m_PointsText.enableVertexGradient = true;
-            m_PointsText.colorGradient = (GuildSaberModule.m_LeaderboardSelectedGuild.Color.ToUnityColor()).GenerateGradient(0.2f);
+            m_PointsText.colorGradient = (GuildSaberModule.LeaderboardSelectedGuild.Color.ToUnityColor()).GenerateGradient(0.2f);
             foreach (RankData l_Rank in m_Player.RankData)
                 if (l_Rank.PointsName == m_SelectedPoints)
                     m_PointsText.text = $"{l_Rank.Points} {l_Rank.PointsName}";
@@ -69,8 +75,11 @@ namespace GuildSaber.UI.Components
         /// <summary>
         /// Refresh Points List
         /// </summary>
-        public void RefreshPoints()
+        public async void RefreshPoints()
         {
+            await WaitUtils.Wait(() => m_Selector != null, 100);
+            await WaitUtils.Wait(() => GuildSaberLeaderboardPanel.PanelInstance != null, 100);
+
             if (GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData.Equals(default(PlayerData))) return;
             m_Player = GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData;
             m_DefaultsPoints.Clear();
@@ -85,7 +94,7 @@ namespace GuildSaber.UI.Components
         }
 
         ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////s
+        ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
         /// On Guild selected
@@ -96,6 +105,8 @@ namespace GuildSaber.UI.Components
             RefreshPoints();
             await Task.Delay(100);
             RefreshSelected();
+            await WaitUtils.Wait(() => GuildSaberLeaderboardView.m_Instance.ChangingLeaderboard == false, 10);
+            Events.Instance.SelectPointsTypes(m_SelectedPoints);
         }
 
         /// <summary>
@@ -106,16 +117,15 @@ namespace GuildSaber.UI.Components
         private async void OnPointsSelected(string p_Selected)
         {
             m_SelectedPoints = p_Selected;
-            Events.m_Instance.SelectPointsTypes(m_SelectedPoints);
+            Events.Instance.SelectPointsTypes(m_SelectedPoints);
             await Task.Delay(100);
             RefreshSelected();
         }
 
 
-
         public static int GetPointsIDByName(ApiPlayerData p_Player, GuildData p_Guild, string p_Name)
         {
-            for (int l_i = 0; l_i < p_Player.RankData.Count;l_i++)
+            for (int l_i = 0; l_i < p_Player.RankData.Count; l_i++)
             {
                 if (p_Player.RankData[l_i].PointsName.ToLower() != p_Name.ToLower()) continue;
 

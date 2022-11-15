@@ -1,11 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿#nullable enable
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-#nullable enable
+using GuildSaber.Utils.Color;
 
 namespace GuildSaber.API
 {
@@ -23,7 +20,7 @@ namespace GuildSaber.API
         public UInt32? GuildValidPassCount { get; set; }
         public string Avatar { get; set; }
 
-        public Utils.Color.Color? Color { get; set; }
+        public Color? Color { get; set; }
 
         public List<Badge> Badges { get; set; }
         public List<Trophy>? Trophies { get; set; }

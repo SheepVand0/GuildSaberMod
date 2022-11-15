@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using GuildSaber.Utils;
+using UnityEngine;
 
+// ReSharper disable once CheckNamespace
 namespace GuildSaber.UI.Leaderboard
 {
     internal class LeaderboardLevelStatsViewManager
     {
         public static GameObject GameLevelStatsView = null;
+
+        public static bool Initialized { get; private set; } = false;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -14,19 +18,21 @@ namespace GuildSaber.UI.Leaderboard
         /// </summary>
         public static void Setup()
         {
-            GameLevelStatsView = Utils.GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView");
+            GameLevelStatsView = GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView");
             Events.e_OnLeaderboardShown += (p_FirstActivation) =>
             {
-                if (!GuildSaberCustomLeaderboard.Initialized) return;
+                if (!GuildSaberCustomLeaderboard.Initialized || !GuildSaberCustomLeaderboard.IsShown) return;
 
-                Show();
+                Hide();
             };
             Events.e_OnLeaderboardHide += () =>
             {
                 if (!GuildSaberCustomLeaderboard.Initialized) return;
 
-                Hide();
+                Show();
             };
+
+            Initialized = true;
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -35,19 +41,23 @@ namespace GuildSaber.UI.Leaderboard
         /// <summary>
         /// Show Game Level Stats View
         /// </summary>
-        public static void Show()
+        public async static void Show()
         {
+            await WaitUtils.Wait(() => GameLevelStatsView != null, 100);
+
             foreach (Transform l_Transform in GameLevelStatsView.transform)
-                l_Transform.gameObject.SetActive(false);
+                l_Transform.gameObject.SetActive(true);
         }
 
         /// <summary>
         /// Hide Game Level Stats View
         /// </summary>
-        public static void Hide()
+        public static async void Hide()
         {
+            await WaitUtils.Wait(() => GameLevelStatsView != null, 1);
+
             foreach (Transform l_Transform in GameLevelStatsView.transform)
-                l_Transform.gameObject.SetActive(true);
+                l_Transform.gameObject.SetActive(false);
         }
     }
 }

@@ -1,12 +1,12 @@
-﻿using BeatSaberMarkupLanguage;
+﻿using System.Reflection;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.ViewControllers;
 using BeatSaberPlus.SDK.UI;
-using GuildSaber.API;
+using GuildSaber.BSPModule;
 using GuildSaber.Configuration;
 using GuildSaber.UI.Card;
 using TMPro;
-using System.Reflection;
+using UnityEngine;
 
 namespace GuildSaber.UI.GuildSaber;
 
@@ -20,7 +20,7 @@ public class LeftModViewController : ViewController<LeftModViewController>
 
     [UIComponent("ErrorText")] private readonly TextMeshProUGUI m_ErrorText = null;
     [UIComponent("ErrorText2")] private readonly TextMeshProUGUI m_ErrorText2 = null;
-    [UIObject("BG")] UnityEngine.GameObject m_BG = null;
+    [UIObject("BG")] GameObject m_BG = null;
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ public class LeftModViewController : ViewController<LeftModViewController>
 
     protected override void OnViewCreation()
     {
-        BeatSaberPlus.SDK.UI.Backgroundable.SetOpacity(m_BG, 0.5f);
+        Backgroundable.SetOpacity(m_BG, 0.5f);
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ public class LeftModViewController : ViewController<LeftModViewController>
     {
         m_ErrorText.gameObject.SetActive(p_Visible);
         m_ErrorText2.gameObject.SetActive(p_Visible);
-        m_ErrorText.text = "Error during getting data from " + BSPModule.GuildSaberModule.m_CardSelectedGuild.Name;
+        m_ErrorText.text = "Error during getting data from " + GuildSaberModule.CardSelectedGuild.Name;
     }
 
     ////////////////////////////////////////////////////////////////////////////

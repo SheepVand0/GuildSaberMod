@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Attributes;
-using GuildSaber.API;
+﻿using BeatSaberMarkupLanguage;
 using GuildSaber.Configuration;
 using HMUI;
 

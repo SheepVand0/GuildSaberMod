@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using GuildSaber.Utils.Color;
-using Newtonsoft.Json;
 
 namespace GuildSaber.API
 {
@@ -9,7 +8,7 @@ namespace GuildSaber.API
     public struct ApiMapLeaderboardCollectionStruct
     {
         //TODO: Make some adjust inside ContentStruct, with a new struct for only the player info + add the GuildRankedDifficultyID
-        public List<ApiMapLeaderboardContentStruct> Leaderboards { get; set; }
+        public List<ApiMapLeaderboardContentStruct>? Leaderboards { get; set; }
         public ApiPageMetadataStruct Metadata { get; set; }
         public ApiCustomDataStruct CustomData { get; set; }
         public ApiMapLeaderboardContentStruct? PlayerScore { get; set; }

@@ -1,14 +1,16 @@
-﻿using BeatSaberPlus.SDK;
-using CP_SDK;
-using HMUI;
-using GuildSaber.Configuration;
-using GuildSaber.UI.Card;
-using GuildSaber.API;
-using GuildSaber.UI.Leaderboard;
-using GuildSaber.UI.BeatSaberPlusSettings;
-using BeatSaberMarkupLanguage;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using BeatSaberMarkupLanguage;
+using BeatSaberPlus.SDK;
+using CP_SDK;
+using GuildSaber.API;
+using GuildSaber.Configuration;
+using GuildSaber.UI.BeatSaberPlusSettings;
+using GuildSaber.UI.Card;
+using GuildSaber.UI.Leaderboard;
+using GuildSaber.Utils;
+using HMUI;
+using UnityEngine;
 
 namespace GuildSaber.BSPModule
 {
@@ -22,7 +24,7 @@ namespace GuildSaber.BSPModule
 
         public override bool UseChatFeatures => false;
 
-        public override bool IsEnabled { get => GSConfig.Instance.Enabled; set => GSConfig.Instance.Enabled = value; }
+        public override bool IsEnabled { get => GSConfig.Instance.Enabled; set { GSConfig.Instance.Enabled = value; if (value) { EnableLeader(); } } }
 
         public override EIModuleBaseActivationType ActivationType => EIModuleBaseActivationType.OnMenuSceneLoaded;
 
@@ -30,21 +32,20 @@ namespace GuildSaber.BSPModule
         ////////////////////////////////////////////////////////////////////////////
 
         #nullable enable
-        public static int? m_GSPlayerId { get; internal set; } = null;
-        public static ulong m_SSPlayerId { get; internal set; } = 0;
+        public static int? GSPlayerId { get; internal set; } = null;
+        public static ulong SsPlayerId { get; internal set; } = 0;
 
-        public static GuildData m_CardSelectedGuild { get; internal set; } = default(GuildData);
-        public static GuildData m_PlaylistDownloadSelectedGuild { get; internal set; } = default(GuildData);
-        public static GuildData m_LeaderboardSelectedGuild { get; internal set; } = default(GuildData);
-        public static GuildData m_GuildSaberPlayingMenuSelectedGuild { get; internal set; } = default(GuildData);
-        public static GuildData m_LevelSelectionMenuSelectedGuild { get; internal set; } = default(GuildData);
+        public static GuildData CardSelectedGuild { get; internal set; } = default(GuildData);
+        public static GuildData PlaylistDownloadSelectedGuild { get; internal set; } = default(GuildData);
+        public static GuildData LeaderboardSelectedGuild { get; internal set; } = default(GuildData);
+        public static GuildData GuildSaberPlayingMenuSelectedGuild { get; internal set; } = default(GuildData);
 
         public static List<GuildData> AvailableGuilds { get; internal set; } = new List<GuildData>();
 
         public static EModState ModState { get; internal set; } = EModState.APIError;
         public static EModErrorState ModErrorState { get; internal set; } = EModErrorState.NoError;
 
-        public static HarmonyLib.Harmony m_HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber"); }
+        public static HarmonyLib.Harmony HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber"); }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -67,9 +68,15 @@ namespace GuildSaber.BSPModule
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        protected async override void OnEnable()
+        private async void EnableLeader()
         {
-            AvailableGuilds = (await GuildApi.GetPlayerGuildsInfo()).m_AvailableGuilds;
+            await WaitUtils.Wait(() => GameObject.Find("LeaderboardNavigationButtonsPanel") != null, 100);
+            GuildSaberCustomLeaderboard.Instance.Initialize();
+        }
+
+        protected override async void OnEnable()
+        {
+            AvailableGuilds = (await GuildApi.GetPlayerGuildsInfo()).AvailableGuilds;
 
             if (PlayerCardUI.m_Instance == null && GSConfig.Instance.CardEnabled && ModState == EModState.Fonctionnal)
                 await PlayerCardUI.CreateCard();
@@ -87,7 +94,7 @@ namespace GuildSaber.BSPModule
             PlayerCardUI.DestroyCard();
             GuildSaberCustomLeaderboard.Instance.Dispose();
 
-            m_HarmonyInstance.UnpatchSelf();
+            HarmonyInstance.UnpatchSelf();
         }
 
         ////////////////////////////////////////////////////////////////////////////

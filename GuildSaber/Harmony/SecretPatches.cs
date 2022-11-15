@@ -1,13 +1,8 @@
-﻿using HarmonyLib;
-using TMPro;
-using GuildSaber.Configuration;
-using System;
+﻿using GuildSaber.Configuration;
+using HarmonyLib;
 using IPA.Utilities;
-using UnityEngine;
-using HMUI;
-using UnityEngine.UI;
 using Polyglot;
-using System.Collections.Generic;
+using TMPro;
 
 namespace GuildSaber.Harmony
 {

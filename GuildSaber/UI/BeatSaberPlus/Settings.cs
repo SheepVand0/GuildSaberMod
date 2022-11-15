@@ -1,18 +1,12 @@
-﻿using BeatSaberMarkupLanguage;
-using BeatSaberPlus.SDK.UI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Reflection;
+﻿using System.Reflection;
+using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
-using ToggleSetting = BeatSaberMarkupLanguage.Components.Settings.ToggleSetting;
-using GuildSaber.Configuration;
 using BeatSaberMarkupLanguage.Parser;
+using BeatSaberPlus.SDK.UI;
+using GuildSaber.Configuration;
 using GuildSaber.UI.Card;
-using BeatmapEditor3D;
 using GuildSaber.UI.Leaderboard;
+using ToggleSetting = BeatSaberMarkupLanguage.Components.Settings.ToggleSetting;
 
 namespace GuildSaber.UI.BeatSaberPlusSettings
 {
