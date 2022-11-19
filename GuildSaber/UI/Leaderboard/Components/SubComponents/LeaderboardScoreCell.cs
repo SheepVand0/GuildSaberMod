@@ -160,6 +160,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             l_CurrentParams[1] = new ItemParam("AnchorPosX", (-40f + l_OffsetFromRank + l_NameOffset) + (ScaleFactor * 1.04f));
             l_CurrentParams[2] = new ItemParam("Alignment", TextAlignmentOptions.Right);
             l_CurrentParams[4] = new ItemParam("Color", Color.white);
+            // ReSharper disable once StringLiteralTypo
             l_CurrentParams[6] = new ItemParam("RichText", "<mspace=0.5em>");
 
             m_CScore = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
@@ -202,8 +203,10 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         /// <summary>
         /// Reset cell colors, texts, and hide button
         /// </summary>
-        internal void Reset()
+        internal async void Reset()
         {
+            await WaitUtils.Wait(() => m_ElemsLayout.gameObject.activeInHierarchy, 10, p_CodeLine: 207);
+
             SetEmpty();
             Color l_White = Color.white;
             m_CRank.SetColor(l_White);

@@ -41,9 +41,11 @@ namespace GuildSaber.UI.Leaderboard
         /// <summary>
         /// Show Game Level Stats View
         /// </summary>
-        public async static void Show()
+        public static async void Show()
         {
-            await WaitUtils.Wait(() => GameLevelStatsView != null, 100);
+            await WaitUtils.Wait(() => GameLevelStatsView != null, 100, p_MaxTryCount: 20);
+
+            if (GameLevelStatsView == null) return;
 
             foreach (Transform l_Transform in GameLevelStatsView.transform)
                 l_Transform.gameObject.SetActive(true);

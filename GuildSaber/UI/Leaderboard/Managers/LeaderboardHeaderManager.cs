@@ -47,7 +47,11 @@ namespace GuildSaber.UI.Leaderboard
             while (!l_MoveNext)
             {
                 l_Current = GuildSaberUtils.FindGm(HEADER_PANEL_PATH);
-                await WaitUtils.Wait(() => l_MoveNext = l_Current != null, 100, 0, 10);
+                await WaitUtils.Wait(() =>
+                {
+                    l_MoveNext = l_Current != null;
+                    return true;
+                }, 100, 0, 10);
             }
 
             if (l_Current != null)

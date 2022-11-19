@@ -299,8 +299,11 @@ namespace GuildSaber.UI.Leaderboard.Components
         /// <summary>
         /// Change header to Level of the current map and the category
         /// </summary>
-        public void SetHeader(bool p_Unranked)
+        public async void SetHeader(bool p_Unranked)
         {
+            await WaitUtils.Wait(() => gameObject != null, 10, p_CodeLine: 304);
+            await WaitUtils.Wait(() => gameObject.activeInHierarchy, 10, p_CodeLine: 305);
+
             if (!GuildSaberCustomLeaderboard.IsShown) return;
 
             ChangeHeaderText(p_Unranked ? Polyglot.Localization.Get("TITLE_HIGHSCORES") : $"Level {Leaderboard.CustomData.LevelValue} - {Leaderboard.CustomData.CategoryName.VerifiedCategory()}");
@@ -368,6 +371,7 @@ namespace GuildSaber.UI.Leaderboard.Components
             foreach (LeaderboardScoreCell l_Current in m_ListComponentScores)
             {
                 l_Current.Reset();
+                await WaitUtils.Wait(() => l_Current.m_ElemsLayout.gameObject.activeSelf, 1, p_CodeLine: 374);
             }
 
             for (int l_i = 0; l_i < p_Scores.Count; l_i++)

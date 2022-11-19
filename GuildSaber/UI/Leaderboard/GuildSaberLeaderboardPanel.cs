@@ -61,6 +61,16 @@ namespace GuildSaber.UI.Leaderboard
             LeaderboardHeaderManager.CreateUpdateView();
         }
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+        {
+            GSLogger.Instance.Log("Trying to deactivate panel", IPA.Logging.Logger.LogLevel.InfoUp);
+        }
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         /// <summary>
         /// Set header colors from current guild
         /// </summary>

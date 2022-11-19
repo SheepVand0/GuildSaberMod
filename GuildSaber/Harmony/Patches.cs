@@ -54,7 +54,7 @@ namespace GuildSaber.Harmony
         }
     }
 
-    [HarmonyPatch(typeof(MenuTransitionsHelper), nameof(MenuTransitionsHelper.RestartGame))]
+    //[HarmonyPatch(typeof(MenuTransitionsHelper), nameof(MenuTransitionsHelper.RestartGame))]
     class OnReload
     {
         public static void Prefix()
@@ -65,7 +65,7 @@ namespace GuildSaber.Harmony
         }
     }
 
-    [HarmonyPatch(typeof(GameScenesManager), nameof(GameScenesManager.PushScenes))]
+    //[HarmonyPatch(typeof(GameScenesManager), nameof(GameScenesManager.PushScenes))]
     class OnStart
     {
         public static void Prefix()
@@ -93,32 +93,37 @@ namespace GuildSaber.Harmony
         }
     }
 
-    [HarmonyPatch(typeof(GameScenesManager), nameof(GameScenesManager.PopScenes))]
+    //[HarmonyPatch(typeof(FadeInOutController), nameof(FadeInOutController.FadeOut))]
     class OnReturnToMenu
     {
-        public static async void Postfix(float minDuration)
+        public static async void Postfix(float duration)
         {
+            await Task.Delay((int)duration*1000);
+            await Task.Delay(500);
+
             // ReSharper disable once SimplifyConditionalTernaryExpression
             if (Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0) == null ? false : Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0).gameObject.activeInHierarchy) return;
+
+
 
             //if (Logic.ActiveScene is Logic.SceneType.Menu or Logic.SceneType.None) return;
 
             bool l_MoveNext = false;
-
-            await Task.Delay((int)minDuration*1000);
 
             // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
             while (!l_MoveNext)
             {
                 ResultsViewController l_ResultsViewController = Resources.FindObjectsOfTypeAll<ResultsViewController>().ElementAt(0);
                 GameObject l_NavigationButtonsPanel = GameObject.Find("LeaderboardNavigationButtonsPanel");
+                GameObject l_MainScreen = GameObject.Find("MainScreen");
                 await WaitUtils.Wait(() =>
                 {
                     if (Logic.ActiveScene != Logic.SceneType.Menu) return true;
-                    if (l_ResultsViewController == null) return true;
-                    if (l_ResultsViewController.gameObject.activeInHierarchy) return true;
+                    if (!l_ResultsViewController)
+                        if (l_ResultsViewController.gameObject.activeSelf)
+                            return true;
                     if (l_NavigationButtonsPanel == null) return true;
-                    l_MoveNext = !l_ResultsViewController.gameObject.activeInHierarchy;
+                    l_MoveNext = l_NavigationButtonsPanel.gameObject.activeSelf;
                     return l_MoveNext;
                 }, 10);
             }

@@ -18,7 +18,7 @@ namespace GuildSaber.Utils
                 {
                     try
                     {
-                        if (p_Func.Invoke()) break;
+                        if (p_Func.Invoke()) return;
 
                         if (l_ShouldTryCount)
                             l_TryCount += 1;

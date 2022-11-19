@@ -1,16 +1,12 @@
-﻿<horizontal pref-height="20" min-height="20" anchor-pos-y="2" pad-left="0" pad-right="5"  xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-
+﻿<horizontal pref-height="20" min-height="20" anchor-pos-y="2" pad-left="0" pad-right="5">
 	<vertical min-width="90" pref-width="90" child-control-width="false" spacing="1" id="BgHorizontal" bg="panel-fade-gradient">
 		<horizontal>
 			<text id='PlayerErrorTxt' text='Error during getting Player data' active='false'/>
-
 			<horizontal id='Elems' active='false' horizontal-fit='PreferredSize' spacing='20' anchor-pos-x='45' ignore-layout='true'>
-
 				<horizontal horizontal-fit='PreferredSize' spacing='1'>
 					<grid cell-size-x='14' cell-size-y='14'>
 						<img id='GSImage' src='GuildSaber.Resources.GsWhiteLogo.png'/>
 					</grid>
-
 					<vertical spacing='0' horizontal-fit='PreferredSize'>
 						<horizontal preferred-width='17' id='NameLayout' horizontal-fit='PreferredSize' spacing='32'>
 							<text font-size='5' id='PlayerName' text='GuildSaber'/>

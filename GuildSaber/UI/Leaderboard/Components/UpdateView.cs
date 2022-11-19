@@ -74,7 +74,10 @@ namespace GuildSaber.UI.Leaderboard.Components
         /// </summary>
         public async void Hide()
         {
-            await WaitUtils.Wait(() => m_ShowUpdatesButton != null, 100);
+            await WaitUtils.Wait(() => m_ShowUpdatesButton != null, 100, p_MaxTryCount: 10);
+
+            if (m_ShowUpdatesButton == null) return;
+            if (!m_ShowUpdatesButton.gameObject.activeSelf) return;
 
             m_ShowUpdatesButton.gameObject.SetActive(false);
         }
