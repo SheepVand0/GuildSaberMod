@@ -264,7 +264,7 @@ public static class GuildApi
     public static async Task<ApiMapLeaderboardCollectionStruct> GetLeaderboard(
         int p_Guild, string p_Hash, IDifficultyBeatmap p_BeatMap,
         int p_Page, int p_GSId, string p_Country, string p_Mode,
-        int p_CountPerPage = 10, int p_SearchType = 1)
+        int p_CountPerPage = GuildSaberModule.SCORES_BY_PAGE, int p_SearchType = 1)
     {
         try
         {

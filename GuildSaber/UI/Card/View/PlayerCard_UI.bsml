@@ -18,9 +18,9 @@
 						</horizontal>
 						<vertical child-control-height="true" child-expand-height="true" id="RankUIVertical" vertical-fit="PreferredSize">
 						</vertical>
-						<text text="______" font-size="3"></text>
+						<text text="______" font-size="3"/>
 					</vertical>
-					<text font-size="2" id="PlayTimeText" text="00:00:00" align="MidlineRight"></text>
+					<text font-size="2" id="PlayTimeText" text="00:00:00" align="MidlineRight"/>
 				</vertical>
 				<grid cell-size-x="15" cell-size-y="15" child-align="MiddleCenter">
 					<clickable-image pref-height="1" pref-width="1" preserve-aspect="false" src="~PlayerImageSrc" on-click="OnPPClick"/>
@@ -33,19 +33,19 @@
 	</bg>
 	<modal size-delta-x="100" size-delta-y="60" id="SettingsModal" show-event="ShowSettings" hide-event="HideSettings">
 		<vertical vertical-fit="PreferredSize">
-			<dropdown-list-setting id="GuildList" text='Guild :' value='SelectedGuild' bind-value='true' on-change='UpdateCard' choices='AvailableGuilds' apply-on-change='true'></dropdown-list-setting>
-			<toggle-setting text='Show card handle :' value='ShowCardHandle' id='ToggleShowHandle' apply-on-change='true'></toggle-setting>
-			<toggle-setting text='Show detailed levels :' value='DetailLevels' apply-on-change='true'></toggle-setting>
-			<toggle-setting text='Show play time :' value='ShowPlayTime' apply-on-change='true'></toggle-setting>
-			<color-setting text='Custom Card Color' id='CustomColorSettings' value='CustomColor' apply-on-change='true'></color-setting>
+			<dropdown-list-setting id="GuildList" text='Guild :' value='SelectedGuild' bind-value='true' on-change='UpdateCard' choices='AvailableGuilds' apply-on-change='true'/>
+			<toggle-setting text='Show card handle :' value='ShowCardHandle' id='ToggleShowHandle' apply-on-change='true'/>
+			<toggle-setting text='Show detailed levels :' value='DetailLevels' apply-on-change='true'/>
+			<toggle-setting text='Show play time :' value='ShowPlayTime' apply-on-change='true'/>
+			<color-setting text='Custom Card Color' id='CustomColorSettings' value='CustomColor' apply-on-change='true'/>
 			<vertical vertical-fit='PreferredSize' spacing='5'>
 				<horizontal spacing='17'>
-					<action-button align='Left' text='Reset menu position' on-click='ResetPosMenu'></action-button>
-					<action-button align='Left' text='Reset game position' on-click='ResetPosGame'></action-button>
+					<action-button align='Left' text='Reset menu position' on-click='ResetPosMenu'/>
+					<action-button align='Left' text='Reset game position' on-click='ResetPosGame'/>
 				</horizontal>
-				<button align='Right' text='Refresh' on-click='RefreshCard' font-align='Center' min-width='40'></button>
+				<button align='Right' text='Refresh' on-click='RefreshCard' font-align='Center' min-width='40'/>
 			</vertical>
-			<button text='Hide' event-click='HideSettings'></button>
+			<button text='Close' event-click='HideSettings'/>
 		</vertical>
 	</modal>
 </bg>

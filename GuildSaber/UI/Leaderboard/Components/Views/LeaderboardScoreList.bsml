@@ -1,28 +1,33 @@
-﻿<custom-list id="ScoreList" contents="ScoreCells" stick-scrolling="false" min-height="60" cell-size="~ListCellSize" pref-width="100" xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
-	xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'
-	>
-	<horizontal ignore-layout='true' id='Elems' child-control-width='true' child-expand-width='true' min-width='120'>
-		<macro.as-host host='Rank'></macro.as-host>
-		<macro.as-host host='PlayerName'></macro.as-host>
-		<macro.as-host host='Points'></macro.as-host>
-		<macro.as-host host='ScoreText'></macro.as-host>
-		<macro.as-host host='AccText'></macro.as-host>
-		<macro.as-host host='Modifiers'></macro.as-host>
-	</horizontal>
-	<button anchor-pos-y='-2' on-click='ShowInfo' ignore-layout='true' pref-width='~LeaderWidth' id='Interactable' preferred-height='~InteractableScaleY' text=''>
-	</button>
-	<modal size-delta-x='50' size-delta-y='60' id='Info'>
-		<vertical vertical-fit='PreferredSize' spacing='2'>
-			<text id='ModalPlayerName' align='Center' />
-			<horizontal spacing='2'>
-				<text id='ModalBadCuts' rich-text='true'/>
-				<text id='ModalMissedNotes' rich-text='true'></text>
-			</horizontal>
-			<text id='ModalPassState' rich-text='true'/>
-			<text id='ModalModifiedScore' rich-text='true'/>
-			<text id='ModalPauseCount' rich-text='true'/>
-			<text id='ModalHMD' rich-text='true'/>
-			<button text='Close' on-click='CloseModal'/>
-		</vertical>
-	</modal>
-</custom-list>
+﻿<vertical>
+    <custom-list id="ScoreList" contents="ScoreCells" stick-scrolling="false" min-height="60" cell-size="~ListCellSize" pref-width="100">
+        <horizontal ignore-layout='true' id='Elems' child-control-width='true' child-expand-width='true' min-width='120'>
+            <macro.as-host host='Rank'/>
+            <macro.as-host host='PlayerName'/>
+            <macro.as-host host='Points'/>
+            <macro.as-host host='ScoreText'/>
+            <macro.as-host host='AccText'/>
+            <macro.as-host host='Modifiers'/>
+        </horizontal>
+        <button anchor-pos-y='-2' on-click='ShowInfo' ignore-layout='true' pref-width='~LeaderWidth' id='Interactable' preferred-height='~InteractableScaleY' text=''>
+        </button>
+        <modal size-delta-x='50' size-delta-y='60' id='Info'>
+            <vertical vertical-fit='PreferredSize' spacing='2'>
+                <text id='ModalPlayerName' align='Center'/>
+                <horizontal spacing='2'>
+                    <text id='ModalBadCuts' rich-text='true'/>
+                    <text id='ModalMissedNotes' rich-text='true'/>
+                </horizontal>
+                <text id='ModalPassState' rich-text='true'/>
+                <text id='ModalModifiedScore' rich-text='true'/>
+                <text id='ModalPauseCount' rich-text='true'/>
+                <text id='ModalHMD' rich-text='true'/>
+                <button text='Close' on-click='CloseModal'/>
+            </vertical>
+        </modal>
+    </custom-list>
+    <text id='NotRankedText' ignore-layout="true" anchor-pos-y="5" align='Center' text='Map not ranked' color='red' font-size='6' active='false'/>
+    <text id='ErrorText' ignore-layout="true" anchor-pos-y="5" text='Error during loading leaderboard' align='Center' active='false' font-size='6'/>
+    <grid id='Loading'  ignore-layout="true" anchor-pos-y="5" cell-size-x='20' cell-size-y='20' child-align='MiddleCenter'>
+        <loading-indicator/>
+    </grid>
+</vertical>

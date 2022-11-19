@@ -1,0 +1,11 @@
+<horizontal pref-height="65">
+
+    <text text="Select a Guild"/>
+
+    <custom-list id="GuildList">
+        <horizontal id="MainLayout" pref-height="25" pref-width="85">
+
+        </horizontal>
+    </custom-list>
+
+</horizontal>

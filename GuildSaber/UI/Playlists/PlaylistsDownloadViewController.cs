@@ -138,14 +138,17 @@ namespace GuildSaber.UI.GuildSaber
         [UIAction("ClearCategoryFolder")]
         private void ClearCategory()
         {
-            if (Directory.Exists(m_CategoryDirectory))
+            if (!Directory.Exists(m_CategoryDirectory))
+                return;
+
+            foreach (string l_File in Directory.GetFiles(m_CategoryDirectory))
             {
-                foreach (var l_File in Directory.GetFiles(m_CategoryDirectory))
-                {
-                    File.Delete(l_File);
-                }
-                Directory.Delete(m_CategoryDirectory);
+                File.Delete(l_File);
             }
+
+            Directory.Delete(m_CategoryDirectory);
+
+            CheckCategoryForButton();
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -224,29 +227,32 @@ namespace GuildSaber.UI.GuildSaber
 
         private void CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType p_VerificationType)
         {
-            switch (p_VerificationType)
+            while (true)
             {
-                case PlaylistsVerificationType.FolderOnly:
-                    if (!Directory.Exists(m_CategoryDirectory))
-                        Directory.CreateDirectory(m_CategoryDirectory);
-                    break;
-                case PlaylistsVerificationType.PlaylistsOnly:
-                    if (File.Exists(BuildLevelPath(m_CategoryDirectory, m_CategoryLevels[CurrentPlaylistIndex].LevelNumber, m_GuildId, Category.Name)))
-                        File.Delete(BuildLevelPath(m_CategoryDirectory, m_CategoryLevels[CurrentPlaylistIndex].LevelNumber, m_GuildId, Category.Name));
-                    break;
-                case PlaylistsVerificationType.All:
-                    CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.FolderOnly);
-                    // ReSharper disable once TailRecursiveCall
-                    CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.PlaylistsOnly);
-                    break;
-                default: return;
+                switch (p_VerificationType)
+                {
+                    case PlaylistsVerificationType.FolderOnly:
+                        if (!Directory.Exists(m_CategoryDirectory)) Directory.CreateDirectory(m_CategoryDirectory);
+                        break;
+                    case PlaylistsVerificationType.PlaylistsOnly:
+                        string l_Path = BuildLevelPath(m_CategoryDirectory, m_CategoryLevels[CurrentPlaylistIndex].LevelNumber, m_GuildId, Category.Name);
+                        if (File.Exists(l_Path)) File.Delete(l_Path);
+                        break;
+                    case PlaylistsVerificationType.All:
+                        CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.FolderOnly);
+                        p_VerificationType = PlaylistsVerificationType.PlaylistsOnly;
+                        continue;
+                    default:
+                        return;
+                }
+                break;
             }
         }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        string BuildLevelPath(string p_CategoryDirectory, float p_LevelNumber, int p_GuildId, string p_CategoryName)
+        static string BuildLevelPath(string p_CategoryDirectory, float p_LevelNumber, int p_GuildId, string p_CategoryName)
         {
             return $"{p_CategoryDirectory}/{p_LevelNumber:000}_{p_GuildId}_{p_CategoryName}.bplist";
         }

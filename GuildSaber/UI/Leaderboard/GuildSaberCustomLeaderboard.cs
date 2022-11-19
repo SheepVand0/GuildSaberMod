@@ -90,7 +90,8 @@ namespace GuildSaber.UI.Leaderboard
 
             await WaitUtils.Wait(() => IsShown, 100, 0, 5);
 
-            LeaderboardLevelStatsViewManager.Hide();
+            if (m_LeaderboardViewController.gameObject.activeInHierarchy)
+                LeaderboardLevelStatsViewManager.Hide();
         }
 
     }

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using BeatSaberPlus.SDK.Game;
+using GuildSaber.BSPModule;
 using GuildSaber.Configuration;
 using GuildSaber.Installers;
+using GuildSaber.Logger;
 using GuildSaber.UI.Leaderboard;
 using GuildSaber.Utils;
 using HarmonyLib;
@@ -33,7 +36,7 @@ namespace GuildSaber.Harmony
             if (__instance.GetType() != typeof(GuildSaberCustomLeaderboard)) return;
 
             GuildSaberCustomLeaderboard.IsShown = true;
-            Events.OnLeaderboardShow(GuildSaberCustomLeaderboard.Instance.m_PanelViewController.m_IsFirtActivation);
+            Events.OnLeaderboardShow(GuildSaberCustomLeaderboard.Instance.m_PanelViewController.m_IsFirstActivation);
         }
     }
 
@@ -58,14 +61,6 @@ namespace GuildSaber.Harmony
         {
             if (GuildSaberCustomLeaderboard.Instance == null) return;
 
-            if (LeaderboardHeaderManager.m_HeaderImageView.gameObject.activeInHierarchy)
-            {
-                LeaderboardHeaderManager.ChangeTextForced(Localization.Get("TITLE_HIGHSCORES"), false);
-                LeaderboardHeaderManager.ResetColors();
-            }
-
-            GuildSaberCustomLeaderboard.Initialized = false;
-            GuildSaberLeaderboardPanel.PanelInstance.m_IsFirtActivation = true;
             GuildSaberCustomLeaderboard.Instance.Dispose();
         }
     }
@@ -81,9 +76,9 @@ namespace GuildSaber.Harmony
 
             // ReSharper disable once SimplifyConditionalTernaryExpression
             if (GSConfig.Instance.LeaderboardEnabled &&
-                Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0) == null ?
-                    false :
-                    Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0).isActivated)
+                Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0) == null
+                    ? false
+                    : Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0).gameObject.activeInHierarchy)
                 return;
 
             if (LeaderboardHeaderManager.m_HeaderImageView != null)
@@ -104,17 +99,29 @@ namespace GuildSaber.Harmony
         public static async void Postfix(float minDuration)
         {
             // ReSharper disable once SimplifyConditionalTernaryExpression
-            if (Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0) == null ? true : !Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0).gameObject.activeInHierarchy) return;
+            if (Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0) == null ? false : Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0).gameObject.activeInHierarchy) return;
 
-            if (Logic.ActiveScene is Logic.SceneType.Menu or Logic.SceneType.None) return;
+            //if (Logic.ActiveScene is Logic.SceneType.Menu or Logic.SceneType.None) return;
 
-            await WaitUtils.Wait(() => Logic.ActiveScene == Logic.SceneType.Menu, 100);
+            bool l_MoveNext = false;
 
-            await WaitUtils.Wait(() => GameObject.Find("LeaderboardNavigationButtonsPanel") != null, 100);
-            await WaitUtils.Wait(() => GameObject.Find("LeaderboardNavigationButtonsPanel").gameObject.activeInHierarchy, 100);
+            await Task.Delay((int)minDuration*1000);
 
-            // ReSharper disable once SimplifyConditionalTernaryExpression
-            //await WaitUtils.Wait(() => Resources.FindObjectsOfTypeAll<ResultsViewController>().ElementAt(0) == null ? true : !Resources.FindObjectsOfTypeAll<ResultsViewController>().ElementAt(0).gameObject.activeInHierarchy,10);
+            // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
+            while (!l_MoveNext)
+            {
+                ResultsViewController l_ResultsViewController = Resources.FindObjectsOfTypeAll<ResultsViewController>().ElementAt(0);
+                GameObject l_NavigationButtonsPanel = GameObject.Find("LeaderboardNavigationButtonsPanel");
+                await WaitUtils.Wait(() =>
+                {
+                    if (Logic.ActiveScene != Logic.SceneType.Menu) return true;
+                    if (l_ResultsViewController == null) return true;
+                    if (l_ResultsViewController.gameObject.activeInHierarchy) return true;
+                    if (l_NavigationButtonsPanel == null) return true;
+                    l_MoveNext = !l_ResultsViewController.gameObject.activeInHierarchy;
+                    return l_MoveNext;
+                }, 10);
+            }
 
             GuildSaberCustomLeaderboard.Instance.Initialize();
         }

@@ -157,6 +157,19 @@ namespace GuildSaber.Utils
             return l_LastGM;
         }
 
+        /// <summary>
+        /// Get a page from a rank
+        /// </summary>
+        /// <param name="p_Rank"></param>
+        /// <returns></returns>
+        public static int CalculatePageByRank(int p_Rank)
+        {
+            if (p_Rank % GuildSaberModule.SCORES_BY_PAGE != 0)
+                return (p_Rank / GuildSaberModule.SCORES_BY_PAGE) + 1;
+
+            return (p_Rank / GuildSaberModule.SCORES_BY_PAGE);
+        }
+
         public enum ErrorMode
         {
             StackTrace, Message

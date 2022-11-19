@@ -12,7 +12,7 @@ namespace GuildSaber.UI.Leaderboard.Components
 {
     public class PointsType : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.PointsType.bsml";
+        protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.PointsType.bsml";
 
         [UIComponent("PointsDropdown")] DropDownListSetting m_Selector = null;
         TextMeshProUGUI m_PointsText;

@@ -4,13 +4,14 @@ using HMUI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using GuildSaber.UI.Leaderboard.Components.SubComponents;
 
 namespace GuildSaber.UI.Leaderboard.Components
 {
 
     internal class CustomLevelStatsView : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.CustomLevelStatsView.bsml";
+        protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.CustomLevelStatsView.bsml";
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////

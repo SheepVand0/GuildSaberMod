@@ -283,11 +283,14 @@
     <Compile Include="UI\BeatSaberPlus\Settings.cs" />
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCardUI.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\Components\RoundedButton.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\GuildSelectionMenu.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomLevelStatsView.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomText.cs" />
     <Compile Include="UI\Leaderboard\Components\LeaderboardScoreList.cs" />
     <Compile Include="UI\Leaderboard\Components\PointsType.cs" />
     <Compile Include="UI\Leaderboard\Components\ScopeSelector.cs" />
+    <Compile Include="UI\Leaderboard\Components\SubComponents\LeaderboardScoreCell.cs" />
     <Compile Include="UI\Leaderboard\Components\UpdateView.cs" />
     <Compile Include="UI\CustomUIComponent.cs" />
     <Compile Include="UI\Leaderboard\Components\PlayerAvatar.cs" />
@@ -338,6 +341,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GuildSaber.csproj.user" />
+    <Content Include="UI\CustomLevelSelectionMenu\Views\GuildSelectionMenu.bsml" />
     <EmbeddedResource Include="Resources\Arrow.png" />
     <EmbeddedResource Include="Resources\GsWhiteLogo.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogoOrange4.png" />
@@ -349,7 +353,6 @@
     <EmbeddedResource Include="Resources\BSCCIconOrange.png" />
     <EmbeddedResource Include="Resources\CSIcon.png" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

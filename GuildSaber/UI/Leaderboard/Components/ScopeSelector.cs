@@ -9,7 +9,7 @@ namespace GuildSaber.UI.Leaderboard.Components
 {
     class ScopeSelector : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.ScopeSelector.bsml";
+        protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.ScopeSelector.bsml";
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////

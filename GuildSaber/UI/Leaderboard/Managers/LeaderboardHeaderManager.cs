@@ -43,23 +43,27 @@ namespace GuildSaber.UI.Leaderboard
             if (!GuildSaberCustomLeaderboard.Initialized) return false;
 
             GameObject l_Current = null;
-            await WaitUtils.Wait(() => (l_Current = GuildSaberUtils.FindGm(HEADER_PANEL_PATH)) != null, 1);
-
-            if (l_Current != null)
-                m_Header = l_Current;
-
-            if (m_Header != null && m_HeaderImageView != null)
+            bool l_MoveNext = false;
+            while (!l_MoveNext)
             {
-                if (s_UpdatesModal == null)
-                {
-                    s_UpdatesModal = CustomUIComponent.CreateItem<UpdateView>(m_Header.transform, true, true);
-                    s_UpdatesModal.CheckUpdates();
-                }
+                l_Current = GuildSaberUtils.FindGm(HEADER_PANEL_PATH);
+                await WaitUtils.Wait(() => l_MoveNext = l_Current != null, 100, 0, 10);
             }
 
-            m_HeaderImageView = m_Header.GetComponentInChildren<ImageView>();
+            if (l_Current != null)
+            {
+                m_Header = l_Current;
+                m_HeaderImageView = m_Header.GetComponentInChildren<ImageView>();
+            }
 
             return true;
+        }
+
+        public static async void CreateUpdateView()
+        {
+            await WaitUtils.Wait(() => m_Header != null, 10, p_CodeLine: 64);
+            s_UpdatesModal = CustomUIComponent.CreateItem<UpdateView>(m_Header.transform, true, true);
+            s_UpdatesModal.CheckUpdates();
         }
 
         public static async void SetColors(Color p_Color0, Color p_Color1)

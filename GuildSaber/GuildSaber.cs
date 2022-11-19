@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using BeatSaberMarkupLanguage;
 using BeatSaberPlus.SDK;
+using BeatSaberPlus.SDK.Game;
 using CP_SDK;
 using GuildSaber.API;
 using GuildSaber.Configuration;
@@ -24,28 +26,42 @@ namespace GuildSaber.BSPModule
 
         public override bool UseChatFeatures => false;
 
-        public override bool IsEnabled { get => GSConfig.Instance.Enabled; set { GSConfig.Instance.Enabled = value; if (value) { EnableLeader(); } } }
+        public override bool IsEnabled
+        {
+            get => GSConfig.Instance.Enabled;
+            set
+            {
+                GSConfig.Instance.Enabled = value;
+                if (value)
+                {
+                    EnableLeader();
+                }
+            }
+        }
 
         public override EIModuleBaseActivationType ActivationType => EIModuleBaseActivationType.OnMenuSceneLoaded;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        #nullable enable
+#nullable enable
         public static int? GSPlayerId { get; internal set; } = null;
         public static ulong SsPlayerId { get; internal set; } = 0;
 
         public static GuildData CardSelectedGuild { get; internal set; } = default(GuildData);
-        public static GuildData PlaylistDownloadSelectedGuild { get; internal set; } = default(GuildData);
+        //public static GuildData PlaylistDownloadSelectedGuild { get; internal set; } = default(GuildData);
         public static GuildData LeaderboardSelectedGuild { get; internal set; } = default(GuildData);
-        public static GuildData GuildSaberPlayingMenuSelectedGuild { get; internal set; } = default(GuildData);
+        //public static GuildData GuildSaberPlayingMenuSelectedGuild { get; internal set; } = default(GuildData);
 
         public static List<GuildData> AvailableGuilds { get; internal set; } = new List<GuildData>();
 
         public static EModState ModState { get; internal set; } = EModState.APIError;
         public static EModErrorState ModErrorState { get; internal set; } = EModErrorState.NoError;
-
-        public static HarmonyLib.Harmony HarmonyInstance { get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber"); }
+        public static bool Restarting = false;
+        public static HarmonyLib.Harmony HarmonyInstance
+        {
+            get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber");
+        }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////

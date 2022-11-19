@@ -40,7 +40,7 @@ namespace GuildSaber.UI.Leaderboard.Components
     {
         public const string UPDATE_FILE_LOCATION = "UserData/BeatSaberPlus/GuildSaber/Updates.json";
 
-        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.UpdateView.bsml";
+        protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.UpdateView.bsml";
 
         [UIComponent("ShowUpdatesButton")] Button m_ShowUpdatesButton = null;
         [UIComponent("UdpatesModal")] private ModalView m_UpdatesModal = null;

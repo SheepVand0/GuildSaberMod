@@ -1,26 +1,33 @@
 ﻿<bg bg="round-rect-panel" id="BG" pref-width="100" pref-height="75">
-	<vertical id='Elems' pref-width='100' pref-height='65' vertical-fit='PreferredSize'>
-		<clickable-text text='Playlists : ' underlined='true' event-click='ShowUwUSetting' />
-		<modal show-event='ShowUwUSetting' hide-event='HideUwU' size-delta-x='80' size-delta-y='20'>
-			<vertical vertical-fit='PreferredSize'>
-				<toggle-setting text='UwU Mode : ' value='UwU' apply-on-change='true' />
-				<button text='Hide' event-click='HideUwU' />
-			</vertical>
-		</modal>
-		<dropdown-list-setting id='Dropdown' text='Selected Guild : ' choices='AvailableGuilds' value='SelectedGuild' on-change='OnGuildChange' bind-value='true'/>
-		<vertical min-width='25' spacing='2'>
-				<toggle-setting text='Playlists contains only un passed maps' value='UnPassedMaps' apply-on-change='true' />
-			<custom-list id='CategoryList' contents='AvailableCategories' pref-height='40' show-scrollbar='true'>
-				<horizontal spacing='5' child-align='MiddleCenter' bg='panel-top' id='ElemsHorizontal' background-color='white'>
-					<text align='Center' id='CategoryNameText' text='CategoryName' />
-					<horizontal pref-width="2" />
-					<button align='Center' text='Download' id='DownloadBut' />
-					<button align="Center" text="Clear" id="ClearCategoryButton" on-click="ClearCategoryFolder" />
-				</horizontal>
-			</custom-list>
-		</vertical>
-	</vertical>
-	<grid id='LoadingLayout'  cell-size-x='20' cell-size-y='20'>
-		<loading-indicator />
-	</grid>
+    <vertical id='Elems' pref-width='100' pref-height='65' vertical-fit='PreferredSize'>
+        <clickable-text text='Playlists : ' underlined='true' event-click='ShowUwUSetting'/>
+        <modal show-event='ShowUwUSetting' hide-event='HideUwU' size-delta-x='80' size-delta-y='20'>
+            <vertical vertical-fit='PreferredSize'>
+                <toggle-setting text='UwU Mode : ' value='UwU' apply-on-change='true'/>
+                <button text='Hide' event-click='HideUwU'/>
+            </vertical>
+        </modal>
+        <dropdown-list-setting id='Dropdown' text='Selected Guild : ' choices='AvailableGuilds' value='SelectedGuild' on-change='OnGuildChange' bind-value='true'/>
+        <vertical min-width='25' spacing='2'>
+            <toggle-setting text='Playlists contains only un passed maps' value='UnPassedMaps' apply-on-change='true'/>
+            <custom-list id='CategoryList' contents='AvailableCategories' pref-height='40' show-scrollbar='true'>
+                <horizontal child-align='MiddleCenter' bg='panel-top' id='ElemsHorizontal' background-color='white'>
+                    <horizontal pref-width="2"/>
+                    <horizontal pref-width="10">
+                        <text align='Left' id='CategoryNameText' text='CategoryName'/>
+                    </horizontal>
+                    <horizontal pref-width="1"/>
+                    <horizontal pref-width="15">
+                        <button align='Center' text='Download' id='DownloadBut'/>
+                    </horizontal>
+                    <horizontal pref-width="15">
+                        <button align="Center" text="Clear" id="ClearCategoryButton" on-click="ClearCategoryFolder"/>
+                    </horizontal>
+                </horizontal>
+            </custom-list>
+        </vertical>
+    </vertical>
+    <grid id='LoadingLayout' cell-size-x='20' cell-size-y='20'>
+        <loading-indicator/>
+    </grid>
 </bg>

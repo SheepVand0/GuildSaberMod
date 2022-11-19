@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Parser;
 using CP_SDK.Unity;
@@ -25,7 +26,7 @@ namespace GuildSaber.UI
     public abstract class CustomUIComponent : MonoBehaviour
     {
 
-        protected abstract string m_ViewResourceName { get; }
+        protected abstract string ViewResourceName { get; }
         public BSMLParserParams m_ParserParams;
         public Action OnPostParse;
 
@@ -46,7 +47,7 @@ namespace GuildSaber.UI
         {
             TItem l_Item = new GameObject($"Parent_{nameof(TItem)}").AddComponent<TItem>();
             l_Item.OnCreate();
-            l_Item.Init(p_Init, p_Parent, p_UnderParent, p_NeedParse);
+            l_Item.Init<TItem>(p_Init, p_Parent, p_UnderParent, p_NeedParse);
             l_Item.OnPostParse += () =>
             {
                 p_Callback?.Invoke(l_Item);
@@ -83,12 +84,13 @@ namespace GuildSaber.UI
             TItem l_Item = CreateItem<TItem>(p_Parent, p_UnderParent, p_NeedParse, false);
             foreach (ItemParam l_Param in p_Params)
             {
-                PropertyInfo p_PropertyInfo = typeof(TItem).GetProperty(l_Param.m_ParamName, BindingFlags.Public | BindingFlags.Instance);
-                if (p_PropertyInfo != null && p_PropertyInfo.CanWrite && p_PropertyInfo.PropertyType == l_Param.m_Value.GetType())
-                    p_PropertyInfo.SetValue(l_Item, l_Param.m_Value, null);
-                else GSLogger.Instance.Error(new Exception($"Property not valid -> Gived Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}"), nameof(CustomUIComponent), nameof(CreateItemWithParams));
+                PropertyInfo l_PropertyInfo = typeof(TItem).GetProperty(l_Param.m_ParamName, BindingFlags.Public | BindingFlags.Instance) ?? null;
+                if (l_PropertyInfo != null && l_PropertyInfo.CanWrite && l_PropertyInfo.PropertyType == l_Param.m_Value.GetType())
+                    l_PropertyInfo.SetValue(l_Item, l_Param.m_Value, null);
+                else
+                    GSLogger.Instance.Error(new Exception($"Property not valid -> Given Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}"), nameof(CustomUIComponent), nameof(CreateItemWithParams));
             }
-            l_Item.Init(true, p_Parent, p_UnderParent, p_NeedParse);
+            l_Item.Init<TItem>(true, p_Parent, p_UnderParent, p_NeedParse);
             l_Item.OnPostParse += () =>
             {
                 p_Callback?.Invoke(l_Item);
@@ -106,6 +108,7 @@ namespace GuildSaber.UI
         protected virtual void OnDestroy() { }
         public virtual void DestroyItem() { }
         public virtual void ResetComponent() { }
+        protected virtual string GetViewDescription() => string.Empty;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -117,10 +120,10 @@ namespace GuildSaber.UI
         /// <param name="p_Parent"></param>
         /// <param name="p_UnderParent"></param>
         /// <param name="p_Parse"></param>
-        public void Init(bool p_Enable, Transform p_Parent, bool p_UnderParent, bool p_Parse)
+        public void Init<T>(bool p_Enable, Transform p_Parent, bool p_UnderParent, bool p_Parse) where T : CustomUIComponent
         {
             try {
-                name = GetType().Name;
+                name = $"{typeof(T)}_{Resources.FindObjectsOfTypeAll<T>().Length}";
                 if (p_Parse) m_ParserParams = Parse(p_Parent);
                 gameObject.transform.SetParent(p_UnderParent ? p_Parent : p_Parent.parent, false);
                 MTCoroutineStarter.Start(_PostCreate(this));
@@ -128,6 +131,7 @@ namespace GuildSaber.UI
             catch (Exception l_E)
             {
                 GSLogger.Instance.Error(l_E, nameof(CustomUIComponent), nameof(Init));
+                GSLogger.Instance.Error(new Exception($"Component name = {name}"), nameof(CustomUIComponent), nameof(Init));
             }
         }
 
@@ -140,14 +144,19 @@ namespace GuildSaber.UI
         {
             try
             {
-                BSMLParserParams l_ParserParams = BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), m_ViewResourceName), p_Parent.gameObject, this);
+                string l_Resource = ViewResourceName;
+                if (l_Resource == string.Empty)
+                    l_Resource = GetViewDescription();
+                if (l_Resource == string.Empty) throw new Exception($"No Valid bsml was found for the ui component {name}");
+
+                BSMLParserParams l_ParserParams = BSMLParser.instance.Parse(Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), l_Resource), p_Parent.gameObject, this);
                 PostParse();
                 return l_ParserParams;
             }
             catch (Exception l_Ex)
             {
                 GSLogger.Instance.Error(l_Ex, nameof(CustomUIComponent), nameof(Parse));
-                Exception l_NewEx = new("Error during parsing bsml : maybe path is invalid ?"); throw l_NewEx;
+                Exception l_NewEx = new($"Error during parsing bsml of component {name} : maybe path is invalid ?"); throw l_NewEx;
             }
         }
 

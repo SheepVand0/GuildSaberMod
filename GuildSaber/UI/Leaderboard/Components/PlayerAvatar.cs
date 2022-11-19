@@ -13,7 +13,7 @@ namespace GuildSaber.UI.Leaderboard.Components
     class PlayerAvatar : CustomUIComponent
     {
 
-        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.PlayerAvatar.bsml";
+        protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.PlayerAvatar.bsml";
 
         private Material _PlayerAvatarMaskInstance = null;
 

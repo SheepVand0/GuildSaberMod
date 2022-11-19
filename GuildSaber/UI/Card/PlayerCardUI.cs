@@ -20,7 +20,7 @@ namespace GuildSaber.UI.Card;
 
 public class PlayerLevelUI : CustomUIComponent
 {
-    protected override string m_ViewResourceName => "GuildSaber.UI.Card.View.PlayerLevelUI.bsml";
+    protected override string ViewResourceName => "GuildSaber.UI.Card.View.PlayerLevelUI.bsml";
 
     [UIComponent("ElemsLayout")] private  VerticalLayoutGroup m_Elems = null;
 
@@ -66,7 +66,7 @@ public class PlayerLevelUI : CustomUIComponent
 
 public class PlayerRankUI : CustomUIComponent
 {
-    protected override string m_ViewResourceName => "GuildSaber.UI.Card.View.PlayerRankUI.bsml";
+    protected override string ViewResourceName => "GuildSaber.UI.Card.View.PlayerRankUI.bsml";
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

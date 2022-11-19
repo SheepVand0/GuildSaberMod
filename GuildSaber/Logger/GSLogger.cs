@@ -48,6 +48,11 @@ namespace GuildSaber.Logger
             }
         }
 
+        internal void Log(bool p_Value, IPA.Logging.Logger.LogLevel p_LogType)
+        {
+            Log(p_Value.ToString(), p_LogType);
+        }
+
         /// <summary>
         /// Log Error
         /// </summary>
@@ -57,6 +62,9 @@ namespace GuildSaber.Logger
         internal void Error(Exception p_E, string p_Class, string p_Function)
         {
             Log($"[GuildSaber.{p_Class}][{p_Function}] : {p_E}", IPA.Logging.Logger.LogLevel.ErrorUp);
+            Log($"[GuildSaber.{p_Class}][{p_Function}] Source : {p_E.Source}", IPA.Logging.Logger.LogLevel.ErrorUp);
+            Log($"[GuildSaber.{p_Class}][{p_Function}] TargetSite : {p_E.TargetSite}", IPA.Logging.Logger.LogLevel.ErrorUp);
+
         }
 
     }

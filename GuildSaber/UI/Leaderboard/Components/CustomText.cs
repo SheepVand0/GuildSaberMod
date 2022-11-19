@@ -7,7 +7,7 @@ namespace GuildSaber.UI.Leaderboard.Components
 {
     class CustomText : CustomUIComponent
     {
-        protected override string m_ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.CustomText.bsml";
+        protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.CustomText.bsml";
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////

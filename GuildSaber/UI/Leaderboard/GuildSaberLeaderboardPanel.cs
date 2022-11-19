@@ -15,6 +15,7 @@ using HMUI;
 using IPA.Utilities;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace GuildSaber.UI.Leaderboard
@@ -23,7 +24,6 @@ namespace GuildSaber.UI.Leaderboard
     [ViewDefinition("GuildSaber.UI.GuildSaber.View.LeaderboardPanel.bsml")]
     internal class GuildSaberLeaderboardPanel : BSMLAutomaticViewController
     {
-
         public static GuildSaberLeaderboardPanel PanelInstance;
 
         [UIComponent("PlayerErrorTxt")] private readonly TextMeshProUGUI m_ErrorText = null;
@@ -38,12 +38,15 @@ namespace GuildSaber.UI.Leaderboard
         private PlayerAvatar m_PlayerAvatar = null;
         public PointsType m_PointsType = null;
 
-        [UIValue("LeaderGuilds")] private List<object> m_AvailablesGuilds = new() { GSConfig.Instance.SelectedGuild };
-        [UIValue("LeaderboardGuild")] private string DropdownSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild).Name;
+        [UIValue("LeaderGuilds")] private readonly List<object> m_AvailableGuilds = new()
+        {
+            GSConfig.Instance.SelectedGuild
+        };
+        [UIValue("LeaderboardGuild")] private string m_DropdownSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild).Name;
         public int m_SelectedGuild = GSConfig.Instance.SelectedGuild;
 
         public ApiPlayerData m_PlayerData = default(ApiPlayerData);
-        public bool m_IsFirtActivation = true;
+        public bool m_IsFirstActivation = true;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -55,6 +58,7 @@ namespace GuildSaber.UI.Leaderboard
         {
             PanelInstance = this;
             Reload(ReloadMode.FromCurrent, true, true);
+            LeaderboardHeaderManager.CreateUpdateView();
         }
 
         /// <summary>
@@ -62,7 +66,7 @@ namespace GuildSaber.UI.Leaderboard
         /// </summary>
         internal async void SetColors()
         {
-            if(GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
+            if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
             {
                 LeaderboardHeaderManager.SetColors(Color.red, Color.clear);
                 return;
@@ -99,6 +103,10 @@ namespace GuildSaber.UI.Leaderboard
         /// <param name="p_ReloadStyle">Reload shaders</param>
         public async void Reload(ReloadMode p_ReloadMode, bool p_SetLoadingModeBeforeGettingData, bool p_ReloadStyle)
         {
+            GSLogger.Instance.Log("Reloading", IPA.Logging.Logger.LogLevel.InfoUp);
+
+            await WaitUtils.Wait(() => gameObject.activeInHierarchy, 10, p_CodeLine: 105);
+
             PanelInstance = this;
 
             if (GuildSaberModule.IsStateError())
@@ -110,17 +118,19 @@ namespace GuildSaber.UI.Leaderboard
             if (p_SetLoadingModeBeforeGettingData)
                 SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Loading);
 
-            if (m_IsFirtActivation)
+            if (m_IsFirstActivation)
                 m_SelectedGuild = GSConfig.Instance.SelectedGuild;
-            await Task.Run(delegate {
-                GuildSaberModule.LeaderboardSelectedGuild = GuildSaberUtils.GetGuildFromId(m_SelectedGuild);
-            });
+            await Task.Run(delegate { GuildSaberModule.LeaderboardSelectedGuild = GuildSaberUtils.GetGuildFromId(m_SelectedGuild); });
             ///-----------------------------------------Panel Style-----------------------------------------
             switch (p_ReloadMode)
             {
                 case ReloadMode.FromCurrent:
                     if (m_SelectedGuild == GSConfig.Instance.SelectedGuild) m_PlayerData = GuildApi.GetPlayerDataFromCurrent();
-                    else { Reload(ReloadMode.FromApi, true, true); return; }
+                    else
+                    {
+                        Reload(ReloadMode.FromApi, true, true);
+                        return;
+                    }
                     break;
                 case ReloadMode.FromApi:
                     m_PlayerData = await GuildApi.GetPlayerInfoFromAPI(false, m_SelectedGuild, true);
@@ -139,11 +149,11 @@ namespace GuildSaber.UI.Leaderboard
             m_PlayerName.text = GuildSaberUtils.GetPlayerNameToFit(m_PlayerData.Name, 12);
             SetLeaderboardGuildsChoices(GuildSaberModule.AvailableGuilds);
 
-            if (m_IsFirtActivation)
+            if (m_IsFirstActivation)
             {
                 m_PointsType = CustomUIComponent.CreateItem<PointsType>(m_NameLayout.transform, true, true);
                 m_PlayerAvatar = CustomUIComponent.CreateItem<PlayerAvatar>(m_ElemsLayout.transform, true, true);
-                m_IsFirtActivation = false;
+                m_IsFirstActivation = false;
             }
 
             if (p_ReloadStyle)
@@ -157,7 +167,8 @@ namespace GuildSaber.UI.Leaderboard
                 try
                 {
                     l_IconTexture = await GuildSaberUtils.GetImage(GuildSaberModule.LeaderboardSelectedGuild.Logo);
-                } catch(Exception l_E)
+                }
+                catch (Exception l_E)
                 {
                     GSLogger.Instance.Error(l_E, nameof(GuildSaberLeaderboardPanel), nameof(Reload));
                     l_IconTexture = Utilities.FindTextureInAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
@@ -206,21 +217,21 @@ namespace GuildSaber.UI.Leaderboard
         /// <summary>
         /// Set dropdown guilds
         /// </summary>
-        /// <param name="l_Guilds">GuildData list</param>
-        private void SetLeaderboardGuildsChoices(List<GuildData> l_Guilds)
+        /// <param name="p_Guilds">GuildData list</param>
+        private void SetLeaderboardGuildsChoices(List<GuildData> p_Guilds)
         {
-            m_AvailablesGuilds.Clear();
-            for (int l_i = 0; l_i < l_Guilds.Count; l_i++)
+            m_AvailableGuilds.Clear();
+            for (int l_i = 0; l_i < p_Guilds.Count; l_i++)
             {
-                GuildData l_Current = l_Guilds[l_i];
-                m_AvailablesGuilds.Add(l_Current.Name);
+                GuildData l_Current = p_Guilds[l_i];
+                m_AvailableGuilds.Add(l_Current.Name);
                 if (l_Current.ID == m_SelectedGuild)
                 {
                     m_GuildSelector.Value = l_Current.Name;
                     m_GuildSelector.ApplyValue();
                 }
             }
-            m_GuildSelector.values = m_AvailablesGuilds;
+            m_GuildSelector.values = m_AvailableGuilds;
             m_GuildSelector.UpdateChoices();
         }
     }
