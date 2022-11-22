@@ -18,10 +18,11 @@ namespace GuildSaber.UI.Leaderboard
         /// </summary>
         public static void Setup()
         {
-            GameLevelStatsView = GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView");
+            GameLevelStatsView = (GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView") ?? null)!;
+            if (GameLevelStatsView == null) return;
             Events.e_OnLeaderboardShown += (p_FirstActivation) =>
             {
-                if (!GuildSaberCustomLeaderboard.Initialized || !GuildSaberCustomLeaderboard.IsShown) return;
+                if (!GuildSaberCustomLeaderboard.Initialized/* || !GuildSaberCustomLeaderboard.IsShown*/) return;
 
                 Hide();
             };

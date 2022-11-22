@@ -44,14 +44,20 @@ namespace GuildSaber.UI.Leaderboard
 
             GameObject l_Current = null;
             bool l_MoveNext = false;
-            while (!l_MoveNext)
+            // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
+            while (true)
             {
-                l_Current = GuildSaberUtils.FindGm(HEADER_PANEL_PATH);
+                l_Current = GuildSaberUtils.FindGm(HEADER_PANEL_PATH) ?? null;
                 await WaitUtils.Wait(() =>
                 {
                     l_MoveNext = l_Current != null;
+                    if (l_MoveNext)
+                        l_MoveNext = l_Current.gameObject.activeSelf;
                     return true;
-                }, 100, 0, 10);
+                }, 10, 0, 10);
+                if (l_MoveNext) break;
+
+                return false;
             }
 
             if (l_Current != null)
@@ -59,6 +65,8 @@ namespace GuildSaber.UI.Leaderboard
                 m_Header = l_Current;
                 m_HeaderImageView = m_Header.GetComponentInChildren<ImageView>();
             }
+            else
+                return false;
 
             return true;
         }
@@ -95,7 +103,9 @@ namespace GuildSaber.UI.Leaderboard
 
             await WaitUtils.Wait(() => m_Header != null, 100);
 
-            m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
+            TextMeshProUGUI l_Text = m_Header.GetComponentInChildren<TextMeshProUGUI>();
+            if (l_Text)
+                l_Text.text = p_Text;
         }
 
         public static async void ChangeTextForced(string p_Text, bool p_ChangeReallyForce = false)
@@ -105,10 +115,12 @@ namespace GuildSaber.UI.Leaderboard
                     return;
             if (GuildSaberModule.IsStateError())
                 return;
-            if (m_Header == null)
-                if (!await GetPanel())
-                    return;
-            m_Header.GetComponentInChildren<TextMeshProUGUI>().text = p_Text;
+
+            if (!await GetPanel())
+                return;
+            TextMeshProUGUI l_Text = m_Header.GetComponentInChildren<TextMeshProUGUI>();
+            if (l_Text)
+                l_Text.text = p_Text;
         }
 
     }

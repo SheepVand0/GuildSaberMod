@@ -136,25 +136,38 @@ namespace GuildSaber.Utils
             return p_Value;
         }
 
-        public static GameObject FindGm(string p_Query)
+        public static GameObject? FindGm(string p_Query)
         {
-            GameObject l_LastGM = null;
-            string[] l_Gms = p_Query.Split('.');
-            foreach (string l_Current in l_Gms)
+            try
             {
-                if (l_LastGM == null)
+                GameObject l_LastGM = null;
+                string[] l_Gms = p_Query.Split('.');
+                bool l_IsFirst = true;
+                foreach (string l_Current in l_Gms)
                 {
-                    l_LastGM = GameObject.Find(l_Gms[0]);
-                    if (l_LastGM == null) return null;
-                    continue;
+                    if (l_IsFirst)
+                    {
+                        l_LastGM = GameObject.Find(l_Gms[0]);
+                        l_IsFirst = false;
+                        continue;
+                    }
+
+                    if (l_LastGM == null)
+                    {
+                        return null;
+                    }
+
+                    GameObject l_CurrentGM = l_LastGM.transform.Find(l_Current).gameObject;
+                    if (l_CurrentGM == null) return null;
+                    l_LastGM = l_CurrentGM;
                 }
 
-                GameObject l_CurrentGM = l_LastGM.transform.Find(l_Current).gameObject;
-                if (l_CurrentGM == null) return null;
-                l_LastGM = l_CurrentGM;
+                return l_LastGM;
             }
-
-            return l_LastGM;
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>

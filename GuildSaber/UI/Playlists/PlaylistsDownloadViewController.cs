@@ -196,7 +196,8 @@ namespace GuildSaber.UI.GuildSaber
             try
             {
                 CheckAndDeleteIfPlaylistOrFolderExists(PlaylistsVerificationType.PlaylistsOnly);
-                l_Client.DownloadFileAsync(new Uri(l_QueryString), $"{m_CategoryDirectory}/{m_CategoryLevels[CurrentPlaylistIndex].LevelNumber:000}_{Category.Name}.bplist");
+                l_Client.DownloadFileAsync(new Uri(l_QueryString),
+                    $"{m_CategoryDirectory}/{m_CategoryLevels[CurrentPlaylistIndex].LevelNumber:000}_{GuildApi.GetGuildFromId(PlaylistViewController.PlaylistsDownloadViewControllerInstance.m_GuildId).Name}_{Category.Name}.bplist");
                 l_Client.DownloadFileCompleted += (p_Sender, p_Event) =>
                 {
                     if (p_Event.Error == null)
@@ -265,6 +266,8 @@ namespace GuildSaber.UI.GuildSaber
             return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.GuildSaber.View.ModViewController.bsml");
         }
 
+        public static PlaylistViewController PlaylistsDownloadViewControllerInstance;
+
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
@@ -294,6 +297,7 @@ namespace GuildSaber.UI.GuildSaber
             if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
                 return;
             UpdateCategories();
+            PlaylistsDownloadViewControllerInstance = this;
         }
 
         ////////////////////////////////////////////////////////////////////////////

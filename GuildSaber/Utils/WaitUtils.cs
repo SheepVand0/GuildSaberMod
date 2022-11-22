@@ -14,6 +14,8 @@ namespace GuildSaber.Utils
             {
                 bool l_ShouldTryCount = p_MaxTryCount > 0;
 
+                GSLogger.Instance.Log($"Doing wait at line : {p_CodeLine}", IPA.Logging.Logger.LogLevel.InfoUp);
+
                 do
                 {
                     try

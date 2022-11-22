@@ -30,6 +30,8 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         [UIComponent("ModalPassState")] private readonly TextMeshProUGUI m_ModalPassState = null;
         [UIComponent("ModalPauseCount")] private readonly TextMeshProUGUI m_ModalPauseCount = null;
         [UIComponent("ModalHMD")] private readonly TextMeshProUGUI m_ModalHMD = null;
+        [UIComponent("ModalTimeSet")] private readonly TextMeshProUGUI m_ModalTimeSet = null;
+        [UIComponent("ModalReplay")] internal readonly Button m_ModalReplay = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -72,6 +74,8 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         public PassState.EState PassState { get; set; } = API.PassState.EState.Allowed;
 
         private List<string> m_BannedModifiers = new List<string>();
+        public long UnixTimeSet { get; set; } = 0;
+        private string? ReplayLink { get; set; } = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -110,7 +114,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         /// <param name="p_BannedModifiers"></param>
         /// <param name="p_PassState"></param>
         /// <param name="p_Hmd"></param>
-        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd)
+        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd, long p_UnixTimeSet, string? p_ReplayLink)
         {
             BadCuts = p_BadCuts;
             MissedNotes = p_MissedNotes;
@@ -119,6 +123,8 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             PassState = p_PassState;
             m_BannedModifiers = p_BannedModifiers;
             HMD = p_Hmd;
+            UnixTimeSet = p_UnixTimeSet;
+
         }
 
         /// <summary>
@@ -304,6 +310,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 
             m_ModalPassState.text = "Pass state : " + $"<color=#{API.PassState.GetColorFromPassState(PassState)}>{PassState}</color>";
             m_ModalHMD.text = $"Set on : {HMD}";
+            m_ModalTimeSet.text = $"{CP_SDK.Misc.Time.FromUnixTime(UnixTimeSet)} ago";
         }
 
         /// <summary>

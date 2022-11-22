@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using GuildSaber.UI.Leaderboard.Components.SubComponents;
+using GuildSaber.Utils;
 
 namespace GuildSaber.UI.Leaderboard.Components
 {

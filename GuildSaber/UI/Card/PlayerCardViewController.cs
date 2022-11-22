@@ -172,7 +172,7 @@ internal class PlayerCardViewController : BSMLAutomaticViewController
             }
         }
 
-        AllowCustomCardColors = PlayerCardUI.m_Player.LevelValue >= (float)(l_MaxLevel * 0.97f);
+        AllowCustomCardColors = PlayerCardUI.m_Player.LevelValue >= (float)(l_MaxLevel * 0.95f);
     }
 
     ////////////////////////////////////////////////////////////////////////////
