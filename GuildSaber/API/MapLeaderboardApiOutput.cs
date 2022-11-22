@@ -48,7 +48,7 @@ namespace GuildSaber.API
         public UInt32 HMD { get; set; }
         public string UnixTimeSet { get; set; }
         public bool HasReplay { get; set; }
-        public string? ReplayViewerURL { get; set; }
+        public string? ReplayURL { get; set; }
         public bool HasScoreStatistic { get; set; }
         public ApiScoreStatistic? ScoreStatistic { get; set; }
     }

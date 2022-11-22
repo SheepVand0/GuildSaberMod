@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine.UI;
 using BeatSaberMarkupLanguage.Attributes;
 using GuildSaber.API;
@@ -7,6 +9,7 @@ using GuildSaber.Utils;
 using HMUI;
 using TMPro;
 using UnityEngine;
+using IPA.Utilities;
 
 namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 {
@@ -124,7 +127,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             m_BannedModifiers = p_BannedModifiers;
             HMD = p_Hmd;
             UnixTimeSet = p_UnixTimeSet;
-
+            ReplayLink = p_ReplayLink;
         }
 
         /// <summary>
@@ -310,7 +313,27 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 
             m_ModalPassState.text = "Pass state : " + $"<color=#{API.PassState.GetColorFromPassState(PassState)}>{PassState}</color>";
             m_ModalHMD.text = $"Set on : {HMD}";
-            m_ModalTimeSet.text = $"{CP_SDK.Misc.Time.FromUnixTime(UnixTimeSet)} ago";
+            DateTime l_Time = CP_SDK.Misc.Time.FromUnixTime(CP_SDK.Misc.Time.UnixTimeNow() - UnixTimeSet);
+
+            long l_FormattedYears = l_Time.Year - 1970;
+            string l_Years = (l_FormattedYears != 0) ? $"{l_FormattedYears} Years" : string.Empty;
+
+            long l_FormattedMonth = l_Time.Month - 1;
+            string l_Months = (l_FormattedMonth != 0) ? $"{l_FormattedMonth} Months" : string.Empty;
+
+            long l_FormattedDays = l_Time.Day - 1;
+            string l_Days = (l_FormattedDays != 0) ? $"{l_FormattedDays} Days" : string.Empty;
+
+            bool l_IsMajorObjects0 = string.IsNullOrEmpty(l_Years) && string.IsNullOrEmpty(l_Months) && string.IsNullOrEmpty(l_Days);
+
+            string l_Hours = (l_Time.Hour != 0 && l_IsMajorObjects0) ? $"{l_Time.Hour} Hours" : string.Empty;
+            string l_Minutes = (l_Time.Minute != 0 && l_IsMajorObjects0) ? $"{l_Time.Minute} Minutes" : string.Empty;
+            string l_Seconds = (l_Time.Second != 0 && l_IsMajorObjects0) ? $"{l_Time.Second} Seconds" : string.Empty;
+            m_ModalTimeSet.text = $"{l_Years} {l_Months} {l_Days} {l_Hours} {l_Minutes} {l_Seconds}ago";
+
+
+            m_ModalReplay.interactable = ReplayLink != null;
+
         }
 
         /// <summary>
@@ -322,6 +345,12 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             m_InfoModal.Hide(true);
         }
 
+        [UIAction("StartReplay")]
+        private async void StartReplay()
+        {
+            m_ModalReplay.interactable = false;
+            Resources.FindObjectsOfTypeAll<BeatLeader.Replayer.ReplayerLauncher>().First().StartReplayAsync(await BeatLeaderReplayDownloader.GetReplay(ReplayLink));
+        }
 
     }
 }

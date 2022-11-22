@@ -413,7 +413,7 @@ namespace GuildSaber.UI.Leaderboard.Components
                         "NO",
                         "NB",
                         "ZM"
-                    }, (PassState.EState)l_Score.State, (EHMD)l_Score.HMD, long.Parse(l_Score.UnixTimeSet));
+                    }, (PassState.EState)l_Score.State, (EHMD)l_Score.HMD, long.Parse(l_Score.UnixTimeSet), l_Score.ReplayURL);
                     if (l_Score.ScoreSaberID == GuildSaberModule.SsPlayerId.ToString())
                     {
                         l_CurrentCell.SetCellToCurrentPlayer();
