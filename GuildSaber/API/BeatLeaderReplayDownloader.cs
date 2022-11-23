@@ -25,7 +25,7 @@ namespace GuildSaber.API
                 byte[] l_Bytes = await l_Client.DownloadDataTaskAsync(new Uri(p_Link));
                 GSLogger.Instance.Log(p_Link, IPA.Logging.Logger.LogLevel.InfoUp);
                 MethodInfo l_BeatLeaderMethod = Assembly.Load(AssemblyName.GetAssemblyName("BeatLeader")).GetType("ReplayDecoder").GetMethod("Decode", BindingFlags.Static | BindingFlags.Public);
-                l_NewData = new((Replay)l_BeatLeaderMethod.Invoke(null, new object[1] { l_Bytes }));
+                l_NewData = new((Replay)l_BeatLeaderMethod.Invoke(null, new object[] { l_Bytes }));
 
             }
             catch (Exception l_E)
