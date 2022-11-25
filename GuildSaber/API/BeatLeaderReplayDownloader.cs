@@ -13,19 +13,19 @@ namespace GuildSaber.API
     public static class BeatLeaderReplayDownloader
     {
 
-        public static async Task<ReplayLaunchData?> GetReplay(string p_Link)
+        public static async Task<Replay?> GetReplay(string p_Link)
         {
-
-
             WebClient l_Client = new();
 
-            ReplayLaunchData? l_NewData = null;
+            Replay? l_NewData = null;
             try
             {
                 byte[] l_Bytes = await l_Client.DownloadDataTaskAsync(new Uri(p_Link));
                 GSLogger.Instance.Log(p_Link, IPA.Logging.Logger.LogLevel.InfoUp);
-                MethodInfo l_BeatLeaderMethod = Assembly.Load(AssemblyName.GetAssemblyName("BeatLeader")).GetType("ReplayDecoder").GetMethod("Decode", BindingFlags.Static | BindingFlags.Public);
-                l_NewData = new((Replay)l_BeatLeaderMethod.Invoke(null, new object[] { l_Bytes }));
+
+                MethodInfo? l_BeatLeaderMethod = Assembly.Load(AssemblyName.GetAssemblyName("Plugins\\BeatLeader.dll")).GetType("BeatLeader.Models.ReplayDecoder", true).GetMethod("Decode", new[] { typeof(byte[]) });
+                GSLogger.Instance.Log(l_BeatLeaderMethod == null, IPA.Logging.Logger.LogLevel.NoticeUp);
+                l_NewData = (Replay)l_BeatLeaderMethod.Invoke(null, new object[] { l_Bytes });
 
             }
             catch (Exception l_E)

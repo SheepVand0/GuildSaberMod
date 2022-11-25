@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CP_SDK.Unity;
 using GuildSaber.API;
 using GuildSaber.BSPModule;
+using GuildSaber.Logger;
 using TMPro;
 using UnityEngine;
 using Zenject;
@@ -19,7 +20,6 @@ namespace GuildSaber.Utils
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
         /// Statics Utils
-
         /// <summary>
         ///  Guild List contains this guild id ?
         /// </summary>
@@ -95,8 +95,8 @@ namespace GuildSaber.Utils
         public static bool ColorEquals(this UnityEngine.Color p_ColorBase, UnityEngine.Color p_ColorToCheck, float p_Tolerance)
         {
             bool l_Return = p_ColorToCheck.r.IsIn(p_ColorBase.r - p_Tolerance, p_ColorBase.r + p_Tolerance)
-                         && p_ColorToCheck.g.IsIn(p_ColorBase.g - p_Tolerance, p_ColorBase.g + p_Tolerance)
-                         && p_ColorToCheck.b.IsIn(p_ColorBase.b - p_Tolerance, p_ColorBase.b + p_Tolerance);
+                            && p_ColorToCheck.g.IsIn(p_ColorBase.g - p_Tolerance, p_ColorBase.g + p_Tolerance)
+                            && p_ColorToCheck.b.IsIn(p_ColorBase.b - p_Tolerance, p_ColorBase.b + p_Tolerance);
             return l_Return;
         }
         public static bool IsIn(this float p_Value, float p_Min, float p_Max)
@@ -185,40 +185,32 @@ namespace GuildSaber.Utils
 
         public enum ErrorMode
         {
-            StackTrace, Message
+            StackTrace,
+            Message
         }
 
-        public static async Task<Texture2D> GetImage(string p_Url)
+        public static async Task<Texture2D> GetImage(string p_Url, bool p_LogOnError = false)
         {
             Texture2D l_NewTexture = new Texture2D(100, 100);
 
-            float l_Time = UnityEngine.Time.realtimeSinceStartup;
-            string l_Link = $"UserData/BeatSaberPlus/GuildSaber/TempImg{l_Time.ToString("0")}.png";
-
-            using (WebClient l_Client = new WebClient())
+            try
             {
-                bool l_MoveNext = false;
-                l_Client.DownloadFileAsync(new Uri(p_Url), l_Link);
-                l_Client.DownloadFileCompleted += (p_Sender, p_EventArgs) =>
+                using (WebClient l_Client = new WebClient())
                 {
-                    if (p_EventArgs.Error != null)
-                    {
-                        l_MoveNext = true;
-                        return;
-                    }
+                    bool l_MoveNext = false;
+                    byte[] l_Bytes = await l_Client.DownloadDataTaskAsync(new Uri(p_Url));
 
-                    using FileStream l_Reader = new FileStream(l_Link, FileMode.Open);
-                    byte[] l_StreamBytes = new byte[l_Reader.Length];
-                    // ReSharper disable once MustUseReturnValue
-                    l_Reader.Read(l_StreamBytes, 0, (int)l_Reader.Length);
-                    l_NewTexture.LoadImage(l_StreamBytes,false);
+                    l_NewTexture.LoadImage(l_Bytes, false);
                     l_MoveNext = true;
-                };
 
-                await WaitUtils.Wait(() => l_MoveNext, 10);
+                    await WaitUtils.Wait(() => l_MoveNext, 10);
+                }
             }
-
-            File.Delete(l_Link);
+            catch (Exception l_E)
+            {
+                if (p_LogOnError)
+                    GSLogger.Instance.Error(l_E, nameof(GuildSaberUtils), nameof(GetImage));
+            }
 
             return l_NewTexture;
         }

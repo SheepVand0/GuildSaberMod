@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using BeatLeader.Models;
+using BeatLeader.Utils;
 using UnityEngine.UI;
 using BeatSaberMarkupLanguage.Attributes;
 using GuildSaber.API;
 using GuildSaber.BSPModule;
+using GuildSaber.Logger;
 using GuildSaber.Utils;
 using HMUI;
 using TMPro;
 using UnityEngine;
 using IPA.Utilities;
+using Zenject;
 
 namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 {
@@ -67,6 +72,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         public string Score { get; set; } = string.Empty;
         public string Acc { get; set; } = string.Empty;
         public string Id { get; set; } = string.Empty;
+        public Player BeatLeaderPlayer { get; set; }
         public string Modifiers { get; set; } = string.Empty;
 
         public int BadCuts { get; set; } = 0;
@@ -93,8 +99,8 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         /// <param name="p_Score">Score</param>
         /// <param name="p_Acc">Acc</param>
         /// <param name="p_Id">Player GuildSaber Id</param>
-        /// <param name="p_Modfiers">Modifiers</param>
-        internal void Init(int p_Rank, string p_Name, float p_Points, string p_PointsName, int p_Score, float p_Acc, string p_Id, string p_Modfiers)
+        /// <param name="p_Modifiers">Modifiers</param>
+        internal void Init(int p_Rank, string p_Name, float p_Points, string p_PointsName, int p_Score, float p_Acc, string p_Id, string p_Modifiers)
         {
             Rank = $"{p_Rank}";
             PlayerName = p_Name;
@@ -103,7 +109,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             Score = p_Score.ToString();
             Acc = $"{p_Acc:00.00}%";
             Id = p_Id;
-            Modifiers = GuildSaberUtils.GetPlayerNameToFit(p_Modfiers, 4);
+            Modifiers = GuildSaberUtils.GetPlayerNameToFit(p_Modifiers, 4);
             Show();
         }
 
@@ -117,7 +123,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         /// <param name="p_BannedModifiers"></param>
         /// <param name="p_PassState"></param>
         /// <param name="p_Hmd"></param>
-        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd, long p_UnixTimeSet, string? p_ReplayLink)
+        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd, long p_UnixTimeSet, Player p_BeatLeaderPlayer, string? p_ReplayLink)
         {
             BadCuts = p_BadCuts;
             MissedNotes = p_MissedNotes;
@@ -128,6 +134,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             HMD = p_Hmd;
             UnixTimeSet = p_UnixTimeSet;
             ReplayLink = p_ReplayLink;
+            BeatLeaderPlayer = p_BeatLeaderPlayer;
         }
 
         /// <summary>
@@ -214,7 +221,9 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         /// </summary>
         internal async void Reset()
         {
-            await WaitUtils.Wait(() => m_ElemsLayout.gameObject.activeInHierarchy, 10, p_CodeLine: 207);
+            await WaitUtils.Wait(() => LeaderboardScoreList.Instance.Initialized, 10);
+            await WaitUtils.Wait(() => HasBeenParsed, 10);
+            //await WaitUtils.Wait(() => m_ElemsLayout.gameObject.activeInHierarchy, 10, p_CodeLine: 207);
 
             SetEmpty();
             Color l_White = Color.white;
@@ -238,8 +247,10 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         /// <summary>
         /// Show it when have a score
         /// </summary>
-        internal void Show()
+        internal async void Show()
         {
+            await WaitUtils.Wait(() => LeaderboardScoreList.Instance.Initialized, 10);
+
             SetTexts();
 
             m_Interactable.gameObject.SetActive(true);
@@ -331,7 +342,6 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             string l_Seconds = (l_Time.Second != 0 && l_IsMajorObjects0) ? $"{l_Time.Second} Seconds" : string.Empty;
             m_ModalTimeSet.text = $"{l_Years} {l_Months} {l_Days} {l_Hours} {l_Minutes} {l_Seconds}ago";
 
-
             m_ModalReplay.interactable = ReplayLink != null;
 
         }
@@ -349,8 +359,61 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         private async void StartReplay()
         {
             m_ModalReplay.interactable = false;
-            Resources.FindObjectsOfTypeAll<BeatLeader.Replayer.ReplayerLauncher>().First().StartReplayAsync(await BeatLeaderReplayDownloader.GetReplay(ReplayLink));
+            Replay l_Replay = await BeatLeaderReplayDownloader.GetReplay(ReplayLink);
+
+            ReplayerSettings l_Settings = new();
+            l_Settings.ShowHead = false;
+            l_Settings.LoadPlayerEnvironment = true;
+            l_Settings.ShowUI = true;
+            l_Settings.ShowWatermark = true;
+            l_Settings.ForceUseReplayerCamera = true;
+            l_Settings.ShowLeftSaber = true;
+            l_Settings.ShowRightSaber = true;
+            l_Settings.CameraFOV = 95;
+            l_Settings.MinFOV = 50;
+            l_Settings.MaxFOV = 120;
+            l_Settings.VRCameraPose = "CenterView";
+            l_Settings.FPFCCameraPose = "CenterView";
+
+            ReplayerShortcuts l_Shortcuts = new();
+            l_Shortcuts.PauseHotkey = KeyCode.Space;
+            l_Shortcuts.HideCursorHotkey = KeyCode.A;
+            l_Shortcuts.RewindBackwardHotkey = KeyCode.LeftArrow;
+            l_Shortcuts.RewindForwardHotkey = KeyCode.RightArrow;
+            l_Shortcuts.HideUIHotkey = KeyCode.H;
+
+            l_Settings.Shortcuts = l_Shortcuts;
+
+            ReplayLaunchData l_Data = new(l_Replay,
+                BeatLeaderPlayer,
+                null,
+                null,
+                l_Settings);
+
+            if (await Resources.FindObjectsOfTypeAll<BeatLeader.Replayer.ReplayerLauncher>().First().StartReplayAsync(l_Data))
+            {
+                var l_RecordingEnabled = Assembly.Load(AssemblyName.GetAssemblyName("Plugins\\BeatLeader.dll")).GetType("BeatLeader.Interop.ScoreSaberInterop", true).GetProperty("RecordingEnabled", BindingFlags.Static | BindingFlags.Public);
+                l_RecordingEnabled.SetValue(null, false);
+                var l_BeatSaviorSubmission = Assembly.Load(AssemblyName.GetAssemblyName("Plugins\\BeatLeader.dll")).GetType("BeatLeader.Interop.BeatSaviorInterop", true).GetProperty("ScoreSubmissionEnabled", BindingFlags.Static | BindingFlags.Public);
+                l_BeatSaviorSubmission.SetValue(null, false);
+            };
         }
+
+        /*private static void Init() {
+            var types = _assembly.GetTypes();
+            var _installersMethods = new List<MethodInfo>();
+
+            foreach (var item in types) {
+                if (item.IsSubclassOf(typeof(Installer))) {
+                    var method = item.GetMethod(nameof(
+                        Installer.InstallBindings), ReflectionUtils.DefaultFlags);
+                    _installersMethods.Add(method);
+                }
+            }
+
+            var _installatorsSilencer = new(_installersMethods, false);
+            GSLogger.Instance.Log($"Successfully patched {_installersMethods.Count} ScoreSaber installators!", IPA.Logging.Logger.LogLevel.InfoUp);
+        }*/
 
     }
 }

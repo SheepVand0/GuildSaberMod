@@ -1,5 +1,6 @@
 ﻿using GuildSaber.Utils;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // ReSharper disable once CheckNamespace
 namespace GuildSaber.UI.Leaderboard
@@ -18,22 +19,30 @@ namespace GuildSaber.UI.Leaderboard
         /// </summary>
         public static void Setup()
         {
-            GameLevelStatsView = (GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView") ?? null)!;
-            if (GameLevelStatsView == null) return;
-            Events.e_OnLeaderboardShown += (p_FirstActivation) =>
-            {
-                if (!GuildSaberCustomLeaderboard.Initialized/* || !GuildSaberCustomLeaderboard.IsShown*/) return;
-
-                Hide();
-            };
-            Events.e_OnLeaderboardHide += () =>
-            {
-                if (!GuildSaberCustomLeaderboard.Initialized) return;
-
-                Show();
-            };
+            Events.e_OnLeaderboardShown += OnShow;
+            Events.e_OnLeaderboardHide += OnHide;
 
             Initialized = true;
+        }
+
+        private static void GetReferences()
+        {
+            GameLevelStatsView = (GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView") ?? null)!;
+            if (GameLevelStatsView == null) return;
+        }
+
+        private static void OnShow(bool p_FirstActivation)
+        {
+            if (!GuildSaberCustomLeaderboard.Initialized/* || !GuildSaberCustomLeaderboard.IsShown*/) return;
+
+            Hide();
+        }
+
+        private static void OnHide()
+        {
+            if (!GuildSaberCustomLeaderboard.Initialized) return;
+
+            Show();
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -44,6 +53,8 @@ namespace GuildSaber.UI.Leaderboard
         /// </summary>
         public static async void Show()
         {
+            GetReferences();
+
             await WaitUtils.Wait(() => GameLevelStatsView != null, 100, p_MaxTryCount: 20);
 
             if (GameLevelStatsView == null) return;
@@ -57,6 +68,8 @@ namespace GuildSaber.UI.Leaderboard
         /// </summary>
         public static async void Hide()
         {
+            GetReferences();
+
             await WaitUtils.Wait(() => GameLevelStatsView != null, 1);
 
             foreach (Transform l_Transform in GameLevelStatsView.transform)

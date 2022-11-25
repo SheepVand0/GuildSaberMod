@@ -270,7 +270,6 @@
     <Compile Include="API\BeatSaverAPI.cs" />
     <Compile Include="API\GuildApi.cs" />
     <Compile Include="API\MapLeaderboardApiOutput.cs" />
-    <Compile Include="API\ReplayDecoder.cs" />
     <Compile Include="AssetBundles\AssetBundleLoader.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="GlobalSuppressions.cs" />

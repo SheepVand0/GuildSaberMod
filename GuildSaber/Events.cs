@@ -27,6 +27,8 @@ public class Events : IInitializable
 
     public event Action<ELeaderboardScope> e_OnScopeSelected = null;
 
+    public static event Action e_OnReload = null;
+
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
@@ -85,6 +87,11 @@ public class Events : IInitializable
         if (!m_EventsEnabled)
             return;
         e_OnScopeSelected?.Invoke(p_Scope);
+    }
+
+    public static void InvokeOnReload()
+    {
+        e_OnReload?.Invoke();
     }
 
     ////////////////////////////////////////////////////////////////////////////

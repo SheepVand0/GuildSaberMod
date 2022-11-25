@@ -15,6 +15,7 @@ using HMUI;
 using IPA.Utilities;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -59,6 +60,12 @@ namespace GuildSaber.UI.Leaderboard
             PanelInstance = this;
             Reload(ReloadMode.FromCurrent, true, true);
             LeaderboardHeaderManager.CreateUpdateView();
+
+            SceneManager.sceneLoaded += (p_Scene, p_SceneMode) =>
+            {
+                if (p_Scene.name.ToLower().Contains("menu"))
+                    PanelInstance = this;
+            };
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -115,7 +122,7 @@ namespace GuildSaber.UI.Leaderboard
         {
             GSLogger.Instance.Log("Reloading", IPA.Logging.Logger.LogLevel.InfoUp);
 
-            await WaitUtils.Wait(() => gameObject.activeInHierarchy, 10, p_CodeLine: 105);
+            //await WaitUtils.Wait(() => gameObject.activeInHierarchy, 10, p_CodeLine: 105);
 
             PanelInstance = this;
 
@@ -192,14 +199,17 @@ namespace GuildSaber.UI.Leaderboard
                 l_ResultTexture.SetPixels(l_Texture);
                 l_ResultTexture.Apply();
 
-                l_BackgroundView.overrideSprite = Sprite.Create(l_ResultTexture, new Rect(0, 0, l_ResultTexture.width, l_ResultTexture.height), new Vector2(0, 0));
+                if (l_BackgroundView != null)
+                {
+                    l_BackgroundView.overrideSprite = Sprite.Create(l_ResultTexture, new Rect(0, 0, l_ResultTexture.width, l_ResultTexture.height), new Vector2(0, 0));
 
-                ///----------------------------------------------------------------------------------
-                l_BackgroundView.color = new(0.7f, 0.7f, 0.7f, 0.9f);
-                l_BackgroundView.color0 = new(0.7f, 0.7f, 0.7f, 0.9f);
-                l_BackgroundView.color1 = new(0.7f, 0.7f, 0.7f, 0.1f);
-                l_BackgroundView.SetField("_gradientDirection", ImageView.GradientDirection.Horizontal);
-                l_BackgroundView.SetField("_flipGradientColors", false);
+                    ///----------------------------------------------------------------------------------
+                    l_BackgroundView.color = new(0.7f, 0.7f, 0.7f, 0.9f);
+                    l_BackgroundView.color0 = new(0.7f, 0.7f, 0.7f, 0.9f);
+                    l_BackgroundView.color1 = new(0.7f, 0.7f, 0.7f, 0.1f);
+                    l_BackgroundView.SetField("_gradientDirection", ImageView.GradientDirection.Horizontal);
+                    l_BackgroundView.SetField("_flipGradientColors", false);
+                }
             }
 
             Events.Instance.SelectGuild(m_SelectedGuild);
@@ -216,6 +226,7 @@ namespace GuildSaber.UI.Leaderboard
         /// <param name="p_ViewMode">Mode</param>
         public void SetLeaderboardPanelViewMode(LeaderboardPanelViewMode p_ViewMode)
         {
+            if (m_ElemsLayout == null || m_ErrorText == null || m_LoadingLayout == null) return;
             m_ElemsLayout.gameObject.SetActive(p_ViewMode == LeaderboardPanelViewMode.Normal);
             m_ErrorText.gameObject.SetActive(p_ViewMode == LeaderboardPanelViewMode.Error);
             m_LoadingLayout.gameObject.SetActive(p_ViewMode == LeaderboardPanelViewMode.Loading);

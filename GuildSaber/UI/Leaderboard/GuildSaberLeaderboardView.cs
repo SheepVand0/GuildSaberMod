@@ -122,7 +122,6 @@ namespace GuildSaber.UI.Leaderboard
             }
         }
 
-
         public void OnLeaderboardSet(IDifficultyBeatmap difficultyBeatmap)
         {
             if (m_ScoresList == null) return;

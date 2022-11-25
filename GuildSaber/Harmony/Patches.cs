@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BeatLeader.Models;
 using BeatSaberPlus.SDK.Game;
 using GuildSaber.BSPModule;
 using GuildSaber.Configuration;
 using GuildSaber.Installers;
 using GuildSaber.Logger;
 using GuildSaber.UI.Leaderboard;
+using GuildSaber.UI.Leaderboard.Components;
 using GuildSaber.Utils;
 using HarmonyLib;
 using HMUI;
@@ -54,79 +56,31 @@ namespace GuildSaber.Harmony
         }
     }
 
-    //[HarmonyPatch(typeof(MenuTransitionsHelper), nameof(MenuTransitionsHelper.RestartGame))]
+    [HarmonyPatch(typeof(MenuTransitionsHelper), nameof(MenuTransitionsHelper.RestartGame))]
     class OnReload
     {
+        public static bool s_RepopPatch;
+
         public static void Prefix()
         {
-            if (GuildSaberCustomLeaderboard.Instance == null) return;
+            if (GuildSaberCustomLeaderboard.Instance == null || !GSConfig.Instance.LeaderboardEnabled) return;
+
+            s_RepopPatch = true;
+
+            Events.InvokeOnReload();
 
             GuildSaberCustomLeaderboard.Instance.Dispose();
         }
     }
 
-    //[HarmonyPatch(typeof(GameScenesManager), nameof(GameScenesManager.PushScenes))]
-    class OnStart
+    [HarmonyPatch(typeof(SoloFreePlayFlowCoordinator), "SinglePlayerLevelSelectionFlowCoordinatorDidActivate")]
+    class AfterReloadPatch
     {
-        public static void Prefix()
+        public static async void Postfix()
         {
-            if (GuildSaberCustomLeaderboard.Instance == null) return;
+            if (!OnReload.s_RepopPatch) return;
 
-            //GSLogger.Instance.Log("here", IPA.Logging.Logger.LogLevel.NoticeUp);
-
-            // ReSharper disable once SimplifyConditionalTernaryExpression
-            if (GSConfig.Instance.LeaderboardEnabled &&
-                Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0) == null
-                    ? false
-                    : Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0).gameObject.activeInHierarchy)
-                return;
-
-            if (LeaderboardHeaderManager.m_HeaderImageView != null)
-            {
-                if (LeaderboardHeaderManager.m_HeaderImageView.gameObject.activeInHierarchy)
-                {
-                    LeaderboardHeaderManager.ChangeTextForced(Localization.Get("TITLE_HIGHSCORES"), false);
-                    LeaderboardHeaderManager.ResetColors();
-                }
-            }
-            GuildSaberCustomLeaderboard.Instance.Dispose();
-        }
-    }
-
-    //[HarmonyPatch(typeof(FadeInOutController), nameof(FadeInOutController.FadeOut))]
-    class OnReturnToMenu
-    {
-        public static async void Postfix(float duration)
-        {
-            await Task.Delay((int)duration*1000);
-            await Task.Delay(500);
-
-            // ReSharper disable once SimplifyConditionalTernaryExpression
-            if (Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0) == null ? false : Resources.FindObjectsOfTypeAll<PracticeViewController>().ElementAt(0).gameObject.activeInHierarchy) return;
-
-
-
-            //if (Logic.ActiveScene is Logic.SceneType.Menu or Logic.SceneType.None) return;
-
-            bool l_MoveNext = false;
-
-            // ReSharper disable once LoopVariableIsNeverChangedInsideLoop
-            while (!l_MoveNext)
-            {
-                ResultsViewController l_ResultsViewController = Resources.FindObjectsOfTypeAll<ResultsViewController>().ElementAt(0);
-                GameObject l_NavigationButtonsPanel = GameObject.Find("LeaderboardNavigationButtonsPanel");
-                GameObject l_MainScreen = GameObject.Find("MainScreen");
-                await WaitUtils.Wait(() =>
-                {
-                    if (Logic.ActiveScene != Logic.SceneType.Menu) return true;
-                    if (!l_ResultsViewController)
-                        if (l_ResultsViewController.gameObject.activeSelf)
-                            return true;
-                    if (l_NavigationButtonsPanel == null) return true;
-                    l_MoveNext = l_NavigationButtonsPanel.gameObject.activeSelf;
-                    return l_MoveNext;
-                }, 10);
-            }
+            await Task.Delay(1500);
 
             GuildSaberCustomLeaderboard.Instance.Initialize();
         }

@@ -73,7 +73,11 @@ namespace GuildSaber.UI.Leaderboard
 
         public static async void CreateUpdateView()
         {
-            await WaitUtils.Wait(() => m_Header != null, 10, p_CodeLine: 64);
+            await WaitUtils.Wait(() =>
+            {
+                GetPanel();
+                return m_Header != null;
+            }, 100, p_CodeLine: 80);
             s_UpdatesModal = CustomUIComponent.CreateItem<UpdateView>(m_Header.transform, true, true);
             s_UpdatesModal.CheckUpdates();
         }
