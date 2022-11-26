@@ -342,7 +342,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             string l_Seconds = (l_Time.Second != 0 && l_IsMajorObjects0) ? $"{l_Time.Second} Seconds" : string.Empty;
             m_ModalTimeSet.text = $"{l_Years} {l_Months} {l_Days} {l_Hours} {l_Minutes} {l_Seconds}ago";
 
-            m_ModalReplay.interactable = ReplayLink != null;
+            //m_ModalReplay.interactable = ReplayLink != null;
 
         }
 
@@ -363,10 +363,10 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 
             ReplayerSettings l_Settings = new();
             l_Settings.ShowHead = false;
-            l_Settings.LoadPlayerEnvironment = true;
+            l_Settings.LoadPlayerEnvironment = false;
             l_Settings.ShowUI = true;
             l_Settings.ShowWatermark = true;
-            l_Settings.ForceUseReplayerCamera = true;
+            l_Settings.ForceUseReplayerCamera = false;
             l_Settings.ShowLeftSaber = true;
             l_Settings.ShowRightSaber = true;
             l_Settings.CameraFOV = 95;
@@ -390,13 +390,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
                 null,
                 l_Settings);
 
-            if (await Resources.FindObjectsOfTypeAll<BeatLeader.Replayer.ReplayerLauncher>().First().StartReplayAsync(l_Data))
-            {
-                var l_RecordingEnabled = Assembly.Load(AssemblyName.GetAssemblyName("Plugins\\BeatLeader.dll")).GetType("BeatLeader.Interop.ScoreSaberInterop", true).GetProperty("RecordingEnabled", BindingFlags.Static | BindingFlags.Public);
-                l_RecordingEnabled.SetValue(null, false);
-                var l_BeatSaviorSubmission = Assembly.Load(AssemblyName.GetAssemblyName("Plugins\\BeatLeader.dll")).GetType("BeatLeader.Interop.BeatSaviorInterop", true).GetProperty("ScoreSubmissionEnabled", BindingFlags.Static | BindingFlags.Public);
-                l_BeatSaviorSubmission.SetValue(null, false);
-            };
+            await Resources.FindObjectsOfTypeAll<BeatLeader.Replayer.ReplayerLauncher>().First().StartReplayAsync(l_Data);
         }
 
         /*private static void Init() {

@@ -289,6 +289,7 @@
     <Compile Include="UI\Card\PlayerCardUI.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\Components\RoundedButton.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\GuildSelectionMenu.cs" />
+    <Compile Include="UI\FlowCoordinator\CustomFlowCoordinator.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomLevelStatsView.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomText.cs" />
     <Compile Include="UI\Leaderboard\Components\LeaderboardScoreList.cs" />
@@ -345,6 +346,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GuildSaber.csproj.user" />
+    <EmbeddedResource Include="Resources\ArrowRed.png" />
     <Content Include="UI\CustomLevelSelectionMenu\Views\GuildSelectionMenu.bsml" />
     <EmbeddedResource Include="Resources\Arrow.png" />
     <EmbeddedResource Include="Resources\GsWhiteLogo.png" />

@@ -54,8 +54,16 @@ namespace GuildSaber.UI.Leaderboard.Components
 
         public bool m_NeedUpdate = false;
 
+        static bool s_HasBeenShow = false;
+
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
+
+        [UIAction("ShowUpdates")]
+        private void Open()
+        {
+            m_UpdatesModal.Show(true, true);
+        }
 
         /// <summary>
         /// Close Modal
@@ -87,10 +95,14 @@ namespace GuildSaber.UI.Leaderboard.Components
         /// </summary>
         public async void Show()
         {
+            if (s_HasBeenShow) return;
+
             await WaitUtils.Wait(() => LeaderboardHeaderManager.m_HeaderImageView != null, 100);
             await WaitUtils.Wait(() => m_ShowUpdatesButton != null, 100);
 
             m_ShowUpdatesButton.gameObject.SetActive(m_NeedUpdate);
+
+            s_HasBeenShow = true;
         }
 
         ////////////////////////////////////////////////////////////////////////////

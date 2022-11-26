@@ -36,6 +36,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
             return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.CustomLevelSelectionMenu.Views.GuildSelectionMenu.bsml");
         }
 
+        protected override void OnViewCreation()
+        {
 
+        }
     }
 }

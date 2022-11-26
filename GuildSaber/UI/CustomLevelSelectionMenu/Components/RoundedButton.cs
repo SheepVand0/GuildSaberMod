@@ -44,12 +44,12 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             try
             {
                 Material l_RoundedShader = AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask");
-                l_RoundedShader.SetFloat("_FadeStart", 1.48f);
-                l_RoundedShader.SetFloat("_FadeEnd", 1.45f);
+                l_RoundedShader.SetFloat(Shader.PropertyToID("_FadeStart"), 1.48f);
+                l_RoundedShader.SetFloat(Shader.PropertyToID("_FadeEnd"), 1.45f);
                 Texture l_Texture = await GuildSaberUtils.GetImage(m_Image);
                 if (l_Texture == null) return;
 
-                l_RoundedShader.SetTexture("_MainTex", l_Texture);
+                l_RoundedShader.SetTexture(Shader.PropertyToID("_MainTex"), l_Texture);
                 m_Button.GetComponentsInChildren<ImageView>().ElementAt(0).material = l_RoundedShader;
                 m_Button.GetComponentsInChildren<ImageView>().ElementAt(1).gameObject.SetActive(false);
             }

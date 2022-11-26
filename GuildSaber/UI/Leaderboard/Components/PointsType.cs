@@ -25,6 +25,8 @@ namespace GuildSaber.UI.Leaderboard.Components
 
         public ApiPlayerData m_Player = default;
 
+        private static UnityEngine.GameObject s_GameObjectReference;
+
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
@@ -44,6 +46,8 @@ namespace GuildSaber.UI.Leaderboard.Components
         /// </summary>
         protected override void AfterViewCreation()
         {
+            s_GameObjectReference = gameObject;
+
             m_PointsText = m_Selector.GetComponentInChildren<TextMeshProUGUI>();
             ImageView l_ImageView = m_Selector.GetComponentInChildren<ImageView>();
             l_ImageView.gameObject.SetActive(false);
@@ -80,6 +84,9 @@ namespace GuildSaber.UI.Leaderboard.Components
             await WaitUtils.Wait(() => m_Selector != null, 100);
             await WaitUtils.Wait(() => GuildSaberLeaderboardPanel.PanelInstance != null, 100);
 
+            if (!s_GameObjectReference.activeInHierarchy) return;
+
+            // ReSharper disable once SuspiciousTypeConversion.Global
             if (GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData.Equals(default(PlayerData))) return;
             m_Player = GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData;
             m_DefaultsPoints.Clear();

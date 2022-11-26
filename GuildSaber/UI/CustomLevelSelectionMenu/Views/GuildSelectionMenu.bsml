@@ -3,9 +3,7 @@
     <text text="Select a Guild"/>
 
     <custom-list id="GuildList">
-        <horizontal id="MainLayout" pref-height="25" pref-width="85">
-
-        </horizontal>
+        <horizontal id="MainLayout" pref-height="25" pref-width="85" />
     </custom-list>
 
 </horizontal>
