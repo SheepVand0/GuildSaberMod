@@ -1,0 +1,10 @@
+<vertical child-control-height='false'>
+    <horizontal bg='panel-top' pad-left='15' pad-right='15' horizontal-fit='PreferredSize'>
+        <text id='GuildName' align='Center' font-size='4.2'/>
+    </horizontal>
+
+    <horizontal bg='round-rect-panel' id='Background' min-width='110' min-height='60' spacing='0' pad='0'>
+        <custom-list id="DescriptionList" content="DescriptionLines"><text id="Line"/></custom-list>
+    </horizontal>
+
+</vertical>

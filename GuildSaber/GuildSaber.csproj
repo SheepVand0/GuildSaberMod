@@ -288,7 +288,10 @@
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCardUI.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\Components\RoundedButton.cs" />
-    <Compile Include="UI\CustomLevelSelectionMenu\GuildSelectionMenu.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\CategorySelectionFlowCoordinator.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\CategoriesSelectionViewController.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
     <Compile Include="UI\FlowCoordinator\CustomFlowCoordinator.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomLevelStatsView.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomText.cs" />
@@ -347,6 +350,8 @@
   <ItemGroup>
     <Content Include="GuildSaber.csproj.user" />
     <EmbeddedResource Include="Resources\ArrowRed.png" />
+    <EmbeddedResource Include="UI\CustomLevelSelectionMenu\ViewControllers\Views\GuildDescription.bsml" />
+    <Content Include="UI\CustomLevelSelectionMenu\ViewControllers\Views\CategorySelectionViewController.bsml" />
     <Content Include="UI\CustomLevelSelectionMenu\Views\GuildSelectionMenu.bsml" />
     <EmbeddedResource Include="Resources\Arrow.png" />
     <EmbeddedResource Include="Resources\GsWhiteLogo.png" />
