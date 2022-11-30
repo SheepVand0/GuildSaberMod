@@ -83,6 +83,7 @@ namespace GuildSaber.API
 
         public UInt32? CategoryID { get; set; }
         public string? CategoryName { get; set; }
+        public float PassPoints { get; set; }
         public UInt32 MaxScore { get; set; }
     }
 

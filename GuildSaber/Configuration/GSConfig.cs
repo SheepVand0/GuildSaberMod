@@ -40,8 +40,16 @@ internal class GSConfig : JsonConfig<GSConfig>
 
     [JsonProperty] internal bool UseCustomColor = false;
     [JsonProperty] internal bool UseCustomColorGradient = false;
-    [JsonProperty] internal Color CustomColor = Color.magenta;
-    [JsonProperty] internal Color CustomColor1 = Color.cyan;
+    [JsonProperty] internal Color CustomColor = new(0.7f, 0.7f, 0);
+    [JsonProperty] internal Color CustomColor1 = new(0.7f, 0.2f, 0);
+    [JsonProperty] internal bool InvertGradient = false;
+    [JsonProperty] internal float GradientColor1Multiplier = 1.0f;
+
+    [JsonProperty] internal bool UseCustomPointsColor = false;
+    [JsonProperty] internal Color CustomPointsColor = Color.red;
+
+    [JsonProperty] internal bool UseCustomNameGradientColor = false;
+    [JsonProperty] internal Color CustomNameGradientColor = Color.red;
     [JsonProperty] internal float NameGradientColor0Multiplier = 1f;
 
     [JsonProperty] internal bool  UwUMode     = false;

@@ -22,7 +22,7 @@ public class Plugin
 
     public const string NOT_DEFINED = "Undefined";
 
-    public static ModFlowCoordinator _modFlowCoordinator = null;
+    internal static ModFlowCoordinator _modFlowCoordinator = null;
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ public class Plugin
         if (_modFlowCoordinator == null)
             _modFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
 
-        _modFlowCoordinator.ShowFlow(false);
+        _modFlowCoordinator.Show();
     }
 
     [OnExit]

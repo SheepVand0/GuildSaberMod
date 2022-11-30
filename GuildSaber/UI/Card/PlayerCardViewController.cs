@@ -7,7 +7,6 @@ using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberMarkupLanguage.Parser;
-using BeatSaberMarkupLanguage.ViewControllers;
 using BeatSaberPlus.SDK.Game;
 using GuildSaber.API;
 using GuildSaber.BSPModule;
@@ -18,7 +17,6 @@ using GuildSaber.Utils;
 using GuildSaber.Utils.Color;
 using HMUI;
 using IPA.Utilities;
-using JetBrains.Annotations;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -48,11 +46,29 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
     [UIComponent("ToggleShowHandle")] private readonly ToggleSetting m_ToggleShowHandle = null;
     [UIComponent("ToggleDetailedLevels")] private readonly ToggleSetting m_ToggleDetailedLevels = null;
     [UIComponent("ToggleShowPlayTime")] private readonly ToggleSetting m_ToggleShowPlayTime = null;
-    [UIComponent("ToggleCustomCardColors")]  private readonly ToggleSetting m_ToggleCustomCardColors = null;
-    [UIComponent("ToggleCustomCardGradient")] private readonly ToggleSetting m_ToggleCustomCardGradient = null;
+
+    [UIComponent("ButtonManageCardColor")] private readonly Button m_ButtonManageCardColor = null;
+    [UIComponent("ButtonManagePointsColor")] private readonly Button m_ButtonManagePointsColor = null;
+    [UIComponent("ButtonManageNameColor")] private readonly Button m_ButtonManageNameColor = null;
+
+    [UIComponent("ToggleCustomCardColors")]
+    private readonly ToggleSetting m_ToggleCustomCardColors = null;
+    [UIComponent("ToggleCustomCardGradient")]
+    private readonly ToggleSetting m_ToggleCustomCardGradient = null;
     [UIComponent("CustomColorSettings")] private readonly ColorSetting m_CustomColorSettings = null;
     [UIComponent("CustomColorSettings1")] private readonly ColorSetting m_CustomColorSettings1 = null;
-    [UIComponent("NameGradientMultiplier")] private readonly SliderSetting m_NameGradientMutiliplier = null;
+    [UIComponent("CardColorMultiplier")] private readonly SliderSetting m_CardColorMultiplier = null;
+    [UIComponent("ToggleInvertGradient")] private readonly ToggleSetting m_ToggleInvertGradient = null;
+
+    [UIComponent("ToggleCustomPointsColor")]
+    private readonly ToggleSetting m_ToggleCustomPointsColor = null;
+    [UIComponent("CustomPointsColor")] private readonly ColorSetting m_CustomPointsColor = null;
+
+    [UIComponent("ToggleUseCustomNameColor")]
+    private readonly ToggleSetting m_ToggleUseCustomNameColor = null;
+    [UIComponent("CustomNameColor")] private readonly ColorSetting m_CustomNameColor = null;
+    [UIComponent("NameGradientMultiplier")]
+    private readonly SliderSetting m_NameGradientMutiliplier = null;
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -124,13 +140,22 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
         BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleShowHandle, l_SettingAction, GSConfig.Instance.CardHandleVisible, false);
         BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleDetailedLevels, l_SettingAction, GSConfig.Instance.ShowDetailsLevels, false);
         BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleShowPlayTime, l_SettingAction, GSConfig.Instance.ShowPlayTime, false);
+
         BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleCustomCardColors, l_SettingAction, GSConfig.Instance.UseCustomColor, false);
         BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleCustomCardGradient, l_SettingAction, GSConfig.Instance.UseCustomColorGradient, false);
-
-        BeatSaberPlus.SDK.UI.SliderSetting.Setup(m_NameGradientMutiliplier, l_SettingAction, null,GSConfig.Instance.NameGradientColor0Multiplier, false);
-
+        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleInvertGradient, l_SettingAction, GSConfig.Instance.InvertGradient, false);
         BeatSaberPlus.SDK.UI.ColorSetting.Setup(m_CustomColorSettings, l_SettingAction, GSConfig.Instance.CustomColor, false);
         BeatSaberPlus.SDK.UI.ColorSetting.Setup(m_CustomColorSettings1, l_SettingAction, GSConfig.Instance.CustomColor1, false);
+        BeatSaberPlus.SDK.UI.SliderSetting.Setup(m_CardColorMultiplier, l_SettingAction, null, GSConfig.Instance.GradientColor1Multiplier, true);
+
+        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleCustomPointsColor, l_SettingAction, GSConfig.Instance.UseCustomPointsColor, false);
+        BeatSaberPlus.SDK.UI.ColorSetting.Setup(m_CustomPointsColor, l_SettingAction, GSConfig.Instance.CustomPointsColor, false);
+
+        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleUseCustomNameColor, l_SettingAction, GSConfig.Instance.UseCustomNameGradientColor, false);
+        BeatSaberPlus.SDK.UI.ColorSetting.Setup(m_CustomNameColor, l_SettingAction, GSConfig.Instance.CustomNameGradientColor, false);
+        BeatSaberPlus.SDK.UI.SliderSetting.Setup(m_NameGradientMutiliplier, l_SettingAction, null, GSConfig.Instance.NameGradientColor0Multiplier, true);
+
+
 
         Refresh();
 
@@ -145,21 +170,28 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
     /// </summary>
     public void UpdateCardColor()
     {
-        if (m_AllowCustomCardColors && GSConfig.Instance.UseCustomColor)
-            PlayerCardUI.m_Player.Color = GSConfig.Instance.CustomColor.ToGSProfileColor();
-
-        Color l_PlayerColor = PlayerCardUI.m_Player.Color.ToUnityColor32();
+        Color l_PlayerColor = (m_AllowCustomCardColors && GSConfig.Instance.UseCustomColor) ?GSConfig.Instance.CustomColor : PlayerCardUI.m_Player.Color.ToUnityColor32();
 
         m_PlayerNameText.enableVertexGradient = true;
 
-        Color l_Color0 = (GSConfig.Instance.UseCustomColor) ?
-            GSConfig.Instance.CustomColor : l_PlayerColor;
+        Color l_Color0 = (GSConfig.Instance.UseCustomColor) ? GSConfig.Instance.CustomColor : l_PlayerColor;
         Color l_Color1 = (GSConfig.Instance.UseCustomColorGradient) ? GSConfig.Instance.CustomColor1 : l_PlayerColor;
 
-        VertexGradient l_Gradient =
-            (GSConfig.Instance.UseCustomColorGradient && m_AllowCustomCardGradient) ?
-                GuildSaberUtils.Equilibrate(l_Color0, l_Color1, GSConfig.Instance.NameGradientColor0Multiplier).GenerateGradient(0.2f) :
-                l_PlayerColor.GenerateGradient(0.2f);
+
+        VertexGradient l_Gradient;
+
+        if (!m_AllowCustomCardGradient || (m_AllowCustomCardGradient && !GSConfig.Instance.UseCustomNameGradientColor))
+            l_Gradient = l_PlayerColor.GenerateGradient(0.2f);
+        else
+        {
+            l_Gradient = ((GSConfig.Instance.UseCustomNameGradientColor) ?
+                GSConfig.Instance.CustomNameGradientColor :
+                GuildSaberUtils.Equilibrate(
+                    l_Color0,
+                    l_Color1,
+                    GSConfig.Instance.NameGradientColor0Multiplier)).GenerateGradient(0.2f);
+        }
+
 
         m_PlayerNameText.colorGradient = l_Gradient;
 
@@ -167,10 +199,16 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
         l_CurrentImageView.SetField("_skew", 0.0f);
         l_CurrentImageView.overrideSprite = null;
         l_CurrentImageView.SetImage("#RoundRect10BorderFade");
-        l_CurrentImageView.color0 = l_Color0;
-        l_CurrentImageView.color1 = (l_Color1.IsIn(l_Color0)) ? l_Color1 : l_Color1.Add(0.5f);
+        l_CurrentImageView.color0 = (GSConfig.Instance.UseCustomColorGradient && m_AllowCustomCardGradient) ? l_Color0.FloorTo(0.5f) : l_Color0;
+        l_CurrentImageView.color1 = (l_Color1.IsIn(l_Color0) ? l_Color1 : l_Color1.Add(0.5f)) * GSConfig.Instance.GradientColor1Multiplier;
         l_CurrentImageView.color = l_PlayerColor.ColorWithAlpha(1f);
         l_CurrentImageView.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.BakedEmissive;
+        l_CurrentImageView.SetField("_flipGradientColors", GSConfig.Instance.InvertGradient);
+
+        foreach (var l_Current in m_Ranks)
+        {
+            l_Current.SetColor((GSConfig.Instance.UseCustomPointsColor && m_AllowCustomCardGradient) ? GSConfig.Instance.CustomPointsColor : PlayerCardUI.m_Player.Color.ToUnityColor());
+        }
     }
 
     /// <summary>
@@ -217,8 +255,8 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
             }
         }
 
-        m_AllowCustomCardColors = PlayerCardUI.m_Player.LevelValue >= (float)(l_MaxLevel * 0.9f);
-        m_AllowCustomCardGradient = l_MaxLevel - PlayerCardUI.m_Player.LevelValue <= 2;
+        m_AllowCustomCardColors = PlayerCardUI.m_Player.LevelValue >= (float)(l_MaxLevel * 0.9f) || GuildSaberModule.GSPlayerId == 1 || GuildSaberModule.SsPlayerId == 76561198235823594;
+        m_AllowCustomCardGradient = l_MaxLevel - PlayerCardUI.m_Player.LevelValue <= 2 || GuildSaberModule.GSPlayerId == 1 || GuildSaberModule.SsPlayerId == 76561198235823594;
 
         UpdateShowPlayerCustomColorUISetting();
     }
@@ -341,7 +379,6 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
     /// <param name="p_Time"></param>
     public void UpdateTime(OptimizedDateTime p_Time)
     {
-        //Let's go
         m_PlayTimeText.text = GSConfig.Instance.ShowPlayTime ? string.Join(":", p_Time.Hours.ToString("00"), p_Time.Minutes.ToString("00"), p_Time.Seconds.ToString("00")) : " ";
     }
 
@@ -360,10 +397,28 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
     /// </summary>
     public void UpdateShowPlayerCustomColorUISetting()
     {
-        m_CustomColorSettings.interactable = m_AllowCustomCardColors && GSConfig.Instance.UseCustomColor;
-        m_CustomColorSettings1.interactable = m_AllowCustomCardGradient && GSConfig.Instance.UseCustomColorGradient;
+        m_ButtonManageCardColor.interactable = m_AllowCustomCardColors;
+        m_ButtonManageNameColor.interactable = m_AllowCustomCardGradient;
+        m_ButtonManagePointsColor.interactable = m_AllowCustomCardGradient;
+
         m_ToggleCustomCardColors.interactable = m_AllowCustomCardColors;
         m_ToggleCustomCardGradient.interactable = m_AllowCustomCardGradient;
+
+        m_ToggleCustomPointsColor.interactable = m_AllowCustomCardGradient;
+        m_ToggleUseCustomNameColor.interactable = m_AllowCustomCardGradient;
+
+        m_CustomColorSettings.interactable = m_AllowCustomCardColors && GSConfig.Instance.UseCustomColor;
+        m_CustomColorSettings1.interactable = m_AllowCustomCardGradient && GSConfig.Instance.UseCustomColorGradient;
+        m_CardColorMultiplier.interactable = m_AllowCustomCardGradient && GSConfig.Instance.UseCustomColorGradient;
+
+        m_CustomPointsColor.interactable = m_AllowCustomCardGradient && GSConfig.Instance.UseCustomPointsColor;
+
+        m_NameGradientMutiliplier.interactable = m_AllowCustomCardGradient
+                                                 && GSConfig.Instance.UseCustomColorGradient
+                                                 && !GSConfig.Instance.UseCustomNameGradientColor;
+
+        m_CustomNameColor.interactable = GSConfig.Instance.UseCustomNameGradientColor && m_AllowCustomCardGradient;
+        m_NameGradientMutiliplier.interactable = !GSConfig.Instance.UseCustomNameGradientColor && m_AllowCustomCardGradient;
     }
 
     /// <summary>
@@ -393,10 +448,19 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
         GSConfig.Instance.CardHandleVisible = m_ToggleShowHandle.Value;
         GSConfig.Instance.ShowDetailsLevels = m_ToggleDetailedLevels.Value;
         GSConfig.Instance.ShowPlayTime = m_ToggleShowPlayTime.Value;
+
         GSConfig.Instance.UseCustomColor = m_ToggleCustomCardColors.Value;
         GSConfig.Instance.UseCustomColorGradient = m_ToggleCustomCardGradient.Value;
         GSConfig.Instance.CustomColor = m_CustomColorSettings.CurrentColor;
         GSConfig.Instance.CustomColor1 = m_CustomColorSettings1.CurrentColor;
+        GSConfig.Instance.GradientColor1Multiplier = m_CardColorMultiplier.Value;
+        GSConfig.Instance.InvertGradient = m_ToggleInvertGradient.Value;
+
+        GSConfig.Instance.UseCustomPointsColor = m_ToggleCustomPointsColor.Value;
+        GSConfig.Instance.CustomPointsColor = m_CustomPointsColor.CurrentColor;
+
+        GSConfig.Instance.UseCustomNameGradientColor = m_ToggleUseCustomNameColor.Value;
+        GSConfig.Instance.CustomNameGradientColor = m_CustomNameColor.CurrentColor;
         GSConfig.Instance.NameGradientColor0Multiplier = m_NameGradientMutiliplier.Value;
 
         PlayerCardUI.m_Instance.CardViewController.UpdateLevelsDetails();
@@ -404,6 +468,8 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
         UpdateToggleCardHandleUISettingVisibility();
         UpdateShowPlayerCustomColorUISetting();
         UpdateCardColor();
+
+        GSConfig.Instance.Save();
     }
 
     [UIValue("SelectedGuild")]

@@ -23,6 +23,7 @@ namespace GuildSaber.UI
 
             SetTitle(Title);
             var l_ViewControllers = GetUIImplementation();
+            showBackButton = true;
             ProvideInitialViewControllers(l_ViewControllers.Item1, l_ViewControllers.Item2, l_ViewControllers.Item3);
         }
 

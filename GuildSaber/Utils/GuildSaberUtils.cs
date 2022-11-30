@@ -134,6 +134,11 @@ namespace GuildSaber.Utils
             return ((p_Color.r >= p_Color1.r) && p_Color.g >= p_Color1.g && p_Color.b >= p_Color1.b);
         }
 
+        public static UnityEngine.Color FloorTo(this UnityEngine.Color p_Color,float p_Floor)
+        {
+            return new((p_Color.r < p_Floor) ? p_Floor : p_Color.r, (p_Color.g < p_Floor) ? p_Floor : p_Color.g, (p_Color.g < p_Floor) ? p_Floor : p_Color.g);
+        }
+
         public static void SetTextError(this TextMeshProUGUI p_Text, Exception p_Ex, ErrorMode p_Mode)
         {
             p_Text.color = UnityEngine.Color.red;

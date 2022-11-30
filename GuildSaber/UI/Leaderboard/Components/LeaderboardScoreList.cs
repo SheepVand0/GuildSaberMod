@@ -311,7 +311,7 @@ namespace GuildSaber.UI.Leaderboard.Components
                     SetHeader(false);
 
                     return false;
-                }, 1, 0, 900);
+                }, 1, 0, 1100);
             }
             else
             {
@@ -335,7 +335,7 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             if (!GuildSaberCustomLeaderboard.IsShown) return;
 
-            ChangeHeaderText(p_Unranked ? Polyglot.Localization.Get("TITLE_HIGHSCORES") : $"Level {s_Leaderboard.CustomData.LevelValue} - {s_Leaderboard.CustomData.CategoryName.VerifiedCategory()}");
+            ChangeHeaderText(p_Unranked ? Polyglot.Localization.Get("TITLE_HIGHSCORES") : $"Level {s_Leaderboard.CustomData.LevelValue} - {s_Leaderboard.CustomData.CategoryName.VerifiedCategory()} - {s_Leaderboard.CustomData.PassPoints} PassPoints");
 
             await WaitUtils.Wait(() => GuildSaberLeaderboardPanel.PanelInstance.gameObject.activeSelf, 1);
 
@@ -408,10 +408,6 @@ namespace GuildSaber.UI.Leaderboard.Components
                 l_Current.Reset();
             }
 
-            bool l_IsCpp = false;
-            float l_Cpp = 0.0f;
-            string l_PointsName = string.Empty;
-
             for (int l_i = 0; l_i < p_Scores.Count; l_i++)
             {
                 if (l_i > GuildSaberModule.SCORES_BY_PAGE - 1) continue;
@@ -430,9 +426,6 @@ namespace GuildSaber.UI.Leaderboard.Components
                         {
                             l_PointData.Points = float.NaN;
                             l_PointData.PointsName = string.Empty;
-                            l_PointsName = l_Current.PointsName;
-                            l_IsCpp = true;
-                            l_Cpp = l_Current.Points != 0f ? l_Current.Points : l_Cpp;
                             break;
                         }
 
@@ -489,12 +482,6 @@ namespace GuildSaber.UI.Leaderboard.Components
                 {
                     GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(SetScores));
                 }
-            }
-
-            if (l_IsCpp)
-            {
-                await WaitUtils.Wait(() => ChangingLeaderboard == false, 1);
-                ChangeHeaderText($"Level {s_Leaderboard.CustomData.LevelValue} - {s_Leaderboard.CustomData.CategoryName} - {l_Cpp} - {l_PointsName}");
             }
         }
     }

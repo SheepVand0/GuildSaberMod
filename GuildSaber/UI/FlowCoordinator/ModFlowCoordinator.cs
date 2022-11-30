@@ -4,7 +4,7 @@ using HMUI;
 
 namespace GuildSaber.UI.GuildSaber;
 
-public class ModFlowCoordinator : FlowCoordinator
+internal class ModFlowCoordinator : CustomFlowCoordinator
 {
     public PlaylistViewController _modViewController = null;
 
@@ -15,64 +15,21 @@ public class ModFlowCoordinator : FlowCoordinator
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    /// <summary>
-    /// Awake
-    /// </summary>
-    public void Awake()
+    protected override string Title => "Guild Saber";
+    protected override (ViewController?, ViewController?, ViewController?) GetUIImplementation()
     {
         if (_modViewController == null)
             _modViewController = BeatSaberUI.CreateViewController<PlaylistViewController>();
 
         if (_LeftModViewController == null)
             _LeftModViewController = BeatSaberUI.CreateViewController<LeftModViewController>();
+
+        return (_modViewController, _LeftModViewController, null);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    /// <summary>
-    /// On activate
-    /// </summary>
-    /// <param name="firstActivation"></param>
-    /// <param name="addedToHierarchy"></param>
-    /// <param name="screenSystemEnabling"></param>
-    protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
+    protected override void OnShow()
     {
-        if (!firstActivation)
-            return;
-
-        SetTitle("GuildSaber");
-        showBackButton = true;
         _modViewController.Init(GSConfig.Instance.SelectedGuild);
-        ProvideInitialViewControllers(_modViewController, _LeftModViewController);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    /// <summary>
-    /// Show Flow
-    /// </summary>
-    /// <param name="p_IsFromChildFlowCoordinator"></param>
-    public void ShowFlow(bool p_IsFromChildFlowCoordinator)
-    {
-        if (!p_IsFromChildFlowCoordinator)
-            _LastFlow = BeatSaberUI.MainFlowCoordinator;
-        else
-            _LastFlow = BeatSaberUI.MainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf();
-        _LastFlow.PresentFlowCoordinator(this, null, ViewController.AnimationDirection.Vertical);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    /// <summary>
-    /// On Back button pressed
-    /// </summary>
-    /// <param name="topViewController"></param>
-    protected override void BackButtonWasPressed(ViewController topViewController)
-    {
-        base.BackButtonWasPressed(topViewController);
-        _LastFlow.DismissFlowCoordinator(this, null, ViewController.AnimationDirection.Vertical);
-    }
 }

@@ -22,7 +22,7 @@ public class PlayerLevelUI : CustomUIComponent
 {
     protected override string ViewResourceName => "GuildSaber.UI.Card.View.PlayerLevelUI.bsml";
 
-    [UIComponent("ElemsLayout")] private  VerticalLayoutGroup m_Elems = null;
+    [UIComponent("ElemsLayout")] private VerticalLayoutGroup m_Elems = null;
 
     [UIComponent("LevelNameText")] private TextMeshProUGUI m_LevelNameText = null;
     [UIComponent("LevelText")] private TextMeshProUGUI m_LevelText = null;
@@ -86,6 +86,18 @@ public class PlayerRankUI : CustomUIComponent
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    public async void SetColor(Color p_Color)
+    {
+        await WaitUtils.Wait(() => m_CategoryText != null, 100, 20);
+
+        VertexGradient l_TextGradient = p_Color.GenerateGradient(0.2f);
+
+        m_PlayerRankText.enableVertexGradient = true;
+        m_CategoryText.enableVertexGradient = true;
+        m_PlayerRankText.colorGradient = l_TextGradient;
+        m_CategoryText.colorGradient = l_TextGradient;
+    }
+
     /// <summary>
     /// Set Values
     /// </summary>
@@ -101,16 +113,7 @@ public class PlayerRankUI : CustomUIComponent
         /*if (m_Hastag != null && PointsName.IsNullOrEmpty() && PlayerRank.IsNullOrEmpty())
             GameObject.DestroyImmediate(m_Hastag.gameObject);*/
 
-        Color l_PlayerColor = p_Color;
-        Color l_BeforePlayerColor = new Color(l_PlayerColor.r * 0.8f, l_PlayerColor.g * 0.8f, l_PlayerColor.b * 0.8f);
-        Color l_NewPlayerColor = new Color(l_PlayerColor.r * 1.2f, l_PlayerColor.g * 1.2f, l_PlayerColor.b * 1.2f);
-
-        VertexGradient l_TextGradient = new VertexGradient(l_BeforePlayerColor, l_BeforePlayerColor, l_NewPlayerColor, l_NewPlayerColor);
-
-        m_PlayerRankText.enableVertexGradient = true;
-        m_CategoryText.enableVertexGradient = true;
-        m_PlayerRankText.colorGradient = l_TextGradient;
-        m_CategoryText.colorGradient = l_TextGradient;
+        SetColor(p_Color);
 
         m_CategoryText.text = PointsName;
         m_PlayerRankText.text = PlayerRank;
@@ -213,7 +216,11 @@ internal class PlayerCardUI
 
         ApiPlayerData l_Player = await GuildApi.GetPlayerInfoFromAPI(p_GuildFromConfig: false, GSConfig.Instance.SelectedGuild, p_UseGuild: true);
 
-        if (l_Player.Equals(null)) { GSLogger.Instance.Error(new Exception("Failed Getting Player Info"), nameof(PlayerCardUI), nameof(CreateCard)); return null; }
+        if (l_Player.Equals(null))
+        {
+            GSLogger.Instance.Error(new Exception("Failed Getting Player Info"), nameof(PlayerCardUI), nameof(CreateCard));
+            return null;
+        }
 
         m_Player = l_Player;
 
@@ -232,7 +239,10 @@ internal class PlayerCardUI
     /// <param name="p_Active"></param>
     public static void SetCardActive(bool p_Active)
     {
-        if (m_Instance == null) {  return; }
+        if (m_Instance == null)
+        {
+            return;
+        }
 
         if (m_Instance.CardViewController != null) m_Instance.CardViewController.gameObject.SetActive(p_Active);
         else return;
@@ -267,7 +277,7 @@ internal class PlayerCardUI
             case Logic.SceneType.None:
                 break;
             default:
-                GSLogger.Instance.Error( new Exception("Scene not valid"),nameof(PlayerCardUI), nameof(UpdateCardVisibility));
+                GSLogger.Instance.Error(new Exception("Scene not valid"), nameof(PlayerCardUI), nameof(UpdateCardVisibility));
                 break;
         }
     }
@@ -304,7 +314,11 @@ internal class PlayerCardUI
     {
         if (p_GetPlayerInfoFromApi == true)
         {
-            if (m_Instance == null) { await CreateCard(); return; }
+            if (m_Instance == null)
+            {
+                await CreateCard();
+                return;
+            }
 
             ApiPlayerData l_Player = await GuildApi.GetPlayerInfoFromAPI();
             if (l_Player.Equals(null))
