@@ -115,6 +115,25 @@ namespace GuildSaber.Utils
             return new(l_Color1, l_Color1, l_Color0, l_Color0);
         }
 
+        public static UnityEngine.Color Add(this UnityEngine.Color p_Color, float p_Value)
+        {
+            return new(p_Color.r + p_Value, p_Color.g + p_Value, p_Color.b + p_Value);
+        }
+        public static VertexGradient GetVerticalGradient(UnityEngine.Color p_Color0, UnityEngine.Color p_Color1)
+        {
+            return new(p_Color0, p_Color0, p_Color1, p_Color1);
+        }
+
+        public static UnityEngine.Color Equilibrate(UnityEngine.Color p_Color0, UnityEngine.Color p_Color1, float p_Color0Multiplier = 1)
+        {
+            return new((p_Color0.r * p_Color0Multiplier) + p_Color1.r / 2, (p_Color0.g * p_Color0Multiplier) + p_Color1.g / 2, (p_Color0.b * p_Color0Multiplier) + p_Color1.b / 2);
+        }
+
+        public static bool IsIn(this UnityEngine.Color p_Color, UnityEngine.Color p_Color1)
+        {
+            return ((p_Color.r >= p_Color1.r) && p_Color.g >= p_Color1.g && p_Color.b >= p_Color1.b);
+        }
+
         public static void SetTextError(this TextMeshProUGUI p_Text, Exception p_Ex, ErrorMode p_Mode)
         {
             p_Text.color = UnityEngine.Color.red;

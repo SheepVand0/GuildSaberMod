@@ -38,7 +38,12 @@ internal class GSConfig : JsonConfig<GSConfig>
 
     [JsonProperty] internal int SelectedGuild = 0;
 
-    [JsonProperty] internal Color CustomColor = Color.red;
+    [JsonProperty] internal bool UseCustomColor = false;
+    [JsonProperty] internal bool UseCustomColorGradient = false;
+    [JsonProperty] internal Color CustomColor = Color.magenta;
+    [JsonProperty] internal Color CustomColor1 = Color.cyan;
+    [JsonProperty] internal float NameGradientColor0Multiplier = 1f;
+
     [JsonProperty] internal bool  UwUMode     = false;
 
     public override string GetRelativePath()

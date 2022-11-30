@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using BeatLeader.Models;
 using BeatLeader.Utils;
+using BeatSaberMarkupLanguage;
 using UnityEngine.UI;
 using BeatSaberMarkupLanguage.Attributes;
 using GuildSaber.API;
@@ -105,7 +106,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             Rank = $"{p_Rank}";
             PlayerName = p_Name;
             BasePoints = p_Points;
-            Points = $"{p_Points:0.00} {p_PointsName}";
+            Points = !float.IsNaN(p_Points) ? $"{p_Points:0.00} {p_PointsName}" : string.Empty;
             Score = p_Score.ToString();
             Acc = $"{p_Acc:00.00}%";
             Id = p_Id;
@@ -123,7 +124,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         /// <param name="p_BannedModifiers"></param>
         /// <param name="p_PassState"></param>
         /// <param name="p_Hmd"></param>
-        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd, long p_UnixTimeSet, Player p_BeatLeaderPlayer, string? p_ReplayLink)
+        internal async void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd, long p_UnixTimeSet, Player p_BeatLeaderPlayer, string? p_ReplayLink)
         {
             BadCuts = p_BadCuts;
             MissedNotes = p_MissedNotes;
@@ -135,6 +136,17 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             UnixTimeSet = p_UnixTimeSet;
             ReplayLink = p_ReplayLink;
             BeatLeaderPlayer = p_BeatLeaderPlayer;
+
+            // ReSharper disable once InvertIf
+            if (Points == string.Empty)
+            {
+                if (p_PassState is API.PassState.EState.Denied or API.PassState.EState.MissingModifiers or API.PassState.EState.ProhibitedModifiers or API.PassState.EState.MinScoreRequirement)
+                {
+                    //m_CPoints.SetEnableRichText(true);
+                    Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>D";
+                    m_CPoints.SetText(Points);
+                }
+            }
         }
 
         /// <summary>
@@ -310,12 +322,9 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 
             m_ModalModifiedScoreText.gameObject.SetActive(ModifiedScore != int.Parse(Score));
             m_ModalModifiedScoreText.text = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}> Modified score : </color>{ModifiedScore}";
-            if (Pauses != null)
-                m_ModalPauseCount.text = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.white)}>Pauses : <color=#{(Pauses == 0 ? ColorUtility.ToHtmlStringRGB(Color.green) : ColorUtility.ToHtmlStringRGB(Color.red))}>{Pauses}";
-            else
-                m_ModalPauseCount.text = "Pauses : ?";
+            m_ModalPauseCount.text = Pauses != null ? $"<color=#{ColorUtility.ToHtmlStringRGB(Color.white)}>Pauses : <color=#{(Pauses == 0 ? ColorUtility.ToHtmlStringRGB(Color.green) : ColorUtility.ToHtmlStringRGB(Color.red))}>{Pauses}" : "Pauses : ?";
 
-            foreach (var l_BannedModifier in m_BannedModifiers)
+            foreach (string? l_BannedModifier in m_BannedModifiers)
             {
                 if (!Modifiers.Contains(l_BannedModifier)) continue;
 
@@ -342,7 +351,12 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             string l_Seconds = (l_Time.Second != 0 && l_IsMajorObjects0) ? $"{l_Time.Second} Seconds" : string.Empty;
             m_ModalTimeSet.text = $"{l_Years} {l_Months} {l_Days} {l_Hours} {l_Minutes} {l_Seconds}ago";
 
-            //m_ModalReplay.interactable = ReplayLink != null;
+            m_ModalReplay.interactable = ReplayLink != null && GuildSaberModule.s_BeatLeaderInstalled;
+
+            if (!GuildSaberModule.s_BeatLeaderInstalled)
+            {
+                m_ModalReplay.SetButtonText("BeatLeader not installed");
+            }
 
         }
 
@@ -390,7 +404,11 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
                 null,
                 l_Settings);
 
+            m_InfoModal.Hide(false);
+
             await Resources.FindObjectsOfTypeAll<BeatLeader.Replayer.ReplayerLauncher>().First().StartReplayAsync(l_Data);
+
+            LeaderboardScoreList.s_StartedReplayFromMod = true;
         }
 
         /*private static void Init() {

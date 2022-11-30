@@ -97,16 +97,14 @@ public static class GuildApi
     {
         try
         {
-            ApiPlayerData l_Player = default;
-            ApiPlayerData l_NoGuildsPlayer = await GetPlayerInfoFromAPI(p_UseGuild: false);
+            ApiPlayerData l_Player = await GetPlayerInfoFromAPI(p_UseGuild: false);
 
             HttpClient l_Client = new();
 
-            Task<string> l_SerializedGuilds = l_Client.GetStringAsync($"https://api.guildsaber.com/guilds/data/all?player-id={l_NoGuildsPlayer.ID}");
+            Task<string> l_SerializedGuilds = l_Client.GetStringAsync($"https://api.guildsaber.com/guilds/data/all?player-id={l_Player.ID}");
             l_SerializedGuilds.Wait();
             ApiGuildCollection l_GuildCollection = JsonConvert.DeserializeObject<ApiGuildCollection>(l_SerializedGuilds.Result);
             List<GuildData> l_Guilds = l_GuildCollection.Guilds;
-            l_Player = l_NoGuildsPlayer;
 
 
             GuildSaberModule.SetState(GuildSaberModule.EModState.Fonctionnal);

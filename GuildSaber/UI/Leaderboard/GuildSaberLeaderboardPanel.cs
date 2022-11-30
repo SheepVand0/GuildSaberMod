@@ -180,7 +180,9 @@ namespace GuildSaber.UI.Leaderboard
 
                 ///-----------------------------------------Croping Icon to fit to panel-----------------------------------------
 
-                Texture2D l_IconTexture = null;
+                Texture2D l_DefaultLogo = Utilities.FindTextureInAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
+                Texture2D l_IconTexture = l_DefaultLogo;
+                GSLogger.Instance.Log(GuildSaberModule.LeaderboardSelectedGuild.Logo, IPA.Logging.Logger.LogLevel.DebugUp);
                 try
                 {
                     l_IconTexture = await GuildSaberUtils.GetImage(GuildSaberModule.LeaderboardSelectedGuild.Logo);
@@ -188,13 +190,17 @@ namespace GuildSaber.UI.Leaderboard
                 catch (Exception l_E)
                 {
                     GSLogger.Instance.Error(l_E, nameof(GuildSaberLeaderboardPanel), nameof(Reload));
-                    l_IconTexture = Utilities.FindTextureInAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
                 }
 
                 await WaitUtils.Wait(() => l_IconTexture != null, 10);
 
-                Color[] l_Texture = l_IconTexture.GetPixels(0, (int)(l_IconTexture.height / 2.25f), l_IconTexture.width, (int)(l_IconTexture.height / 4.5f));
+                if (l_IconTexture.width <= 0 || l_IconTexture.height <= 0)
+                    l_IconTexture = l_DefaultLogo;
 
+                // ReSharper disable once PossibleLossOfFraction
+                Color[] l_Texture = l_IconTexture.GetPixels(0, (int)(l_IconTexture.height  * ((float)(l_IconTexture.height / l_IconTexture.width)) / 2.25f), l_IconTexture.width, (int)(l_IconTexture.height / 4.5f));
+
+                // ReSharper disable once PossibleLossOfFraction
                 Texture2D l_ResultTexture = new(l_IconTexture.width, (int)(l_IconTexture.height / 4.5f - (l_IconTexture.width / l_IconTexture.height) - 1));
                 l_ResultTexture.SetPixels(l_Texture);
                 l_ResultTexture.Apply();

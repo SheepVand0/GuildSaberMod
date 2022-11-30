@@ -81,8 +81,8 @@ namespace GuildSaber.UI.Leaderboard.Components
         /// </summary>
         public async void RefreshPoints()
         {
-            await WaitUtils.Wait(() => m_Selector != null, 100);
-            await WaitUtils.Wait(() => GuildSaberLeaderboardPanel.PanelInstance != null, 100);
+            //await WaitUtils.Wait(() => m_Selector != null, 100);
+            //await WaitUtils.Wait(() => GuildSaberLeaderboardPanel.PanelInstance != null, 100);
 
             if (!s_GameObjectReference.activeInHierarchy) return;
 
@@ -98,6 +98,7 @@ namespace GuildSaber.UI.Leaderboard.Components
             m_SelectedPoints = (string)m_Selector.values[0];
             m_Selector.Value = m_SelectedPoints;
             m_Selector.ApplyValue();
+            Events.Instance.SelectPointsTypes(m_SelectedPoints);
         }
 
         ////////////////////////////////////////////////////////////////////////////

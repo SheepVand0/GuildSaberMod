@@ -30,6 +30,8 @@ namespace GuildSaber.UI.Leaderboard.Components
 
         public static LeaderboardScoreList Instance;
 
+        internal static bool s_StartedReplayFromMod = false;
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         [UIValue("ScoreCells")] internal List<object> m_ListComponentScores = new List<object>();
         private static List<object> s_ListComponentScores = new List<object>();
@@ -127,9 +129,6 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             int l_Page = (p_Scope == ELeaderboardScope.Around) ? -2 : 1;
 
-            if (s_Leaderboard.Equals(null)) return;
-            else if (s_Leaderboard.Leaderboards == null) return;
-            else if (s_Leaderboard.Leaderboards.Count == 0) return;
             SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, false, l_Page);
         }
 
@@ -137,10 +136,10 @@ namespace GuildSaber.UI.Leaderboard.Components
         /// On guild is selected
         /// </summary>
         /// <param name="p_Guild"></param>
-        private async void OnGuildSelected(int p_Guild)
+        private void OnGuildSelected(int p_Guild)
         {
             if (!Initialized || !s_GameObjectReference.activeInHierarchy) return;
-            //await WaitUtils.Wait(() => CurrentBeatMap != null, 10);
+
             SetLeaderboard(p_Guild, false);
         }
 
@@ -409,6 +408,10 @@ namespace GuildSaber.UI.Leaderboard.Components
                 l_Current.Reset();
             }
 
+            bool l_IsCpp = false;
+            float l_Cpp = 0.0f;
+            string l_PointsName = string.Empty;
+
             for (int l_i = 0; l_i < p_Scores.Count; l_i++)
             {
                 if (l_i > GuildSaberModule.SCORES_BY_PAGE - 1) continue;
@@ -422,6 +425,16 @@ namespace GuildSaber.UI.Leaderboard.Components
                     foreach (PointsData l_Current in l_Score.PointsData)
                     {
                         if (l_Current.PointsName != p_PointsNames) continue;
+
+                        if (l_Current.PointsIndex == 1)
+                        {
+                            l_PointData.Points = float.NaN;
+                            l_PointData.PointsName = string.Empty;
+                            l_PointsName = l_Current.PointsName;
+                            l_IsCpp = true;
+                            l_Cpp = l_Current.Points != 0f ? l_Current.Points : l_Cpp;
+                            break;
+                        }
 
                         l_PointData = l_Current;
                         break;
@@ -476,6 +489,12 @@ namespace GuildSaber.UI.Leaderboard.Components
                 {
                     GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(SetScores));
                 }
+            }
+
+            if (l_IsCpp)
+            {
+                await WaitUtils.Wait(() => ChangingLeaderboard == false, 1);
+                ChangeHeaderText($"Level {s_Leaderboard.CustomData.LevelValue} - {s_Leaderboard.CustomData.CategoryName} - {l_Cpp} - {l_PointsName}");
             }
         }
     }

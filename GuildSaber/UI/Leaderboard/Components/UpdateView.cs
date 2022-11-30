@@ -23,6 +23,8 @@ namespace GuildSaber.UI.Leaderboard.Components
         public string FileLink { get; set; }
         public string BSPlusMinVersion { get; set; }
         public string BSPlusLink { get; set; }
+        public string BeatLeaderMinVersion { get; set; }
+        public string BeatLeaderLink { get; set; }
     }
 
     internal struct FileToDownload
@@ -43,9 +45,9 @@ namespace GuildSaber.UI.Leaderboard.Components
         protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.UpdateView.bsml";
 
         [UIComponent("ShowUpdatesButton")] Button m_ShowUpdatesButton = null;
-        [UIComponent("UdpatesModal")] private ModalView m_UpdatesModal = null;
+        [UIComponent("UpdatesModal")] private ModalView m_UpdatesModal = null;
         [UIComponent("Horizontal")] HorizontalLayoutGroup m_Horizontal = null;
-        [UIComponent("UdpateText")] TextMeshProUGUI m_UpdateText = null;
+        [UIComponent("UpdateText")] TextMeshProUGUI m_UpdateText = null;
 
         Button m_DirectDownloadButton = null;
         Button m_GithubDownloadButton = null;
@@ -154,11 +156,9 @@ namespace GuildSaber.UI.Leaderboard.Components
         /// </summary>
         public void CheckUpdates()
         {
-            using (WebClient l_Client = new WebClient())
-            {
-                l_Client.DownloadFileAsync(new Uri("https://github.com/SheepVand0/GuildSaberMod/raw/main/Updates.json"), UPDATE_FILE_LOCATION);
-                l_Client.DownloadFileCompleted += ProcessFile;
-            }
+            using WebClient l_Client = new();
+            l_Client.DownloadFileAsync(new Uri("https://github.com/SheepVand0/GuildSaberMod/raw/main/Updates.json"), UPDATE_FILE_LOCATION);
+            l_Client.DownloadFileCompleted += ProcessFile;
         }
 
         /// <summary>
@@ -178,8 +178,7 @@ namespace GuildSaber.UI.Leaderboard.Components
             string l_UpdatesText = string.Empty;
             using (StreamReader l_Reader = new StreamReader(UPDATE_FILE_LOCATION))
             {
-                string l_CurrentLine = string.Empty;
-                while ((l_CurrentLine = l_Reader.ReadLine()) != null)
+                while (l_Reader.ReadLine() is { } l_CurrentLine)
                     l_UpdatesText += l_CurrentLine;
             }
 
@@ -187,6 +186,7 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             string l_CurrentVersion = PluginManager.GetPluginFromId("GuildSaber").HVersion.ToString();
             string l_BSPlusVersion = PluginManager.GetPluginFromId("BeatSaberPlusCORE").HVersion.ToString();
+            string? l_BeatLeaderVersion = PluginManager.GetPluginFromId("BeatLeader")?.HVersion.ToString();
 
             m_FileToDownload.Clear();
 
@@ -200,9 +200,17 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             if (ParseVersion(l_BSPlusVersion) < ParseVersion(l_UpdateData.BSPlusMinVersion))
             {
-                l_NewText += " and BeatSaberplus";
+                l_NewText += $"{(l_NewText.Length > 0 ? "," : string.Empty)} BeatSaberPlus";
                 m_FileToDownload.Add(new FileToDownload("BeatSaberPlus.dll", l_UpdateData.BSPlusLink));
             }
+
+            if (l_BeatLeaderVersion != null)
+                if (ParseVersion(l_BeatLeaderVersion) < ParseVersion(l_UpdateData.BeatLeaderMinVersion))
+                {
+                    l_NewText += $"{(l_NewText.Length > 0 ? "," : string.Empty)} BeatLeader";
+                    m_FileToDownload.Add(new FileToDownload("BeatLeader.dll", l_UpdateData.BeatLeaderLink));
+                }
+
 
             if (m_FileToDownload.Count > 0)
             {
@@ -256,7 +264,7 @@ namespace GuildSaber.UI.Leaderboard.Components
             {
                 if (p_Version[l_i] == '.') continue;
 
-                l_Current += p_Version[l_i];
+                l_Current += (int)(p_Version[(p_Version.Length - 1) - l_i] * Math.Pow(10, l_i));
             }
             return l_Current;
         }

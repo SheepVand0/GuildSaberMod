@@ -1,12 +1,9 @@
 using System;
-using System.IO;
 using BeatLeader.Models;
 using System.Threading.Tasks;
 using System.Net;
 using System.Reflection;
-using CP_SDK_WebSocketSharp;
 using GuildSaber.Logger;
-using Newtonsoft.Json;
 
 namespace GuildSaber.API
 {

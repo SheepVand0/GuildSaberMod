@@ -38,7 +38,7 @@ public class Plugin
     {
         Instance = this;
 
-        new GSLogger(p_Logger);
+        _ = new GSLogger(p_Logger);
 
         MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
         GuildSaberModule.HarmonyInstance.PatchAll();
@@ -47,7 +47,7 @@ public class Plugin
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public void ShowGuildFlow()
+    private void ShowGuildFlow()
     {
         if (_modFlowCoordinator == null)
             _modFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
@@ -62,6 +62,7 @@ public class Plugin
 
         foreach (CustomUIComponent l_Current in l_Components)
         {
+            // ReSharper disable once AccessToStaticMemberViaDerivedType
             GameObject.DestroyImmediate(l_Current.gameObject);
         }
     }

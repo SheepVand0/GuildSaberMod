@@ -31,13 +31,17 @@
 		</horizontal>
 	</grid>
 	</bg>
-	<modal size-delta-x="100" size-delta-y="60" id="SettingsModal" show-event="ShowSettings" hide-event="HideSettings">
+	<modal size-delta-x="100" size-delta-y="100" id="SettingsModal" show-event="ShowSettings" hide-event="HideSettings">
 		<vertical vertical-fit="PreferredSize">
 			<dropdown-list-setting id="GuildList" text='Guild :' value='SelectedGuild' bind-value='true' on-change='UpdateCard' choices='AvailableGuilds' apply-on-change='true'/>
-			<toggle-setting text='Show card handle :' value='ShowCardHandle' id='ToggleShowHandle' apply-on-change='true'/>
-			<toggle-setting text='Show detailed levels :' value='DetailLevels' apply-on-change='true'/>
-			<toggle-setting text='Show play time :' value='ShowPlayTime' apply-on-change='true'/>
-			<color-setting text='Custom Card Color' id='CustomColorSettings' value='CustomColor' apply-on-change='true'/>
+			<toggle-setting id='ToggleShowHandle' text='Show card handle :' apply-on-change='true' />
+			<toggle-setting id="ToggleDetailedLevels" text='Show detailed levels :' apply-on-change='true' />
+			<toggle-setting id="ToggleShowPlayTime" text='Show play time :' apply-on-change='true' />
+			<toggle-setting id="ToggleCustomCardColors" text="Use custom colors : "  apply-on-change="true" />
+			<toggle-setting id="ToggleCustomCardGradient" text="Use custom gradient : " apply-on-change="true" />
+			<color-setting text='Custom Card Color' id='CustomColorSettings' apply-on-change='true'/>
+			<color-setting text='Custom Card Color' id='CustomColorSettings1' apply-on-change='true'/>
+			<slider-setting text="Name gradient first color multiplier" apply-on-change="true" id="NameGradientMultiplier" min="0" max="2" increment="0.1" show-buttons="true"/>
 			<vertical vertical-fit='PreferredSize' spacing='5'>
 				<horizontal spacing='17'>
 					<action-button align='Left' text='Reset menu position' on-click='ResetPosMenu'/>

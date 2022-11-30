@@ -15,6 +15,8 @@ using HMUI;
 using LeaderboardCore.Models;
 using Polyglot;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using VRUIControls;
 using Zenject;
 
 namespace GuildSaber.Harmony
@@ -70,6 +72,33 @@ namespace GuildSaber.Harmony
             Events.InvokeOnReload();
 
             GuildSaberCustomLeaderboard.Instance.Dispose();
+        }
+    }
+
+    [HarmonyPatch(typeof(PauseController), nameof(PauseController.HandlePauseMenuManagerDidPressMenuButton))]
+    class OnMapExit
+    {
+        public static async void Postfix()
+        {
+            if (!LeaderboardScoreList.s_StartedReplayFromMod) return;
+
+            var l_GameScenesManager = Resources.FindObjectsOfTypeAll<GameScenesManager>().First();
+            l_GameScenesManager.PopScenes();
+
+
+            LeaderboardScoreList.s_StartedReplayFromMod = false;
+
+            await WaitUtils.Wait(() => GameObject.Find("Logo") != null, 10, 1000);
+
+            /*foreach (var l_Current in Environment.GetCommandLineArgs())
+            {
+                if (l_Current.ToLower().Contains("fpfc"))
+                {
+                    Resources.FindObjectsOfTypeAll<FirstPersonFlyingController>().First().gameObject.SetActive(true);
+                    Resources.FindObjectsOfTypeAll<Camera>().First().gameObject.SetActive(true);
+                }
+
+            }*/
         }
     }
 

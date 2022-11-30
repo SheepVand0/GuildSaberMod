@@ -47,21 +47,14 @@ namespace GuildSaber.BSPModule
 #nullable enable
         public static int? GSPlayerId { get; internal set; } = null;
         public static ulong SsPlayerId { get; internal set; } = 0;
-
         public static GuildData CardSelectedGuild { get; internal set; } = default(GuildData);
-        //public static GuildData PlaylistDownloadSelectedGuild { get; internal set; } = default(GuildData);
         public static GuildData LeaderboardSelectedGuild { get; internal set; } = default(GuildData);
-        //public static GuildData GuildSaberPlayingMenuSelectedGuild { get; internal set; } = default(GuildData);
-
         public static List<GuildData> AvailableGuilds { get; internal set; } = new List<GuildData>();
-
         public static EModState ModState { get; internal set; } = EModState.APIError;
         public static EModErrorState ModErrorState { get; internal set; } = EModErrorState.NoError;
         public static bool Restarting = false;
-        public static HarmonyLib.Harmony HarmonyInstance
-        {
-            get => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber");
-        }
+        public static HarmonyLib.Harmony HarmonyInstance => new HarmonyLib.Harmony("SheepVand.BeatSaber.GuildSaber");
+        public static bool s_BeatLeaderInstalled = false;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -92,6 +85,9 @@ namespace GuildSaber.BSPModule
 
         protected override async void OnEnable()
         {
+            var l_BeatLeaderPlugin = IPA.Loader.PluginManager.GetPluginFromId("BeatLeader");
+            s_BeatLeaderInstalled = l_BeatLeaderPlugin != null;
+
             AvailableGuilds = (await GuildApi.GetPlayerGuildsInfo()).AvailableGuilds;
 
             if (PlayerCardUI.m_Instance == null && GSConfig.Instance.CardEnabled && ModState == EModState.Fonctionnal)

@@ -37,6 +37,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         protected override void PostCreate()
         {
             m_CText.fontSize = FontSize;
+            m_CText.richText = EnableRichText;
             m_CText.text = $"{(EnableRichText ? RichText : string.Empty)}{Text}";
             m_CText.alignment = Alignment;
             m_CText.color = Color;
@@ -65,5 +66,11 @@ namespace GuildSaber.UI.Leaderboard.Components
             m_CText.richText = EnableRichText;
             m_CText.color = p_Color;
         }
+
+        /*public void SetEnableRichText(bool p_RichText)
+        {
+            EnableRichText = p_RichText;
+            m_CText.richText = p_RichText;
+        }*/
     }
 }
