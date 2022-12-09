@@ -129,6 +129,7 @@ namespace GuildSaber.Utils
             return new((p_Color0.r * p_Color0Multiplier) + p_Color1.r / 2, (p_Color0.g * p_Color0Multiplier) + p_Color1.g / 2, (p_Color0.b * p_Color0Multiplier) + p_Color1.b / 2);
         }
 
+
         public static bool IsIn(this UnityEngine.Color p_Color, UnityEngine.Color p_Color1)
         {
             return ((p_Color.r >= p_Color1.r) && p_Color.g >= p_Color1.g && p_Color.b >= p_Color1.b);

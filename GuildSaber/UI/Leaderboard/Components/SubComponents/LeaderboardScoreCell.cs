@@ -1,21 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using BeatLeader.Models;
-using BeatLeader.Utils;
 using BeatSaberMarkupLanguage;
 using UnityEngine.UI;
 using BeatSaberMarkupLanguage.Attributes;
 using GuildSaber.API;
 using GuildSaber.BSPModule;
-using GuildSaber.Logger;
 using GuildSaber.Utils;
 using HMUI;
 using TMPro;
 using UnityEngine;
-using IPA.Utilities;
-using Zenject;
 
 namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 {

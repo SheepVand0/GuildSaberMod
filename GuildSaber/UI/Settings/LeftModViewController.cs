@@ -5,6 +5,7 @@ using BeatSaberPlus.SDK.UI;
 using GuildSaber.BSPModule;
 using GuildSaber.Configuration;
 using GuildSaber.UI.Card;
+using GuildSaber.Utils;
 using TMPro;
 using UnityEngine;
 

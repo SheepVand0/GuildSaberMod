@@ -90,10 +90,10 @@ namespace GuildSaber.BSPModule
 
             AvailableGuilds = (await GuildApi.GetPlayerGuildsInfo()).AvailableGuilds;
 
-            if (PlayerCardUI.m_Instance == null && GSConfig.Instance.CardEnabled && ModState == EModState.Fonctionnal)
+            if (PlayerCardUI.m_Instance == null && GSConfig.Instance.CardEnabled && ModState == EModState.Functional)
                 await PlayerCardUI.CreateCard();
 
-            if (PlayerCardUI.m_Instance != null && ModState == EModState.Fonctionnal)
+            if (PlayerCardUI.m_Instance != null && ModState == EModState.Functional)
                 PlayerCardUI.SetCardActive(GSConfig.Instance.CardEnabled);
 
             Events.m_EventsEnabled = true;
@@ -133,7 +133,7 @@ namespace GuildSaber.BSPModule
         public enum EModState
         {
             APIError = 0,
-            Fonctionnal = 1 << 1
+            Functional = 1 << 1
         }
 
         public enum EModErrorState

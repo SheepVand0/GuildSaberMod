@@ -69,7 +69,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
         public static void Create(Transform p_Transform, string p_Text, string p_Description, Action p_OnClick, string? p_Image)
         {
-            RoundedButton l_Button = CustomUIComponent.CreateItem<RoundedButton>(p_Transform, true, false);
+            RoundedButton l_Button = CreateItem<RoundedButton>(p_Transform, true, false);
             l_Button.Setup(p_OnClick, p_Text, p_Description, p_Image);
             BSMLParser.instance.Parse("<horizontal id=\"MainLayout\"><vertical><text id=\"Title\" /><text id=\"Description\"/></vertical></horizontal>", p_Transform.gameObject, l_Button);
         }

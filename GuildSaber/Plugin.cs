@@ -5,6 +5,7 @@ using BeatSaberMarkupLanguage.MenuButtons;
 using GuildSaber.BSPModule;
 using GuildSaber.Logger;
 using GuildSaber.UI;
+using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.UI.GuildSaber;
 using IPA;
 using UnityEngine;
@@ -22,8 +23,8 @@ public class Plugin
 
     public const string NOT_DEFINED = "Undefined";
 
-    internal static ModFlowCoordinator _modFlowCoordinator = null;
-
+    internal static ModFlowCoordinator ModFlowCoordinator = null;
+    internal static GuildSelectionFlowCoordinator SelectionFlowCoordinator = null;
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -41,6 +42,7 @@ public class Plugin
         _ = new GSLogger(p_Logger);
 
         MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
+        //MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber Playing Menu", "GuildSaber Playing Menu", ShowSelectionFlow));
         GuildSaberModule.HarmonyInstance.PatchAll();
     }
 
@@ -49,10 +51,18 @@ public class Plugin
 
     private void ShowGuildFlow()
     {
-        if (_modFlowCoordinator == null)
-            _modFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
+        if (ModFlowCoordinator == null)
+            ModFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
 
-        _modFlowCoordinator.Show();
+        ModFlowCoordinator.Show();
+    }
+
+    private void ShowSelectionFlow()
+    {
+        if (SelectionFlowCoordinator == null)
+            SelectionFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<GuildSelectionFlowCoordinator>();
+
+        SelectionFlowCoordinator.Show();
     }
 
     [OnExit]

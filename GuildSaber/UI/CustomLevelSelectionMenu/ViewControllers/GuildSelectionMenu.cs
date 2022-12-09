@@ -1,7 +1,10 @@
+using System.Collections.Generic;
 using System.Reflection;
 using BeatSaberPlus.SDK.UI;
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
+using BeatSaberMarkupLanguage.Components;
+using GuildSaber.BSPModule;
 using GuildSaber.UI.CustomLevelSelectionMenu.Components;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using UnityEngine.UI;
@@ -38,19 +41,25 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
 
     internal class GuildSelectionMenu : ViewController<GuildSelectionMenu>
     {
-
         internal const string VIEW_CONTROLLERS_PATH = "GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Views";
 
         internal static CategorySelectionFlowCoordinator m_CategorySelectionFlowCoordinator = null;
 
+        [UIComponent("GuildList")] private CustomCellListTableData m_CustomCellListTableData = null;
+
+        [UIValue("Guilds")] private List<object> m_Guilds = new List<object>();
+
         protected override string GetViewContentDescription()
         {
-            return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.CustomLevelSelectionMenu.Views.GuildSelectionMenu.bsml");
+            return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), $"{VIEW_CONTROLLERS_PATH}.GuildSelectionMenu.bsml");
         }
 
-        protected override void OnViewCreation()
+        protected override void OnViewActivation()
         {
-
+            m_Guilds.Clear();
+            foreach (var l_Guild in GuildSaberModule.AvailableGuilds)
+                m_Guilds.Add(new GuildSelectionMenuCell(l_Guild.Name, l_Guild.Description, l_Guild.Logo));
+            m_CustomCellListTableData.tableView.ReloadData();
         }
     }
 }

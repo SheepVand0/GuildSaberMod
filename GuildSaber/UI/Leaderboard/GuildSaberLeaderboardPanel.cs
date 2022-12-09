@@ -27,7 +27,7 @@ namespace GuildSaber.UI.Leaderboard
     {
         public static GuildSaberLeaderboardPanel PanelInstance;
 
-        [UIComponent("PlayerErrorTxt")] private readonly TextMeshProUGUI m_ErrorText = null;
+        [UIComponent("PlayerErrorTxt")] private readonly HorizontalLayoutGroup m_ErrorText = null;
         [UIComponent("Elems")] private readonly HorizontalLayoutGroup m_ElemsLayout = null;
         [UIComponent("LoadingGrid")] private readonly GridLayoutGroup m_LoadingLayout = null;
         [UIComponent("PlayerName")] private readonly TextMeshProUGUI m_PlayerName = null;
@@ -46,7 +46,7 @@ namespace GuildSaber.UI.Leaderboard
         [UIValue("LeaderboardGuild")] private string m_DropdownSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild).Name;
         public int m_SelectedGuild = GSConfig.Instance.SelectedGuild;
 
-        public ApiPlayerData m_PlayerData = default(ApiPlayerData);
+        public ApiPlayerData m_PlayerData = new();
         public bool m_IsFirstActivation = true;
 
         ////////////////////////////////////////////////////////////////////////////
@@ -122,8 +122,6 @@ namespace GuildSaber.UI.Leaderboard
         {
             GSLogger.Instance.Log("Reloading", IPA.Logging.Logger.LogLevel.InfoUp);
 
-            //await WaitUtils.Wait(() => gameObject.activeInHierarchy, 10, p_CodeLine: 105);
-
             PanelInstance = this;
 
             if (GuildSaberModule.IsStateError())
@@ -139,20 +137,32 @@ namespace GuildSaber.UI.Leaderboard
                 m_SelectedGuild = GSConfig.Instance.SelectedGuild;
             await Task.Run(delegate { GuildSaberModule.LeaderboardSelectedGuild = GuildSaberUtils.GetGuildFromId(m_SelectedGuild); });
             ///-----------------------------------------Panel Style-----------------------------------------
-            switch (p_ReloadMode)
+            try
             {
-                case ReloadMode.FromCurrent:
-                    if (m_SelectedGuild == GSConfig.Instance.SelectedGuild) m_PlayerData = GuildApi.GetPlayerDataFromCurrent();
-                    else
-                    {
-                        Reload(ReloadMode.FromApi, true, true);
-                        return;
-                    }
-                    break;
-                case ReloadMode.FromApi:
-                    m_PlayerData = await GuildApi.GetPlayerInfoFromAPI(false, m_SelectedGuild, true);
-                    break;
+
+                switch (p_ReloadMode)
+                {
+                    case ReloadMode.FromCurrent:
+                        if (m_SelectedGuild == GSConfig.Instance.SelectedGuild) m_PlayerData = GuildApi.GetPlayerDataFromCurrent();
+                        else
+                        {
+                            Reload(ReloadMode.FromApi, true, true);
+                            return;
+                        }
+                        break;
+                    case ReloadMode.FromApi:
+                        m_PlayerData = await GuildApi.GetPlayerInfoFromAPI(false, m_SelectedGuild, true);
+                        break;
+                    default: return;
+                }
             }
+            catch (Exception l_E)
+            {
+                GSLogger.Instance.Error(l_E, nameof(GuildSaberLeaderboardPanel), nameof(Reload));
+                return;
+            }
+
+            if (GuildSaberModule.IsStateError()) { SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Error); return; }
 
             if (m_PlayerAvatar != null) m_PlayerAvatar.UpdateShader(m_PlayerData.Color.ToUnityColor32());
 
@@ -198,7 +208,7 @@ namespace GuildSaber.UI.Leaderboard
                     l_IconTexture = l_DefaultLogo;
 
                 // ReSharper disable once PossibleLossOfFraction
-                Color[] l_Texture = l_IconTexture.GetPixels(0, (int)(l_IconTexture.height  * ((float)(l_IconTexture.height / l_IconTexture.width)) / 2.25f), l_IconTexture.width, (int)(l_IconTexture.height / 4.5f));
+                Color[] l_Texture = l_IconTexture.GetPixels(0, (int)(l_IconTexture.height * ((float)(l_IconTexture.height / l_IconTexture.width)) / 2.25f), l_IconTexture.width, (int)(l_IconTexture.height / 4.5f));
 
                 // ReSharper disable once PossibleLossOfFraction
                 Texture2D l_ResultTexture = new(l_IconTexture.width, (int)(l_IconTexture.height / 4.5f - (l_IconTexture.width / l_IconTexture.height) - 1));

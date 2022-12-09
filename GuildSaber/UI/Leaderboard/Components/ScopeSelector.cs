@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using GuildSaber.Logger;
+using GuildSaber.Utils;
 using UnityEngine;
 
 namespace GuildSaber.UI.Leaderboard.Components
@@ -67,7 +68,6 @@ namespace GuildSaber.UI.Leaderboard.Components
             else
                 GSLogger.Instance.Error(new Exception($"Invalid scope provided : {p_Scope}"), nameof(ScopeSelector), nameof(SelectScope));
         }
-
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////

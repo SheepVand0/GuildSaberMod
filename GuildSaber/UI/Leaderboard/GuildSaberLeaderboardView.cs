@@ -37,6 +37,8 @@ namespace GuildSaber.UI.Leaderboard
 
         public bool ChangingLeaderboard { get; private set; } = false;
 
+        public static GameObject s_GameObjectReference = null;
+
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
@@ -47,6 +49,7 @@ namespace GuildSaber.UI.Leaderboard
         private async void PostParse()
         {
             m_Instance = this;
+            s_GameObjectReference = gameObject;
 
             //Plugin.Log.Info("Creating GuildSaber leaderboard view");
             m_ScoresList = CustomUIComponent.CreateItem<LeaderboardScoreList>(m_ScoreParamsLayout.transform, true, true);

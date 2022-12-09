@@ -78,9 +78,10 @@ namespace GuildSaber.UI.Leaderboard.Components
             Events.Instance.e_OnScopeSelected += OnScopeSelected;
             Events.e_OnReload += async () =>
             {
-                Initialized = false;
+                /*Initialized = false;
                 await Task.Delay(1000);
-                Initialized = true;
+                Initialized = true;*/
+                m_ListComponentScores.Clear();
             };
 
             Instance = this;
@@ -184,7 +185,7 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             ChangingLeaderboard = true;
 
-            await WaitUtils.Wait(() => GuildSaberLeaderboardView.m_Instance.gameObject.activeInHierarchy && Initialized, 10, p_CodeLine: 176);
+            await WaitUtils.Wait(() => GuildSaberLeaderboardView.s_GameObjectReference.activeInHierarchy && Initialized, 10, p_DelayAfter: 500, p_CodeLine: 176);
 
             if (GuildSaberModule.IsStateError())
             {
@@ -382,6 +383,11 @@ namespace GuildSaber.UI.Leaderboard.Components
         {
             //await WaitUtils.Wait(() => gameObject.activeSelf, 1, p_CodeLine: 362);
 
+            if (s_Leaderboard.Leaderboards == null) return;
+
+            await WaitUtils.Wait(() => s_GameObjectReference.activeSelf, 100, p_MaxTryCount: 10);
+            if (!s_GameObjectReference.activeSelf) return;
+
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Scores);
 
             if (m_ListComponentScores.Count != GuildSaberModule.SCORES_BY_PAGE)
@@ -394,6 +400,8 @@ namespace GuildSaber.UI.Leaderboard.Components
                 }
 
                 s_ListComponentScores = m_ListComponentScores;
+
+                await WaitUtils.Wait(() => m_ScoreList != null, 1);
 
                 m_ScoreList.tableView.ReloadData();
             }

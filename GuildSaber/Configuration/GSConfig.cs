@@ -52,6 +52,8 @@ internal class GSConfig : JsonConfig<GSConfig>
     [JsonProperty] internal Color CustomNameGradientColor = Color.red;
     [JsonProperty] internal float NameGradientColor0Multiplier = 1f;
 
+    [JsonProperty] internal bool EnableCheeseDetection = false;
+
     [JsonProperty] internal bool  UwUMode     = false;
 
     public override string GetRelativePath()

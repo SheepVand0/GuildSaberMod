@@ -1,7 +1,9 @@
 ﻿<horizontal pref-height="20" min-height="20" anchor-pos-y="2" pad-left="0" pad-right="5">
 	<vertical min-width="90" pref-width="90" child-control-width="false" spacing="1" id="BgHorizontal" bg="panel-fade-gradient">
 		<horizontal>
-			<text id='PlayerErrorTxt' text='Error during getting Player data' active='false'/>
+			<horizontal horizontal-fit="PreferredSize" id='PlayerErrorTxt' pref-width="90">
+				<text text='Error during getting Player data' active='false'/>
+			</horizontal>
 			<horizontal id='Elems' active='false' horizontal-fit='PreferredSize' spacing='20' anchor-pos-x='45' ignore-layout='true'>
 				<horizontal horizontal-fit='PreferredSize' spacing='1'>
 					<grid cell-size-x='14' cell-size-y='14'>

@@ -104,7 +104,7 @@ namespace GuildSaber.UI.GuildSaber
 
         public void UnbindEvent()
         {
-            Plugin._modFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged -= OnUnPassedOnlyChanged;
+            Plugin.ModFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged -= OnUnPassedOnlyChanged;
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ namespace GuildSaber.UI.GuildSaber
             l_Background.color1 = Color.white.ColorWithAlpha(0.4f);
             l_Background.overrideSprite = null;
 
-            Plugin._modFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged += OnUnPassedOnlyChanged;
+            Plugin.ModFlowCoordinator._modViewController.e_OnUnPassedOnlyValueChanged += OnUnPassedOnlyChanged;
 
             m_CategoryNameText.text = (Category.ID == 0) ? "Default" : Category.Name;
 
@@ -428,6 +428,8 @@ namespace GuildSaber.UI.GuildSaber
                 }
                 foreach (string l_Current in GetGuildsName())
                     l_TempList.Add(l_Current);
+                if (l_TempList.Count == 0)
+                    l_TempList.Add("Undefined");
                 return l_TempList;
             }
             // ReSharper disable once ValueParameterNotUsed

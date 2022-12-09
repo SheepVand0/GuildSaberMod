@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BeatLeader.Models;
@@ -18,6 +19,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VRUIControls;
 using Zenject;
+using Vector3 = UnityEngine.Vector3;
 
 namespace GuildSaber.Harmony
 {
@@ -61,13 +63,9 @@ namespace GuildSaber.Harmony
     [HarmonyPatch(typeof(MenuTransitionsHelper), nameof(MenuTransitionsHelper.RestartGame))]
     class OnReload
     {
-        public static bool s_RepopPatch;
-
         public static void Prefix()
         {
             if (GuildSaberCustomLeaderboard.Instance == null || !GSConfig.Instance.LeaderboardEnabled) return;
-
-            s_RepopPatch = true;
 
             Events.InvokeOnReload();
 
@@ -85,7 +83,6 @@ namespace GuildSaber.Harmony
             var l_GameScenesManager = Resources.FindObjectsOfTypeAll<GameScenesManager>().First();
             l_GameScenesManager.PopScenes();
 
-
             LeaderboardScoreList.s_StartedReplayFromMod = false;
 
             await WaitUtils.Wait(() => GameObject.Find("Logo") != null, 10, 1000);
@@ -102,7 +99,7 @@ namespace GuildSaber.Harmony
         }
     }
 
-    [HarmonyPatch(typeof(SoloFreePlayFlowCoordinator), "SinglePlayerLevelSelectionFlowCoordinatorDidActivate")]
+    /*[HarmonyPatch(typeof(SoloFreePlayFlowCoordinator), "SinglePlayerLevelSelectionFlowCoordinatorDidActivate")]
     class AfterReloadPatch
     {
         public static async void Postfix()
@@ -113,7 +110,7 @@ namespace GuildSaber.Harmony
 
             GuildSaberCustomLeaderboard.Instance.Initialize();
         }
-    }
+    }*/
 
     [HarmonyPatch(typeof(FlowCoordinator), "SetTitle", new Type[]
     {
@@ -127,4 +124,16 @@ namespace GuildSaber.Harmony
                 value = "UwU";
         }
     }
+
+    /*[HarmonyPatch(typeof(GameNoteController), nameof(GameNoteController.HandleBigWasCutBySaber))]
+    class CheesePatch
+    {
+        private static List<(NoteCutDirection, UnityEngine.Vector3)> s_MinVelocityForCutDirection = new List<(NoteCutDirection, Vector3)>();
+
+        public static void Postfix(GameNoteController __instance, Saber saber, UnityEngine.Vector3 cutPoint,  UnityEngine.Quaternion orientation, UnityEngine.Vector3 cutDirVec)
+        {
+            GSLogger.Instance.Log("Cuting", IPA.Logging.Logger.LogLevel.DebugUp);
+            GSLogger.Instance.Log(cutDirVec.ToString(), IPA.Logging.Logger.LogLevel.DebugUp);
+        }
+    }*/
 }
