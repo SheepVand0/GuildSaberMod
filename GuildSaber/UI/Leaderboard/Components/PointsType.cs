@@ -16,6 +16,9 @@ namespace GuildSaber.UI.Leaderboard.Components
     {
         protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.PointsType.bsml";
 
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
         [UIComponent("PointsDropdown")] DropDownListSetting m_Selector = null;
         TextMeshProUGUI m_PointsText;
 
@@ -71,7 +74,6 @@ namespace GuildSaber.UI.Leaderboard.Components
             await WaitUtils.Wait(() => m_Selector != null, 100);
             await WaitUtils.Wait(() => m_PointsText != null, 100);
             await WaitUtils.Wait(() => s_GameObjectReference.activeSelf, 100);
-            await WaitUtils.Wait(() => !GuildSaberModule.LeaderboardSelectedGuild.Equals(default(GuildData)), 10);
 
             try
             {

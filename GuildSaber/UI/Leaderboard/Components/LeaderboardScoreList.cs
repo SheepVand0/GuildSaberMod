@@ -31,6 +31,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         public static LeaderboardScoreList Instance;
 
         internal static bool s_StartedReplayFromMod = false;
+        internal static ReplayLaunchData s_ReplayLaunchData = null;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         [UIValue("ScoreCells")] internal List<object> m_ListComponentScores = new List<object>();
@@ -314,10 +315,6 @@ namespace GuildSaber.UI.Leaderboard.Components
                     return false;
                 }, 1, 0, 1100);
             }
-            else
-            {
-                SetHeader(false);
-            }
 
             ChangingLeaderboard = false;
         }
@@ -491,6 +488,8 @@ namespace GuildSaber.UI.Leaderboard.Components
                     GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(SetScores));
                 }
             }
+
+            SetHeader(false);
         }
     }
 }

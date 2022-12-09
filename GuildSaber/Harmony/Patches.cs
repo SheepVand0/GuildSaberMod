@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using BeatLeader.Models;
+using BeatLeader.Replayer;
 using BeatSaberPlus.SDK.Game;
 using GuildSaber.BSPModule;
 using GuildSaber.Configuration;
@@ -80,22 +82,13 @@ namespace GuildSaber.Harmony
         {
             if (!LeaderboardScoreList.s_StartedReplayFromMod) return;
 
-            var l_GameScenesManager = Resources.FindObjectsOfTypeAll<GameScenesManager>().First();
-            l_GameScenesManager.PopScenes();
-
-            LeaderboardScoreList.s_StartedReplayFromMod = false;
-
-            await WaitUtils.Wait(() => GameObject.Find("Logo") != null, 10, 1000);
-
-            /*foreach (var l_Current in Environment.GetCommandLineArgs())
+            var l_ReplayerMenuLoader = Resources.FindObjectsOfTypeAll<ReplayerMenuLoader>().First();
+            var l_Method = typeof(ReplayerMenuLoader).GetMethod("HandleReplayWasFinished", BindingFlags.Instance | BindingFlags.NonPublic);
+            l_Method.Invoke(l_ReplayerMenuLoader, new object[]
             {
-                if (l_Current.ToLower().Contains("fpfc"))
-                {
-                    Resources.FindObjectsOfTypeAll<FirstPersonFlyingController>().First().gameObject.SetActive(true);
-                    Resources.FindObjectsOfTypeAll<Camera>().First().gameObject.SetActive(true);
-                }
+                null, LeaderboardScoreList.s_ReplayLaunchData
+            });
 
-            }*/
         }
     }
 
@@ -128,7 +121,8 @@ namespace GuildSaber.Harmony
     /*[HarmonyPatch(typeof(GameNoteController), nameof(GameNoteController.HandleBigWasCutBySaber))]
     class CheesePatch
     {
-        private static List<(NoteCutDirection, UnityEngine.Vector3)> s_MinVelocityForCutDirection = new List<(NoteCutDirection, Vector3)>();
+        private static List<(NoteCutDirection, UnityEngine.Vector3)> s_MinVelocityForCutDirection =
+        new List<(NoteCutDirection, Vector3)>();
 
         public static void Postfix(GameNoteController __instance, Saber saber, UnityEngine.Vector3 cutPoint,  UnityEngine.Quaternion orientation, UnityEngine.Vector3 cutDirVec)
         {

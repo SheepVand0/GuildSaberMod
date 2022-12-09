@@ -403,6 +403,8 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 
             await Resources.FindObjectsOfTypeAll<BeatLeader.Replayer.ReplayerLauncher>().First().StartReplayAsync(l_Data);
 
+            LeaderboardScoreList.s_ReplayLaunchData = l_Data;
+
             LeaderboardScoreList.s_StartedReplayFromMod = true;
         }
 
