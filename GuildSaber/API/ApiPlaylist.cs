@@ -2,7 +2,7 @@
 
 namespace GuildSaber.API
 {
-    #nullable enable
+#nullable enable
 
     public struct PlaylistFormatApi
     {

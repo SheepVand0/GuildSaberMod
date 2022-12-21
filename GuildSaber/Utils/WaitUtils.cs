@@ -19,7 +19,10 @@ namespace GuildSaber.Utils
             {
                 try
                 {
-                    if (p_Func.Invoke()) break;
+                    if (p_Func.Invoke())
+                    {
+                        break;
+                    }
 
                     l_TryCount += 1;
                     await Task.Delay(p_ToleranceMs);
@@ -28,11 +31,15 @@ namespace GuildSaber.Utils
                 {
                     GSLogger.Instance.Error(l_E, nameof(WaitUtils), nameof(Wait));
                     if (p_CodeLine != -1)
+                    {
                         GSLogger.Instance.Error(new Exception($"At line {p_CodeLine}"), nameof(WaitUtils), nameof(Wait));
+                    }
                 }
             } while (l_ShouldTryCount ? l_TryCount < p_MaxTryCount : l_TryCount < 10000);
             if (p_DelayAfter != 0)
+            {
                 await Task.Delay(p_DelayAfter);
+            }
             return Task.CompletedTask;
         }
     }

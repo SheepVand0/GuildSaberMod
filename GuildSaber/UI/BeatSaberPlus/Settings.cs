@@ -8,10 +8,19 @@ using GuildSaber.UI.Card;
 using GuildSaber.UI.Leaderboard;
 using ToggleSetting = BeatSaberMarkupLanguage.Components.Settings.ToggleSetting;
 
+/// It's needed to make it work
+// ReSharper disable once CheckNamespace
 namespace GuildSaber.UI.BeatSaberPlusSettings
 {
     internal class Settings : ViewController<Settings>
     {
+        [UIComponent("BoolCardEnabled")] private readonly ToggleSetting m_BoolCardEnabled = null;
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        [UIComponent("BoolLeaderboardEnabled")]
+        private readonly ToggleSetting m_BoolLeaderboardEnabled = null;
         protected override string GetViewContentDescription()
         {
             return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.BeatSaberPlus.View.Settings.bsml");
@@ -21,26 +30,22 @@ namespace GuildSaber.UI.BeatSaberPlusSettings
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        [UIComponent("BoolLeaderboardEnabled")] ToggleSetting m_BoolLeaderboardEnabled = null;
-        [UIComponent("BoolCardEnabled")] ToggleSetting m_BoolCardEnabled = null;
-
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
-
         protected override void OnViewCreation()
         {
-            BSMLAction l_ToggleCardEvent = new BSMLAction(this, this.GetType().GetMethod(nameof(OnBoolCardChanged), BindingFlags.NonPublic | BindingFlags.Instance));
-            BSMLAction l_ToggleLeaderboardEvent = new BSMLAction(this, this.GetType().GetMethod(nameof(OnBoolLeaderboardChanged), BindingFlags.NonPublic | BindingFlags.Instance));
+            var l_ToggleCardEvent = new BSMLAction(this, GetType().GetMethod(nameof(OnBoolCardChanged), BindingFlags.NonPublic | BindingFlags.Instance));
+            var l_ToggleLeaderboardEvent = new BSMLAction(this, GetType().GetMethod(nameof(OnBoolLeaderboardChanged), BindingFlags.NonPublic | BindingFlags.Instance));
 
-            BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_BoolCardEnabled, l_ToggleCardEvent, GSConfig.Instance.CardEnabled, true);
-            BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_BoolLeaderboardEnabled, l_ToggleLeaderboardEvent, GSConfig.Instance.LeaderboardEnabled, true);
+            global::BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_BoolCardEnabled, l_ToggleCardEvent, GSConfig.Instance.CardEnabled, true);
+            global::BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_BoolLeaderboardEnabled, l_ToggleLeaderboardEvent, GSConfig.Instance.LeaderboardEnabled, true);
         }
 
         private void OnBoolCardChanged(object p_Value)
         {
             GSConfig.Instance.CardEnabled = m_BoolCardEnabled.Value;
-            if (PlayerCardUI.m_Instance != null && Events.m_EventsEnabled == true)
+            if (PlayerCardUI.m_Instance != null && Events.m_EventsEnabled)
+            {
                 PlayerCardUI.SetCardActive(GSConfig.Instance.CardEnabled);
+            }
             GSConfig.Instance.Save();
         }
 
@@ -50,7 +55,8 @@ namespace GuildSaber.UI.BeatSaberPlusSettings
             if (GSConfig.Instance.LeaderboardEnabled)
             {
                 GuildSaberCustomLeaderboard.Instance.Initialize();
-            } else
+            }
+            else
             {
                 GuildSaberCustomLeaderboard.Instance.Dispose();
             }

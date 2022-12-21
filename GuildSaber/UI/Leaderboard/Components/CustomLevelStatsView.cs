@@ -1,11 +1,10 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using GuildSaber.API;
+using GuildSaber.UI.Leaderboard.Components.SubComponents;
 using HMUI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using GuildSaber.UI.Leaderboard.Components.SubComponents;
-using GuildSaber.Utils;
 
 namespace GuildSaber.UI.Leaderboard.Components
 {
@@ -17,34 +16,34 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        [UIComponent("MainButton")] Button m_MainButton = null;
-        [UIComponent("MainHorizontal")] Button m_MainHorizontal = null;
+        [UIComponent("MainButton")] private readonly Button m_MainButton = null;
+        [UIComponent("MainHorizontal")] private Button m_MainHorizontal = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         [UIComponent("Rank")]
-        private TextMeshProUGUI m_CRank = null;
+        private readonly TextMeshProUGUI m_CRank = null;
         [UIComponent("Name")]
-        private TextMeshProUGUI m_CName = null;
+        private readonly TextMeshProUGUI m_CName = null;
         [UIComponent("PassState")]
-        private TextMeshProUGUI m_CPassState = null;
+        private readonly TextMeshProUGUI m_CPassState = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        [UIComponent("InfoModal")] ModalView m_InfoModal = null;
+        [UIComponent("InfoModal")] private readonly ModalView m_InfoModal = null;
 
-        [UIComponent("BadCuts")] TextMeshProUGUI m_CBadCuts = null;
-        [UIComponent("MissedNotes")] TextMeshProUGUI m_CMissedNotes = null;
-        [UIComponent("Pauses")] TextMeshProUGUI m_CPauses = null;
-        [UIComponent("HMD")] TextMeshProUGUI m_CHMD = null;
+        [UIComponent("BadCuts")] private readonly TextMeshProUGUI m_CBadCuts = null;
+        [UIComponent("MissedNotes")] private readonly TextMeshProUGUI m_CMissedNotes = null;
+        [UIComponent("Pauses")] private readonly TextMeshProUGUI m_CPauses = null;
+        [UIComponent("HMD")] private readonly TextMeshProUGUI m_CHMD = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// After view creation
+        ///     After view creation
         /// </summary>
         protected override void AfterViewCreation()
         {
@@ -61,7 +60,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Set Stats View Informations
+        ///     Set Stats View Informations
         /// </summary>
         /// <param name="p_Rank"></param>
         /// <param name="p_Name"></param>
@@ -75,7 +74,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         }
 
         /// <summary>
-        /// Set View Modal Info
+        ///     Set View Modal Info
         /// </summary>
         /// <param name="p_BadCuts"></param>
         /// <param name="p_MissedNotes"></param>
@@ -89,14 +88,20 @@ namespace GuildSaber.UI.Leaderboard.Components
                 m_CBadCuts.color = Color.green;
                 m_CBadCuts.text = "Full Combo";
                 m_CMissedNotes.text = string.Empty;
-            } else {
+            }
+            else
+            {
                 m_CBadCuts.text = $"<color=#adadad>Bad cuts : <color=#b50000>{p_BadCuts}</color>";
                 m_CMissedNotes.text = $"<color=#adadad>Missed Notes : <color=#b50000>{p_MissedNotes}</color>";
             }
             if (p_Pauses != null)
+            {
                 m_CPauses.text = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.white)}>Pauses : <color=#{(p_Pauses == 0 ? ColorUtility.ToHtmlStringRGB(Color.green) : ColorUtility.ToHtmlStringRGB(Color.red))}>{p_Pauses}";
+            }
             else
+            {
                 m_CPauses.text = "Pauses : ?";
+            }
             m_CHMD.text = $"Set on : {p_Hmd}";
         }
 #nullable disable
@@ -105,7 +110,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Reset informations and hide
+        ///     Reset informations and hide
         /// </summary>
         public void Clear()
         {
@@ -119,7 +124,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Show Modal
+        ///     Show Modal
         /// </summary>
         [UIAction("ShowInfoModal")]
         public void ShowInfoModal()
@@ -128,7 +133,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         }
 
         /// <summary>
-        /// Close Info Modal
+        ///     Close Info Modal
         /// </summary>
         [UIAction("CloseModal")]
         private void CloseModal()

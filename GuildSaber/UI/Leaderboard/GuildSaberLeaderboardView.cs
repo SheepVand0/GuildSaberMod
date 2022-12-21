@@ -1,17 +1,15 @@
 ﻿using System;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.ViewControllers;
-using GuildSaber.API;
-using GuildSaber.BSPModule;
-using GuildSaber.Configuration;
 using GuildSaber.Logger;
 using GuildSaber.UI.Leaderboard.Components;
+using GuildSaber.UI.Leaderboard.Managers;
 using GuildSaber.Utils;
 using LeaderboardCore.Interfaces;
 using Polyglot;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Color = UnityEngine.Color;
 
 namespace GuildSaber.UI.Leaderboard
 {
@@ -20,30 +18,40 @@ namespace GuildSaber.UI.Leaderboard
     internal class GuildSaberLeaderboardView : BSMLAutomaticViewController, INotifyLeaderboardSet
     {
 
-        [UIComponent("ScoreParamsLayout")] internal readonly VerticalLayoutGroup m_ScoreParamsLayout = null;
-        [UIComponent("WorldSelection")] readonly VerticalLayoutGroup m_ScopeSelectionLayout = null;
-        [UIComponent("PageUpImage")] public readonly Button m_PageUpImage = null;
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        public static GuildSaberLeaderboardView m_Instance;
+
+        public static GameObject s_GameObjectReference;
+        public ScopeSelector m_ScopeSelector;
         [UIComponent("PageDownImage")] public readonly Button m_PageDownImage = null;
+        [UIComponent("PageUpImage")] public readonly Button m_PageUpImage = null;
+        [UIComponent("WorldSelection")] private readonly VerticalLayoutGroup m_ScopeSelectionLayout = null;
 
-        LeaderboardScoreList m_ScoresList = null;
-        public ScopeSelector m_ScopeSelector = null;
+        [UIComponent("ScoreParamsLayout")] internal readonly VerticalLayoutGroup m_ScoreParamsLayout = null;
 
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
+        private LeaderboardScoreList m_ScoresList;
 
-        public static GuildSaberLeaderboardView m_Instance = null;
+        public static bool Initialized { get; private set; }
 
-        public static bool Initialized { get; private set; } = false;
+        public bool ChangingLeaderboard { get; } = false;
 
-        public bool ChangingLeaderboard { get; private set; } = false;
-
-        public static GameObject s_GameObjectReference = null;
+        public void OnLeaderboardSet(IDifficultyBeatmap difficultyBeatmap)
+        {
+            GSLogger.Instance.Log("Setting", IPA.Logging.Logger.LogLevel.InfoUp);
+            if (m_ScoresList == null)
+            {
+                return;
+            }
+            m_ScoresList.OnLeaderboardSet(difficultyBeatmap);
+        }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Post Parse
+        ///     Post Parse
         /// </summary>
         [UIAction("#post-parse")]
         private async void PostParse()
@@ -61,7 +69,7 @@ namespace GuildSaber.UI.Leaderboard
         }
 
         /// <summary>
-        /// When page up button pressed
+        ///     When page up button pressed
         /// </summary>
         [UIAction("PageUp")]
         private void PageUp()
@@ -70,7 +78,7 @@ namespace GuildSaber.UI.Leaderboard
         }
 
         /// <summary>
-        /// When page down button pressed
+        ///     When page down button pressed
         /// </summary>
         [UIAction("PageDown")]
         private void PageDown()
@@ -82,7 +90,7 @@ namespace GuildSaber.UI.Leaderboard
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Set leaderboard mode
+        ///     Set leaderboard mode
         /// </summary>
         /// <param name="p_Mode"></param>
         public void SetLeaderboardViewMode(ELeaderboardViewMode p_Mode)
@@ -90,7 +98,7 @@ namespace GuildSaber.UI.Leaderboard
             try
             {
                 m_ScoresList.m_ScoreList.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores);
-                m_ScopeSelectionLayout.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores || (p_Mode == ELeaderboardViewMode.UnPassed && m_ScoresList.m_SelectedScope != ELeaderboardScope.Global));
+                m_ScopeSelectionLayout.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores || p_Mode == ELeaderboardViewMode.UnPassed && m_ScoresList.m_SelectedScope != ELeaderboardScope.Global);
                 m_ScoresList.m_NotRankedText.gameObject.SetActive(p_Mode == ELeaderboardViewMode.UnPassed || p_Mode == ELeaderboardViewMode.NotRanked);
                 m_ScoresList.m_ErrorText.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Error);
                 m_ScoresList.m_LoadingLayout.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Loading);
@@ -123,13 +131,6 @@ namespace GuildSaber.UI.Leaderboard
             {
                 GSLogger.Instance.Error(l_E, nameof(GuildSaberLeaderboardView), nameof(SetLeaderboardViewMode));
             }
-        }
-
-        public void OnLeaderboardSet(IDifficultyBeatmap difficultyBeatmap)
-        {
-            GSLogger.Instance.Log("Setting", IPA.Logging.Logger.LogLevel.InfoUp);
-            if (m_ScoresList == null) return;
-            m_ScoresList.OnLeaderboardSet(difficultyBeatmap);
         }
     }
 

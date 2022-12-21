@@ -2,7 +2,7 @@
 
 using System;
 using System.Collections.Generic;
-using GuildSaber.Utils.Color;
+using GuildSaber.Utils;
 
 namespace GuildSaber.API
 {

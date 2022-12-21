@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using GuildSaber.Utils.Color;
+using GuildSaber.Utils;
 
 namespace GuildSaber.API
 {
@@ -34,7 +34,7 @@ namespace GuildSaber.API
         public UInt32 State { get; set; }
         public List<PointsData> PointsData;
         /// <summary>
-        /// The weight is used to display how much points it actually really gave to the player (=> Earned Points = Points * Weight) (not used yet on BSDR, but it's something used on ScoreSaber)
+        ///     The weight is used to display how much points it actually really gave to the player (=> Earned Points = Points * Weight) (not used yet on BSDR, but it's something used on ScoreSaber)
         /// </summary>
         public float Weight { get; set; }
         public UInt32 BaseScore { get; set; }
@@ -98,7 +98,35 @@ namespace GuildSaber.API
         Quest1 = 1 << 5,
         ValveIndex = 1 << 6,
         ViveCosmos = 1 << 7,
-        Quest2 = 1 << 8
+        Quest2 = 1 << 8,
+        PicoNeo3 = 33,
+        PicoNeo2 = 34,
+        VivePro2 = 35,
+        ViveElite = 36,
+        Miramar = 37,
+        Pimax8K = 38,
+        Pimax5K = 39,
+        PimaxArtisan = 40,
+        HpReverb = 41,
+        SamsungWmr = 42,
+        QiyuDream = 43,
+        Disco = 44,
+        LenovoExplorer = 45,
+        AcerWmr = 46,
+        ViveFocus = 47,
+        Arpara = 48,
+        DellVisor = 49,
+        E3 = 50,
+        ViveDvt = 51,
+        Glasses20 = 52,
+        Hedy = 53,
+        Vaporeon = 54,
+        Huaweivr = 55,
+        AsusWmr = 56,
+        Cloudxr = 57,
+        VRidge = 58,
+        Medion = 59,
+        PicoNeo4 = 60,
+        QuestPro = 61
     }
-
 }

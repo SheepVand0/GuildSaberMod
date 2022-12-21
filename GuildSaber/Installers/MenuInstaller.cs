@@ -4,7 +4,7 @@ using Zenject;
 
 namespace GuildSaber.Installers
 {
-    class MenuInstaller : Installer<MenuInstaller>
+    internal class MenuInstaller : Installer<MenuInstaller>
     {
         public override void InstallBindings()
         {

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using GuildSaber.Utils.Color;
+using GuildSaber.Utils;
 
 namespace GuildSaber.API
 {
@@ -57,6 +57,7 @@ namespace GuildSaber.API
         public bool Pure_OnlyAutoWeight { get; set; }
         public bool GGP_ShowAccPoint { get; set; }
     }
+
     public struct GuildLightData
     {
         public int ID { get; set; }

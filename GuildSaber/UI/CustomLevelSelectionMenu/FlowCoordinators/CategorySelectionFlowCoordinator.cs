@@ -1,4 +1,5 @@
 using BeatSaberMarkupLanguage;
+using GuildSaber.UI.FlowCoordinator;
 using GuildSaber.Utils;
 using HMUI;
 
@@ -6,20 +7,22 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
 {
     internal class CategorySelectionFlowCoordinator : CustomFlowCoordinator
     {
-        private GuildDescriptionViewController m_GuildDescriptionViewController = null;
+        private GuildDescriptionViewController m_GuildDescriptionViewController;
 
         protected override string Title => "Categories";
+
+        private string Name { get; set; }
+        private string Description { get; set; }
 
         protected override (ViewController?, ViewController?, ViewController?) GetUIImplementation()
         {
             if (m_GuildDescriptionViewController == null)
+            {
                 m_GuildDescriptionViewController = BeatSaberUI.CreateViewController<GuildDescriptionViewController>();
+            }
 
             return (null, m_GuildDescriptionViewController, null);
         }
-
-        private string Name { get; set; }
-        private string Description { get; set; }
 
         public void Init(string p_Name, string p_Description)
         {
@@ -36,6 +39,5 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
             Name = string.Empty;
             Description = string.Empty;
         }
-
     }
 }

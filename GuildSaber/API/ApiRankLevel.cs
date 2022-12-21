@@ -3,7 +3,7 @@
 namespace GuildSaber.API
 {
 
-    struct ApiRankingLevel
+    internal struct ApiRankingLevel
     {
         public UInt32 ID { get; set; }
         public UInt32 GuildID { get; set; }

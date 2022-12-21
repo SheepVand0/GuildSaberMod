@@ -4,15 +4,14 @@ namespace GuildSaber.Logger
 {
     internal class GSLogger
     {
-        private IPA.Logging.Logger IPALogger { get; set; } = null;
 
-        internal static GSLogger Instance = null;
+        internal static GSLogger Instance;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Init
+        ///     Init
         /// </summary>
         /// <param name="p_Logger"></param>
         public GSLogger(IPA.Logging.Logger p_Logger)
@@ -20,9 +19,10 @@ namespace GuildSaber.Logger
             IPALogger = p_Logger;
             Instance = this;
         }
+        private IPA.Logging.Logger IPALogger { get; }
 
         /// <summary>
-        /// Log something
+        ///     Log something
         /// </summary>
         /// <param name="p_Message"></param>
         /// <param name="p_LogType"></param>
@@ -54,7 +54,7 @@ namespace GuildSaber.Logger
         }
 
         /// <summary>
-        /// Log Error
+        ///     Log Error
         /// </summary>
         /// <param name="p_E"></param>
         /// <param name="p_Class"></param>
@@ -66,6 +66,5 @@ namespace GuildSaber.Logger
             Log($"[GuildSaber.{p_Class}][{p_Function}] TargetSite : {p_E.TargetSite}", IPA.Logging.Logger.LogLevel.ErrorUp);
 
         }
-
     }
 }

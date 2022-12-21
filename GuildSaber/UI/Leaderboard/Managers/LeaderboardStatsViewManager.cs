@@ -1,21 +1,19 @@
 ﻿using GuildSaber.Utils;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-// ReSharper disable once CheckNamespace
-namespace GuildSaber.UI.Leaderboard
+namespace GuildSaber.UI.Leaderboard.Managers
 {
     internal class LeaderboardLevelStatsViewManager
     {
-        public static GameObject GameLevelStatsView = null;
+        public static GameObject GameLevelStatsView;
 
-        public static bool Initialized { get; private set; } = false;
+        public static bool Initialized { get; private set; }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Setup Manager
+        ///     Setup Manager
         /// </summary>
         public static void Setup()
         {
@@ -28,19 +26,27 @@ namespace GuildSaber.UI.Leaderboard
         private static void GetReferences()
         {
             GameLevelStatsView = (GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView") ?? null)!;
-            if (GameLevelStatsView == null) return;
+            if (GameLevelStatsView == null)
+            {
+            }
         }
 
         private static void OnShow(bool p_FirstActivation)
         {
-            if (!GuildSaberCustomLeaderboard.Initialized/* || !GuildSaberCustomLeaderboard.IsShown*/) return;
+            if (!GuildSaberCustomLeaderboard.Initialized /* || !GuildSaberCustomLeaderboard.IsShown*/)
+            {
+                return;
+            }
 
             Hide();
         }
 
         private static void OnHide()
         {
-            if (!GuildSaberCustomLeaderboard.Initialized) return;
+            if (!GuildSaberCustomLeaderboard.Initialized)
+            {
+                return;
+            }
 
             Show();
         }
@@ -49,7 +55,7 @@ namespace GuildSaber.UI.Leaderboard
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Show Game Level Stats View
+        ///     Show Game Level Stats View
         /// </summary>
         public static async void Show()
         {
@@ -57,14 +63,19 @@ namespace GuildSaber.UI.Leaderboard
 
             await WaitUtils.Wait(() => GameLevelStatsView != null, 100, p_MaxTryCount: 20);
 
-            if (GameLevelStatsView == null) return;
+            if (GameLevelStatsView == null)
+            {
+                return;
+            }
 
             foreach (Transform l_Transform in GameLevelStatsView.transform)
+            {
                 l_Transform.gameObject.SetActive(true);
+            }
         }
 
         /// <summary>
-        /// Hide Game Level Stats View
+        ///     Hide Game Level Stats View
         /// </summary>
         public static async void Hide()
         {
@@ -73,7 +84,9 @@ namespace GuildSaber.UI.Leaderboard
             await WaitUtils.Wait(() => GameLevelStatsView != null, 1);
 
             foreach (Transform l_Transform in GameLevelStatsView.transform)
+            {
                 l_Transform.gameObject.SetActive(false);
+            }
         }
     }
 }

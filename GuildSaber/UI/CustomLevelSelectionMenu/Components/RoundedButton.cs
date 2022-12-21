@@ -5,7 +5,6 @@ using BeatSaberMarkupLanguage.Attributes;
 using GuildSaber.AssetBundles;
 using GuildSaber.Utils;
 using HMUI;
-using OVR.OpenVR;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,23 +13,26 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 {
     public class RoundedButton : CustomUIComponent
     {
-        protected override string ViewResourceName => string.Empty;
-
-        protected override string GetViewDescription() => "";
+        [UIComponent("Description")] private readonly TextMeshProUGUI m_DescriptionText = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         [UIComponent("MainLayout")] private readonly HorizontalLayoutGroup m_MainLayout = null;
         [UIComponent("Title")] private readonly TextMeshProUGUI m_TitleText = null;
-        [UIComponent("Description")] private readonly TextMeshProUGUI m_DescriptionText = null;
 
-        private string m_Title = String.Empty;
+        private Button m_Button;
         private string m_Description = string.Empty;
-        private string? m_Image = null;
-        private Action m_OnClick = null;
+        private string? m_Image;
+        private Action m_OnClick;
 
-        private Button m_Button = null;
+        private string m_Title = string.Empty;
+        protected override string ViewResourceName => string.Empty;
+
+        protected override string GetViewDescription()
+        {
+            return "";
+        }
 
         protected override async void AfterViewCreation()
         {
@@ -40,14 +42,20 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             m_DescriptionText.text = m_Description;
             m_DescriptionText.fontSize = 2.5f;
 
-            if (m_Image == null) return;
+            if (m_Image == null)
+            {
+                return;
+            }
             try
             {
-                Material l_RoundedShader = AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask");
+                var l_RoundedShader = AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask");
                 l_RoundedShader.SetFloat(Shader.PropertyToID("_FadeStart"), 1.48f);
                 l_RoundedShader.SetFloat(Shader.PropertyToID("_FadeEnd"), 1.45f);
                 Texture l_Texture = await GuildSaberUtils.GetImage(m_Image);
-                if (l_Texture == null) return;
+                if (l_Texture == null)
+                {
+                    return;
+                }
 
                 l_RoundedShader.SetTexture(Shader.PropertyToID("_MainTex"), l_Texture);
                 m_Button.GetComponentsInChildren<ImageView>().ElementAt(0).material = l_RoundedShader;
@@ -55,7 +63,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             }
             catch
             {
-                return;
+                // ignored
             }
         }
 
@@ -69,10 +77,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
         public static void Create(Transform p_Transform, string p_Text, string p_Description, Action p_OnClick, string? p_Image)
         {
-            RoundedButton l_Button = CreateItem<RoundedButton>(p_Transform, true, false);
+            var l_Button = CreateItem<RoundedButton>(p_Transform, true, false);
             l_Button.Setup(p_OnClick, p_Text, p_Description, p_Image);
             BSMLParser.instance.Parse("<horizontal id=\"MainLayout\"><vertical><text id=\"Title\" /><text id=\"Description\"/></vertical></horizontal>", p_Transform.gameObject, l_Button);
         }
-
     }
 }

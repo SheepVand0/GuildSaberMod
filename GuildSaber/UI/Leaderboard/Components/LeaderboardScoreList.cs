@@ -1,68 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using BeatLeader.Models;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using GuildSaber.API;
-using GuildSaber.BSPModule;
-using GuildSaber.Utils;
-using TMPro;
-using UnityEngine;
 using GuildSaber.Configuration;
 using GuildSaber.Logger;
-using UnityEngine.UI;
 using GuildSaber.UI.Leaderboard.Components.SubComponents;
+using GuildSaber.UI.Leaderboard.Managers;
+using GuildSaber.Utils;
+using Polyglot;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace GuildSaber.UI.Leaderboard.Components
 {
 
 
-    class LeaderboardScoreList : CustomUIComponent
+    internal class LeaderboardScoreList : CustomUIComponent
     {
-        protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.LeaderboardScoreList.bsml";
-
-        [UIComponent("ScoreList")] internal readonly CustomCellListTableData m_ScoreList = null;
-        [UIComponent("NotRankedText")] internal readonly TextMeshProUGUI m_NotRankedText = null;
-        [UIComponent("ErrorText")] internal readonly TextMeshProUGUI m_ErrorText = null;
-        [UIComponent("Loading")] internal readonly GridLayoutGroup m_LoadingLayout = null;
 
         public static LeaderboardScoreList Instance;
 
         internal static bool s_StartedReplayFromMod = false;
         internal static ReplayLaunchData s_ReplayLaunchData = null;
+        private static List<object> s_ListComponentScores = new List<object>();
+
+        private static CustomLevelStatsView s_CustomLevelStatsView;
+
+        private static GameObject s_GameObjectReference;
+
+        private static ApiMapLeaderboardCollectionStruct s_Leaderboard = default(ApiMapLeaderboardCollectionStruct);
+        private static string s_CurrentPointsName = string.Empty;
+        public int m_Page = 1;
+        [UIComponent("ErrorText")] internal readonly TextMeshProUGUI m_ErrorText = null;
+        [UIComponent("Loading")] internal readonly GridLayoutGroup m_LoadingLayout = null;
+        [UIComponent("NotRankedText")] internal readonly TextMeshProUGUI m_NotRankedText = null;
+
+        [UIComponent("ScoreList")] internal readonly CustomCellListTableData m_ScoreList = null;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         [UIValue("ScoreCells")] internal List<object> m_ListComponentScores = new List<object>();
-        private static List<object> s_ListComponentScores = new List<object>();
 
-        static CustomLevelStatsView s_CustomLevelStatsView = null;
-
-        private static GameObject s_GameObjectReference = null;
+        internal ELeaderboardScope m_SelectedScope = ELeaderboardScope.Global;
+        protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.LeaderboardScoreList.bsml";
 
         public bool Initialized { get; private set; }
 
-        private float ListCellSize
-        {
-            get => 4 * LeaderboardScoreCell.ScaleFactor;
-        }
-
-        static ApiMapLeaderboardCollectionStruct s_Leaderboard = default(ApiMapLeaderboardCollectionStruct);
-        public int m_Page = 1;
-        private static string s_CurrentPointsName = string.Empty;
+        private float ListCellSize => 4 * LeaderboardScoreCell.ScaleFactor;
         //public string CurrentMapHash { get; internal set; } = string.Empty;
-        public static IDifficultyBeatmap? CurrentBeatMap { get; internal set; } = null;
-
-        internal ELeaderboardScope m_SelectedScope = ELeaderboardScope.Global;
-        public bool ChangingLeaderboard { get; private set; } = false;
+        public static IDifficultyBeatmap? CurrentBeatMap { get; internal set; }
+        public bool ChangingLeaderboard { get; private set; }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         protected override async void AfterViewCreation()
         {
-            s_CustomLevelStatsView = CustomUIComponent.CreateItem<CustomLevelStatsView>(GuildSaberLeaderboardView.m_Instance.m_ScoreParamsLayout.transform, true, true);
+            s_CustomLevelStatsView = CreateItem<CustomLevelStatsView>(GuildSaberLeaderboardView.m_Instance.m_ScoreParamsLayout.transform, true, true);
 
             await WaitUtils.Wait(() => GuildSaberLeaderboardPanel.PanelInstance != null, 10);
 
@@ -91,26 +88,32 @@ namespace GuildSaber.UI.Leaderboard.Components
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
-        ///Events
+        /// Events
         /// <summary>
-        /// When the leaderboard is shown
+        ///     When the leaderboard is shown
         /// </summary>
         /// <param name="p_FirstActivation"></param>
         private void OnLeaderboardShow(bool p_FirstActivation)
         {
-            if (p_FirstActivation || !Initialized) return;
+            if (p_FirstActivation || !Initialized)
+            {
+                return;
+            }
 
             SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, true);
         }
 
         /// <summary>
-        /// On beat map selected
+        ///     On beat map selected
         /// </summary>
         /// <param name="p_DifficultyBeatmap"></param>
         internal void OnLeaderboardSet(IDifficultyBeatmap p_DifficultyBeatmap)
         {
             // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-            if (p_DifficultyBeatmap == null || !Initialized) return;
+            if (p_DifficultyBeatmap == null || !Initialized)
+            {
+                return;
+            }
 
             CurrentBeatMap = p_DifficultyBeatmap;
 
@@ -118,35 +121,40 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             m_Page = 1;
             if (GuildSaberCustomLeaderboard.IsShown)
+            {
                 SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, false);
+            }
         }
 
         /// <summary>
-        /// Event on scope selected
+        ///     Event on scope selected
         /// </summary>
         /// <param name="p_Scope"></param>
         private void OnScopeSelected(ELeaderboardScope p_Scope)
         {
             m_SelectedScope = p_Scope;
 
-            int l_Page = (p_Scope == ELeaderboardScope.Around) ? -2 : 1;
+            int l_Page = p_Scope == ELeaderboardScope.Around ? -2 : 1;
 
             SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, false, l_Page);
         }
 
         /// <summary>
-        /// On guild is selected
+        ///     On guild is selected
         /// </summary>
         /// <param name="p_Guild"></param>
         private void OnGuildSelected(int p_Guild)
         {
-            if (!Initialized || !s_GameObjectReference.activeInHierarchy) return;
+            if (!Initialized || !s_GameObjectReference.activeInHierarchy)
+            {
+                return;
+            }
 
             SetLeaderboard(p_Guild, false);
         }
 
         /// <summary>
-        /// On other points type selected
+        ///     On other points type selected
         /// </summary>
         /// <param name="p_PointsName"></param>
         /// <param name="p_PointsName"></param>
@@ -154,9 +162,18 @@ namespace GuildSaber.UI.Leaderboard.Components
         {
             s_CurrentPointsName = p_PointsName;
 
-            if (s_Leaderboard.Equals(null)) return;
-            else if (s_Leaderboard.Leaderboards == null) return;
-            else if (s_Leaderboard.Leaderboards.Count == 0) return;
+            if (s_Leaderboard.Equals(null))
+            {
+                return;
+            }
+            if (s_Leaderboard.Leaderboards == null)
+            {
+                return;
+            }
+            if (s_Leaderboard.Leaderboards.Count == 0)
+            {
+                return;
+            }
 
             try
             {
@@ -175,23 +192,29 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Set leaderboard from current beat map
+        ///     Set leaderboard from current beat map
         /// </summary>
         /// <param name="p_Guild">Guild Id</param>
         public async void SetLeaderboard(int p_Guild, bool p_NeedUpdate, int p_Page = 0)
         {
             ///Change conditions
 
-            if (ChangingLeaderboard) return;
+            if (ChangingLeaderboard)
+            {
+                return;
+            }
 
             ChangingLeaderboard = true;
 
             await WaitUtils.Wait(() => GuildSaberLeaderboardView.s_GameObjectReference.activeInHierarchy && Initialized, 100, p_MaxTryCount: 15, p_CodeLine: 176);
-            if (!gameObject.activeInHierarchy) return;
+            if (!gameObject.activeInHierarchy)
+            {
+                return;
+            }
 
             if (GuildSaberModule.IsStateError())
             {
-                m_ErrorText.SetTextError(GuildSaberModule.ModErrorState == GuildSaberModule.EModErrorState.BadRequest_400 ? new System.Exception($"Error during getting player data \n: Bad Request, maybe you mod is outdated or the api is down") : new Exception("Error during getting player data : \n Go scan !"), GuildSaberUtils.ErrorMode.Message);
+                m_ErrorText.SetTextError(GuildSaberModule.ModErrorState == GuildSaberModule.EModErrorState.BadRequest_400 ? new Exception("Error during getting player data \n: Bad Request, maybe you mod is outdated or the api is down") : new Exception("Error during getting player data : \n Go scan !"), GuildSaberUtils.ErrorMode.Message);
 
                 GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Error);
                 s_CustomLevelStatsView.Clear();
@@ -214,7 +237,7 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             string l_Hash = GSBeatmapUtils.DifficultyBeatmapToHash(CurrentBeatMap);
             string l_Country =
-                (GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData.Country != string.Empty && m_SelectedScope == ELeaderboardScope.Country) ? GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData.Country : string.Empty;
+                GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData.Country != string.Empty && m_SelectedScope == ELeaderboardScope.Country ? GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData.Country : string.Empty;
 
             ///Page managing
 
@@ -237,11 +260,13 @@ namespace GuildSaber.UI.Leaderboard.Components
             ///Points managing
 
             if (s_CurrentPointsName == string.Empty)
+            {
                 s_CurrentPointsName = GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData.RankData[0].PointsName;
+            }
 
             ///Getting leaderboard from API
 
-            s_Leaderboard = await GuildApi.GetLeaderboard(p_Guild, l_Hash, CurrentBeatMap, l_Page, GuildSaberModule.GSPlayerId ?? 0, p_Country: l_Country, p_Mode: CurrentBeatMap.parentDifficultyBeatmapSet.beatmapCharacteristic.serializedName, 10, PointsType.GetPointsIDByName(GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData, GuildSaberModule.LeaderboardSelectedGuild, s_CurrentPointsName));
+            s_Leaderboard = await GuildApi.GetLeaderboard(p_Guild, l_Hash, CurrentBeatMap, l_Page, GuildSaberModule.GSPlayerId ?? 0, l_Country, CurrentBeatMap.parentDifficultyBeatmapSet.beatmapCharacteristic.serializedName, 10, PointsType.GetPointsIDByName(GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData, GuildSaberModule.LeaderboardSelectedGuild, s_CurrentPointsName));
 
             ///Set around me button active if player have a score on current map
 
@@ -258,16 +283,20 @@ namespace GuildSaber.UI.Leaderboard.Components
                 ChangingLeaderboard = false;
                 return;
             }
-            else if (!s_Leaderboard.Equals(default(ApiMapLeaderboardCollectionStruct)) && s_Leaderboard.Leaderboards.Count == 0)
+            if (!s_Leaderboard.Equals(default(ApiMapLeaderboardCollectionStruct)) && s_Leaderboard.Leaderboards.Count == 0)
             {
                 ///If map is un passed
                 GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.UnPassed);
                 ChangeHeaderText($"Level {s_Leaderboard.CustomData.LevelValue} - {s_Leaderboard.CustomData.CategoryName.VerifiedCategory()}");
                 GuildSaberLeaderboardView.m_Instance.m_PageDownImage.interactable = false;
                 if (m_Page == 1)
+                {
                     GuildSaberLeaderboardView.m_Instance.m_PageUpImage.interactable = false;
+                }
                 else if (m_Page > 1)
+                {
                     GuildSaberLeaderboardView.m_Instance.m_PageUpImage.interactable = true;
+                }
                 SetHeader(false);
                 s_CustomLevelStatsView.Clear();
                 ChangingLeaderboard = false;
@@ -290,7 +319,7 @@ namespace GuildSaber.UI.Leaderboard.Components
                 if (GuildSaberLeaderboardView.m_Instance.m_ScopeSelector.m_AroundImage.gameObject.activeInHierarchy)
                 {
                     s_CustomLevelStatsView.SetModalInfo((int)s_Leaderboard.PlayerScore?.BadCuts!, (int)s_Leaderboard.PlayerScore?.MissedNotes!,
-                        (s_Leaderboard.PlayerScore?.HasScoreStatistic ?? false) ? (int)s_Leaderboard.PlayerScore?.ScoreStatistic?.PauseCount! : null,
+                        s_Leaderboard.PlayerScore?.HasScoreStatistic ?? false ? (int)s_Leaderboard.PlayerScore?.ScoreStatistic?.PauseCount! : null,
                         (EHMD)s_Leaderboard.PlayerScore?.HMD!);
 
                     s_CustomLevelStatsView.Init((int)s_Leaderboard.PlayerScore?.Rank!,
@@ -326,17 +355,23 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Change header to Level of the current map and the category
+        ///     Change header to Level of the current map and the category
         /// </summary>
         public async void SetHeader(bool p_Unranked)
         {
             //await WaitUtils.Wait(() => gameObject.activeSelf, 10, p_CodeLine: 305);
 
-            if (LeaderboardHeaderManager.m_Header == null || !LeaderboardHeaderManager.m_Header.activeSelf) return;
+            if (LeaderboardHeaderManager.m_Header == null || !LeaderboardHeaderManager.m_Header.activeSelf)
+            {
+                return;
+            }
 
-            if (!GuildSaberCustomLeaderboard.IsShown) return;
+            if (!GuildSaberCustomLeaderboard.IsShown)
+            {
+                return;
+            }
 
-            ChangeHeaderText(p_Unranked ? Polyglot.Localization.Get("TITLE_HIGHSCORES") : $"Level {s_Leaderboard.CustomData.LevelValue} - {s_Leaderboard.CustomData.CategoryName.VerifiedCategory()} - {s_Leaderboard.CustomData.PassPoints} PassPoints");
+            ChangeHeaderText(p_Unranked ? Localization.Get("TITLE_HIGHSCORES") : $"Level {s_Leaderboard.CustomData.LevelValue} - {s_Leaderboard.CustomData.CategoryName.VerifiedCategory()} - {s_Leaderboard.CustomData.PassPoints} PassPoints");
 
             await WaitUtils.Wait(() => GuildSaberLeaderboardPanel.PanelInstance.gameObject.activeSelf, 1);
 
@@ -344,13 +379,15 @@ namespace GuildSaber.UI.Leaderboard.Components
         }
 
         /// <summary>
-        /// Change leaderboard Header
+        ///     Change leaderboard Header
         /// </summary>
         /// <param name="p_Text"></param>
         public void ChangeHeaderText(string p_Text)
         {
             if (GSConfig.Instance.UwUMode)
+            {
                 p_Text += " `(*>﹏<*)′";
+            }
 
             LeaderboardHeaderManager.ChangeText(p_Text);
         }
@@ -374,7 +411,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Set current scores to list
+        ///     Set current scores to list
         /// </summary>
         /// <param name="p_CustomData"></param>
         /// <param name="p_Scores"></param>
@@ -383,10 +420,16 @@ namespace GuildSaber.UI.Leaderboard.Components
         {
             //await WaitUtils.Wait(() => gameObject.activeSelf, 1, p_CodeLine: 362);
 
-            if (s_Leaderboard.Leaderboards == null) return;
+            if (s_Leaderboard.Leaderboards == null)
+            {
+                return;
+            }
 
             await WaitUtils.Wait(() => s_GameObjectReference.activeSelf, 100, p_MaxTryCount: 10);
-            if (!s_GameObjectReference.activeSelf) return;
+            if (!s_GameObjectReference.activeSelf)
+            {
+                return;
+            }
 
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Scores);
 
@@ -406,10 +449,12 @@ namespace GuildSaber.UI.Leaderboard.Components
                 m_ScoreList.tableView.ReloadData();
             }
 
-            LeaderboardScoreCell l_Cell = (LeaderboardScoreCell)s_ListComponentScores[GuildSaberModule.SCORES_BY_PAGE - 1];
+            var l_Cell = (LeaderboardScoreCell)s_ListComponentScores[GuildSaberModule.SCORES_BY_PAGE - 1];
 
             if (l_Cell.HasBeenParsed == false)
-                await WaitUtils.Wait(() => l_Cell.HasBeenParsed, 50, 0);
+            {
+                await WaitUtils.Wait(() => l_Cell.HasBeenParsed, 50);
+            }
 
             foreach (LeaderboardScoreCell l_Current in s_ListComponentScores)
             {
@@ -418,17 +463,26 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             for (int l_i = 0; l_i < p_Scores.Count; l_i++)
             {
-                if (l_i > GuildSaberModule.SCORES_BY_PAGE - 1) continue;
+                if (l_i > GuildSaberModule.SCORES_BY_PAGE - 1)
+                {
+                    continue;
+                }
 
                 ApiMapLeaderboardContentStruct l_Score = p_Scores[l_i];
-                PointsData l_PointData = default(PointsData);
+                var l_PointData = default(PointsData);
 
-                if (string.IsNullOrEmpty(p_PointsNames)) l_PointData = l_Score.PointsData[0];
+                if (string.IsNullOrEmpty(p_PointsNames))
+                {
+                    l_PointData = l_Score.PointsData[0];
+                }
                 else
                 {
                     foreach (PointsData l_Current in l_Score.PointsData)
                     {
-                        if (l_Current.PointsName != p_PointsNames) continue;
+                        if (l_Current.PointsName != p_PointsNames)
+                        {
+                            continue;
+                        }
 
                         if (l_Current.PointsIndex == 1)
                         {
@@ -446,7 +500,7 @@ namespace GuildSaber.UI.Leaderboard.Components
                 {
                     ///Player settings for BeatLeader Replay
 
-                    Player l_Player = new Player
+                    var l_Player = new Player
                     {
                         id = l_Score.BeatLeaderID,
                         avatar = l_Score.Avatar,
@@ -455,7 +509,7 @@ namespace GuildSaber.UI.Leaderboard.Components
                         countryRank = (int)l_Score.Rank
                     };
 
-                    ProfileSettings l_Settings = new()
+                    var l_Settings = new ProfileSettings
                     {
                         hue = 1,
                         message = string.Empty,
@@ -470,9 +524,9 @@ namespace GuildSaber.UI.Leaderboard.Components
                         l_Player.pp = l_Index.Points;
                     }
 
-                    LeaderboardScoreCell l_CurrentCell = (LeaderboardScoreCell)s_ListComponentScores[l_i];
-                    l_CurrentCell.Init((int)l_Score.Rank, l_Score.Name, l_PointData.Points, l_PointData.PointsName, (int)l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID.ToString(), l_Score.Modifiers);
-                    l_CurrentCell.SetModalInfo((int)l_Score.BadCuts, (int)l_Score.MissedNotes, (l_Score.ScoreStatistic != null) ? (int)l_Score.ScoreStatistic?.PauseCount! : null, (int)l_Score.ModifiedScore, new List<string>
+                    var l_CurrentCell = (LeaderboardScoreCell)s_ListComponentScores[l_i];
+                    l_CurrentCell.Init((int)l_Score.Rank, l_Score.Name, l_PointData.Points, l_PointData.PointsName, (int)l_Score.BaseScore, (float)l_Score.BaseScore * 100 / p_CustomData.MaxScore, l_Score.ScoreSaberID, l_Score.Modifiers);
+                    l_CurrentCell.SetModalInfo((int)l_Score.BadCuts, (int)l_Score.MissedNotes, l_Score.ScoreStatistic != null ? (int)l_Score.ScoreStatistic?.PauseCount! : null, (int)l_Score.ModifiedScore, new List<string>
                     {
                         "NF",
                         "SS",

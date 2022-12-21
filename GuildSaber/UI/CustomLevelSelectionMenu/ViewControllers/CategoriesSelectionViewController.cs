@@ -2,8 +2,7 @@ using System.Reflection;
 using BeatSaberMarkupLanguage;
 using BeatSaberPlus.SDK.UI;
 
-// ReSharper disable once CheckNamespace
-namespace GuildSaber.UI.CustomLevelSelectionMenu
+namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 {
     public class CategoriesSelectionViewController : ViewController<CategoriesSelectionViewController>
     {

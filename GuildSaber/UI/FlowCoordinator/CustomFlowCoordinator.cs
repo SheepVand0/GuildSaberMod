@@ -1,28 +1,30 @@
 using BeatSaberMarkupLanguage;
 using HMUI;
 
-// ReSharper disable once CheckNamespace
-namespace GuildSaber.UI
+namespace GuildSaber.UI.FlowCoordinator
 {
-    internal abstract class CustomFlowCoordinator : FlowCoordinator
+    internal abstract class CustomFlowCoordinator : HMUI.FlowCoordinator
     {
+
+        private HMUI.FlowCoordinator m_LastFlowCoordinator;
 
         protected abstract string Title { get; }
 
-        private FlowCoordinator m_LastFlowCoordinator = null;
-
         /// <summary>
-        /// Get view controllers
+        ///     Get view controllers
         /// </summary>
         /// <returns>Center view controller, Left View Controller, Right ViewController</returns>
         protected abstract (ViewController?, ViewController?, ViewController?) GetUIImplementation();
 
         protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
         {
-            if (!firstActivation) return;
+            if (!firstActivation)
+            {
+                return;
+            }
 
             SetTitle(Title);
-            var l_ViewControllers = GetUIImplementation();
+            (ViewController?, ViewController?, ViewController?) l_ViewControllers = GetUIImplementation();
             showBackButton = true;
             ProvideInitialViewControllers(l_ViewControllers.Item1, l_ViewControllers.Item2, l_ViewControllers.Item3);
         }
@@ -44,14 +46,21 @@ namespace GuildSaber.UI
 
         public void Hide()
         {
-            if (m_LastFlowCoordinator == null) return;
+            if (m_LastFlowCoordinator == null)
+            {
+                return;
+            }
             m_LastFlowCoordinator.DismissFlowCoordinator(this);
             m_LastFlowCoordinator = null;
             OnHide();
         }
 
-        protected virtual void OnShow() {}
+        protected virtual void OnShow()
+        {
+        }
 
-        protected virtual void OnHide() {}
+        protected virtual void OnHide()
+        {
+        }
     }
 }

@@ -12,7 +12,10 @@ namespace GuildSaber.Harmony
     {
         private static void Prefix(ComboUIController __instance)
         {
-            if (!GSConfig.Instance.UwUMode) return;
+            if (!GSConfig.Instance.UwUMode)
+            {
+                return;
+            }
 
             __instance.GetComponentInChildren<TextMeshProUGUI>().text = "COMBWO";
         }
@@ -25,12 +28,19 @@ namespace GuildSaber.Harmony
         {
             TextMeshProUGUI l_Text = __instance.GetField<TextMeshProUGUI, GameplayModifierToggle>("_nameText");
 
-            if (!GSConfig.Instance.UwUMode) { return; }
+            if (!GSConfig.Instance.UwUMode)
+            {
+                return;
+            }
 
             if (l_Text.text == Localization.Get("MODIFIER_NO_FAIL_ON_0_ENERGY"))
+            {
                 l_Text.text = "Nowo Fwail";
+            }
             else if (l_Text.text == Localization.Get("MODIFIER_NO_BOMBS"))
+            {
                 l_Text.text = "Nowo Bwombs";
+            }
         }
     }
 }

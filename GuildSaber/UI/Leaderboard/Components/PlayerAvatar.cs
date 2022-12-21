@@ -10,29 +10,32 @@ using UnityEngine.UI;
 
 namespace GuildSaber.UI.Leaderboard.Components
 {
-    class PlayerAvatar : CustomUIComponent
+    internal class PlayerAvatar : CustomUIComponent
     {
 
+        private Material _PlayerAvatarMaskInstance;
+
+        ////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////////////////
+
+        [UIComponent("AvatarImage")] private readonly ImageView m_Avatar = null;
+        [UIComponent("AvatarGrid")] private readonly GridLayoutGroup m_AvatarGrid = null;
+
         protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.PlayerAvatar.bsml";
-
-        private Material _PlayerAvatarMaskInstance = null;
-
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
-
-        [UIComponent("AvatarImage")] private ImageView m_Avatar = null;
-        [UIComponent("AvatarGrid")] private GridLayoutGroup m_AvatarGrid = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// After View Creation
+        ///     After View Creation
         /// </summary>
         protected override void AfterViewCreation()
         {
             ApiPlayerData l_Player = GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData;
-            if (string.IsNullOrEmpty(l_Player.Avatar)) return;
+            if (string.IsNullOrEmpty(l_Player.Avatar))
+            {
+                return;
+            }
 
             m_AvatarGrid.cellSize = new Vector2(17, 17);
             Setup(l_Player.Avatar, l_Player.Color.ToUnityColor32());
@@ -42,7 +45,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Set defaults
+        ///     Set defaults
         /// </summary>
         /// <param name="p_AvatarLink"></param>
         /// <param name="p_ProfileColor"></param>
@@ -57,16 +60,20 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Update profile color
+        ///     Update profile color
         /// </summary>
         /// <param name="p_ProfileColor"></param>
         public void UpdateShader(Color p_ProfileColor)
         {
-            if (m_Avatar == null) { GSLogger.Instance.Error(new Exception("Avatar Is Null"), nameof(PlayerAvatar), nameof(UpdateShader)); return; }
+            if (m_Avatar == null)
+            {
+                GSLogger.Instance.Error(new Exception("Avatar Is Null"), nameof(PlayerAvatar), nameof(UpdateShader));
+                return;
+            }
 
             //_PlayerAvatarMaskInstance = Object.Instantiate(AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask"));
 
-            Material l_Mat = AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask");
+            var l_Mat = AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask");
             _PlayerAvatarMaskInstance = l_Mat;
 
             Texture l_PlayerAvatar = m_Avatar.material.mainTexture;

@@ -4,9 +4,7 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using BeatSaberPlus.SDK.UI;
-using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.Utils;
-using HMUI;
 using TMPro;
 
 // ReSharper disable once CheckNamespace
@@ -14,12 +12,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
 {
     internal class GuildDescriptionLine
     {
-        private string Line { get; set; }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        [UIComponent(("Line"))] private readonly TextMeshProUGUI m_Line = null;
+        [UIComponent("Line")] private readonly TextMeshProUGUI m_Line = null;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -28,6 +25,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
         {
             Line = p_Line;
         }
+        private string Line { get; }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -37,28 +35,27 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
         {
             m_Line.text = Line;
         }
-
     }
 
     internal class GuildDescriptionViewController : ViewController<GuildDescriptionViewController>
     {
-        protected override string GetViewContentDescription()
-        {
-            return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(),
-                $"{GuildSelectionMenu.VIEW_CONTROLLERS_PATH}.GuildDescription.bsml");
-        }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        [UIComponent(("GuildName"))] private readonly TextMeshProUGUI m_GuildName = null;
+        [UIComponent("GuildName")] private readonly TextMeshProUGUI m_GuildName = null;
         [UIComponent("DescriptionList")] private readonly CustomCellListTableData m_LineList = null;
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         // ReSharper disable once CollectionNeverQueried.Local
         [UIValue("DescriptionLines")] private List<object> m_DescriptionLines = new List<object>();
 
-        private bool m_Parsed = false;
+        private bool m_Parsed;
+        protected override string GetViewContentDescription()
+        {
+            return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(),
+                $"{GuildSelectionMenu.VIEW_CONTROLLERS_PATH}.GuildDescription.bsml");
+        }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -72,7 +69,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
         ////////////////////////////////////////////////////////////////////////////
 
         /// <summary>
-        /// Set description
+        ///     Set description
         /// </summary>
         /// <param name="p_Name">Guild Name</param>
         /// <param name="p_Description">Guild Description</param>
@@ -99,7 +96,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
                     }
 
                     if (l_i != 32)
+                    {
                         continue;
+                    }
 
                     string l_Value = p_Description.Substring(0, 32);
                     l_Lines.Add(l_Value);
@@ -112,10 +111,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
 
             m_DescriptionLines.Clear();
 
-            l_Lines.ForEach((p_Value) => { m_DescriptionLines.Add(new GuildDescriptionLine(p_Value)); });
+            l_Lines.ForEach(p_Value => { m_DescriptionLines.Add(new GuildDescriptionLine(p_Value)); });
 
             m_LineList.tableView.ReloadData();
         }
-
     }
 }
