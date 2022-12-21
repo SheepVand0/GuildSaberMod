@@ -138,10 +138,15 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             // ReSharper disable once InvertIf
             if (Points == string.Empty)
             {
-                if (p_PassState is API.PassState.EState.Denied or API.PassState.EState.MissingModifiers or API.PassState.EState.ProhibitedModifiers or API.PassState.EState.MinScoreRequirement)
+                if (p_PassState is not API.PassState.EState.Allowed && p_PassState is not API.PassState.EState.NeedConfirmation)
                 {
                     //m_CPoints.SetEnableRichText(true);
                     Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>D";
+                    m_CPoints.SetText(Points);
+                }
+                else if (p_PassState is API.PassState.EState.NeedConfirmation)
+                {
+                    Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}>N";
                     m_CPoints.SetText(Points);
                 }
             }

@@ -41,6 +41,8 @@ namespace GuildSaber.UI.Leaderboard.Components
 
         private static GameObject s_GameObjectReference = null;
 
+        private bool m_FromReload = false;
+
         public bool Initialized { get; private set; }
 
         private float ListCellSize
@@ -79,9 +81,7 @@ namespace GuildSaber.UI.Leaderboard.Components
             Events.Instance.e_OnScopeSelected += OnScopeSelected;
             Events.e_OnReload += async () =>
             {
-                /*Initialized = false;
-                await Task.Delay(1000);
-                Initialized = true;*/
+                m_FromReload = true;
                 m_ListComponentScores.Clear();
             };
 
@@ -184,10 +184,18 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             if (ChangingLeaderboard) return;
 
+            if (m_FromReload)
+            {
+                m_FromReload = false;
+                return;
+            }
+
             ChangingLeaderboard = true;
 
             await WaitUtils.Wait(() => GuildSaberLeaderboardView.s_GameObjectReference.activeInHierarchy && Initialized, 100, p_MaxTryCount: 15, p_CodeLine: 176);
             if (!gameObject.activeInHierarchy) return;
+
+
 
             if (GuildSaberModule.IsStateError())
             {
