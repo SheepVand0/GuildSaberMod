@@ -418,7 +418,8 @@ namespace GuildSaber.UI.GuildSaber
                     "Undefined"
                 };
             List<string> l_Temp = new List<string>();
-            foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds) l_Temp.Add(string.IsNullOrEmpty(l_Current.SmallName) ? l_Current.Name : l_Current.SmallName);
+            foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
+                l_Temp.Add(l_Current.SmallName ?? l_Current.Name);
             return l_Temp;
         }
 

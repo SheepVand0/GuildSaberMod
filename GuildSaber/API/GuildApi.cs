@@ -296,18 +296,10 @@ internal class PassState
 
     public static string GetColorFromPassState(EState p_State)
     {
-        return p_State switch
-        {
-            EState.Allowed => ColorUtility.ToHtmlStringRGBA(Color.green),
-            EState.NeedConfirmation => ColorUtility.ToHtmlStringRGBA(Color.yellow),
-            EState.Denied => ColorUtility.ToHtmlStringRGBA(Color.red),
-            EState.UpdatedScore => GetColorFromPassState(EState.Allowed),
-            EState.NewScore => GetColorFromPassState(EState.NeedConfirmation),
-            EState.UnVerified => GetColorFromPassState(EState.NeedConfirmation),
-            EState.MinScoreRequirement => GetColorFromPassState(EState.Denied),
-            EState.MissingModifiers => GetColorFromPassState(EState.Denied),
-            EState.ProhibitedModifiers => GetColorFromPassState(EState.Denied),
-            _ => ColorUtility.ToHtmlStringRGBA(Color.white)
-        };
+        if (p_State.HasFlag(EState.NeedConfirmation))
+            return ColorUtility.ToHtmlStringRGBA(Color.yellow);
+        else if (!p_State.HasFlag(EState.Allowed))
+            return ColorUtility.ToHtmlStringRGBA(Color.red);
+        return ColorUtility.ToHtmlStringRGBA(Color.green);
     }
 }

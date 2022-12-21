@@ -112,7 +112,7 @@ internal class LeaderboardScoreCell
     }
 
     /// <summary>
-    ///     Set Score Modal Information
+    /// Set Score Modal Information
     /// </summary>
     /// <param name="p_BadCuts"></param>
     /// <param name="p_MissedNotes"></param>
@@ -121,7 +121,7 @@ internal class LeaderboardScoreCell
     /// <param name="p_BannedModifiers"></param>
     /// <param name="p_PassState"></param>
     /// <param name="p_Hmd"></param>
-    internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd, long p_UnixTimeSet, Player p_BeatLeaderPlayer, string? p_ReplayLink)
+    internal async void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd, long p_UnixTimeSet, Player p_BeatLeaderPlayer, string? p_ReplayLink)
     {
         BadCuts = p_BadCuts;
         MissedNotes = p_MissedNotes;
@@ -135,12 +135,22 @@ internal class LeaderboardScoreCell
         BeatLeaderPlayer = p_BeatLeaderPlayer;
 
         // ReSharper disable once InvertIf
-        if (Points == string.Empty && p_PassState is not API.PassState.EState.Allowed) {
-            //m_CPoints.SetEnableRichText(true);
-            Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>⬛";
-            m_CPoints.SetText(Points);
+        if (Points == string.Empty)
+        {
+            if (p_PassState is not API.PassState.EState.Allowed && p_PassState is not API.PassState.EState.NeedConfirmation)
+            {
+                //m_CPoints.SetEnableRichText(true);
+                Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>D";
+                m_CPoints.SetText(Points);
+            }
+            else if (p_PassState is API.PassState.EState.NeedConfirmation)
+            {
+                Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}>N";
+                m_CPoints.SetText(Points);
+            }
         }
     }
+
 
     /// <summary>
     ///     PostParse
@@ -260,6 +270,7 @@ internal class LeaderboardScoreCell
 
         m_Interactable.gameObject.SetActive(true);
     }
+
     /// <summary>
     ///     Set texts to empty
     /// </summary>
@@ -280,8 +291,8 @@ internal class LeaderboardScoreCell
         m_CModifiers.SetText(string.Empty);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 
     private void OnGuildSelected(int p_Guild)
     {
@@ -291,20 +302,22 @@ internal class LeaderboardScoreCell
         m_CPoints.SetColor(l_NewColor);
     }
 
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 
     [UIAction("ShowInfo")]
     private void ShowInfo()
     {
         m_InfoModal.Show(true, true);
         m_ModalPlayerNameText.text = PlayerName;
-        if (BadCuts == 0 && MissedNotes == 0) {
+        if (BadCuts == 0 && MissedNotes == 0)
+        {
             m_ModalBadCutsText.color = Color.green;
             m_ModalBadCutsText.text = "Full Combo";
             m_ModalMissedNotesText.text = string.Empty;
         }
-        else {
+        else
+        {
             // ReSharper disable once StringLiteralTypo
             m_ModalBadCutsText.text = $"<color=#adadad>Bad cuts : <color=#b50000>{BadCuts}</color>";
             // ReSharper disable once StringLiteralTypo
@@ -315,7 +328,8 @@ internal class LeaderboardScoreCell
         m_ModalModifiedScoreText.text = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}> Modified score : </color>{ModifiedScore}";
         m_ModalPauseCount.text = Pauses != null ? $"<color=#{ColorUtility.ToHtmlStringRGB(Color.white)}>Pauses : <color=#{(Pauses == 0 ? ColorUtility.ToHtmlStringRGB(Color.green) : ColorUtility.ToHtmlStringRGB(Color.red))}>{Pauses}" : "Pauses : ?";
 
-        foreach (string? l_BannedModifier in m_BannedModifiers) {
+        foreach (string? l_BannedModifier in m_BannedModifiers)
+        {
             if (!Modifiers.Contains(l_BannedModifier)) continue;
 
             PassState = API.PassState.EState.Denied;
@@ -351,14 +365,18 @@ internal class LeaderboardScoreCell
     ///     On Close Modal button pressed
     /// </summary>
     [UIAction("CloseModal")]
-    private void CloseModal() { m_InfoModal.Hide(true); }
+    private void CloseModal()
+    {
+        m_InfoModal.Hide(true);
+    }
 
     [UIAction("StartReplay")]
     private async void StartReplay()
     {
         m_ModalReplay.interactable = false;
         Replay? l_Replay = await BeatLeaderReplayDownloader.GetReplay(ReplayLink);
-        if (l_Replay is null) {
+        if (l_Replay is null)
+        {
             return;
         }
 
@@ -395,9 +413,9 @@ internal class LeaderboardScoreCell
         ReplayerLauncher.ReplayWasFinishedEvent +=
             OnReplayFinished;
 
-        LeaderboardScoreList.s_ReplayLaunchData = l_Data;
+        LeaderboardScoreList.m_ReplayLaunchData = l_Data;
 
-        LeaderboardScoreList.s_StartedReplayFromMod = true;
+        LeaderboardScoreList.m_StartedReplayFromMod = true;
     }
 
     private void OnReplayFinished(ReplayLaunchData p_LaunchData)
@@ -405,7 +423,7 @@ internal class LeaderboardScoreCell
         MethodInfo? l_Method = typeof(ReplayerMenuLoader).GetMethod("HandleReplayWasFinished", BindingFlags.Instance | BindingFlags.NonPublic);
         l_Method.Invoke(Resources.FindObjectsOfTypeAll<ReplayerMenuLoader>().First(), new object[]
         {
-            null, LeaderboardScoreList.s_ReplayLaunchData
+            null, LeaderboardScoreList.m_ReplayLaunchData
         });
 
 
@@ -414,19 +432,19 @@ internal class LeaderboardScoreCell
             OnReplayFinished;
     }
 
-    /*private static void Init() {
-        var types = _assembly.GetTypes();
-        var _installersMethods = new List<MethodInfo>();
+/*private static void Init() {
+    var types = _assembly.GetTypes();
+    var _installersMethods = new List<MethodInfo>();
 
-        foreach (var item in types) {
-            if (item.IsSubclassOf(typeof(Installer))) {
-                var method = item.GetMethod(nameof(
-                    Installer.InstallBindings), ReflectionUtils.DefaultFlags);
-                _installersMethods.Add(method);
-            }
+    foreach (var item in types) {
+        if (item.IsSubclassOf(typeof(Installer))) {
+            var method = item.GetMethod(nameof(
+                Installer.InstallBindings), ReflectionUtils.DefaultFlags);
+            _installersMethods.Add(method);
         }
+    }
 
-        var _installatorsSilencer = new(_installersMethods, false);
-        GSLogger.Instance.Log($"Successfully patched {_installersMethods.Count} ScoreSaber installators!", IPA.Logging.Logger.LogLevel.InfoUp);
-    }*/
+    var _installatorsSilencer = new(_installersMethods, false);
+    GSLogger.Instance.Log($"Successfully patched {_installersMethods.Count} ScoreSaber installators!", IPA.Logging.Logger.LogLevel.InfoUp);
+}*/
 }

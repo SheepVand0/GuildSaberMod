@@ -87,7 +87,7 @@ internal class GuildSaberLeaderboardView : BSMLAutomaticViewController, INotifyL
     public void SetLeaderboardViewMode(ELeaderboardViewMode p_Mode)
     {
         try {
-            m_ScoresList.m_ScoreList.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores);
+            m_ScoresList.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores);
             m_ScopeSelectionLayout.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores || p_Mode == ELeaderboardViewMode.UnPassed && m_ScoresList.m_SelectedScope != ELeaderboardScope.Global);
             m_ScoresList.m_NotRankedText.gameObject.SetActive(p_Mode == ELeaderboardViewMode.UnPassed || p_Mode == ELeaderboardViewMode.NotRanked);
             m_ScoresList.m_ErrorText.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Error);

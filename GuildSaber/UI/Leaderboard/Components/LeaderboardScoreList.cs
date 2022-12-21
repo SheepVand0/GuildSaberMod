@@ -20,10 +20,13 @@ namespace GuildSaber.UI.Leaderboard.Components;
 internal class LeaderboardScoreList : CustomUIComponent
 {
 
+    protected override string ViewResourceName
+        => "GuildSaber.UI.Leaderboard.Components.Views.LeaderboardScoreList.bsml";
+
     public static LeaderboardScoreList Instance;
 
-    internal static bool s_StartedReplayFromMod = false;
-    internal static ReplayLaunchData s_ReplayLaunchData = null;
+    internal static bool m_StartedReplayFromMod = false;
+    internal static ReplayLaunchData m_ReplayLaunchData = null;
     private static List<object> s_ListComponentScores = new List<object>();
 
     private static CustomLevelStatsView s_CustomLevelStatsView;
@@ -37,18 +40,15 @@ internal class LeaderboardScoreList : CustomUIComponent
     [UIComponent("Loading")] internal readonly GridLayoutGroup m_LoadingLayout = null;
     [UIComponent("NotRankedText")] internal readonly TextMeshProUGUI m_NotRankedText = null;
 
-    [UIComponent("ScoreList")] internal readonly CustomCellListTableData m_ScoreList = null;
+    private bool m_FromReload = false;
+
+    public bool Initialized { get; private set; }
 
     // ReSharper disable once FieldCanBeMadeReadOnly.Local
     [UIValue("ScoreCells")] internal List<object> m_ListComponentScores = new List<object>();
 
     internal ELeaderboardScope m_SelectedScope = ELeaderboardScope.Global;
-    protected override string ViewResourceName
-    {
-        get => "GuildSaber.UI.Leaderboard.Components.Views.LeaderboardScoreList.bsml";
-    }
 
-    public bool Initialized { get; private set; }
 
     private float ListCellSize
     {
@@ -80,9 +80,7 @@ internal class LeaderboardScoreList : CustomUIComponent
         Events.Instance.e_OnScopeSelected += OnScopeSelected;
         Events.e_OnReload += () =>
         {
-            /*Initialized = false;
-            await Task.Delay(1000);
-            Initialized = true;*/
+            m_FromReload = true;
             m_ListComponentScores.Clear();
         };
 
@@ -158,10 +156,14 @@ internal class LeaderboardScoreList : CustomUIComponent
         if (s_Leaderboard.Leaderboards == null) return;
         if (s_Leaderboard.Leaderboards.Count == 0) return;
 
-        try {
+        try
+        {
             if (s_GameObjectReference.activeInHierarchy) SetScores(s_Leaderboard.CustomData, s_Leaderboard.Leaderboards, s_CurrentPointsName);
         }
-        catch (Exception l_E) { GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(OnPointsTypeChange)); }
+        catch (Exception l_E)
+        {
+            GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(OnPointsTypeChange));
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -177,13 +179,22 @@ internal class LeaderboardScoreList : CustomUIComponent
 
         if (ChangingLeaderboard) return;
 
+        if (m_FromReload)
+        {
+            m_FromReload = false;
+            return;
+        }
+
         ChangingLeaderboard = true;
 
-        await WaitUtils.Wait(() => GuildSaberLeaderboardView.s_GameObjectReference.activeInHierarchy && Initialized, 100, p_MaxTryCount: 15, p_CodeLine: 176);
+        await WaitUtils.Wait(() => GuildSaberLeaderboardView.s_GameObjectReference.activeSelf && Initialized, 50, p_MaxTryCount: 15, p_CodeLine: 176);
         if (!gameObject.activeInHierarchy) return;
 
-        if (GuildSaberModule.IsStateError()) {
-            m_ErrorText.SetTextError(GuildSaberModule.ModErrorState == GuildSaberModule.EModErrorState.BadRequest_400 ? new Exception("Error during getting player data \n: Bad Request, maybe you mod is outdated or the api is down") : new Exception("Error during getting player data : \n Go scan !"), GuildSaberUtils.ErrorMode.Message);
+        await WaitUtils.Wait(() => GuildSaberLeaderboardPanel.PanelInstance != null, 1);
+
+        if (GuildSaberModule.IsStateError())
+        {
+            m_ErrorText.SetTextError(GuildSaberModule.ModErrorState == GuildSaberModule.EModErrorState.BadRequest_400 ? new System.Exception($"Error during getting player data \n: Bad Request, maybe you mod is outdated or the api is down") : new Exception("Error during getting player data : \n Go scan !"), GuildSaberUtils.ErrorMode.Message);
 
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Error);
             s_CustomLevelStatsView.Clear();
@@ -195,7 +206,8 @@ internal class LeaderboardScoreList : CustomUIComponent
         ///Init change
         GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Loading);
 
-        if (CurrentBeatMap == null) {
+        if (CurrentBeatMap == null)
+        {
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Error);
             ChangingLeaderboard = false;
             return;
@@ -234,29 +246,35 @@ internal class LeaderboardScoreList : CustomUIComponent
 
         GuildSaberLeaderboardView.m_Instance.m_ScopeSelector.m_AroundImage.gameObject.SetActive(s_Leaderboard.PlayerScore != null);
 
-
         ///If map not ranked
 
-        if (s_Leaderboard.Equals(default(ApiMapLeaderboardCollectionStruct)) || s_Leaderboard.Leaderboards == null || s_Leaderboard.Metadata.Equals(null)) {
+        GSLogger.Instance.Log("Here", IPA.Logging.Logger.LogLevel.InfoUp);
+
+        if (s_Leaderboard.Equals(default(ApiMapLeaderboardCollectionStruct)) || s_Leaderboard.Leaderboards == null || s_Leaderboard.Metadata.Equals(null))
+        {
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.NotRanked);
             s_CustomLevelStatsView.Clear();
             SetHeader(true);
             ChangingLeaderboard = false;
             return;
         }
-        if (!s_Leaderboard.Equals(default(ApiMapLeaderboardCollectionStruct)) && s_Leaderboard.Leaderboards.Count == 0) {
+        else if (!s_Leaderboard.Equals(default(ApiMapLeaderboardCollectionStruct)) && s_Leaderboard.Leaderboards.Count == 0)
+        {
             ///If map is un passed
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.UnPassed);
             ChangeHeaderText($"Level {s_Leaderboard.CustomData.LevelValue} - {s_Leaderboard.CustomData.CategoryName.VerifiedCategory()}");
             GuildSaberLeaderboardView.m_Instance.m_PageDownImage.interactable = false;
             if (m_Page == 1)
                 GuildSaberLeaderboardView.m_Instance.m_PageUpImage.interactable = false;
-            else if (m_Page > 1) GuildSaberLeaderboardView.m_Instance.m_PageUpImage.interactable = true;
+            else if (m_Page > 1)
+                GuildSaberLeaderboardView.m_Instance.m_PageUpImage.interactable = true;
             SetHeader(false);
             s_CustomLevelStatsView.Clear();
             ChangingLeaderboard = false;
             return;
         }
+
+        GSLogger.Instance.Log("Here", IPA.Logging.Logger.LogLevel.InfoUp);
 
         ///Page button managing
 
@@ -269,8 +287,10 @@ internal class LeaderboardScoreList : CustomUIComponent
 
         ///If player have a score initing score modal
 
-        try {
-            if (GuildSaberLeaderboardView.m_Instance.m_ScopeSelector.m_AroundImage.gameObject.activeInHierarchy) {
+        try
+        {
+            if (GuildSaberLeaderboardView.m_Instance.m_ScopeSelector.m_AroundImage.gameObject.activeInHierarchy)
+            {
                 s_CustomLevelStatsView.SetModalInfo((int)s_Leaderboard.PlayerScore?.BadCuts!, (int)s_Leaderboard.PlayerScore?.MissedNotes!,
                     s_Leaderboard.PlayerScore?.HasScoreStatistic ?? false ? (int)s_Leaderboard.PlayerScore?.ScoreStatistic?.PauseCount! : null,
                     (EHMD)s_Leaderboard.PlayerScore?.HMD!);
@@ -279,9 +299,15 @@ internal class LeaderboardScoreList : CustomUIComponent
                     s_Leaderboard.PlayerScore?.Name,
                     (PassState.EState)s_Leaderboard.PlayerScore?.State!);
             }
-            else { s_CustomLevelStatsView.Clear(); }
+            else
+            {
+                s_CustomLevelStatsView.Clear();
+            }
         }
-        catch (Exception l_E) { GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(SetLeaderboard)); }
+        catch (Exception l_E)
+        {
+            GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(SetLeaderboard));
+        }
 
         ///If need update changing header
 
@@ -363,9 +389,11 @@ internal class LeaderboardScoreList : CustomUIComponent
 
         GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Scores);
 
-        if (m_ListComponentScores.Count != GuildSaberModule.SCORES_BY_PAGE) {
+        if (m_ListComponentScores.Count != GuildSaberModule.SCORES_BY_PAGE)
+        {
             m_ListComponentScores.Clear();
-            for (int l_i = 0; l_i < GuildSaberModule.SCORES_BY_PAGE; l_i++) {
+            for (int l_i = 0; l_i < GuildSaberModule.SCORES_BY_PAGE; l_i++)
+            {
                 var l_CurrentCell = new LeaderboardScoreCell();
                 m_ListComponentScores.Add(l_CurrentCell);
             }
@@ -383,7 +411,8 @@ internal class LeaderboardScoreList : CustomUIComponent
 
         foreach (LeaderboardScoreCell l_Current in s_ListComponentScores) l_Current.Reset();
 
-        for (int l_i = 0; l_i < p_Scores.Count; l_i++) {
+        for (int l_i = 0; l_i < p_Scores.Count; l_i++)
+        {
             if (l_i > GuildSaberModule.SCORES_BY_PAGE - 1) continue;
 
             ApiMapLeaderboardContentStruct l_Score = p_Scores[l_i];
@@ -392,10 +421,12 @@ internal class LeaderboardScoreList : CustomUIComponent
             if (string.IsNullOrEmpty(p_PointsNames))
                 l_PointData = l_Score.PointsData[0];
             else
-                foreach (PointsData l_Current in l_Score.PointsData) {
+                foreach (PointsData l_Current in l_Score.PointsData)
+                {
                     if (l_Current.PointsName != p_PointsNames) continue;
 
-                    if (l_Current.PointsIndex == 1) {
+                    if (l_Current.PointsIndex == 1)
+                    {
                         l_PointData.Points = float.NaN;
                         l_PointData.PointsName = string.Empty;
                         break;
@@ -405,7 +436,8 @@ internal class LeaderboardScoreList : CustomUIComponent
                     break;
                 }
 
-            try {
+            try
+            {
                 ///Player settings for BeatLeader Replay
 
                 var l_Player = new Player
@@ -442,7 +474,10 @@ internal class LeaderboardScoreList : CustomUIComponent
                 }, (PassState.EState)l_Score.State, (EHMD)l_Score.HMD, long.Parse(l_Score.UnixTimeSet), l_Player, l_Score.ReplayURL);
                 if (l_Score.ID == GuildSaberModule.GSPlayerId) l_CurrentCell.SetCellToCurrentPlayer();
             }
-            catch (Exception l_E) { GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(SetScores)); }
+            catch (Exception l_E)
+            {
+                GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(SetScores));
+            }
         }
 
         SetHeader(false);
