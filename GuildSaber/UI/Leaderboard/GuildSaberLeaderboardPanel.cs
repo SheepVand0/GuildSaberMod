@@ -261,10 +261,10 @@ namespace GuildSaber.UI.Leaderboard
             for (int l_i = 0; l_i < p_Guilds.Count; l_i++)
             {
                 GuildData l_Current = p_Guilds[l_i];
-                m_AvailableGuilds.Add(l_Current.Name);
+                m_AvailableGuilds.Add(l_Current.SmallName ?? l_Current.Name);
                 if (l_Current.ID == m_SelectedGuild)
                 {
-                    m_GuildSelector.Value = l_Current.Name;
+                    m_GuildSelector.Value = l_Current.SmallName ?? l_Current.Name;
                     m_GuildSelector.ApplyValue();
                 }
             }

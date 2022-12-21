@@ -30,7 +30,7 @@ public class Color
 
     public UnityEngine.Color ToUnityColor()
     {
-        return new UnityEngine.Color((float)R / 255, (float)G / 255, (float)B / 255);
+        return new UnityEngine.Color((float)R / 255, (float)G / 255, (float)B / 255, 1);
     }
 
 }

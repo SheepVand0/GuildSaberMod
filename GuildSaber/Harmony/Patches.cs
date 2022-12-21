@@ -75,23 +75,6 @@ namespace GuildSaber.Harmony
         }
     }
 
-    [HarmonyPatch(typeof(PauseController), nameof(PauseController.HandlePauseMenuManagerDidPressMenuButton))]
-    class OnMapExit
-    {
-        public static async void Postfix()
-        {
-            if (!LeaderboardScoreList.s_StartedReplayFromMod) return;
-
-            var l_ReplayerMenuLoader = Resources.FindObjectsOfTypeAll<ReplayerMenuLoader>().First();
-            var l_Method = typeof(ReplayerMenuLoader).GetMethod("HandleReplayWasFinished", BindingFlags.Instance | BindingFlags.NonPublic);
-            l_Method.Invoke(l_ReplayerMenuLoader, new object[]
-            {
-                null, LeaderboardScoreList.s_ReplayLaunchData
-            });
-
-        }
-    }
-
     /*[HarmonyPatch(typeof(SoloFreePlayFlowCoordinator), "SinglePlayerLevelSelectionFlowCoordinatorDidActivate")]
     class AfterReloadPatch
     {

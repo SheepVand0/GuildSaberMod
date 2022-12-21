@@ -3,14 +3,14 @@
   "id": "GuildSaber",
   "name": "GuildSaber",
   "author": "SheepVand & Kuurama",
-  "version": "0.4.7",
+  "version": "0.5.2",
   "description": "",
   "gameVersion": "1.21.0",
   "dependsOn": {
     "BSIPA": "^4.2.0",
     "LeaderboardCore": "^1.2.2",
     "SiraUtil": "^3.1.0",
-    "BeatSaberPlusCORE": "^5.0.1",
-    "BeatLeader": "^0.5.1"
+    "BeatSaberPlusCORE": "^5.0.3",
+    "BeatLeader": "^0.5.3"
   }
 }

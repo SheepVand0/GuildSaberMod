@@ -7,7 +7,7 @@ using GuildSaber.Logger;
 
 namespace GuildSaber.API
 {
-    public static class BeatLeaderReplayDownloader
+    public static class     BeatLeaderReplayDownloader
     {
 
         public static async Task<Replay?> GetReplay(string p_Link)

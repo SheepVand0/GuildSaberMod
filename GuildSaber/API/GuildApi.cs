@@ -237,7 +237,7 @@ public static class GuildApi
     {
         foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
         {
-            if (l_Current.Name != p_Name)
+            if (l_Current.Name != p_Name && l_Current.SmallName != p_Name)
                 continue;
 
             return l_Current;

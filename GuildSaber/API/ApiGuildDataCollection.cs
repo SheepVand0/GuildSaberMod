@@ -8,6 +8,7 @@ namespace GuildSaber.API
     {
         public int ID { get; set; }
         public string Name { get; set; }
+        public string? SmallName { get; set; }
         public string Logo { get; set; }
         public string Banner { get; set; }
         public string Description { get; set; }

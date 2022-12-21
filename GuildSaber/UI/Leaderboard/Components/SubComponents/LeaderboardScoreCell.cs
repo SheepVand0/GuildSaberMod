@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using BeatLeader.Models;
+using BeatLeader.Replayer;
 using BeatSaberMarkupLanguage;
 using UnityEngine.UI;
 using BeatSaberMarkupLanguage.Attributes;
@@ -9,6 +11,7 @@ using GuildSaber.API;
 using GuildSaber.BSPModule;
 using GuildSaber.Utils;
 using HMUI;
+using ModestTree;
 using TMPro;
 using UnityEngine;
 
@@ -401,11 +404,29 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 
             m_InfoModal.Hide(false);
 
-            await Resources.FindObjectsOfTypeAll<BeatLeader.Replayer.ReplayerLauncher>().First().StartReplayAsync(l_Data);
+            var l_ReplayLauncher = Resources.FindObjectsOfTypeAll<BeatLeader.Replayer.ReplayerLauncher>().First();
+
+            await l_ReplayLauncher.StartReplayAsync(l_Data);
+            ReplayerLauncher.ReplayWasFinishedEvent +=
+                OnReplayFinished;
 
             LeaderboardScoreList.s_ReplayLaunchData = l_Data;
 
             LeaderboardScoreList.s_StartedReplayFromMod = true;
+        }
+
+        private void OnReplayFinished(ReplayLaunchData p_LaunchData)
+        {
+            var l_Method = typeof(ReplayerMenuLoader).GetMethod("HandleReplayWasFinished", BindingFlags.Instance | BindingFlags.NonPublic);
+            l_Method.Invoke(Resources.FindObjectsOfTypeAll<BeatLeader.Replayer.ReplayerMenuLoader>().First(), new object[]
+            {
+                null, LeaderboardScoreList.s_ReplayLaunchData
+            });
+
+
+
+            ReplayerLauncher.ReplayWasFinishedEvent -=
+                OnReplayFinished;
         }
 
         /*private static void Init() {
@@ -425,4 +446,6 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         }*/
 
     }
+
+
 }

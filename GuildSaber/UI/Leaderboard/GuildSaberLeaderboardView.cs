@@ -127,6 +127,7 @@ namespace GuildSaber.UI.Leaderboard
 
         public void OnLeaderboardSet(IDifficultyBeatmap difficultyBeatmap)
         {
+            GSLogger.Instance.Log("Setting", IPA.Logging.Logger.LogLevel.InfoUp);
             if (m_ScoresList == null) return;
             m_ScoresList.OnLeaderboardSet(difficultyBeatmap);
         }

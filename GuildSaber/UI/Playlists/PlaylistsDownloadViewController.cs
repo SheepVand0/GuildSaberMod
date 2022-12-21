@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -145,10 +146,13 @@ namespace GuildSaber.UI.GuildSaber
 
             foreach (string l_File in Directory.GetFiles(m_CategoryDirectory))
             {
+                if (!l_File.EndsWith(".json") && !l_File.EndsWith(".bplist")) continue;
+
                 File.Delete(l_File);
             }
 
-            Directory.Delete(m_CategoryDirectory);
+            if (!Directory.GetDirectories(m_CategoryDirectory).Any())
+                Directory.Delete(m_CategoryDirectory);
 
             CheckCategoryForButton();
         }

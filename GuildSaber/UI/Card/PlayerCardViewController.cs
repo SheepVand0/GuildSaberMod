@@ -76,7 +76,7 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
     [UIValue("AvailableGuilds")]
     private readonly List<object> m_DropdownAvailableGuilds = new()
     {
-        "UwU"
+        "undefined"
     };
 
     //[CanBeNull]
@@ -105,7 +105,6 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
         set { }
     }
 
-
     public List<PlayerRankUI> m_Ranks = new List<PlayerRankUI>();
     public List<PlayerLevelUI> m_Levels = new List<PlayerLevelUI>();
     public FloatingScreen m_CardScreen;
@@ -125,11 +124,13 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
         m_DropdownAvailableGuilds.Clear();
         foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
         {
-            m_DropdownAvailableGuilds.Add(l_Current.Name);
+            m_DropdownAvailableGuilds.Add(l_Current.SmallName ?? l_Current.Name);
         }
         m_GuildSelector.UpdateChoices();
 
-        m_GuildSelector.Value = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild).Name;
+        var l_CurrentGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild);
+
+        m_GuildSelector.Value = l_CurrentGuild.SmallName ?? l_CurrentGuild.Name;
         m_GuildSelector.ApplyValue();
 
         GuildSaberModule.CardSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild);
@@ -155,9 +156,12 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
         BeatSaberPlus.SDK.UI.ColorSetting.Setup(m_CustomNameColor, l_SettingAction, GSConfig.Instance.CustomNameGradientColor, false);
         BeatSaberPlus.SDK.UI.SliderSetting.Setup(m_NameGradientMutiliplier, l_SettingAction, null, GSConfig.Instance.NameGradientColor0Multiplier, true);
 
-
-
         Refresh();
+
+        Logic.OnSceneChange += (p_Scene) =>
+        {
+            UpdateToggleCardHandleUISettingVisibility();
+        };
 
         //Plugin.Log.Debug("Card loaded");
     }
@@ -170,21 +174,23 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
     /// </summary>
     public void UpdateCardColor()
     {
-        Color l_PlayerColor = (m_AllowCustomCardColors && GSConfig.Instance.UseCustomColor) ?GSConfig.Instance.CustomColor : PlayerCardUI.m_Player.Color.ToUnityColor32();
+        Color l_PlayerColor = m_AllowCustomCardColors && GSConfig.Instance.UseCustomColor ? GSConfig.Instance.CustomColor : PlayerCardUI.m_Player.Color?.ToUnityColor() ?? Color.white;
 
         m_PlayerNameText.enableVertexGradient = true;
 
-        Color l_Color0 = (GSConfig.Instance.UseCustomColor) ? GSConfig.Instance.CustomColor : l_PlayerColor;
-        Color l_Color1 = (GSConfig.Instance.UseCustomColorGradient) ? GSConfig.Instance.CustomColor1 : l_PlayerColor;
+        VertexGradient l_CardGradient = (!GSConfig.Instance.UseCustomColorGradient || !m_AllowCustomCardGradient) ?
+            l_PlayerColor.GenerateGradient(0.2f) : default;
 
+        Color l_Color0 = (GSConfig.Instance.UseCustomColor && m_AllowCustomCardColors) ? GSConfig.Instance.CustomColor : l_CardGradient.topRight;
+        Color l_Color1 = (GSConfig.Instance.UseCustomColorGradient && m_AllowCustomCardGradient) ? GSConfig.Instance.CustomColor1 : l_CardGradient.bottomLeft;
 
-        VertexGradient l_Gradient;
+        VertexGradient l_NameGradient;
 
         if (!m_AllowCustomCardGradient || (m_AllowCustomCardGradient && !GSConfig.Instance.UseCustomNameGradientColor))
-            l_Gradient = l_PlayerColor.GenerateGradient(0.2f);
+            l_NameGradient = l_PlayerColor.GenerateGradient(0.2f);
         else
         {
-            l_Gradient = ((GSConfig.Instance.UseCustomNameGradientColor) ?
+            l_NameGradient = ((GSConfig.Instance.UseCustomNameGradientColor) ?
                 GSConfig.Instance.CustomNameGradientColor :
                 GuildSaberUtils.Equilibrate(
                     l_Color0,
@@ -192,22 +198,21 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
                     GSConfig.Instance.NameGradientColor0Multiplier)).GenerateGradient(0.2f);
         }
 
-
-        m_PlayerNameText.colorGradient = l_Gradient;
+        m_PlayerNameText.colorGradient = l_NameGradient;
 
         ImageView l_CurrentImageView = m_NeonBackground.GetComponentInChildren<ImageView>();
         l_CurrentImageView.SetField("_skew", 0.0f);
         l_CurrentImageView.overrideSprite = null;
         l_CurrentImageView.SetImage("#RoundRect10BorderFade");
-        l_CurrentImageView.color0 = (GSConfig.Instance.UseCustomColorGradient && m_AllowCustomCardGradient) ? l_Color0.FloorTo(0.5f) : l_Color0;
-        l_CurrentImageView.color1 = (l_Color1.IsIn(l_Color0) ? l_Color1 : l_Color1.Add(0.5f)) * GSConfig.Instance.GradientColor1Multiplier;
+        l_CurrentImageView.color0 = GSConfig.Instance.UseCustomColorGradient && m_AllowCustomCardGradient ? l_Color0.FloorTo(0.5f) : l_Color0;
+        l_CurrentImageView.color1 = (l_Color1.IsIn(l_Color0) ? l_Color1 : l_Color1.Add(0.5f)) * ((GSConfig.Instance.UseCustomColorGradient && m_AllowCustomCardGradient) ? GSConfig.Instance.GradientColor1Multiplier : 1);
         l_CurrentImageView.color = l_PlayerColor.ColorWithAlpha(1f);
         l_CurrentImageView.material.globalIlluminationFlags = MaterialGlobalIlluminationFlags.BakedEmissive;
         l_CurrentImageView.SetField("_flipGradientColors", GSConfig.Instance.InvertGradient);
 
         foreach (var l_Current in m_Ranks)
         {
-            l_Current.SetColor((GSConfig.Instance.UseCustomPointsColor && m_AllowCustomCardGradient) ? GSConfig.Instance.CustomPointsColor : PlayerCardUI.m_Player.Color.ToUnityColor());
+            l_Current.SetColor((GSConfig.Instance.UseCustomPointsColor && m_AllowCustomCardGradient) ? GSConfig.Instance.CustomPointsColor : PlayerCardUI.m_Player.Color?.ToUnityColor() ?? Color.white);
         }
     }
 
@@ -325,7 +330,7 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
                 else
                 {
                     ///Else just set the value
-                    m_Levels[l_i].SetValues(l_Cat.CategoryName, l_Cat.LevelValue?.ToString("0.0"));
+                    m_Levels[l_i].SetValues(l_Cat.CategoryName, l_Cat.LevelValue?.ToString("0.0"), l_FontSize);
                 }
             }
 
@@ -348,12 +353,12 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
     /// </summary>
     public void UpdateLevelsDetails()
     {
-        bool l_ShowDetaislLevels = GSConfig.Instance.ShowDetailsLevels;
-        if (m_Levels.Count == 0) l_ShowDetaislLevels = false;
-        m_DetailsLevelsLayout.gameObject.SetActive(l_ShowDetaislLevels);
+        bool l_ShowDetailsLevels = GSConfig.Instance.ShowDetailsLevels;
+        if (m_Levels.Count == 0) l_ShowDetailsLevels = false;
+        m_DetailsLevelsLayout.gameObject.SetActive(l_ShowDetailsLevels);
         if (m_CardScreen == null) return;
         float l_LevelsSize = m_Levels.Count;
-        if (l_ShowDetaislLevels)
+        if (l_ShowDetailsLevels)
         {
             //When the details levels is visible
             m_CardScreen.ScreenSize = new Vector2((68 + PlayerCardUI.m_Player.Name.Length * 1.2f + l_LevelsSize) * 0.9f, 28 + l_LevelsSize * 0.65f + m_Ranks.Count * 2);
@@ -426,10 +431,20 @@ internal class PlayerCardViewController : BeatSaberPlus.SDK.UI.ViewController<Pl
     /// </summary>
     public void UpdateToggleCardHandleUISettingVisibility()
     {
-        if (Logic.ActiveScene == Logic.SceneType.Playing)
-            m_ToggleShowHandle.gameObject.SetActive(GSConfig.Instance.CardHandleVisible);
-        else
-            m_ToggleShowHandle.gameObject.SetActive(true);
+        switch (Logic.ActiveScene)
+        {
+            case Logic.SceneType.Menu:
+                m_ToggleShowHandle.gameObject.SetActive(true);
+                break;
+            case Logic.SceneType.Playing:
+                m_ToggleShowHandle.gameObject.SetActive(GSConfig.Instance.CardHandleVisible);
+                break;
+            case Logic.SceneType.None:
+                m_ToggleShowHandle.gameObject.SetActive(GSConfig.Instance.CardHandleVisible);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(Logic.ActiveScene), Logic.ActiveScene, null);
+        }
     }
 
     /// <summary>

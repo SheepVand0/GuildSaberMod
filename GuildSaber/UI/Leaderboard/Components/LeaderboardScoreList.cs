@@ -186,16 +186,19 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             ChangingLeaderboard = true;
 
-            await WaitUtils.Wait(() => GuildSaberLeaderboardView.s_GameObjectReference.activeInHierarchy && Initialized, 10, p_DelayAfter: 500, p_CodeLine: 176);
+            await WaitUtils.Wait(() => GuildSaberLeaderboardView.s_GameObjectReference.activeInHierarchy && Initialized, 100, p_MaxTryCount: 15, p_CodeLine: 176);
+            if (!gameObject.activeInHierarchy) return;
 
             if (GuildSaberModule.IsStateError())
             {
-                m_ErrorText.SetTextError(new System.Exception($"Error during getting player data : {GuildSaberModule.ModErrorState}"), GuildSaberUtils.ErrorMode.Message);
+                m_ErrorText.SetTextError(GuildSaberModule.ModErrorState == GuildSaberModule.EModErrorState.BadRequest_400 ? new System.Exception($"Error during getting player data \n: Bad Request, maybe you mod is outdated or the api is down") : new Exception("Error during getting player data : \n Go scan !"), GuildSaberUtils.ErrorMode.Message);
+
                 GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Error);
                 s_CustomLevelStatsView.Clear();
                 ChangingLeaderboard = false;
                 return;
             }
+
 
             ///Init change
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Loading);
@@ -478,7 +481,7 @@ namespace GuildSaber.UI.Leaderboard.Components
                         "NB",
                         "ZM"
                     }, (PassState.EState)l_Score.State, (EHMD)l_Score.HMD, long.Parse(l_Score.UnixTimeSet), l_Player, l_Score.ReplayURL);
-                    if (l_Score.ScoreSaberID == GuildSaberModule.SsPlayerId.ToString())
+                    if (l_Score.ID == GuildSaberModule.GSPlayerId)
                     {
                         l_CurrentCell.SetCellToCurrentPlayer();
                     }

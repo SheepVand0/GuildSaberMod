@@ -44,12 +44,14 @@ public class PlayerLevelUI : CustomUIComponent
     /// </summary>
     /// <param name="p_LevelName"></param>
     /// <param name="p_Level"></param>
-    public void SetValues(string p_LevelName, string p_Level)
+    public void SetValues(string p_LevelName, string p_Level, float p_FontSize)
     {
         LevelName = p_LevelName;
         Level = p_Level;
         m_LevelNameText.text = p_LevelName;
         m_LevelText.text = p_Level;
+        m_LevelText.fontSize = p_FontSize;
+        m_LevelNameText.fontSize = p_FontSize;
     }
 
     /// <summary>
@@ -163,7 +165,7 @@ internal class PlayerCardUI
         }
 
         CardViewController = BeatSaberUI.CreateViewController<PlayerCardViewController>();
-        m_FloatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40f, 40f), true, GSConfig.Instance.CardPosition.ToUnityVector3(), GSConfig.Instance.CardRotation.ToUnityQuat());
+        m_FloatingScreen = FloatingScreen.CreateFloatingScreen(new Vector2(40f, 40f), true, GSConfig.Instance.CardPosition, Quaternion.Euler(GSConfig.Instance.CardRotation));
         m_FloatingScreen.HighlightHandle = true;
         m_FloatingScreen.HandleSide = FloatingScreen.Side.Right;
         m_FloatingScreen.HandleReleased += OnCardHandleReleased;
@@ -293,12 +295,12 @@ internal class PlayerCardUI
         switch (Logic.ActiveScene)
         {
             case Logic.SceneType.Menu:
-                m_FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.CardPosition.ToUnityVector3();
-                m_FloatingScreen.gameObject.transform.localRotation = GSConfig.Instance.CardRotation.ToUnityQuat();
+                m_FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.CardPosition;
+                m_FloatingScreen.gameObject.transform.localRotation = Quaternion.Euler(GSConfig.Instance.CardRotation);
                 break;
             case Logic.SceneType.Playing:
-                m_FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.InGameCardPosition.ToUnityVector3();
-                m_FloatingScreen.gameObject.transform.localRotation = GSConfig.Instance.InGameCardRotation.ToUnityQuat();
+                m_FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.InGameCardPosition;
+                m_FloatingScreen.gameObject.transform.localRotation = Quaternion.Euler(GSConfig.Instance.InGameCardRotation);
                 break;
         }
     }
@@ -349,12 +351,12 @@ internal class PlayerCardUI
         switch (Logic.ActiveScene)
         {
             case Logic.SceneType.Menu:
-                GSConfig.Instance.CardPosition = SerializableVector3.FromUnityVector3(p_EventArgs.Position);
-                GSConfig.Instance.CardRotation = SerializableQuaternion.FromUnityQuat(p_EventArgs.Rotation);
+                GSConfig.Instance.CardPosition = p_EventArgs.Position;
+                GSConfig.Instance.CardRotation = p_EventArgs.Rotation.eulerAngles;
                 break;
             case Logic.SceneType.Playing:
-                GSConfig.Instance.InGameCardPosition = SerializableVector3.FromUnityVector3(p_EventArgs.Position);
-                GSConfig.Instance.InGameCardRotation = SerializableQuaternion.FromUnityQuat(p_EventArgs.Rotation);
+                GSConfig.Instance.InGameCardPosition = p_EventArgs.Position;
+                GSConfig.Instance.InGameCardRotation = p_EventArgs.Rotation.eulerAngles;
                 break;
         }
     }
@@ -367,8 +369,8 @@ internal class PlayerCardUI
     /// </summary>
     public static void ResetMenuCardPosition()
     {
-        GSConfig.Instance.CardPosition = SerializableVector3.FromUnityVector3(GSConfig.ConfigDefaults.DefaultCardPosition);
-        GSConfig.Instance.CardRotation = SerializableQuaternion.FromUnityQuat(GSConfig.ConfigDefaults.DefaultCardRotation);
+        GSConfig.Instance.CardPosition = GSConfig.ConfigDefaults.s_DefaultCardPosition;
+        GSConfig.Instance.CardRotation = GSConfig.ConfigDefaults.s_DefaultCardRotation;
         if (m_Instance != null)
             m_Instance.UpdateCardPosition();
     }
@@ -378,8 +380,8 @@ internal class PlayerCardUI
     /// </summary>
     public static void ResetInGameCardPosition()
     {
-        GSConfig.Instance.InGameCardPosition = SerializableVector3.FromUnityVector3(GSConfig.ConfigDefaults.DefaultInGameCardPosition);
-        GSConfig.Instance.InGameCardRotation = SerializableQuaternion.FromUnityQuat(GSConfig.ConfigDefaults.DefaultInGameCardRotation);
+        GSConfig.Instance.InGameCardPosition = GSConfig.ConfigDefaults.s_DefaultInGameCardPosition;
+        GSConfig.Instance.InGameCardRotation = GSConfig.ConfigDefaults.s_DefaultInGameCardRotation;
         if (Logic.ActiveScene == Logic.SceneType.Playing && m_Instance != null)
             m_Instance.UpdateCardPosition();
     }
