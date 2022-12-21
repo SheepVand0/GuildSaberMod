@@ -84,7 +84,9 @@ namespace GuildSaber.UI.Leaderboard.Managers
         {
             await WaitUtils.Wait(() =>
             {
+#pragma warning disable CS4014
                 GetPanel();
+#pragma warning restore CS4014
                 return m_Header != null;
             }, 100, p_CodeLine: 80);
             s_UpdatesModal = CustomUIComponent.CreateItem<UpdateView>(m_Header.transform, true, true);

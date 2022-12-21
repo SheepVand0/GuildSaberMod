@@ -74,7 +74,7 @@ namespace GuildSaber.UI.Leaderboard.Components
             Events.Instance.e_OnPointsTypeChange += OnPointsTypeChange;
             Events.Instance.e_OnGuildSelected += OnGuildSelected;
             Events.Instance.e_OnScopeSelected += OnScopeSelected;
-            Events.e_OnReload += async () =>
+            Events.e_OnReload += () =>
             {
                 /*Initialized = false;
                 await Task.Delay(1000);

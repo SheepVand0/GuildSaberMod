@@ -54,7 +54,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         /// <summary>
         ///     After View Creation
         /// </summary>
-        protected override async void AfterViewCreation()
+        protected override void AfterViewCreation()
         {
             m_PointsText = m_Selector.GetComponentInChildren<TextMeshProUGUI>();
             var l_ImageView = m_Selector.GetComponentInChildren<ImageView>();

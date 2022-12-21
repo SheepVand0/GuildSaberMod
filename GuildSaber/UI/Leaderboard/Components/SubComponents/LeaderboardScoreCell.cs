@@ -109,7 +109,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         /// <param name="p_BannedModifiers"></param>
         /// <param name="p_PassState"></param>
         /// <param name="p_Hmd"></param>
-        internal async void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd, long p_UnixTimeSet, Player p_BeatLeaderPlayer, string? p_ReplayLink)
+        internal void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, int p_ModifiedScore, List<string> p_BannedModifiers, PassState.EState p_PassState, EHMD p_Hmd, long p_UnixTimeSet, Player p_BeatLeaderPlayer, string? p_ReplayLink)
         {
             BadCuts = p_BadCuts;
             MissedNotes = p_MissedNotes;
