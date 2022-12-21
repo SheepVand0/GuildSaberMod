@@ -6,79 +6,69 @@ using GuildSaber.Logger;
 using GuildSaber.UI;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.UI.FlowCoordinator;
-using GuildSaber.UI.GuildSaber;
 using IPA;
 using UnityEngine;
 using IPALogger = IPA.Logging.Logger;
 
 #endregion
 
-namespace GuildSaber
-{
-    [Plugin(RuntimeOptions.SingleStartInit)]
+namespace GuildSaber;
+
+[Plugin(RuntimeOptions.SingleStartInit)]
 // ReSharper disable once ClassNeverInstantiated.Global
-    public class Plugin
+public class Plugin
+{
+
+    public const string NOT_DEFINED = "Undefined";
+
+    internal static ModFlowCoordinator ModFlowCoordinator;
+    internal static GuildSelectionFlowCoordinator SelectionFlowCoordinator;
+    private static Plugin Instance { get; set; }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    [Init]
+    /// <summary>
+    /// Called when the plugin is first loaded by IPA (either when the game starts or when the plugin is enabled if it starts disabled).
+    /// [Init] methods that use a Constructor or called before regular methods like InitWithConfig.
+    /// Only use [Init] with one Constructor.
+    /// </summary>
+    public void Init(IPALogger p_Logger)
     {
+        Instance = this;
 
-        public const string NOT_DEFINED = "Undefined";
+        _ = new GSLogger(p_Logger);
 
-        internal static ModFlowCoordinator ModFlowCoordinator;
-        internal static GuildSelectionFlowCoordinator SelectionFlowCoordinator;
-        private static Plugin Instance { get; set; }
+        MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
+        //MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber Playing Menu", "GuildSaber Playing Menu", ShowSelectionFlow));
+        GuildSaberModule.HarmonyInstance.PatchAll();
+    }
 
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
-        [Init]
-        /// <summary>
-        /// Called when the plugin is first loaded by IPA (either when the game starts or when the plugin is enabled if it starts disabled).
-        /// [Init] methods that use a Constructor or called before regular methods like InitWithConfig.
-        /// Only use [Init] with one Constructor.
-        /// </summary>
-        public void Init(IPALogger p_Logger)
-        {
-            Instance = this;
+    private void ShowGuildFlow()
+    {
+        if (ModFlowCoordinator == null) ModFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
 
-            _ = new GSLogger(p_Logger);
+        ModFlowCoordinator.Show();
+    }
 
-            MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
-            //MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber Playing Menu", "GuildSaber Playing Menu", ShowSelectionFlow));
-            GuildSaberModule.HarmonyInstance.PatchAll();
-        }
+    private void ShowSelectionFlow()
+    {
+        if (SelectionFlowCoordinator == null) SelectionFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<GuildSelectionFlowCoordinator>();
 
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
+        SelectionFlowCoordinator.Show();
+    }
 
-        private void ShowGuildFlow()
-        {
-            if (ModFlowCoordinator == null)
-            {
-                ModFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
-            }
+    [OnExit]
+    public void OnApplicationQuit()
+    {
+        CustomUIComponent[] l_Components = Resources.FindObjectsOfTypeAll<CustomUIComponent>();
 
-            ModFlowCoordinator.Show();
-        }
-
-        private void ShowSelectionFlow()
-        {
-            if (SelectionFlowCoordinator == null)
-            {
-                SelectionFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<GuildSelectionFlowCoordinator>();
-            }
-
-            SelectionFlowCoordinator.Show();
-        }
-
-        [OnExit]
-        public void OnApplicationQuit()
-        {
-            CustomUIComponent[] l_Components = Resources.FindObjectsOfTypeAll<CustomUIComponent>();
-
-            foreach (CustomUIComponent l_Current in l_Components)
-            {
-                // ReSharper disable once AccessToStaticMemberViaDerivedType
-                GameObject.DestroyImmediate(l_Current.gameObject);
-            }
-        }
+        foreach (CustomUIComponent l_Current in l_Components)
+            // ReSharper disable once AccessToStaticMemberViaDerivedType
+            GameObject.DestroyImmediate(l_Current.gameObject);
     }
 }

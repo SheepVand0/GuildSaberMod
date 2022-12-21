@@ -20,7 +20,10 @@ namespace GuildSaber.UI.Leaderboard.Components
 
         [UIComponent("Global")] private readonly ClickableImage m_GlobalImage = null;
         private readonly List<ClickableImage> m_Scopes = new List<ClickableImage>();
-        protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.ScopeSelector.bsml";
+        protected override string ViewResourceName
+        {
+            get => "GuildSaber.UI.Leaderboard.Components.Views.ScopeSelector.bsml";
+        }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -57,47 +60,25 @@ namespace GuildSaber.UI.Leaderboard.Components
         {
             bool l_IsScopeValid = false;
             foreach (ClickableImage l_Current in m_Scopes)
-            {
-                if (l_Current.name == p_Scope.ToString())
-                {
-                    if (l_Current.gradient)
-                    {
-                        l_Current.gradient = false;
-                    }
+                if (l_Current.name == p_Scope.ToString()) {
+                    if (l_Current.gradient) l_Current.gradient = false;
                     l_Current.DefaultColor = m_Blue;
                     l_IsScopeValid = true;
                 }
-                else
-                {
-                    l_Current.DefaultColor = m_Grey;
-                }
-            }
+                else { l_Current.DefaultColor = m_Grey; }
 
             if (l_IsScopeValid)
-            {
                 Events.Instance.SelectScope(p_Scope);
-            }
             else
-            {
                 GSLogger.Instance.Error(new Exception($"Invalid scope provided : {p_Scope}"), nameof(ScopeSelector), nameof(SelectScope));
-            }
         }
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        [UIAction("GlobalClick")] private void GlobalOnClick()
-        {
-            SelectScope(ELeaderboardScope.Global);
-        }
-        [UIAction("AroundClick")] private void AroundOnClick()
-        {
-            SelectScope(ELeaderboardScope.Around);
-        }
-        [UIAction("LocationClick")] private void LocationOnClick()
-        {
-            SelectScope(ELeaderboardScope.Country);
-        }
+        [UIAction("GlobalClick")] private void GlobalOnClick() { SelectScope(ELeaderboardScope.Global); }
+        [UIAction("AroundClick")] private void AroundOnClick() { SelectScope(ELeaderboardScope.Around); }
+        [UIAction("LocationClick")] private void LocationOnClick() { SelectScope(ELeaderboardScope.Country); }
     }
 }
 

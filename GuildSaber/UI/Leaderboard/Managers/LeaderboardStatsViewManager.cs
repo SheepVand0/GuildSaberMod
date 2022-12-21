@@ -1,92 +1,74 @@
 ﻿using GuildSaber.Utils;
 using UnityEngine;
 
-namespace GuildSaber.UI.Leaderboard.Managers
+namespace GuildSaber.UI.Leaderboard.Managers;
+
+internal class LeaderboardLevelStatsViewManager
 {
-    internal class LeaderboardLevelStatsViewManager
+    public static GameObject GameLevelStatsView;
+
+    public static bool Initialized { get; private set; }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    ///     Setup Manager
+    /// </summary>
+    public static void Setup()
     {
-        public static GameObject GameLevelStatsView;
+        Events.e_OnLeaderboardShown += OnShow;
+        Events.e_OnLeaderboardHide += OnHide;
 
-        public static bool Initialized { get; private set; }
+        Initialized = true;
+    }
 
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
+    private static void GetReferences()
+    {
+        GameLevelStatsView = (GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView") ?? null)!;
+        if (GameLevelStatsView == null) { }
+    }
 
-        /// <summary>
-        ///     Setup Manager
-        /// </summary>
-        public static void Setup()
-        {
-            Events.e_OnLeaderboardShown += OnShow;
-            Events.e_OnLeaderboardHide += OnHide;
+    private static void OnShow(bool p_FirstActivation)
+    {
+        if (!GuildSaberCustomLeaderboard.Initialized /* || !GuildSaberCustomLeaderboard.IsShown*/) return;
 
-            Initialized = true;
-        }
+        Hide();
+    }
 
-        private static void GetReferences()
-        {
-            GameLevelStatsView = (GuildSaberUtils.FindGm("RightScreen.PlatformLeaderboardViewController.LevelStatsView") ?? null)!;
-            if (GameLevelStatsView == null)
-            {
-            }
-        }
+    private static void OnHide()
+    {
+        if (!GuildSaberCustomLeaderboard.Initialized) return;
 
-        private static void OnShow(bool p_FirstActivation)
-        {
-            if (!GuildSaberCustomLeaderboard.Initialized /* || !GuildSaberCustomLeaderboard.IsShown*/)
-            {
-                return;
-            }
+        Show();
+    }
 
-            Hide();
-        }
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
-        private static void OnHide()
-        {
-            if (!GuildSaberCustomLeaderboard.Initialized)
-            {
-                return;
-            }
+    /// <summary>
+    ///     Show Game Level Stats View
+    /// </summary>
+    public static async void Show()
+    {
+        GetReferences();
 
-            Show();
-        }
+        await WaitUtils.Wait(() => GameLevelStatsView != null, 100, p_MaxTryCount: 20);
 
-        ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
+        if (GameLevelStatsView == null) return;
 
-        /// <summary>
-        ///     Show Game Level Stats View
-        /// </summary>
-        public static async void Show()
-        {
-            GetReferences();
+        foreach (Transform l_Transform in GameLevelStatsView.transform) l_Transform.gameObject.SetActive(true);
+    }
 
-            await WaitUtils.Wait(() => GameLevelStatsView != null, 100, p_MaxTryCount: 20);
+    /// <summary>
+    ///     Hide Game Level Stats View
+    /// </summary>
+    public static async void Hide()
+    {
+        GetReferences();
 
-            if (GameLevelStatsView == null)
-            {
-                return;
-            }
+        await WaitUtils.Wait(() => GameLevelStatsView != null, 1);
 
-            foreach (Transform l_Transform in GameLevelStatsView.transform)
-            {
-                l_Transform.gameObject.SetActive(true);
-            }
-        }
-
-        /// <summary>
-        ///     Hide Game Level Stats View
-        /// </summary>
-        public static async void Hide()
-        {
-            GetReferences();
-
-            await WaitUtils.Wait(() => GameLevelStatsView != null, 1);
-
-            foreach (Transform l_Transform in GameLevelStatsView.transform)
-            {
-                l_Transform.gameObject.SetActive(false);
-            }
-        }
+        foreach (Transform l_Transform in GameLevelStatsView.transform) l_Transform.gameObject.SetActive(false);
     }
 }

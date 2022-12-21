@@ -3,41 +3,40 @@ using GuildSaber.UI.FlowCoordinator;
 using GuildSaber.Utils;
 using HMUI;
 
-namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
+namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
+
+internal class CategorySelectionFlowCoordinator : CustomFlowCoordinator
 {
-    internal class CategorySelectionFlowCoordinator : CustomFlowCoordinator
+    private GuildDescriptionViewController m_GuildDescriptionViewController;
+
+    protected override string Title
     {
-        private GuildDescriptionViewController m_GuildDescriptionViewController;
+        get => "Categories";
+    }
 
-        protected override string Title => "Categories";
+    private string Name { get; set; }
+    private string Description { get; set; }
 
-        private string Name { get; set; }
-        private string Description { get; set; }
+    protected override (ViewController?, ViewController?, ViewController?) GetUIImplementation()
+    {
+        if (m_GuildDescriptionViewController == null) m_GuildDescriptionViewController = BeatSaberUI.CreateViewController<GuildDescriptionViewController>();
 
-        protected override (ViewController?, ViewController?, ViewController?) GetUIImplementation()
-        {
-            if (m_GuildDescriptionViewController == null)
-            {
-                m_GuildDescriptionViewController = BeatSaberUI.CreateViewController<GuildDescriptionViewController>();
-            }
+        return (null, m_GuildDescriptionViewController, null);
+    }
 
-            return (null, m_GuildDescriptionViewController, null);
-        }
+    public void Init(string p_Name, string p_Description)
+    {
+        Name = p_Name;
+        Description = p_Description;
+    }
 
-        public void Init(string p_Name, string p_Description)
-        {
-            Name = p_Name;
-            Description = p_Description;
-        }
+    protected override async void OnShow()
+    {
+        await WaitUtils.Wait(() => m_GuildDescriptionViewController != null, 1, p_CodeLine: 32);
 
-        protected override async void OnShow()
-        {
-            await WaitUtils.Wait(() => m_GuildDescriptionViewController != null, 1, p_CodeLine: 32);
+        m_GuildDescriptionViewController.SetNameAndDescription(Name, Description);
 
-            m_GuildDescriptionViewController.SetNameAndDescription(Name, Description);
-
-            Name = string.Empty;
-            Description = string.Empty;
-        }
+        Name = string.Empty;
+        Description = string.Empty;
     }
 }
