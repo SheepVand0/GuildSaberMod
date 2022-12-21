@@ -135,10 +135,19 @@ internal class LeaderboardScoreCell
         BeatLeaderPlayer = p_BeatLeaderPlayer;
 
         // ReSharper disable once InvertIf
-        if (Points == string.Empty && p_PassState is not API.PassState.EState.Allowed) {
-            //m_CPoints.SetEnableRichText(true);
-            Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>⬛";
-            m_CPoints.SetText(Points);
+        if (Points == string.Empty)
+        {
+            if (p_PassState is not API.PassState.EState.Allowed && p_PassState is not API.PassState.EState.NeedConfirmation)
+            {
+                //m_CPoints.SetEnableRichText(true);
+                Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>D";
+                m_CPoints.SetText(Points);
+            }
+            else if (p_PassState is API.PassState.EState.NeedConfirmation)
+            {
+                Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}>N";
+                m_CPoints.SetText(Points);
+            }
         }
     }
 

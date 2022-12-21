@@ -56,7 +56,6 @@ internal class LeaderboardScoreList : CustomUIComponent
     }
     //public string CurrentMapHash { get; internal set; } = string.Empty;
     public static IDifficultyBeatmap? CurrentBeatMap { get; internal set; }
-    public bool ChangingLeaderboard { get; private set; }
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -80,9 +79,7 @@ internal class LeaderboardScoreList : CustomUIComponent
         Events.Instance.e_OnScopeSelected += OnScopeSelected;
         Events.e_OnReload += () =>
         {
-            /*Initialized = false;
-            await Task.Delay(1000);
-            Initialized = true;*/
+
             m_ListComponentScores.Clear();
         };
 
@@ -173,21 +170,21 @@ internal class LeaderboardScoreList : CustomUIComponent
     /// <param name="p_Guild">Guild Id</param>
     public async void SetLeaderboard(int p_Guild, bool p_NeedUpdate, int p_Page = 0)
     {
-        ///Change conditions
-
-        if (ChangingLeaderboard) return;
-
-        ChangingLeaderboard = true;
+        GSLogger.Instance.Log("1", IPA.Logging.Logger.LogLevel.InfoUp);
 
         await WaitUtils.Wait(() => GuildSaberLeaderboardView.s_GameObjectReference.activeInHierarchy && Initialized, 100, p_MaxTryCount: 15, p_CodeLine: 176);
-        if (!gameObject.activeInHierarchy) return;
+        if (!s_GameObjectReference.activeInHierarchy)
+        {
+            return;
+        }
+
+        GSLogger.Instance.Log("2", IPA.Logging.Logger.LogLevel.InfoUp);
 
         if (GuildSaberModule.IsStateError()) {
             m_ErrorText.SetTextError(GuildSaberModule.ModErrorState == GuildSaberModule.EModErrorState.BadRequest_400 ? new Exception("Error during getting player data \n: Bad Request, maybe you mod is outdated or the api is down") : new Exception("Error during getting player data : \n Go scan !"), GuildSaberUtils.ErrorMode.Message);
 
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Error);
             s_CustomLevelStatsView.Clear();
-            ChangingLeaderboard = false;
             return;
         }
 
@@ -197,7 +194,6 @@ internal class LeaderboardScoreList : CustomUIComponent
 
         if (CurrentBeatMap == null) {
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Error);
-            ChangingLeaderboard = false;
             return;
         }
 
@@ -241,7 +237,6 @@ internal class LeaderboardScoreList : CustomUIComponent
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.NotRanked);
             s_CustomLevelStatsView.Clear();
             SetHeader(true);
-            ChangingLeaderboard = false;
             return;
         }
         if (!s_Leaderboard.Equals(default(ApiMapLeaderboardCollectionStruct)) && s_Leaderboard.Leaderboards.Count == 0) {
@@ -254,7 +249,6 @@ internal class LeaderboardScoreList : CustomUIComponent
             else if (m_Page > 1) GuildSaberLeaderboardView.m_Instance.m_PageUpImage.interactable = true;
             SetHeader(false);
             s_CustomLevelStatsView.Clear();
-            ChangingLeaderboard = false;
             return;
         }
 
@@ -292,8 +286,6 @@ internal class LeaderboardScoreList : CustomUIComponent
 
                 return false;
             }, 1, 0, 1100);
-
-        ChangingLeaderboard = false;
     }
 
     ////////////////////////////////////////////////////////////////////////////

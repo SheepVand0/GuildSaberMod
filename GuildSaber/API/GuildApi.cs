@@ -29,18 +29,13 @@ public static class GuildApi
     /// <returns></returns>
     public static async Task<ApiPlayerData> GetPlayerInfoFromAPI(bool p_GuildFromConfig = true, int p_GuildId = 0, bool p_UseGuild = true)
     {
-        /// We don't care if it return null because this function is loaded on the MenuSceneLoadedFresh, and the UserID will most likely be fetched way before that happen.
-#pragma warning disable CS0618
-
         // ReSharper disable once JoinDeclarationAndInitializer
-        ulong l_PlayerId
-            /*76561199187029281*/;
-        l_PlayerId = (ulong)long.Parse(GetUserInfo.GetUserID()) /*76561198235823594*/;
-
-#pragma warning restore CS0618
+        ulong l_PlayerId;
+        l_PlayerId = (ulong)long.Parse((await GetUserInfo.GetUserAsync()).platformUserId);
 
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-        if (l_PlayerId == 0) {
+        if (l_PlayerId == 0)
+        {
             GSLogger.Instance.Error(new Exception("Cannot get player Id"), nameof(GuildApi), nameof(GetPlayerInfoFromAPI));
             return default(ApiPlayerData);
         }
@@ -49,23 +44,27 @@ public static class GuildApi
 
         int l_SelectedGuildId = 0;
 
-        if (p_UseGuild) {
+        if (p_UseGuild)
+        {
             l_SelectedGuildId = p_GuildFromConfig ? GSConfig.Instance.SelectedGuild : p_GuildId;
 
             if (!GuildSaberUtils.GuildsListContainsId(GuildSaberModule.AvailableGuilds, l_SelectedGuildId)) l_SelectedGuildId = GuildSaberModule.AvailableGuilds[0].ID;
         }
 
-        try {
+        try
+        {
             using var l_Client = new HttpClient();
             ApiPlayerData l_DefinedPlayer;
-            if (GuildSaberModule.GSPlayerId == null) {
+            if (GuildSaberModule.GSPlayerId == null)
+            {
                 string l_SerializedPlayer =
                     await l_Client.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{GuildSaberModule.SsPlayerId}/1");
                 var l_Player = JsonConvert.DeserializeObject<ApiPlayerData>(l_SerializedPlayer);
                 l_DefinedPlayer = l_Player;
                 GuildSaberModule.GSPlayerId = (int)l_Player.ID;
             }
-            else {
+            else
+            {
                 string l_SerializedPlayer
                     = await l_Client.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{GuildSaberModule.SsPlayerId}/1{(p_UseGuild ? "?guild-id=" + l_SelectedGuildId : string.Empty)}");
                 var l_Player = JsonConvert.DeserializeObject<ApiPlayerData>(l_SerializedPlayer);
@@ -74,7 +73,8 @@ public static class GuildApi
             GuildSaberModule.SetState(GuildSaberModule.EModState.Functional);
             return l_DefinedPlayer;
         }
-        catch (Exception l_E) {
+        catch (Exception l_E)
+        {
             GuildSaberModule.SetState(GuildSaberModule.EModState.APIError);
             GuildSaberModule.SetErrorState(l_E);
             GSLogger.Instance.Error(l_E, nameof(GuildApi), nameof(GetPlayerInfoFromAPI));
@@ -88,7 +88,8 @@ public static class GuildApi
     /// <returns></returns>
     public static async Task<PlayerGuildsInfo> GetPlayerGuildsInfo()
     {
-        try {
+        try
+        {
             ApiPlayerData l_Player = await GetPlayerInfoFromAPI(p_UseGuild: false);
 
             var l_Client = new HttpClient();
@@ -102,11 +103,12 @@ public static class GuildApi
             GuildSaberModule.SetState(GuildSaberModule.EModState.Functional);
             return new PlayerGuildsInfo(l_Player, l_Guilds);
         }
-        catch (Exception l_E) {
+        catch (Exception l_E)
+        {
             GSLogger.Instance.Error(l_E, nameof(GuildApi), nameof(GetPlayerGuildsInfo));
             GuildSaberModule.SetState(GuildSaberModule.EModState.APIError);
             GuildSaberModule.SetErrorState(l_E);
-            return new PlayerGuildsInfo(default(ApiPlayerData));
+            return new PlayerGuildsInfo();
         }
     }
 
@@ -121,16 +123,19 @@ public static class GuildApi
         var l_ResultPlayer = default(ApiPlayerData);
         using var l_Client = new HttpClient();
 
-        try {
+        try
+        {
             Task<string> l_Result = l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{p_ID}/full?guild={p_Guild}");
             l_Result.Wait();
             l_ResultPlayer = JsonConvert.DeserializeObject<ApiPlayerData>(l_Result.Result);
             GuildSaberModule.SetState(GuildSaberModule.EModState.Functional);
         }
-        catch (AggregateException l_AggregateException) {
+        catch (AggregateException l_AggregateException)
+        {
             GuildSaberModule.SetState(GuildSaberModule.EModState.APIError);
             GuildSaberModule.SetErrorState(l_AggregateException);
-            if (l_AggregateException.InnerException is HttpRequestException) {
+            if (l_AggregateException.InnerException is HttpRequestException)
+            {
                 GSLogger.Instance.Error(l_AggregateException, nameof(GuildApi), nameof(GetPlayerByScoreSaberIdAndGuild));
                 return new ApiPlayerData();
             }
@@ -149,63 +154,34 @@ public static class GuildApi
     /// <returns></returns>
     public static async Task<List<ApiCategory>> GetCategoriesForGuild(int p_GuildID)
     {
-        try {
+        try
+        {
             using var l_Client = new HttpClient();
             string l_SerializedCat = await l_Client.GetStringAsync(new Uri($"https://api.guildsaber.com/categories/data/all?guild-id={p_GuildID}"));
             List<ApiCategory> l_Cats = JsonConvert.DeserializeObject<List<ApiCategory>>(l_SerializedCat);
             GuildSaberModule.SetState(GuildSaberModule.EModState.Functional);
             return l_Cats;
         }
-        catch (Exception l_E) {
+        catch (Exception l_E)
+        {
             GuildSaberModule.SetState(GuildSaberModule.EModState.APIError);
             GuildSaberModule.SetErrorState(l_E);
             GSLogger.Instance.Error(l_E, nameof(GuildApi), nameof(GetCategoriesForGuild));
         }
         return default(List<ApiCategory>);
     }
-/*
+
+
     /// <summary>
-    /// Get Guild Data
+    ///     Get Guild From ID
     /// </summary>
-    /// <param name="p_GuildId"></param>
-    /// <param name="p_PlayerId"></param>
+    /// <param name="p_Id"></param>
     /// <returns></returns>
-    public static GuildData GetGuildData(int p_GuildId, int p_PlayerId)
-    {
-        try
-        {
-            using HttpClient l_Client = new();
-            Task<string> l_Str = l_Client.GetStringAsync($"https://api.guildsaber.com/guilds/data/all?player-id={p_PlayerId}");
-            l_Str.Wait();
-            ApiGuildCollection l_GuildsCollection = JsonConvert.DeserializeObject<ApiGuildCollection>(l_Str.Result);
-            foreach (var l_Current in l_GuildsCollection.Guilds)
-            {
-                if (l_Current.ID != p_GuildId)
-                    continue;
-                GuildSaberModule.SetState(GuildSaberModule.EModState.Functional);
-                return l_Current;
-            }
-
-            return default;
-        }
-        catch (Exception l_E)
-        {
-            GuildSaberModule.SetState(GuildSaberModule.EModState.APIError);
-            GuildSaberModule.SetErrorState(l_E);
-            GSLogger.Instance.Error(l_E, nameof(GuildApi), nameof(GetGuildData));
-        }
-        return default;
-    }
-*/
-/// <summary>
-///     Get Guild From ID
-/// </summary>
-/// <param name="p_Id"></param>
-/// <returns></returns>
-public static GuildData GetGuildFromId(int p_Id)
+    public static GuildData GetGuildFromId(int p_Id)
     {
 
-        foreach (GuildData l_Guild in GuildSaberModule.AvailableGuilds) {
+        foreach (GuildData l_Guild in GuildSaberModule.AvailableGuilds)
+        {
             if (l_Guild.ID != p_Id) continue;
 
             return l_Guild;
@@ -213,14 +189,15 @@ public static GuildData GetGuildFromId(int p_Id)
         return default(GuildData);
     }
 
-/// <summary>
-///     Get Guild from name
-/// </summary>
-/// <param name="p_Name">Exact Guild Name</param>
-/// <returns></returns>
-public static GuildData GetGuildFromName(string p_Name)
+    /// <summary>
+    ///     Get Guild from name
+    /// </summary>
+    /// <param name="p_Name">Exact Guild Name</param>
+    /// <returns></returns>
+    public static GuildData GetGuildFromName(string p_Name)
     {
-        foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds) {
+        foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds)
+        {
             if (l_Current.Name != p_Name && l_Current.SmallName != p_Name) continue;
 
             return l_Current;
@@ -247,7 +224,8 @@ public static GuildData GetGuildFromName(string p_Name)
         int p_Page, int p_GSId, string p_Country, string p_Mode,
         int p_CountPerPage = GuildSaberModule.SCORES_BY_PAGE, int p_SearchType = 1)
     {
-        try {
+        try
+        {
             using var l_Client = new HttpClient();
             string l_Country = p_Country != string.Empty ? $"&Country={p_Country}" : string.Empty;
             string l_Link = $"https://api.guildsaber.com/leaderboards/map/by-hash/{p_Hash}/{GSBeatmapUtils.DifficultyToNumber(p_BeatMap.difficulty)}/{p_Mode}?guild-id={p_Guild}{(p_Page > 0 ? "&Page=" + p_Page : string.Empty)}&PlayerID={p_GSId}{l_Country}&CountPerPage={p_CountPerPage}&AroundMe=false&SearchType={p_SearchType}";
@@ -256,19 +234,25 @@ public static GuildData GetGuildFromName(string p_Name)
             var l_Leaderboard = JsonConvert.DeserializeObject<ApiMapLeaderboardCollectionStruct>(l_Result);
             return l_Leaderboard;
         }
-        catch (Exception l_E) { return default(ApiMapLeaderboardCollectionStruct); }
+        catch (Exception l_E)
+        {
+            return default(ApiMapLeaderboardCollectionStruct);
+        }
     }
 
     /// <summary>
     ///     Get player data from card
     /// </summary>
     /// <returns></returns>
-    public static ApiPlayerData GetPlayerDataFromCurrent() { return PlayerCardUI.m_Player; }
+    public static ApiPlayerData GetPlayerDataFromCurrent()
+    {
+        return PlayerCardUI.m_Player;
+    }
 }
 
 public struct PlayerGuildsInfo
 {
-    public PlayerGuildsInfo(ApiPlayerData p_Player = default(ApiPlayerData), List<GuildData>? p_AvailableGuilds = null)
+    public PlayerGuildsInfo(ApiPlayerData p_Player, List<GuildData>? p_AvailableGuilds)
     {
         ReturnPlayer = p_Player;
         AvailableGuilds = p_AvailableGuilds ?? new List<GuildData>();
@@ -296,18 +280,10 @@ internal class PassState
 
     public static string GetColorFromPassState(EState p_State)
     {
-        return p_State switch
-        {
-            EState.Allowed => ColorUtility.ToHtmlStringRGBA(Color.green),
-            EState.NeedConfirmation => ColorUtility.ToHtmlStringRGBA(Color.yellow),
-            EState.Denied => ColorUtility.ToHtmlStringRGBA(Color.red),
-            EState.UpdatedScore => GetColorFromPassState(EState.Allowed),
-            EState.NewScore => GetColorFromPassState(EState.NeedConfirmation),
-            EState.UnVerified => GetColorFromPassState(EState.NeedConfirmation),
-            EState.MinScoreRequirement => GetColorFromPassState(EState.Denied),
-            EState.MissingModifiers => GetColorFromPassState(EState.Denied),
-            EState.ProhibitedModifiers => GetColorFromPassState(EState.Denied),
-            _ => ColorUtility.ToHtmlStringRGBA(Color.white)
-        };
+        if (p_State.HasFlag(EState.NeedConfirmation))
+            return ColorUtility.ToHtmlStringRGBA(Color.yellow);
+        else if (!p_State.HasFlag(EState.Allowed))
+            return ColorUtility.ToHtmlStringRGBA(Color.red);
+        return ColorUtility.ToHtmlStringRGBA(Color.green);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components.Settings;
 using GuildSaber.API;
@@ -21,7 +22,8 @@ public class PointsType : CustomUIComponent
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    [UIComponent("PointsDropdown")] private readonly DropDownListSetting m_Selector = null;
+    [UIComponent("PointsDropdown")] private readonly DropDownListSetting m_SelectorBase = null;
+    private static DropDownListSetting m_Selector;
 
     [UIValue("DefaultPoints")] private List<object> m_DefaultsPoints = new List<object>
     {
@@ -30,10 +32,8 @@ public class PointsType : CustomUIComponent
 
     public ApiPlayerData m_Player = default(ApiPlayerData);
     private TextMeshProUGUI m_PointsText;
-    protected override string ViewResourceName
-    {
-        get => "GuildSaber.UI.Leaderboard.Components.Views.PointsType.bsml";
-    }
+
+    protected override string ViewResourceName => "GuildSaber.UI.Leaderboard.Components.Views.PointsType.bsml";
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -53,6 +53,7 @@ public class PointsType : CustomUIComponent
     /// </summary>
     protected override void AfterViewCreation()
     {
+        m_Selector = m_SelectorBase;
         m_PointsText = m_Selector.GetComponentInChildren<TextMeshProUGUI>();
         var l_ImageView = m_Selector.GetComponentInChildren<ImageView>();
         l_ImageView.gameObject.SetActive(false);
