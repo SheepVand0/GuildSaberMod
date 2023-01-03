@@ -1,8 +1,8 @@
 {
-  "Version" : "0.5.6",
-  "FileLink" : "https://github.com/SheepVand0/GuildSaberMod/releases/download/0.5.6/GuildSaber.dll",
+  "Version" : "0.5.7",
+  "FileLink" : "https://github.com/SheepVand0/GuildSaberMod/releases/download/0.5.7/GuildSaber.dll",
   "BSPlusMinVersion": "5.0.3",
-  "BSPlusFileLink" : "https://github.com/SheepVand0/GuildSaberMod/releases/download/0.5.6/BeatSaberPlus.dll",
+  "BSPlusFileLink" : "https://github.com/SheepVand0/GuildSaberMod/releases/download/0.5.7/BeatSaberPlus.dll",
   "BeatLeaderMinVersion" : "0.5.4",
-  "BeatLeaderLink" : "https://github.com/SheepVand0/GuildSaberMod/releases/download/0.5.6/BeatLeader.dll"
+  "BeatLeaderLink" : "https://github.com/SheepVand0/GuildSaberMod/releases/download/0.5.7/BeatLeader.dll"
 }
