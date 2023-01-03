@@ -35,9 +35,29 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
+<<<<<<< Updated upstream
         public void Awake()
         {
             s_GameObjectReference = gameObject;
+=======
+    /// <summary>
+    ///     Refresh selected points color and text
+    /// </summary>
+    public async void RefreshSelected()
+    {
+        await WaitUtils.Wait(() => m_Selector != null, 100);
+        await WaitUtils.Wait(() => m_PointsText != null, 100);
+        await WaitUtils.Wait(() => s_GameObjectReference.activeSelf, 100);
+
+        try {
+            m_PointsText.enableVertexGradient = true;
+            m_PointsText.colorGradient = GuildSaberModule.LeaderboardSelectedGuild.Color.ToUnityColor().GenerateGradient(0.2f);
+            await WaitUtils.Wait(() => m_Player.RankData != null, 10);
+
+            foreach (RankData l_Rank in m_Player.RankData)
+                if (l_Rank.PointsName == m_SelectedPoints)
+                    m_PointsText.text = $"{l_Rank.Points} {l_Rank.PointsName}";
+>>>>>>> Stashed changes
         }
 
         /// <summary>
@@ -63,6 +83,7 @@ namespace GuildSaber.UI.Leaderboard.Components
             Events.e_OnLeaderboardPostLoad += OnLeaderboardViewPostLoad;
         }
 
+<<<<<<< Updated upstream
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
@@ -90,6 +111,14 @@ namespace GuildSaber.UI.Leaderboard.Components
             {
                 GSLogger.Instance.Error(l_E, nameof(PointsType), nameof(RefreshSelected));
             }
+=======
+        if (GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData.Equals(default(object))) return;
+        // ReSharper disable once SuspiciousTypeConversion.Global
+        m_Player = GuildSaberLeaderboardPanel.PanelInstance.m_PlayerData;
+        m_Selector.values.Clear();
+        foreach (RankData l_Current in m_Player.RankData) {
+            m_Selector.values.Add($"{l_Current.PointsName}");
+>>>>>>> Stashed changes
         }
 
         /// <summary>

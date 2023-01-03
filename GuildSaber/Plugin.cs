@@ -76,5 +76,8 @@ public class Plugin
             GameObject.DestroyImmediate(l_Current.gameObject);
         }
     }
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 }

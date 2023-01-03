@@ -17,7 +17,32 @@ using UnityEngine;
 
 namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 {
+<<<<<<< Updated upstream
     internal class LeaderboardScoreCell
+=======
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    private static readonly Color s_Blue = new Color(0f, 0.8f, 1f, 0.8f);
+
+    [UIValue("AccText")] private CustomText m_CAcc;
+    [UIValue("Modifiers")] private CustomText m_CModifiers;
+    [UIValue("Name")] private CustomText m_CPlayerName;
+    [UIValue("Points")] private CustomText m_CPoints;
+
+    [UIValue("Rank")] private CustomText m_CRank;
+    [UIValue("ScoreText")] private CustomText m_CScore;
+    [UIComponent("Elems")] public HorizontalLayoutGroup m_ElemsLayout = null;
+
+    [UIComponent("Interactable")] public Button m_Interactable = null;
+
+    public static float ScaleFactor
+    {
+        get => 1.2f;
+    }
+    private float InteractableScaleY
+>>>>>>> Stashed changes
     {
         [UIComponent("Elems")] public HorizontalLayoutGroup m_ElemsLayout = null;
         [UIComponent("Interactable")] public Button m_Interactable = null;
@@ -62,6 +87,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             get => 90 * ScaleFactor + (7 * 1.4f);
         }
 
+<<<<<<< Updated upstream
         public bool HasBeenParsed { get; private set; } = false;
 
         float BasePoints { get; set; } = 0f;
@@ -157,6 +183,104 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         /// </summary>
         [UIAction("#post-parse")]
         private void _PostParse()
+=======
+    public bool HasBeenParsed { get; private set; }
+
+    private float BasePoints { get; set; }
+    public string Rank { get; set; } = string.Empty;
+    public string PlayerName { get; set; } = string.Empty;
+    public string Points { get; set; } = string.Empty;
+    public string Score { get; set; } = string.Empty;
+    public string Acc { get; set; } = string.Empty;
+    public string Id { get; set; } = string.Empty;
+
+    public string Modifiers { get; set; } = string.Empty;
+    public PassState.EState State { get; set; }
+    public int IndexInLeaderboard { get; set; }
+    public Player BeatLeaderPlayer { get; set; }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    ///     Update cell on leaderboard refresh
+    /// </summary>
+    /// <param name="p_Rank">Player rank in this map</param>
+    /// <param name="p_Name">player name</param>
+    /// <param name="p_Points">Points</param>
+    /// <param name="p_PointsName">Selected points type name</param>
+    /// <param name="p_Score">Score</param>
+    /// <param name="p_Acc">Acc</param>
+    /// <param name="p_Id">Player GuildSaber Id</param>
+    /// <param name="p_Modifiers">Modifiers</param>
+    internal void Init(ApiMapLeaderboardContentStruct p_Score, ApiCustomDataStruct p_LeaderMetadata, int p_LeaderboardIndex)
+    {
+        Rank = $"{p_Score.Rank}";
+        PlayerName = p_Score.Name;
+
+        PointsData l_Points = new PointsData();
+        try
+        {
+            l_Points = (p_Score.PointsData.Any()) ? p_Score.PointsData.First(p_Index => p_Index.PointsName == GuildSaberLeaderboardPanel.PanelInstance.m_PointsType.m_SelectedPoints) : new PointsData();
+        }
+        catch
+        {
+            //ignored
+        }
+        BasePoints = l_Points.Points;
+        State = (PassState.EState)p_Score.State;
+        Points = l_Points.PointsType != "pass" ? $"{BasePoints:0.00} {l_Points.PointsName}" : string.Empty;
+        Score = p_Score.BaseScore.ToString();
+        Acc = $"{((p_Score.BaseScore * 100) / p_LeaderMetadata.MaxScore):00.00}%";
+        Id = p_Score.ID.ToString();
+        Modifiers = GuildSaberUtils.GetPlayerNameToFit(p_Score.Modifiers, 4);
+        Show();
+        IndexInLeaderboard = p_LeaderboardIndex;
+
+        var l_Player = new Player
+        {
+            id = p_Score.BeatLeaderID,
+            avatar = p_Score.Avatar,
+            rank = (int)p_Score.Rank,
+            name = p_Score.Name,
+            countryRank = (int)p_Score.Rank
+        };
+
+        var l_Settings = new ProfileSettings
+        {
+            hue = 1,
+            message = string.Empty,
+            saturation = 1,
+            effectName = string.Empty
+        };
+
+        l_Player.profileSettings = l_Settings;
+
+        try
+        {
+            if (p_Score.PointsData.Any())
+                foreach (PointsData l_Index in p_Score.PointsData.Where(p_Index => p_Index.PointsName == GuildSaberLeaderboardPanel.PanelInstance.m_PointsType.m_SelectedPoints))
+                    l_Player.pp = l_Index.Points;
+        }
+        catch
+        {
+            //Ignored
+        }
+
+        BeatLeaderPlayer = l_Player;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    ///     PostParse
+    /// </summary>
+    [UIAction("#post-parse")]
+    private void PostParse()
+    {
+        List<ItemParam> l_CurrentParams = new List<ItemParam>
+>>>>>>> Stashed changes
         {
             List<ItemParam> l_CurrentParams = new List<ItemParam>()
             {
@@ -208,7 +332,50 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             l_CurrentParams[1] = new ItemParam("AnchorPosX", (-24f + l_OffsetFromRank + l_NameOffset) + (ScaleFactor * 1.06f));
             l_CurrentParams[4] = new ItemParam("Color", l_StartColor);
 
+<<<<<<< Updated upstream
             m_CAcc = CustomUIComponent.CreateItemWithParams<CustomText>(m_ElemsLayout.transform, true, true, l_CurrentParams);
+=======
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    ///     Show it when have a score
+    /// </summary>
+    internal async void Show()
+    {
+        await WaitUtils.Wait(() => LeaderboardScoreList.Instance.Initialized, 10);
+
+        SetTexts();
+
+        if (GuildSaberModule.GSPlayerId != null && Id == GuildSaberModule.GSPlayerId.ToString()) SetCellToCurrentPlayer();
+
+        m_Interactable.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    ///     Apply all values on texts
+    /// </summary>
+    internal void SetTexts()
+    {
+        m_CRank.SetText(Rank);
+        m_CPlayerName.SetText(GuildSaberUtils.GetPlayerNameToFit(PlayerName, 22));
+        // ReSharper disable once InvertIf
+        if (Points == string.Empty)
+        {
+            if (State is not API.PassState.EState.Allowed && State is not API.PassState.EState.NeedConfirmation)
+            {
+                //m_CPoints.SetEnableRichText(true);
+                Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>D";
+                m_CPoints.SetText(Points);
+            }
+            else if (State is API.PassState.EState.NeedConfirmation)
+            {
+                Points = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}>N";
+                m_CPoints.SetText(Points);
+            }
+        }
+        m_CPoints.SetText(Points);
+>>>>>>> Stashed changes
 
             HasBeenParsed = true;
 
@@ -226,6 +393,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             m_CPlayerName.SetText(GuildSaberUtils.GetPlayerNameToFit(PlayerName, 22));
             m_CPoints.SetText(Points);
 
+<<<<<<< Updated upstream
             m_CScore.SetText($"{m_CScore.RichText}{Score}");
             m_CAcc.SetText(Acc);
             m_CModifiers.SetText(Modifiers);
@@ -248,6 +416,40 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 
             m_Interactable.gameObject.SetActive(false);
         }
+=======
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    ///     Set current cell to player to highlight it in blue
+    /// </summary>
+    internal void SetCellToCurrentPlayer()
+    {
+        m_CRank.SetColor(s_Blue);
+        m_CPlayerName.SetColor(s_Blue);
+        m_CScore.SetColor(s_Blue);
+    }
+
+    /// <summary>
+    ///     Set texts to empty
+    /// </summary>
+    public void SetEmpty()
+    {
+        Rank = string.Empty;
+        PlayerName = string.Empty;
+        Points = string.Empty;
+        Score = string.Empty;
+        Acc = string.Empty;
+        Modifiers = string.Empty;
+
+        m_CRank.SetText(string.Empty);
+        m_CPlayerName.SetText(string.Empty);
+        m_CPoints.SetText(string.Empty);
+        m_CScore.SetText(string.Empty);
+        m_CAcc.SetText(string.Empty);
+        m_CModifiers.SetText(string.Empty);
+    }
+>>>>>>> Stashed changes
 
         /// <summary>
         /// Set current cell to player to highlight it in blue
@@ -268,6 +470,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 
             SetTexts();
 
+<<<<<<< Updated upstream
             m_Interactable.gameObject.SetActive(true);
         }
         /// <summary>
@@ -453,4 +656,21 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
     }
 
 
+=======
+    [UIAction("ShowInfo")]
+    private void ShowInfo()
+    {
+        LeaderboardScoreList.s_InfoModal.SetModalInfo(LeaderboardScoreList.s_Leaderboard.Leaderboards[IndexInLeaderboard], LeaderboardScoreList.s_Leaderboard.CustomData,
+            new List<string>
+            {
+                "NF",
+                "SS",
+                "NA",
+                "NO",
+                "NB",
+                "ZM"
+            }, BeatLeaderPlayer);
+        LeaderboardScoreList.s_InfoModal.Show();
+    }
+>>>>>>> Stashed changes
 }

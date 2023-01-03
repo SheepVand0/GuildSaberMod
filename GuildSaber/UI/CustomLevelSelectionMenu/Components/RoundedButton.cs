@@ -5,16 +5,25 @@ using BeatSaberMarkupLanguage.Attributes;
 using GuildSaber.AssetBundles;
 using GuildSaber.Utils;
 using HMUI;
+<<<<<<< Updated upstream
 using OVR.OpenVR;
+=======
+using IPA.Utilities;
+>>>>>>> Stashed changes
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 {
+<<<<<<< Updated upstream
     public class RoundedButton : CustomUIComponent
     {
         protected override string ViewResourceName => string.Empty;
+=======
+
+    [UIComponent("Description")] private readonly TextMeshProUGUI m_DescriptionText = null;
+>>>>>>> Stashed changes
 
         protected override string GetViewDescription() => "";
 
@@ -25,12 +34,17 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
         [UIComponent("Title")] private readonly TextMeshProUGUI m_TitleText = null;
         [UIComponent("Description")] private readonly TextMeshProUGUI m_DescriptionText = null;
 
+<<<<<<< Updated upstream
         private string m_Title = String.Empty;
         private string m_Description = string.Empty;
         private string? m_Image = null;
         private Action m_OnClick = null;
 
         private Button m_Button = null;
+=======
+    private string m_Title = string.Empty;
+    protected override string ViewResourceName => "GuildSaber.UI.CustomLevelSelectionMenu.Components.Views.RoundedButton.bsml";
+>>>>>>> Stashed changes
 
         protected override async void AfterViewCreation()
         {
@@ -74,5 +88,16 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             BSMLParser.instance.Parse("<horizontal id=\"MainLayout\"><vertical><text id=\"Title\" /><text id=\"Description\"/></vertical></horizontal>", p_Transform.gameObject, l_Button);
         }
 
+<<<<<<< Updated upstream
+=======
+    public static void Create(Transform p_Transform, string p_Text, string p_Description, float p_Width, float p_Height, Action p_OnClick, string? p_Image)
+    {
+        var l_Button = CreateItem<RoundedButton>(p_Transform, true, false, p_Callback: (p_Object) =>
+        {
+            p_Object.m_MainLayout.SetField("preferredHeight", p_Height);
+            p_Object.m_MainLayout.SetField("preferredWidth", p_Width);
+        });
+        l_Button.Setup(p_OnClick, p_Text, p_Description, p_Image);
+>>>>>>> Stashed changes
     }
 }

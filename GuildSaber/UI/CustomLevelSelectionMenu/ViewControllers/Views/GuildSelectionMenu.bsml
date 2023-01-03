@@ -1,9 +1,26 @@
-<horizontal pref-height="65">
+<vertical child-control-height='false'>
+    <horizontal bg='panel-top' pad-left='15' pad-right='15' horizontal-fit='PreferredSize'>
+        <text text='Bobby' align='Center' font-size='4.2'/>
+    </horizontal>
 
-    <text text="Select a Guild"/>
+    <horizontal child-align='MiddleLeft' anchor-pos-x='-5' id='Tabs' bg='round-rect-panel' spacing='0' pad-top='0'
+                min-width='145'>
 
-    <custom-list id="GuildList" content="Guilds">
-        <horizontal id="MainLayout" pref-height="25" pref-width="85" />
-    </custom-list>
+        <vertical spacing='0' pad-top='0'>
 
-</horizontal>
+            <horizontal pref-height='2'/>
+
+            <horizontal id='WhitelistTab' pref-height='65' spacing='0' pad='0'>
+                <vertical>
+                        <custom-list id="GuildList" content="Guilds">
+                            <horizontal id="MainLayout" pref-height="25" pref-width="85" />
+                        </custom-list>
+                </vertical>
+            </horizontal>
+        </vertical>
+    </horizontal>
+</vertical>
+
+
+
+

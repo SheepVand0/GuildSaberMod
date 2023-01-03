@@ -8,6 +8,11 @@ using BeatSaberMarkupLanguage.Components;
 using GuildSaber.API;
 using GuildSaber.BSPModule;
 using GuildSaber.Utils;
+<<<<<<< Updated upstream
+=======
+using HMUI;
+using Polyglot;
+>>>>>>> Stashed changes
 using TMPro;
 using UnityEngine;
 using GuildSaber.Configuration;
@@ -18,6 +23,14 @@ using GuildSaber.UI.Leaderboard.Components.SubComponents;
 namespace GuildSaber.UI.Leaderboard.Components
 {
 
+<<<<<<< Updated upstream
+=======
+    public static LeaderboardScoreList Instance;
+
+    internal static bool StartedReplayFromMod = false;
+    internal static ReplayLaunchData ReplayLaunchData = null;
+    private static List<object> s_ListComponentScores = new List<object>();
+>>>>>>> Stashed changes
 
     class LeaderboardScoreList : CustomUIComponent
     {
@@ -28,14 +41,30 @@ namespace GuildSaber.UI.Leaderboard.Components
         [UIComponent("ErrorText")] internal readonly TextMeshProUGUI m_ErrorText = null;
         [UIComponent("Loading")] internal readonly GridLayoutGroup m_LoadingLayout = null;
 
+<<<<<<< Updated upstream
         public static LeaderboardScoreList Instance;
+=======
+    internal static ApiMapLeaderboardCollectionStruct s_Leaderboard = default(ApiMapLeaderboardCollectionStruct);
+    private static string s_CurrentPointsName = string.Empty;
+    public int m_Page = 1;
+    [UIComponent("ErrorText")] internal readonly TextMeshProUGUI m_ErrorText = null;
+    [UIComponent("Loading")] internal readonly GridLayoutGroup m_LoadingLayout = null;
+    [UIComponent("NotRankedText")] internal readonly TextMeshProUGUI m_NotRankedText = null;
+>>>>>>> Stashed changes
 
         internal static bool s_StartedReplayFromMod = false;
         internal static ReplayLaunchData s_ReplayLaunchData = null;
 
+<<<<<<< Updated upstream
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         [UIValue("ScoreCells")] internal List<object> m_ListComponentScores = new List<object>();
         private static List<object> s_ListComponentScores = new List<object>();
+=======
+    internal static ScoreCellInfoModal s_InfoModal;
+
+    // ReSharper disable once FieldCanBeMadeReadOnly.Local
+    [UIValue("ScoreCells")] internal List<object> m_ListComponentScores = new List<object>();
+>>>>>>> Stashed changes
 
         static CustomLevelStatsView s_CustomLevelStatsView = null;
 
@@ -45,10 +74,17 @@ namespace GuildSaber.UI.Leaderboard.Components
 
         public bool Initialized { get; private set; }
 
+<<<<<<< Updated upstream
         private float ListCellSize
         {
             get => 4 * LeaderboardScoreCell.ScaleFactor;
         }
+=======
+    protected override async void AfterViewCreation()
+    {
+        s_CustomLevelStatsView = CreateItem<CustomLevelStatsView>(GuildSaberLeaderboardView.m_Instance.m_ScoreParamsLayout.transform, true, true);
+        s_InfoModal = CreateItem<ScoreCellInfoModal>(GuildSaberLeaderboardView.m_Instance.m_ScoreParamsLayout.transform, true, true);
+>>>>>>> Stashed changes
 
         static ApiMapLeaderboardCollectionStruct s_Leaderboard = default(ApiMapLeaderboardCollectionStruct);
         public int m_Page = 1;
@@ -407,6 +443,7 @@ namespace GuildSaber.UI.Leaderboard.Components
                     m_ListComponentScores.Add(l_CurrentCell);
                 }
 
+<<<<<<< Updated upstream
                 s_ListComponentScores = m_ListComponentScores;
 
                 await WaitUtils.Wait(() => m_ScoreList != null, 1);
@@ -498,6 +535,12 @@ namespace GuildSaber.UI.Leaderboard.Components
                 {
                     GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(SetScores));
                 }
+=======
+            try {
+                ///Player settings for BeatLeader Replay
+                var l_CurrentCell = (LeaderboardScoreCell)s_ListComponentScores[l_i];
+                l_CurrentCell.Init(l_Score, p_CustomData, l_i);
+>>>>>>> Stashed changes
             }
 
             SetHeader(false);

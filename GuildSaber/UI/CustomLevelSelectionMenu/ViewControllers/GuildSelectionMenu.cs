@@ -26,7 +26,13 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
             m_Image = p_Image;
         }
 
+<<<<<<< Updated upstream
         [UIAction("#post-parse")] private void _PostParse()
+=======
+    [UIAction("#post-parse")] private void _PostParse()
+    {
+        RoundedButton.Create(m_MainLayout.transform, m_Title, m_Description, 85f, 25f, () =>
+>>>>>>> Stashed changes
         {
             RoundedButton.Create(m_MainLayout.transform, m_Title, m_Description, () =>
             {
@@ -49,10 +55,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
 
         [UIValue("Guilds")] private List<object> m_Guilds = new List<object>();
 
+<<<<<<< Updated upstream
         protected override string GetViewContentDescription()
         {
             return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), $"{VIEW_CONTROLLERS_PATH}.GuildSelectionMenu.bsml");
         }
+=======
+   protected override string GetViewContentDescription() { return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), $"{VIEW_CONTROLLERS_PATH}.GuildSelectionMenu.bsml"); }
+>>>>>>> Stashed changes
 
         protected override void OnViewActivation()
         {

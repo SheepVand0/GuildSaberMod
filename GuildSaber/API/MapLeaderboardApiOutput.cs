@@ -14,6 +14,7 @@ namespace GuildSaber.API
         public ApiMapLeaderboardContentStruct? PlayerScore { get; set; }
     }
 
+<<<<<<< Updated upstream
     public struct PointsData
     {
         public string PointsType { get; set; }
@@ -21,6 +22,19 @@ namespace GuildSaber.API
         public byte PointsIndex { get; set; }
         public float Points { get; set; }
     }
+=======
+public struct PointsData
+{
+    public PointsData()
+    {
+    }
+
+    public string PointsType { get; set; } = "pass";
+    public string PointsName { get; set; } = "CPP";
+    public byte PointsIndex { get; set; } = 0;
+    public float Points { get; set; } = 0.0f;
+}
+>>>>>>> Stashed changes
 
     public struct ApiMapLeaderboardContentStruct
     {
@@ -87,6 +101,7 @@ namespace GuildSaber.API
         public UInt32 MaxScore { get; set; }
     }
 
+<<<<<<< Updated upstream
     public enum EHMD
     {
         Unk = 0,
@@ -130,4 +145,47 @@ namespace GuildSaber.API
         QuestPro = 61
     }
 
+=======
+public enum EHMD
+{
+    Unk = 0,
+    CV1 = 1 << 0,
+    Vive = 1 << 1,
+    VivePro = 1 << 2,
+    MixedReality = 1 << 3,
+    RiftS = 1 << 4,
+    Quest1 = 1 << 5,
+    ValveIndex = 1 << 6,
+    ViveCosmos = 1 << 7,
+    Quest2 = 1 << 8,
+    PicoNeo3 = 33,
+    PicoNeo2 = 34,
+    VivePro2 = 35,
+    ViveElite = 36,
+    Miramar = 37,
+    Pimax8K = 38,
+    Pimax5K = 39,
+    PimaxArtisan = 40,
+    HpReverb = 41,
+    SamsungWmr = 42,
+    QiyuDream = 43,
+    Disco = 44,
+    LenovoExplorer = 45,
+    AcerWmr = 46,
+    ViveFocus = 47,
+    Arpara = 48,
+    DellVisor = 49,
+    E3 = 50,
+    ViveDvt = 51,
+    Glasses20 = 52,
+    Hedy = 53,
+    Vaporeon = 54,
+    Huaweivr = 55,
+    AsusWmr = 56,
+    Cloudxr = 57,
+    VRidge = 58,
+    Medion = 59,
+    PicoNeo4 = 60,
+    QuestPro = 61
+>>>>>>> Stashed changes
 }

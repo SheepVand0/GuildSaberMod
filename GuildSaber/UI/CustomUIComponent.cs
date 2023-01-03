@@ -22,6 +22,38 @@ namespace GuildSaber.UI
         public object m_Value { get; set; }
     }
 
+<<<<<<< Updated upstream
+=======
+public abstract class CustomUIComponent: MonoBehaviour
+{
+    public BSMLParserParams m_ParserParams;
+    public Action OnPostParse;
+
+    protected abstract string ViewResourceName { get; }
+    protected virtual void OnDestroy() { }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    ///     Add Item to specific Transform
+    /// </summary>
+    /// <typeparam name="TItem">Item type</typeparam>
+    /// <param name="p_Parent"></param>
+    /// <param name="p_UnderParent"></param>
+    /// <param name="p_NeedParse"></param>
+    /// <param name="p_Init"></param>
+    /// <param name="p_Callback"></param>
+    /// <returns></returns>
+    public static TItem CreateItem<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, bool p_Init = true, Action<TItem>? p_Callback = null) where TItem : CustomUIComponent
+    {
+        var l_Item = new GameObject($"Parent_{nameof(TItem)}").AddComponent<TItem>();
+        l_Item.OnCreate();
+        l_Item.Init<TItem>(p_Init, p_Parent, p_UnderParent, p_NeedParse);
+        l_Item.OnPostParse += () => { p_Callback?.Invoke(l_Item); };
+        return l_Item;
+    }
+>>>>>>> Stashed changes
 
     public abstract class CustomUIComponent : MonoBehaviour
     {

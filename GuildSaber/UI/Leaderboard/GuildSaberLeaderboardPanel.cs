@@ -49,6 +49,7 @@ namespace GuildSaber.UI.Leaderboard
         public ApiPlayerData m_PlayerData = new();
         public bool m_IsFirstActivation = true;
 
+<<<<<<< Updated upstream
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
@@ -66,6 +67,26 @@ namespace GuildSaber.UI.Leaderboard
                 if (p_Scene.name.ToLower().Contains("menu"))
                     PanelInstance = this;
             };
+=======
+    protected override void DidDeactivate(bool removedFromHierarchy, bool screenSystemDisabling)
+    {
+        GSLogger.Instance.Log("Trying to deactivate panel", IPA.Logging.Logger.LogLevel.InfoUp);
+        if (ScoreCellInfoModal.Instance != null) ScoreCellInfoModal.Instance.Hide();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /// <summary>
+    ///     Set header colors from current guild
+    /// </summary>
+    internal async void SetColors()
+    {
+        if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
+        {
+            LeaderboardHeaderManager.SetColors(Color.red, Color.clear);
+            return;
+>>>>>>> Stashed changes
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -91,6 +112,7 @@ namespace GuildSaber.UI.Leaderboard
 
             await WaitUtils.Wait(() => m_SelectedGuild == GuildSaberModule.LeaderboardSelectedGuild.ID, 100);
 
+<<<<<<< Updated upstream
             VertexGradient l_Gradient = GuildSaberModule.LeaderboardSelectedGuild.Color.ToUnityColor().GenerateGradient(0.25f, 1f);
             VertexGradient l_Gradient1 = GuildSaberModule.LeaderboardSelectedGuild.Color.ToUnityColor().GenerateGradient(0.2f, 1f);
             LeaderboardHeaderManager.SetColors(l_Gradient.topLeft, l_Gradient.bottomLeft);
@@ -121,12 +143,68 @@ namespace GuildSaber.UI.Leaderboard
         public async void Reload(ReloadMode p_ReloadMode, bool p_SetLoadingModeBeforeGettingData, bool p_ReloadStyle)
         {
             GSLogger.Instance.Log("Reloading", IPA.Logging.Logger.LogLevel.InfoUp);
+=======
+        if (GuildSaberModule.IsStateError())
+        {
+            SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Error);
+            return;
+        }
+
+        if (p_SetLoadingModeBeforeGettingData) SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Loading);
+
+        if (m_IsFirstActivation) m_SelectedGuild = GSConfig.Instance.SelectedGuild;
+        await Task.Run(delegate { GuildSaberModule.LeaderboardSelectedGuild = GuildSaberUtils.GetGuildFromId(m_SelectedGuild); });
+        ///-----------------------------------------Panel Style-----------------------------------------
+        try
+        {
+
+            switch (p_ReloadMode)
+            {
+                case ReloadMode.FromCurrent:
+                    if (m_SelectedGuild == GSConfig.Instance.SelectedGuild)
+                    {
+                        m_PlayerData = GuildApi.GetPlayerDataFromCurrent();
+                    }
+                    else
+                    {
+                        Reload(ReloadMode.FromApi, true, true);
+                        return;
+                    }
+                    break;
+                case ReloadMode.FromApi:
+                    m_PlayerData = await GuildApi.GetPlayerInfoFromAPI(false, m_SelectedGuild);
+                    break;
+                default:
+                    return;
+            }
+        }
+        catch (Exception l_E)
+        {
+            GSLogger.Instance.Error(l_E, nameof(GuildSaberLeaderboardPanel), nameof(Reload));
+            return;
+        }
+
+        if (GuildSaberModule.IsStateError())
+        {
+            SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Error);
+            return;
+        }
+>>>>>>> Stashed changes
 
             PanelInstance = this;
 
+<<<<<<< Updated upstream
             if (GuildSaberModule.IsStateError())
             {
                 SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Error);
+=======
+        if (m_PlayerData.Equals(default(ApiPlayerData)))
+        {
+            SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Error);
+            if (p_ReloadMode == ReloadMode.FromCurrent)
+                Reload(ReloadMode.FromApi, true, true);
+            else
+>>>>>>> Stashed changes
                 return;
             }
 
@@ -162,9 +240,23 @@ namespace GuildSaber.UI.Leaderboard
                 return;
             }
 
+<<<<<<< Updated upstream
             if (GuildSaberModule.IsStateError()) { SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Error); return; }
 
             if (m_PlayerAvatar != null) m_PlayerAvatar.UpdateShader(m_PlayerData.Color.ToUnityColor32());
+=======
+        if (m_IsFirstActivation)
+        {
+            m_PointsType = CustomUIComponent.CreateItem<PointsType>(m_NameLayout.transform, true, true);
+            m_PlayerAvatar = CustomUIComponent.CreateItem<PlayerAvatar>(m_ElemsLayout.transform, true, true);
+            m_IsFirstActivation = false;
+        }
+
+        if (p_ReloadStyle)
+        {
+            var l_BackgroundView = m_BackgroundLayout.GetComponent<ImageView>();
+            l_BackgroundView.SetField("_skew", 0.0f);
+>>>>>>> Stashed changes
 
             if (m_PlayerData.Equals(default(ApiPlayerData)))
             {
@@ -173,8 +265,22 @@ namespace GuildSaber.UI.Leaderboard
                 else return;
             }
 
+<<<<<<< Updated upstream
             m_PlayerName.text = GuildSaberUtils.GetPlayerNameToFit(m_PlayerData.Name, 12);
             SetLeaderboardGuildsChoices(GuildSaberModule.AvailableGuilds);
+=======
+            Texture2D l_DefaultLogo = Utilities.FindTextureInAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
+            Texture2D l_IconTexture = l_DefaultLogo;
+            GSLogger.Instance.Log(GuildSaberModule.LeaderboardSelectedGuild.Logo, IPA.Logging.Logger.LogLevel.DebugUp);
+            try
+            {
+                l_IconTexture = await GuildSaberUtils.GetImage(GuildSaberModule.LeaderboardSelectedGuild.Logo);
+            }
+            catch (Exception l_E)
+            {
+                GSLogger.Instance.Error(l_E, nameof(GuildSaberLeaderboardPanel), nameof(Reload));
+            }
+>>>>>>> Stashed changes
 
             if (m_IsFirstActivation)
             {
@@ -233,8 +339,14 @@ namespace GuildSaber.UI.Leaderboard
             SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Normal);
         }
 
+<<<<<<< Updated upstream
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
+=======
+            if (l_BackgroundView != null)
+            {
+                l_BackgroundView.overrideSprite = Sprite.Create(l_ResultTexture, new Rect(0, 0, l_ResultTexture.width, l_ResultTexture.height), new Vector2(0, 0));
+>>>>>>> Stashed changes
 
         /// <summary>
         /// Set panel mode
@@ -288,7 +400,44 @@ namespace GuildSaber.UI.Leaderboard
     /// </summary>
     public enum ReloadMode
     {
+<<<<<<< Updated upstream
         FromCurrent,
         FromApi
     }
 }
+=======
+        m_AvailableGuilds.Clear();
+        for (int l_i = 0; l_i < p_Guilds.Count; l_i++)
+        {
+            GuildData l_Current = p_Guilds[l_i];
+            m_AvailableGuilds.Add(l_Current.SmallName ?? l_Current.Name);
+            if (l_Current.ID == m_SelectedGuild)
+            {
+                m_GuildSelector.Value = l_Current.SmallName ?? l_Current.Name;
+                m_GuildSelector.ApplyValue();
+            }
+        }
+        m_GuildSelector.values = m_AvailableGuilds;
+        m_GuildSelector.UpdateChoices();
+    }
+}
+
+/// <summary>
+///     Panel View Mode
+/// </summary>
+public enum LeaderboardPanelViewMode
+{
+    Normal,
+    Loading,
+    Error
+}
+
+/// <summary>
+///     Panel reload mode
+/// </summary>
+public enum ReloadMode
+{
+    FromCurrent,
+    FromApi
+}
+>>>>>>> Stashed changes
