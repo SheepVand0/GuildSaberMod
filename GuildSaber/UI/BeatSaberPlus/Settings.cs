@@ -1,50 +1,60 @@
-﻿using System.Reflection;
-using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Attributes;
-using BeatSaberMarkupLanguage.Parser;
-using BeatSaberPlus.SDK.UI;
+﻿using BeatSaberPlus.SDK.UI;
+using CP_SDK.XUI;
 using GuildSaber.Configuration;
 using GuildSaber.UI.Card;
 using GuildSaber.UI.Leaderboard;
-using ToggleSetting = BeatSaberMarkupLanguage.Components.Settings.ToggleSetting;
+using UnityEngine;
 
-/// It's needed to make it work
-// ReSharper disable once CheckNamespace
 namespace GuildSaber.UI.BeatSaberPlusSettings;
 
-internal class Settings : ViewController<Settings>
+internal class Settings : EmptyViewController<Settings>
 {
-    [UIComponent("BoolCardEnabled")] private readonly ToggleSetting m_BoolCardEnabled = null;
+    private XUIToggle m_BoolCardEnabled = null;
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    [UIComponent("BoolLeaderboardEnabled")]
-    private readonly ToggleSetting m_BoolLeaderboardEnabled = null;
-    protected override string GetViewContentDescription() { return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.BeatSaberPlus.View.Settings.bsml"); }
+    private XUIToggle m_BoolLeaderboardEnabled = null;
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
     protected override void OnViewCreation()
     {
-        var l_ToggleCardEvent = new BSMLAction(this, GetType().GetMethod(nameof(OnBoolCardChanged), BindingFlags.NonPublic | BindingFlags.Instance));
-        var l_ToggleLeaderboardEvent = new BSMLAction(this, GetType().GetMethod(nameof(OnBoolLeaderboardChanged), BindingFlags.NonPublic | BindingFlags.Instance));
+        Templates.FullRectLayoutMainView(
+            Templates.TitleBar("Guild Saber"),
 
-        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_BoolCardEnabled, l_ToggleCardEvent, GSConfig.Instance.CardEnabled, true);
-        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_BoolLeaderboardEnabled, l_ToggleLeaderboardEvent, GSConfig.Instance.LeaderboardEnabled, true);
+            new XUIText("Enable Card:")
+                .SetColor(Color.yellow)
+                .SetAlign(TMPro.TextAlignmentOptions.Center),
+            new XUIToggle()
+                .SetValue(GSConfig.Instance.CardEnabled)
+                .Bind(ref m_BoolCardEnabled),
+
+            new XUIText("Enable Leaderboard:")
+                .SetColor(Color.yellow)
+                .SetAlign(TMPro.TextAlignmentOptions.Center),
+            new XUIToggle()
+                .SetValue(GSConfig.Instance.LeaderboardEnabled)
+                .Bind(ref m_BoolLeaderboardEnabled),
+
+            new XUIVSpacer(35f)
+        ).BuildUI(transform);
+
+        m_BoolCardEnabled.OnValueChanged(OnBoolCardChanged);
+        m_BoolLeaderboardEnabled.OnValueChanged(OnBoolLeaderboardChanged);
     }
 
-    private void OnBoolCardChanged(object p_Value)
+    private void OnBoolCardChanged(bool p_Value)
     {
-        GSConfig.Instance.CardEnabled = m_BoolCardEnabled.Value;
+        GSConfig.Instance.CardEnabled = m_BoolCardEnabled.Element.GetValue();
         if (PlayerCardUI.m_Instance != null && Events.m_EventsEnabled) PlayerCardUI.SetCardActive(GSConfig.Instance.CardEnabled);
         GSConfig.Instance.Save();
     }
 
-    private void OnBoolLeaderboardChanged(object p_Value)
+    private void OnBoolLeaderboardChanged(bool p_Value)
     {
-        GSConfig.Instance.LeaderboardEnabled = m_BoolLeaderboardEnabled.Value;
+        GSConfig.Instance.LeaderboardEnabled = m_BoolLeaderboardEnabled.Element.GetValue();
         if (GSConfig.Instance.LeaderboardEnabled)
             GuildSaberCustomLeaderboard.Instance.Initialize();
         else

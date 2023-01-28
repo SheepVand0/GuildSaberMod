@@ -26,23 +26,23 @@ internal class GSLogger
     /// </summary>
     /// <param name="p_Message"></param>
     /// <param name="p_LogType"></param>
-    internal void Log(string p_Message, IPA.Logging.Logger.LogLevel p_LogType)
+    internal void Log(object p_Message, IPA.Logging.Logger.LogLevel p_LogType)
     {
         switch (p_LogType) {
             case IPA.Logging.Logger.LogLevel.InfoUp:
-                IPALogger.Info(p_Message);
+                IPALogger.Info(p_Message.ToString());
                 break;
             case IPA.Logging.Logger.LogLevel.NoticeUp:
-                IPALogger.Notice(p_Message);
+                IPALogger.Notice(p_Message.ToString());
                 break;
             case IPA.Logging.Logger.LogLevel.WarningUp:
-                IPALogger.Warn(p_Message);
+                IPALogger.Warn(p_Message.ToString());
                 break;
             case IPA.Logging.Logger.LogLevel.ErrorUp:
-                IPALogger.Error(p_Message);
+                IPALogger.Error(p_Message.ToString());
                 break;
             case IPA.Logging.Logger.LogLevel.DebugUp:
-                IPALogger.Debug(p_Message);
+                IPALogger.Debug(p_Message.ToString());
                 break;
         }
     }

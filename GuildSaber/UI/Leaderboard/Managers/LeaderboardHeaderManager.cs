@@ -18,6 +18,7 @@ public class LeaderboardHeaderManager
     ////////////////////////////////////////////////////////////////////////////
 
     public static GameObject m_Header;
+    public static GameObject m_OldHeader;
     public static ImageView m_HeaderImageView;
 
     ////////////////////////////////////////////////////////////////////////////
@@ -39,6 +40,8 @@ public class LeaderboardHeaderManager
     /// </summary>
     private static async Task<bool> GetPanel()
     {
+        if (m_Header != null && m_OldHeader != null) return true;
+
         if (!GuildSaberCustomLeaderboard.Initialized) return false;
 
         GameObject l_Current = null;
@@ -57,8 +60,10 @@ public class LeaderboardHeaderManager
             return false;
         }
 
-        if (l_Current != null) {
-            m_Header = l_Current;
+        m_OldHeader = l_Current;
+
+        if (l_Current != null && m_Header == null) {
+            m_Header = GameObject.Instantiate(l_Current, m_OldHeader.transform.parent);
             m_HeaderImageView = m_Header.GetComponentInChildren<ImageView>();
         }
         else { return false; }
@@ -118,5 +123,21 @@ public class LeaderboardHeaderManager
         if (!await GetPanel()) return;
         var l_Text = m_Header.GetComponentInChildren<TextMeshProUGUI>();
         if (l_Text) l_Text.text = p_Text;
+    }
+
+    public static void ShowCustom()
+    {
+        if (m_OldHeader == null || m_Header == null) return;
+
+        m_OldHeader.transform.localScale = Vector3.zero;
+        m_Header.transform.localScale = Vector3.one;
+    }
+
+    public static void HideCustom()
+    {
+        if (m_OldHeader == null || m_Header == null) return;
+
+        m_OldHeader.transform.localScale = Vector3.one;
+        m_Header.transform.localScale = Vector3.zero;
     }
 }

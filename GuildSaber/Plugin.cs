@@ -1,4 +1,8 @@
-﻿#region Usings
+﻿// Decompiled with JetBrains decompiler
+// Type: GuildSaber.Plugin
+// Assembly: GuildSaber, Version=0.2.5.0, Culture=neutral, PublicKeyToken=null
+// MVID: 2E8F8B5B-092B-47A3-9F65-4C90A48B7328
+// Assembly location: C:\Users\user\Desktop\GuildSaber.dll
 
 using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.MenuButtons;
@@ -7,68 +11,50 @@ using GuildSaber.UI;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.UI.FlowCoordinator;
 using IPA;
+using System;
 using UnityEngine;
-using IPALogger = IPA.Logging.Logger;
 
-#endregion
 
-namespace GuildSaber;
-
-[Plugin(RuntimeOptions.SingleStartInit)]
-// ReSharper disable once ClassNeverInstantiated.Global
-public class Plugin
+#nullable enable
+namespace GuildSaber
 {
-
-    public const string NOT_DEFINED = "Undefined";
-
-    internal static ModFlowCoordinator ModFlowCoordinator;
-    internal static GuildSelectionFlowCoordinator SelectionFlowCoordinator;
-    private static Plugin Instance { get; set; }
-
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    [Init]
-    /// <summary>
-    /// Called when the plugin is first loaded by IPA (either when the game starts or when the plugin is enabled if it starts disabled).
-    /// [Init] methods that use a Constructor or called before regular methods like InitWithConfig.
-    /// Only use [Init] with one Constructor.
-    /// </summary>
-    public void Init(IPALogger p_Logger)
+    [IPA.Plugin(RuntimeOptions.SingleStartInit)]
+    public class Plugin
     {
-        Instance = this;
+        public const string NOT_DEFINED = "Undefined";
+        internal static ModFlowCoordinator ModFlowCoordinator;
+        internal static GuildSelectionFlowCoordinator SelectionFlowCoordinator;
 
-        _ = new GSLogger(p_Logger);
+        private static Plugin Instance { get; set; }
 
-        MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", ShowGuildFlow));
-        //MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber Playing Menu", "GuildSaber Playing Menu", ShowSelectionFlow));
-        GuildSaberModule.HarmonyInstance.PatchAll();
-    }
+        [IPA.Init]
+        public void Init(IPA.Logging.Logger p_Logger)
+        {
+            Plugin.Instance = this;
+            GSLogger gsLogger = new GSLogger(p_Logger);
+            MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", new Action(ShowGuildFlow)));
+            GuildSaberModule.HarmonyInstance.PatchAll();
+        }
 
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+        private void ShowGuildFlow()
+        {
+            if (ModFlowCoordinator == null)
+                ModFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
+            ModFlowCoordinator.Show();
+        }
 
-    private void ShowGuildFlow()
-    {
-        if (ModFlowCoordinator == null) ModFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
+        private void ShowSelectionFlow()
+        {
+            if (SelectionFlowCoordinator == null)
+                SelectionFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<GuildSelectionFlowCoordinator>();
+            SelectionFlowCoordinator.Show();
+        }
 
-        ModFlowCoordinator.Show();
-    }
-
-    private void ShowSelectionFlow()
-    {
-        if (SelectionFlowCoordinator == null) SelectionFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<GuildSelectionFlowCoordinator>();
-
-        SelectionFlowCoordinator.Show();
-    }
-
-    [OnExit]
-    public void OnApplicationQuit()
-    {
-        CustomUIComponent[] l_Components = Resources.FindObjectsOfTypeAll<CustomUIComponent>();
-
-        foreach (CustomUIComponent l_Current in l_Components)
-            // ReSharper disable once AccessToStaticMemberViaDerivedType
-            GameObject.DestroyImmediate(l_Current.gameObject);
+        [OnExit]
+        public void OnApplicationQuit()
+        {
+            foreach (Component l_Index in Resources.FindObjectsOfTypeAll<CustomUIComponent>())
+                GameObject.DestroyImmediate(l_Index.gameObject);
+        }
     }
 }

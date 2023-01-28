@@ -42,9 +42,10 @@ public abstract class CustomUIComponent : MonoBehaviour
     /// <param name="p_Init"></param>
     /// <param name="p_Callback"></param>
     /// <returns></returns>
-    public static TItem CreateItem<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, bool p_Init = true, Action<TItem>? p_Callback = null) where TItem : CustomUIComponent
+    public static TItem CreateItem<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, bool p_Init = true, Action<TItem> p_PreCallback = null, Action<TItem>? p_Callback = null) where TItem : CustomUIComponent
     {
         var l_Item = new GameObject($"Parent_{nameof(TItem)}").AddComponent<TItem>();
+        p_PreCallback?.Invoke(l_Item);
         l_Item.OnCreate();
         l_Item.Init<TItem>(p_Init, p_Parent, p_UnderParent, p_NeedParse);
         l_Item.OnPostParse += () => { p_Callback?.Invoke(l_Item); };
@@ -75,7 +76,7 @@ public abstract class CustomUIComponent : MonoBehaviour
     /// <param name="p_Params"></param>
     /// <param name="p_Callback"></param>
     /// <returns></returns>
-    public static TItem CreateItemWithParams<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, List<ItemParam> p_Params, Action<TItem>? p_Callback = null) where TItem : CustomUIComponent
+    public static TItem CreateItemWithParams<TItem>(Transform p_Parent, bool p_UnderParent, bool p_NeedParse, List<ItemParam> p_Params, Action<TItem>? p_PreCallback = null, Action<TItem>? p_Callback = null) where TItem : CustomUIComponent
     {
         var l_Item = CreateItem<TItem>(p_Parent, p_UnderParent, p_NeedParse, false);
         foreach (ItemParam l_Param in p_Params) {
@@ -85,6 +86,7 @@ public abstract class CustomUIComponent : MonoBehaviour
             else
                 GSLogger.Instance.Error(new Exception($"Property not valid -> Given Name : {l_Param.m_ParamName}, Type : {l_Param.m_Value.GetType()}, Value : {l_Param.m_Value}"), nameof(CustomUIComponent), nameof(CreateItemWithParams));
         }
+        p_PreCallback?.Invoke(l_Item);
         l_Item.Init<TItem>(true, p_Parent, p_UnderParent, p_NeedParse);
         l_Item.OnPostParse += () => { p_Callback?.Invoke(l_Item); };
         return l_Item;

@@ -111,10 +111,10 @@ public static class GuildSaberUtils
         p_Text.color = UnityEngine.Color.red;
         switch (p_Mode) {
             case ErrorMode.StackTrace:
-                p_Text.text = p_Ex.StackTrace;
+                p_Text.text = "<i>" + p_Ex.StackTrace;
                 break;
             case ErrorMode.Message:
-                p_Text.text = p_Ex.Message;
+                p_Text.text = "<i>" + p_Ex.Message;
                 break;
             default:
                 return;

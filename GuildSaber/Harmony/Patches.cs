@@ -11,6 +11,17 @@ using Zenject;
 
 namespace GuildSaber.Harmony;
 
+[HarmonyPatch(typeof(PlatformLeaderboardViewController), nameof(PlatformLeaderboardViewController.SetData))]
+public static class OnMapSelected
+{
+    private static void Postfix(IDifficultyBeatmap difficultyBeatmap)
+    {
+        if (GuildSaberLeaderboardView.m_Instance != null)
+            GuildSaberLeaderboardView.m_Instance.OnLeaderboardSet(difficultyBeatmap);
+    }
+
+}
+
 [HarmonyPatch(typeof(MainSettingsMenuViewControllersInstaller), nameof(MainSettingsMenuViewControllersInstaller.InstallBindings))]
 public static class MenuInstallerPatch
 {
@@ -31,6 +42,7 @@ public static class OnShow
 
         GuildSaberCustomLeaderboard.IsShown = true;
         Events.OnLeaderboardShow(GuildSaberCustomLeaderboard.Instance.m_PanelViewController.m_IsFirstActivation);
+        LeaderboardHeaderManager.ShowCustom();
     }
 }
 
@@ -42,9 +54,10 @@ public static class OnHide
         if (__instance.GetType() != typeof(GuildSaberCustomLeaderboard)) return;
 
         GuildSaberCustomLeaderboard.IsShown = false;
-        LeaderboardHeaderManager.ChangeTextForced(Localization.Get("TITLE_HIGHSCORES"));
-        LeaderboardHeaderManager.ResetColors();
+        //LeaderboardHeaderManager.ChangeTextForced(Localization.Get("TITLE_HIGHSCORES"));
+        //LeaderboardHeaderManager.ResetColors();
         Events.OnLeaderboardIsHide();
+        LeaderboardHeaderManager.HideCustom();
     }
 }
 

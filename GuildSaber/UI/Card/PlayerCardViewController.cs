@@ -297,7 +297,7 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
             int l_RankDataCount = PlayerCardUI.m_Player.RankData.Count;
             for (int l_i = 0; l_i < l_RankDataCount; l_i++) {
                 RankData l_Rank = PlayerCardUI.m_Player.RankData[l_i];
-                m_Ranks[l_i].SetValues(l_Rank.PointsName, l_Rank.Rank.ToString(), PlayerCardUI.m_Player.Color.ToUnityColor());
+                m_Ranks[l_i].SetValues(l_Rank.PointsName, l_Rank.Rank.ToString());
             }
 
             ///Set Levels

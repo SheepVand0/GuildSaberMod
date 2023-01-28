@@ -115,21 +115,6 @@ internal class UpdateView : CustomUIComponent
     /// </summary>
     protected override void AfterViewCreation()
     {
-        ImageView l_Back = m_ShowUpdatesButton.GetComponentsInChildren<ImageView>()[0];
-        l_Back.gradient = false;
-
-        ImageView l_NewBack = Instantiate(l_Back);
-        l_NewBack.transform.SetParent(l_Back.transform.parent);
-        l_NewBack.transform.localScale = l_Back.transform.localScale;
-        l_NewBack.transform.localPosition = l_Back.transform.localPosition;
-
-        l_Back.transform.localScale = Vector3.zero;
-
-        l_NewBack.SetImage("GuildSaber.Resources.Arrow.png");
-        l_NewBack.gradient = false;
-        l_NewBack.color = Color.white.ColorWithAlpha(0.7f);
-        l_NewBack.SetField("_skew", 0f);
-
         ImageView l_OtherBack = m_ShowUpdatesButton.GetComponentsInChildren<ImageView>()[1];
         l_OtherBack.transform.localScale = Vector3.zero;
 
@@ -137,9 +122,13 @@ internal class UpdateView : CustomUIComponent
         m_DirectDownloadButton.interactable = false;
         m_GithubDownloadButton = BeatSaberPlus.SDK.UI.Button.Create(m_Horizontal.transform, "Github", () => { Process.Start("https://github.com/SheepVand0/GuildSaberProfile/releases"); }, p_PreferedWidth: 20);
 
-        Events.e_OnLeaderboardShown += p_First => { Show(); };
+        var l_ButtonText = m_ShowUpdatesButton.GetComponentInChildren<TextMeshProUGUI>();
+        l_ButtonText.richText = true;
+        l_ButtonText.text = "<color=#00F200>Update Available";
 
-        Events.e_OnLeaderboardHide += () => { Hide(); };
+        /*Vector3 l_Position = transform.localPosition;
+
+        transform.localPosition = new Vector3(l_Position.x, l_Position.y - 10, l_Position.z);*/
     }
 
     /// <summary>

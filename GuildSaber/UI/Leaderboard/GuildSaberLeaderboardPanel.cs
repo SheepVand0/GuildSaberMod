@@ -212,7 +212,7 @@ internal class GuildSaberLeaderboardPanel : BSMLAutomaticViewController
         }
 
         Events.Instance.SelectGuild(m_SelectedGuild);
-
+        LeaderboardHeaderManager.ShowCustom();
         SetLeaderboardPanelViewMode(LeaderboardPanelViewMode.Normal);
     }
 

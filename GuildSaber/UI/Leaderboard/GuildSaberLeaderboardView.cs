@@ -15,7 +15,7 @@ namespace GuildSaber.UI.Leaderboard;
 
 [HotReload(RelativePathToLayout = @"LeaderboardView.bsml")]
 [ViewDefinition("GuildSaber.UI.GuildSaber.View.LeaderboardView.bsml")]
-internal class GuildSaberLeaderboardView : BSMLAutomaticViewController, INotifyLeaderboardSet
+internal class GuildSaberLeaderboardView : BSMLAutomaticViewController
 {
 
     ////////////////////////////////////////////////////////////////////////////
@@ -87,6 +87,7 @@ internal class GuildSaberLeaderboardView : BSMLAutomaticViewController, INotifyL
     public void SetLeaderboardViewMode(ELeaderboardViewMode p_Mode)
     {
         try {
+            m_ScoresList.m_NotRankedText.richText = true;
             m_ScoresList.m_ScoreList.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores);
             m_ScopeSelectionLayout.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores || p_Mode == ELeaderboardViewMode.UnPassed && m_ScoresList.m_SelectedScope != ELeaderboardScope.Global);
             m_ScoresList.m_NotRankedText.gameObject.SetActive(p_Mode == ELeaderboardViewMode.UnPassed || p_Mode == ELeaderboardViewMode.NotRanked);
@@ -96,13 +97,13 @@ internal class GuildSaberLeaderboardView : BSMLAutomaticViewController, INotifyL
             m_PageUpImage.gameObject.SetActive(p_Mode == ELeaderboardViewMode.Scores);
             switch (p_Mode) {
                 case ELeaderboardViewMode.NotRanked:
-                    m_ScoresList.m_NotRankedText.SetText("Map not ranked");
+                    m_ScoresList.m_NotRankedText.SetText("<i>Map not ranked");
                     m_ScoresList.m_NotRankedText.color = Color.red;
                     LeaderboardHeaderManager.ChangeText(Localization.Get("TITLE_HIGHSCORES"));
                     break;
                 case ELeaderboardViewMode.UnPassed:
                     LeaderboardHeaderManager.ChangeText(Localization.Get("TITLE_HIGHSCORES"));
-                    m_ScoresList.m_NotRankedText.SetText("Map un passed");
+                    m_ScoresList.m_NotRankedText.SetText("<i>Map un passed");
                     m_ScoresList.m_NotRankedText.color = Color.yellow;
                     break;
                 case ELeaderboardViewMode.Scores:

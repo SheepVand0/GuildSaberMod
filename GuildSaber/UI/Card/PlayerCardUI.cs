@@ -71,6 +71,9 @@ public class PlayerLevelUI : CustomUIComponent
 
 public class PlayerRankUI : CustomUIComponent
 {
+    protected override string ViewResourceName
+         => "GuildSaber.UI.Card.View.PlayerRankUI.bsml";
+
     [UIComponent("CategoryText")] private readonly TextMeshProUGUI m_CategoryText = null;
 
     ////////////////////////////////////////////////////////////////////////////
@@ -79,10 +82,6 @@ public class PlayerRankUI : CustomUIComponent
     [UIComponent("ElemsLayout")] private readonly HorizontalLayoutGroup m_Elems = null;
     [UIComponent("Hastag")] private readonly TextMeshProUGUI m_Hastag = null;
     [UIComponent("PlayerRankText")] private readonly TextMeshProUGUI m_PlayerRankText = null;
-    protected override string ViewResourceName
-    {
-        get => "GuildSaber.UI.Card.View.PlayerRankUI.bsml";
-    }
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -112,16 +111,12 @@ public class PlayerRankUI : CustomUIComponent
     /// <param name="p_PointsName"></param>
     /// <param name="p_PlayerRank"></param>
     /// <param name="p_Color"></param>
-    public async void SetValues(string p_PointsName, string p_PlayerRank, Color p_Color)
+    public async void SetValues(string p_PointsName, string p_PlayerRank)
     {
         await WaitUtils.Wait(() => m_CategoryText != null, 100, 20);
 
         PointsName = p_PointsName;
         PlayerRank = p_PlayerRank;
-        /*if (m_Hastag != null && PointsName.IsNullOrEmpty() && PlayerRank.IsNullOrEmpty())
-            GameObject.DestroyImmediate(m_Hastag.gameObject);*/
-
-        SetColor(p_Color);
 
         m_CategoryText.text = PointsName;
         m_PlayerRankText.text = PlayerRank;
@@ -201,6 +196,8 @@ internal class PlayerCardUI
             UpdateCardPosition();
             m_Instance.UpdateCardVisibility();
         };
+
+        SetCardActive(GSConfig.Instance.ShowCardInMenu);
     }
 
     public PlayerCardViewController CardViewController { get; }
