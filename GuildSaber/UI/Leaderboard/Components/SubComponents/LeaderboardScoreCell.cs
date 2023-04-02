@@ -21,6 +21,8 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
     {
         public const float ANIMATION_DURATION = 0.3f;
 
+        public const string INTERACTABLE_NAME = "GuildSaberLeaderboardCellInteractableBackground";
+
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
@@ -143,7 +145,10 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 
         internal void SetupIfNotInitialized()
         {
+
             if (HasBeenInit == true) return;
+
+            m_Interactable.name = INTERACTABLE_NAME;
 
             float l_Offset1 = 7f;
             float l_Offset2 = -1f;
@@ -226,16 +231,24 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
 
         private void ApplyScaleAndPositionOnButtonLine(float p_Ignored = 0)
         {
-            return;
+            //return;
             if (m_ButtonLineImageView == null)
             {
                 var l_ButtonLineImageView = m_Interactable.GetComponentsInChildren<ImageView>()[1];
-                l_ButtonLineImageView.transform.localScale = new UnityEngine.Vector3(1, 0.7f);
+                l_ButtonLineImageView.transform.localScale = new UnityEngine.Vector3(1, 0.5f);
                 m_ButtonLineImageView = l_ButtonLineImageView;
                 m_OriginalButtonLineYPosition = m_ButtonLineImageView.transform.localPosition.y;
             }
             var l_ButttonLineTransform = m_ButtonLineImageView.transform.localPosition;
             m_ButtonLineImageView.transform.localPosition = new UnityEngine.Vector3(l_ButttonLineTransform.x, m_OriginalButtonLineYPosition - 1.5f, l_ButttonLineTransform.z);
+        }
+
+        public static void ApplyScaleAndPositionOnRandomButtonLine(Button p_Button)
+        {
+            var l_ButtonLineImageView = p_Button.GetComponentsInChildren<ImageView>()[1];
+            l_ButtonLineImageView.transform.localScale = new UnityEngine.Vector3(1, 0.5f);
+            var l_LocalPosition = l_ButtonLineImageView.transform.localPosition;
+            l_ButtonLineImageView.transform.localPosition = new UnityEngine.Vector3(l_LocalPosition.x, l_LocalPosition.y - 1.5f, l_LocalPosition.z);
         }
 
         internal void Show()
@@ -245,6 +258,8 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             SetupIfNotInitialized();
             SetTexts();
             m_Interactable.gameObject.SetActive(true);
+            var l_Binder = new HMUI.ButtonBinder();
+
 
             if (GuildSaberModule.GSPlayerId.HasValue && Id == GuildSaberModule.GSPlayerId.ToString())
                 SetCellToCurrentPlayer();
@@ -260,11 +275,12 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
             }
 
             m_ShowAnimation.Play();
-
         }
 
         internal void StopAnimation()
         {
+            OnChange(1);
+
             if (m_ShowAnimation == null) return;
 
             m_ShowAnimation.Stop();
@@ -273,7 +289,7 @@ namespace GuildSaber.UI.Leaderboard.Components.SubComponents
         private void OnChange(float p_Value)
         {
             var l_Scale = m_ElemsLayout.transform.localScale;
-            m_ElemsLayout.transform.localScale = new UnityEngine.Vector3(l_Scale.x, p_Value * OriginalLayoutSize, l_Scale.z);
+            m_ElemsLayout.transform.localScale = new UnityEngine.Vector3(l_Scale.x, p_Value, l_Scale.z);
             var l_IntScale = m_Interactable.transform.localScale;
             m_Interactable.transform.localScale = new UnityEngine.Vector3(l_IntScale.x, p_Value, l_IntScale.z);
         }

@@ -8,10 +8,13 @@ using BeatSaberMarkupLanguage;
 using BeatSaberPlus.SDK;
 using CP_SDK;
 using CP_SDK.Config;
+using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.Configuration;
 using GuildSaber.UI.BeatSaberPlusSettings;
 using GuildSaber.UI.Card;
+using GuildSaber.UI.Defaults;
+using GuildSaber.UI.FlowCoordinator;
 using GuildSaber.UI.Leaderboard;
 using GuildSaber.Utils;
 using HarmonyLib;
@@ -20,6 +23,7 @@ using IPA.Loader;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 
@@ -82,6 +86,38 @@ namespace GuildSaber
         {
             Task task = await WaitUtils.Wait(() =>GameObject.Find("LeaderboardNavigationButtonsPanel") != null, 100);
             GuildSaberCustomLeaderboard.Instance.Initialize();
+        }
+
+        private static bool m_PatchedPlayingButtonsPanel = false;
+
+        internal static ModFlowCoordinator m_ModFlowCoordinator;
+
+        private static void ShowGuildFlow()
+        {
+            if (m_ModFlowCoordinator == null)
+                m_ModFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
+            m_ModFlowCoordinator.Show();
+        }
+
+        internal static async void PatchPlayingButtonsPanel(UnityEngine.SceneManagement.Scene p_Old, UnityEngine.SceneManagement.Scene p_New)
+        {
+            if (p_New.name == "MainMenu" && !m_PatchedPlayingButtonsPanel)
+            {
+                UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= PatchPlayingButtonsPanel;
+                Transform l_SoloButtonParent = null;
+                await WaitUtils.Wait(() =>
+                {
+                    GameObject l_SoloButton = GameObject.Find("SoloButton");
+                    if (l_SoloButton == null) return false;
+                    l_SoloButtonParent = l_SoloButton.transform.parent;
+                    return true;
+                }, 10, p_MaxTryCount: 5000);
+
+                XUISecondaryButton l_Button = null;
+                UI.Defaults.GSSecondaryButton.Make  ("<i>Guild Saber", /*27, 48*/27, 48, p_OnClick: new Action(ShowGuildFlow)).Bind(ref l_Button).BuildUI(l_SoloButtonParent);
+                //l_Button.Element.ButtonC.GetComponent<TextMeshProUGUI>();
+                m_PatchedPlayingButtonsPanel = true;
+            }
         }
 
         protected override async void OnEnable()

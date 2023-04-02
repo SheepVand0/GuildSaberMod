@@ -165,9 +165,23 @@ public static class GuildSaberUtils
         return p_Rank / GuildSaberModule.SCORES_BY_PAGE;
     }
 
-    public static async Task<Texture2D> GetImage(string p_Url, bool p_LogOnError = false)
+    public struct ImageResult
+    {
+        public ImageResult(Texture2D p_Texture, bool p_IsError)
+        {
+            IsError = p_IsError;
+            Texture = p_Texture;
+        }
+
+        public bool IsError;
+        public Texture2D Texture;
+    }
+
+    public static async Task<ImageResult> GetImage(string p_Url, bool p_LogOnError = false)
     {
         var l_NewTexture = new Texture2D(100, 100);
+
+        bool l_IsError = false;
 
         try {
             using (var l_Client = new WebClient()) {
@@ -181,9 +195,10 @@ public static class GuildSaberUtils
             }
         }
         catch (Exception l_E) {
+            l_IsError = true;
             if (p_LogOnError) GSLogger.Instance.Error(l_E, nameof(GuildSaberUtils), nameof(GetImage));
         }
 
-        return l_NewTexture;
+        return new ImageResult(l_NewTexture, l_IsError);
     }
 }

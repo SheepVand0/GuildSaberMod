@@ -1,15 +1,7 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: GuildSaber.UI.Leaderboard.Components.LeaderboardScoreList
-// Assembly: GuildSaber, Version=0.2.5.0, Culture=neutral, PublicKeyToken=null
-// MVID: 2E8F8B5B-092B-47A3-9F65-4C90A48B7328
-// Assembly location: C:\Users\user\Desktop\GuildSaber.dll
-
-using BeatLeader.Models;
-using BeatLeader.Utils;
+﻿using BeatLeader.Models;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.Components;
 using CP_SDK.Config;
-using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.Configuration;
 using GuildSaber.Logger;
@@ -39,9 +31,6 @@ namespace GuildSaber.UI.Leaderboard.Components
         internal static bool StartedReplayFromMod = false;
         internal static ReplayLaunchData ReplayLaunchData = null;
         private static List<object> s_ListComponentScores = new List<object>();
-
-        /*JD_Value / (2 * _selectedBeatmap_NJS) * 1000
-        JD_Value * (( Original / 2) / 1000)*/
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -116,6 +105,13 @@ namespace GuildSaber.UI.Leaderboard.Components
             }
         }
 
+        private void OnLeaderboardShow()
+        {
+            if (!gameObject.activeInHierarchy) return;
+
+            UpdateLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild);
+        }
+
         /// <summary>
         /// On Leaderboard Set
         /// </summary>
@@ -126,9 +122,9 @@ namespace GuildSaber.UI.Leaderboard.Components
                 return;
             LeaderboardScoreList.CurrentBeatMap = p_DifficultyBeatmap;
             m_Page = 1;
-            /*if (!GuildSaberCustomLeaderboard.IsShown)
-                return;*/
-            SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, false);
+            if (!gameObject.activeInHierarchy) return;
+
+            UpdateLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild);
         }
 
         /// <summary>
@@ -139,7 +135,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         {
             m_SelectedScope = p_Scope;
             int p_Page = p_Scope == ELeaderboardScope.Around ? -2 : 1;
-            SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, false, p_Page);
+            UpdateLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, p_Page);
         }
 
         /// <summary>
@@ -150,7 +146,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         {
             if (!Initialized || !s_GameObjectReference.activeInHierarchy)
                 return;
-            SetLeaderboard(p_Guild, false, p_SetScores: false);
+            UpdateLeaderboard(p_Guild, p_SetScores: false);
         }
 
         /// <summary>
@@ -162,12 +158,12 @@ namespace GuildSaber.UI.Leaderboard.Components
             s_CurrentPointsName = p_PointsName;
             if (s_Leaderboard.Equals(null) || s_Leaderboard.Leaderboards == null)
             {
-                SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, true);
+                UpdateLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild);
                 return;
             }
             if (s_Leaderboard.Leaderboards.Count == 0)
             {
-                SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, true);
+                UpdateLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild);
                 return;
             }
             try
@@ -191,7 +187,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         /// <param name="p_Guild"></param>
         /// <param name="p_NeedUpdate"></param>
         /// <param name="p_Page"></param>
-        public async void SetLeaderboard(int p_Guild, bool p_NeedUpdate, int p_Page = 0, bool p_SetScores = true)
+        public async void UpdateLeaderboard(int p_Guild, int p_Page = 0, bool p_SetScores = true)
         {
             await WaitUtils.Wait(() => GuildSaberLeaderboardView.s_GameObjectReference.activeInHierarchy && Initialized, 100, p_MaxTryCount: 15, p_CodeLine: 176);
             if (!s_GameObjectReference.activeInHierarchy)
@@ -299,17 +295,11 @@ namespace GuildSaber.UI.Leaderboard.Components
                 }
                 else { s_CustomLevelStatsView.Clear(); }
             }
-            catch (Exception l_E) { GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(SetLeaderboard)); }
+            catch (Exception l_E) { GSLogger.Instance.Error(l_E, nameof(LeaderboardScoreList), nameof(UpdateLeaderboard)); }
 
             ///If need update changing header
 
-            if (p_NeedUpdate)
-                await WaitUtils.Wait(() =>
-                {
-                    SetHeader(false);
-
-                    return false;
-                }, 1, 0, 1100);
+            SetHeader(false);
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -364,7 +354,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         public void PageUp()
         {
             --m_Page;
-            SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, false, m_Page);
+            UpdateLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, m_Page);
         }
 
         /// <summary>
@@ -373,7 +363,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         public void PageDown()
         {
             ++m_Page;
-            SetLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, false, m_Page);
+            UpdateLeaderboard(GuildSaberLeaderboardPanel.PanelInstance.m_SelectedGuild, m_Page);
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -397,8 +387,6 @@ namespace GuildSaber.UI.Leaderboard.Components
 
             if (!s_GameObjectReference.activeSelf)
                 return;
-
-            SetHeader(false);
 
             GuildSaberLeaderboardView.m_Instance.SetLeaderboardViewMode(ELeaderboardViewMode.Scores);
 

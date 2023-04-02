@@ -9,6 +9,7 @@ using BeatSaberMarkupLanguage.MenuButtons;
 using GuildSaber.Logger;
 using GuildSaber.UI;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
+using GuildSaber.UI.Defaults;
 using GuildSaber.UI.FlowCoordinator;
 using IPA;
 using System;
@@ -22,7 +23,6 @@ namespace GuildSaber
     public class Plugin
     {
         public const string NOT_DEFINED = "Undefined";
-        internal static ModFlowCoordinator ModFlowCoordinator;
         internal static GuildSelectionFlowCoordinator SelectionFlowCoordinator;
 
         private static Plugin Instance { get; set; }
@@ -32,16 +32,11 @@ namespace GuildSaber
         {
             Plugin.Instance = this;
             GSLogger gsLogger = new GSLogger(p_Logger);
-            MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber", "GuildSaber things", new Action(ShowGuildFlow)));
             GuildSaberModule.HarmonyInstance.PatchAll();
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += GuildSaberModule.PatchPlayingButtonsPanel;
         }
 
-        private void ShowGuildFlow()
-        {
-            if (ModFlowCoordinator == null)
-                ModFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
-            ModFlowCoordinator.Show();
-        }
+
 
         private void ShowSelectionFlow()
         {

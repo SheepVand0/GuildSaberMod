@@ -22,7 +22,7 @@ namespace GuildSaber.UI.FlowCoordinator
             if (!firstActivation)
                 return;
             SetTitle(Title, (ViewController.AnimationType)1);
-            (ViewController, ViewController, ViewController) l_ViewControllers = GetUIImplementation();
+            (ViewController?, ViewController?, ViewController?) l_ViewControllers = GetUIImplementation();
             showBackButton = true;
             ProvideInitialViewControllers(l_ViewControllers.Item1, l_ViewControllers.Item2, l_ViewControllers.Item3, null, null);
         }

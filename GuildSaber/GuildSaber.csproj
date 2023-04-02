@@ -291,6 +291,7 @@
     <Compile Include="Events.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GuildSaber.cs" />
+    <Compile Include="Harmony\OnNoteCutPatch.cs" />
     <Compile Include="Harmony\Patches.cs" />
     <Compile Include="Harmony\SecretPatches.cs" />
     <Compile Include="Installers\MenuInstaller.cs" />
@@ -309,6 +310,7 @@
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\CategoriesSelectionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
+    <Compile Include="UI\Defaults\GSSecondaryButton.cs" />
     <Compile Include="UI\FlowCoordinator\CustomFlowCoordinator.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomLevelStatsView.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomText.cs" />
@@ -330,10 +332,14 @@
     <Compile Include="UI\FlowCoordinator\ModFlowCoordinator.cs" />
     <Compile Include="UI\Playlists\PlaylistsDownloadViewController.cs" />
     <Compile Include="Utils\Animations.cs" />
+    <Compile Include="Utils\AssemblyUtils.cs" />
     <Compile Include="Utils\Color.cs" />
+    <Compile Include="Utils\ColorSettingsFix.cs" />
     <Compile Include="Utils\EnumFlagHelper.cs" />
     <Compile Include="Utils\GSBeatmapUtils.cs" />
     <Compile Include="Utils\GuildSaberUtils.cs" />
+    <Compile Include="Utils\SliderSettingsFix.cs" />
+    <Compile Include="Utils\TextureUtils.cs" />
     <Compile Include="Utils\WaitUtils.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -371,6 +377,7 @@
     <Content Include="GuildSaber.csproj.user" />
     <EmbeddedResource Include="Resources\ArrowRed.png" />
     <EmbeddedResource Include="UI\CustomLevelSelectionMenu\ViewControllers\Views\GuildDescription.bsml" />
+    <EmbeddedResource Include="Resources\White.png" />
     <Content Include="UI\CustomLevelSelectionMenu\ViewControllers\Views\CategorySelectionViewController.bsml" />
     <EmbeddedResource Include="Resources\Arrow.png" />
     <EmbeddedResource Include="Resources\GsWhiteLogo.png" />

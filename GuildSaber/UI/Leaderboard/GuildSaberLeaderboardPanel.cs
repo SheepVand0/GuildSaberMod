@@ -181,11 +181,20 @@ internal class GuildSaberLeaderboardPanel : BSMLAutomaticViewController
 
             ///-----------------------------------------Croping Icon to fit to panel-----------------------------------------
 
-            Texture2D l_DefaultLogo = Utilities.FindTextureInAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
-            Texture2D l_IconTexture = l_DefaultLogo;
+            Texture2D l_DefaultLogo = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
+            GuildSaberUtils.ImageResult l_IconTextureResult = default; //l_DefaultLogo;
             GSLogger.Instance.Log(GuildSaberModule.LeaderboardSelectedGuild.Logo, IPA.Logging.Logger.LogLevel.DebugUp);
-            try { l_IconTexture = await GuildSaberUtils.GetImage(GuildSaberModule.LeaderboardSelectedGuild.Logo); }
-            catch (Exception l_E) { GSLogger.Instance.Error(l_E, nameof(GuildSaberLeaderboardPanel), nameof(Reload)); }
+
+            try {
+                l_IconTextureResult = await GuildSaberUtils.GetImage(GuildSaberModule.LeaderboardSelectedGuild.Logo);
+                if (l_IconTextureResult.IsError)
+                    l_IconTextureResult.Texture = l_DefaultLogo;
+            }
+            catch (Exception l_E) {
+                GSLogger.Instance.Error(l_E, nameof(GuildSaberLeaderboardPanel), nameof(Reload));
+            }
+
+            Texture2D l_IconTexture = l_IconTextureResult.Texture;
 
             await WaitUtils.Wait(() => l_IconTexture != null, 10);
 

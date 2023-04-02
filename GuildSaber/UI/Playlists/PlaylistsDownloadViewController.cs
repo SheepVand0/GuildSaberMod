@@ -19,18 +19,19 @@ namespace GuildSaber.UI.GuildSaber
         public static PlaylistViewController PlaylistsDownloadViewControllerInstance;
         public bool m_OnlyUnPassedMaps;
         public int m_GuildId = JsonConfig<GSConfig>.Instance.SelectedGuild;
-        [UIComponent("CategoryList")]
-        public CustomCellListTableData m_CategoriesTableList;
-        [UIComponent("Dropdown")]
-        public BeatSaberMarkupLanguage.Components.Settings.DropDownListSetting m_GuildChoiceDropdown;
-        [UIComponent("LoadingLayout")]
-        public GridLayoutGroup m_LoadingGrid;
-        [UIComponent("Elems")]
-        public VerticalLayoutGroup m_ElemsLayout;
-        [UIObject("BG")]
-        private readonly GameObject m_BG = (GameObject)null;
-        [UIValue("AvailableCategories")]
-        public List<object> m_ListCategories = new List<object>();
+
+        ///////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////
+
+        [UIComponent("CategoryList")] public CustomCellListTableData m_CategoriesTableList;
+        [UIComponent("Dropdown")] public BeatSaberMarkupLanguage.Components.Settings.DropDownListSetting m_GuildChoiceDropdown;
+        [UIComponent("LoadingLayout")] public GridLayoutGroup m_LoadingGrid;
+        [UIComponent("Elems")] public VerticalLayoutGroup m_ElemsLayout;
+        [UIObject("BG")] private readonly GameObject m_BG = (GameObject)null;
+        [UIValue("AvailableCategories")] public List<object> m_ListCategories = new List<object>();
+
+        ///////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////
 
         [UIValue("AvailableGuilds")]
         public List<object> AvailableGuilds

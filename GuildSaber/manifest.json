@@ -10,7 +10,7 @@
     "BSIPA": "^4.2.0",
     "LeaderboardCore": "^1.2.2",
     "SiraUtil": "^3.1.0",
-    "BeatSaberPlusCORE": "^5.0.3",
+    "BeatSaberPlusCORE": "^6.0.1",
     "BeatLeader": "^0.6.0"
   }
 }

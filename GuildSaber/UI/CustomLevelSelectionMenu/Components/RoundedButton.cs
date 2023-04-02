@@ -1,76 +1,92 @@
-using System;
 using System.Linq;
-using BeatSaberMarkupLanguage;
-using BeatSaberMarkupLanguage.Attributes;
-using GuildSaber.AssetBundles;
+using System.Threading.Tasks;
+using CP_SDK.Chat.Models;
+using CP_SDK.UI.Components;
+using CP_SDK.XUI;
+using GuildSaber.API;
 using GuildSaber.Utils;
-using HMUI;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.Components;
 
-public class RoundedButton : CustomUIComponent
+public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
 {
-    [UIComponent("Description")] private readonly TextMeshProUGUI m_DescriptionText = null;
+    private GuildData m_GuildData = default;
 
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+    public static Texture2D DefaultLogo = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
 
-    [UIComponent("MainLayout")] private readonly HorizontalLayoutGroup m_MainLayout = null;
-    [UIComponent("Title")] private readonly TextMeshProUGUI m_TitleText = null;
-
-    private Button m_Button;
-    private string m_Description = string.Empty;
-    private string? m_Image;
-    private Action m_OnClick;
-
-    private string m_Title = string.Empty;
-    protected override string ViewResourceName
+    public GuildSelectionButton(GuildData p_GuildData) : base("GuildSelectionButton", string.Empty, null)
     {
-        get => string.Empty;
+        m_GuildData = p_GuildData;
+        OnClick(OnButtonClicked);
+        OnReady(OnButtonReady);
     }
 
-    protected override string GetViewDescription() { return ""; }
-
-    protected override async void AfterViewCreation()
+    private async void OnButtonReady(CPrimaryButton p_Button)
     {
-        m_Button = BeatSaberPlus.SDK.UI.Button.Create(m_MainLayout.transform, string.Empty, m_OnClick);
-        m_TitleText.text = m_Title;
-        m_TitleText.fontSize = 4.5f;
-        m_DescriptionText.text = m_Description;
-        m_DescriptionText.fontSize = 2.5f;
+        SetWidth(80);
+        SetHeight(20);
+        await UpdateTexture();
 
-        if (m_Image == null) return;
-        try {
-            var l_RoundedShader = AssetBundleLoader.LoadElement<Material>("Mat_AvatarMask");
-            l_RoundedShader.SetFloat(Shader.PropertyToID("_FadeStart"), 1.48f);
-            l_RoundedShader.SetFloat(Shader.PropertyToID("_FadeEnd"), 1.45f);
-            Texture l_Texture = await GuildSaberUtils.GetImage(m_Image);
-            if (l_Texture == null) return;
-
-            l_RoundedShader.SetTexture(Shader.PropertyToID("_MainTex"), l_Texture);
-            m_Button.GetComponentsInChildren<ImageView>().ElementAt(0).material = l_RoundedShader;
-            m_Button.GetComponentsInChildren<ImageView>().ElementAt(1).gameObject.SetActive(false);
+        if (m_GuildData.Equals(default))
+        {
+            SetText("GuildName not defined");
+            return;
         }
-        catch {
-            // ignored
+
+        int l_Counter = 0;
+        string l_Result = string.Empty;
+        for (int l_i = 0; l_i < m_GuildData.Description.Count();l_i++)
+        {
+            if (l_Counter == 50) {
+                l_Counter = 0;
+                char l_CurrentChar = m_GuildData.Description[l_i];
+                if (l_CurrentChar == ' ')
+                    l_Result += l_CurrentChar + "\n";
+                else
+                    l_Result += l_CurrentChar + "-\n";
+
+                continue;
+            }
+
+            l_Result += m_GuildData.Description[l_i];
+            l_Counter++;
         }
+        SetText(m_GuildData.Name);
+        SetTooltip(l_Result);
     }
 
-    private void Setup(Action p_OnClick, string p_Text, string p_Description, string? p_Image)
+    public void SetGuildData(GuildData p_GuildData)
     {
-        m_OnClick = p_OnClick;
-        m_Title = p_Text;
-        m_Description = p_Description;
-        m_Image = p_Image;
+        m_GuildData = p_GuildData;
+        UpdateTexture();
     }
 
-    public static void Create(Transform p_Transform, string p_Text, string p_Description, Action p_OnClick, string? p_Image)
+    public async Task UpdateTexture()
     {
-        var l_Button = CreateItem<RoundedButton>(p_Transform, true, false);
-        l_Button.Setup(p_OnClick, p_Text, p_Description, p_Image);
-        BSMLParser.instance.Parse("<horizontal id=\"MainLayout\"><vertical><text id=\"Title\" /><text id=\"Description\"/></vertical></horizontal>", p_Transform.gameObject, l_Button);
+        if (m_GuildData.Equals(default)) return;
+
+        GuildSaberUtils.ImageResult l_TextureResult = await GuildSaberUtils.GetImage(m_GuildData.Banner);
+        if (l_TextureResult.IsError) l_TextureResult.Texture = DefaultLogo;
+
+        Texture2D l_Texture = l_TextureResult.Texture;
+
+        int l_FixedHeight = l_Texture.width / (80 / 20);
+
+        int l_Radius = (int)(l_Texture.width * 0.01f);
+        Texture2D l_FixedTexture = TextureUtils.CreateRoundedTexture(l_Texture, l_Radius, (int)(l_FixedHeight/1.5f));
+
+        Element.SetBackgroundSprite(
+            Sprite.Create(
+                l_FixedTexture,
+            new Rect(0, l_FixedHeight / (l_Texture.width / (l_Texture.height / 0.9f)), l_Texture.width, l_FixedHeight),
+            new Vector2())
+            );
+        Element.SetBackgroundColor(new UnityEngine.Color(0.4f, 0.4f, 0.4f));
+    }
+
+    private void OnButtonClicked()
+    {
+        if (m_GuildData.Equals(default)) return;
     }
 }

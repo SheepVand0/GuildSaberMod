@@ -24,21 +24,21 @@ internal class Settings : EmptyViewController<Settings>
         Templates.FullRectLayoutMainView(
             Templates.TitleBar("Guild Saber"),
 
-            new XUIText("Enable Card:")
+            XUIText.Make("Enable Card:")
                 .SetColor(Color.yellow)
                 .SetAlign(TMPro.TextAlignmentOptions.Center),
-            new XUIToggle()
+            XUIToggle.Make()
                 .SetValue(GSConfig.Instance.CardEnabled)
                 .Bind(ref m_BoolCardEnabled),
 
-            new XUIText("Enable Leaderboard:")
+            XUIText.Make("Enable Leaderboard:")
                 .SetColor(Color.yellow)
                 .SetAlign(TMPro.TextAlignmentOptions.Center),
-            new XUIToggle()
+            XUIToggle.Make()
                 .SetValue(GSConfig.Instance.LeaderboardEnabled)
                 .Bind(ref m_BoolLeaderboardEnabled),
 
-            new XUIVSpacer(35f)
+            XUIVSpacer.Make(35f)
         ).BuildUI(transform);
 
         m_BoolCardEnabled.OnValueChanged(OnBoolCardChanged);

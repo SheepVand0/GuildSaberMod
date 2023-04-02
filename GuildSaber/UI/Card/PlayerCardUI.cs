@@ -268,13 +268,13 @@ internal class PlayerCardUI
     public void UpdateCardVisibility()
     {
         switch (Logic.ActiveScene) {
-            case Logic.SceneType.Menu:
+            case Logic.ESceneType.Menu:
                 m_FloatingScreen.gameObject.SetActive(GSConfig.Instance.ShowCardInMenu);
                 break;
-            case Logic.SceneType.Playing:
+            case Logic.ESceneType.Playing:
                 m_FloatingScreen.gameObject.SetActive(GSConfig.Instance.ShowCardInGame);
                 break;
-            case Logic.SceneType.None:
+            case Logic.ESceneType.None:
                 break;
             default:
                 GSLogger.Instance.Error(new Exception("Scene not valid"), nameof(PlayerCardUI), nameof(UpdateCardVisibility));
@@ -291,11 +291,11 @@ internal class PlayerCardUI
     protected void UpdateCardPosition()
     {
         switch (Logic.ActiveScene) {
-            case Logic.SceneType.Menu:
+            case Logic.ESceneType.Menu:
                 m_FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.CardPosition;
                 m_FloatingScreen.gameObject.transform.localRotation = Quaternion.Euler(GSConfig.Instance.CardRotation);
                 break;
-            case Logic.SceneType.Playing:
+            case Logic.ESceneType.Playing:
                 m_FloatingScreen.gameObject.transform.localPosition = GSConfig.Instance.InGameCardPosition;
                 m_FloatingScreen.gameObject.transform.localRotation = Quaternion.Euler(GSConfig.Instance.InGameCardRotation);
                 break;
@@ -343,11 +343,11 @@ internal class PlayerCardUI
     private static void OnCardHandleReleased(object p_Sender, FloatingScreenHandleEventArgs p_EventArgs)
     {
         switch (Logic.ActiveScene) {
-            case Logic.SceneType.Menu:
+            case Logic.ESceneType.Menu:
                 GSConfig.Instance.CardPosition = p_EventArgs.Position;
                 GSConfig.Instance.CardRotation = p_EventArgs.Rotation.eulerAngles;
                 break;
-            case Logic.SceneType.Playing:
+            case Logic.ESceneType.Playing:
                 GSConfig.Instance.InGameCardPosition = p_EventArgs.Position;
                 GSConfig.Instance.InGameCardRotation = p_EventArgs.Rotation.eulerAngles;
                 break;
@@ -374,7 +374,7 @@ internal class PlayerCardUI
     {
         GSConfig.Instance.InGameCardPosition = GSConfig.ConfigDefaults.s_DefaultInGameCardPosition;
         GSConfig.Instance.InGameCardRotation = GSConfig.ConfigDefaults.s_DefaultInGameCardRotation;
-        if (Logic.ActiveScene == Logic.SceneType.Playing && m_Instance != null) m_Instance.UpdateCardPosition();
+        if (Logic.ActiveScene == Logic.ESceneType.Playing && m_Instance != null) m_Instance.UpdateCardPosition();
     }
 
     ////////////////////////////////////////////////////////////////////////////

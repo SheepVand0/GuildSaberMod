@@ -159,16 +159,16 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
         BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleCustomCardColors, l_SettingAction, GSConfig.Instance.UseCustomColor, false);
         BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleCustomCardGradient, l_SettingAction, GSConfig.Instance.UseCustomColorGradient, false);
         BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleInvertGradient, l_SettingAction, GSConfig.Instance.InvertGradient, false);
-        BeatSaberPlus.SDK.UI.ColorSetting.Setup(m_CustomColorSettings, l_SettingAction, GSConfig.Instance.CustomColor, false);
-        BeatSaberPlus.SDK.UI.ColorSetting.Setup(m_CustomColorSettings1, l_SettingAction, GSConfig.Instance.CustomColor1, false);
-        BeatSaberPlus.SDK.UI.SliderSetting.Setup(m_CardColorMultiplier, l_SettingAction, null, GSConfig.Instance.GradientColor1Multiplier, true);
+        Utils.ColorSettingsFix.Setup(m_CustomColorSettings, l_SettingAction, GSConfig.Instance.CustomColor, false);
+        Utils.ColorSettingsFix.Setup(m_CustomColorSettings1, l_SettingAction, GSConfig.Instance.CustomColor1, false);
+        Utils.SliderSettingsFix.Setup(m_CardColorMultiplier, l_SettingAction, null, GSConfig.Instance.GradientColor1Multiplier, true);
 
         BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleCustomPointsColor, l_SettingAction, GSConfig.Instance.UseCustomPointsColor, false);
-        BeatSaberPlus.SDK.UI.ColorSetting.Setup(m_CustomPointsColor, l_SettingAction, GSConfig.Instance.CustomPointsColor, false);
+        Utils.ColorSettingsFix.Setup(m_CustomPointsColor, l_SettingAction, GSConfig.Instance.CustomPointsColor, false);
 
         BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleUseCustomNameColor, l_SettingAction, GSConfig.Instance.UseCustomNameGradientColor, false);
-        BeatSaberPlus.SDK.UI.ColorSetting.Setup(m_CustomNameColor, l_SettingAction, GSConfig.Instance.CustomNameGradientColor, false);
-        BeatSaberPlus.SDK.UI.SliderSetting.Setup(m_NameGradientMutiliplier, l_SettingAction, null, GSConfig.Instance.NameGradientColor0Multiplier, true);
+        Utils.ColorSettingsFix.Setup(m_CustomNameColor, l_SettingAction, GSConfig.Instance.CustomNameGradientColor, false);
+        Utils.SliderSettingsFix.Setup(m_NameGradientMutiliplier, l_SettingAction, null, GSConfig.Instance.NameGradientColor0Multiplier, true);
 
         Refresh();
 
@@ -306,7 +306,7 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
                 ApiPlayerCategory l_Cat = PlayerCardUI.m_Player.CategoryData[l_i];
                 int l_FontSize = (int)(2 / (l_CategoryDataCount * 0.11f));
                 if (l_FontSize < 1) l_FontSize = 2;
-                if (l_FontSize == 5) l_FontSize = 4;
+                if (l_FontSize >= 5) l_FontSize = 4;
 
                 ///Add to list if there is more categories than objects in Levels
                 if (l_i > m_Levels.Count - 1) {
@@ -408,13 +408,13 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
     public void UpdateToggleCardHandleUISettingVisibility()
     {
         switch (Logic.ActiveScene) {
-            case Logic.SceneType.Menu:
+            case Logic.ESceneType.Menu:
                 m_ToggleShowHandle.gameObject.SetActive(true);
                 break;
-            case Logic.SceneType.Playing:
+            case Logic.ESceneType.Playing:
                 m_ToggleShowHandle.gameObject.SetActive(GSConfig.Instance.CardHandleVisible);
                 break;
-            case Logic.SceneType.None:
+            case Logic.ESceneType.None:
                 m_ToggleShowHandle.gameObject.SetActive(GSConfig.Instance.CardHandleVisible);
                 break;
             default:

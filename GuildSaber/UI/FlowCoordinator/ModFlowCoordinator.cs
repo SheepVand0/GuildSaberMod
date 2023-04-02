@@ -12,8 +12,8 @@ namespace GuildSaber.UI.FlowCoordinator
 {
     internal class ModFlowCoordinator : CustomFlowCoordinator
     {
-        public PlaylistViewController _modViewController;
-        public LeftModViewController _LeftModViewController;
+        public CustomLevelSelectionMenu.GuildSelectionMenu _modViewController;
+        //public LeftModViewController _LeftModViewController;
 
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
@@ -26,12 +26,12 @@ namespace GuildSaber.UI.FlowCoordinator
         protected override (ViewController?, ViewController?, ViewController?) GetUIImplementation()
         {
             if (_modViewController == null)
-                _modViewController = BeatSaberUI.CreateViewController<PlaylistViewController>();
-            if (_LeftModViewController == null)
-                _LeftModViewController = BeatSaberUI.CreateViewController<LeftModViewController>();
-            return (_modViewController, _LeftModViewController, null);
+                _modViewController = BeatSaberUI.CreateViewController<CustomLevelSelectionMenu.GuildSelectionMenu>();
+            //if (_LeftModViewController == null)
+            //    _LeftModViewController = BeatSaberUI.CreateViewController<LeftModViewController>();
+            return (_modViewController, null /*_LeftModViewController*/, null);
         }
 
-        protected override void OnShow() => _modViewController.Init(JsonConfig<GSConfig>.Instance.SelectedGuild);
+        //protected override void OnShow() => _modViewController.Init(JsonConfig<GSConfig>.Instance.SelectedGuild);
     }
 }
