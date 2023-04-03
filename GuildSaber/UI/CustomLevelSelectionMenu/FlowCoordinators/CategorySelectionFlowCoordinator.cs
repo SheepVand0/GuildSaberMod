@@ -1,42 +1,46 @@
 using BeatSaberMarkupLanguage;
+using GuildSaber.API;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers;
 using GuildSaber.UI.FlowCoordinator;
 using GuildSaber.Utils;
 using HMUI;
+using System.Collections.Generic;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 
 internal class CategorySelectionFlowCoordinator : CustomFlowCoordinator
 {
-    private GuildDescriptionViewController m_GuildDescriptionViewController;
+    public CategoriesSelectionViewController m_GuildcategorySelection;
+
+    public static CategorySelectionFlowCoordinator Instance;
 
     protected override string Title
     {
         get => "Categories";
     }
 
-    private string Name { get; set; }
-    private string Description { get; set; }
-
     protected override (ViewController?, ViewController?, ViewController?) GetUIImplementation()
     {
-        if (m_GuildDescriptionViewController == null) m_GuildDescriptionViewController = BeatSaberUI.CreateViewController<GuildDescriptionViewController>();
+        if (m_GuildcategorySelection == null) m_GuildcategorySelection = BeatSaberUI.CreateViewController<CategoriesSelectionViewController>();
 
-        return (null, m_GuildDescriptionViewController, null);
+        return (m_GuildcategorySelection, null, null);
     }
 
-    public void Init(string p_Name, string p_Description)
+    List<ApiCategory> m_Categories;
+
+    public void ShowWithCategories(List<ApiCategory> p_Categories)
     {
-        Name = p_Name;
-        Description = p_Description;
+        m_Categories = p_Categories;
+        Show();
     }
 
-    protected override async void OnShow()
+    protected override void TransitionDidFinish()
     {
-        await WaitUtils.Wait(() => m_GuildDescriptionViewController != null, 1, p_CodeLine: 32);
+        base.TransitionDidFinish();
 
-        m_GuildDescriptionViewController.SetNameAndDescription(Name, Description);
+        if (!gameObject.activeInHierarchy) return;
 
-        Name = string.Empty;
-        Description = string.Empty;
+        m_GuildcategorySelection.SetCategories(m_Categories);
     }
+
 }

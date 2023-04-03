@@ -11,10 +11,10 @@ public struct GuildData
     public string Logo { get; set; }
     public string Banner { get; set; }
     public string Description { get; set; }
-    public Color Color { get; set; }
-    public Color RankingTeamColor { get; set; }
-    public Color ScoringTeamColor { get; set; }
-    public Color ManagerTeamColor { get; set; }
+    public GuildSaber.Utils.DiscordColor.Color Color { get; set; }
+    public GuildSaber.Utils.DiscordColor.Color RankingTeamColor { get; set; }
+    public GuildSaber.Utils.DiscordColor.Color ScoringTeamColor { get; set; }
+    public GuildSaber.Utils.DiscordColor.Color ManagerTeamColor { get; set; }
     public int MemberCount { get; set; }
     public int RankedDiffCount { get; set; }
     public int PlaylistCount { get; set; }
@@ -64,7 +64,7 @@ public struct GuildLightData
     public string Logo { get; set; }
     public string Banner { get; set; }
     public string Description { get; set; }
-    public Color Color { get; set; }
+    public GuildSaber.Utils.DiscordColor.Color Color { get; set; }
     public int MemberCount { get; set; }
     public int RankedDiffCount { get; set; }
     public int PlaylistCount { get; set; }

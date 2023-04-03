@@ -19,7 +19,7 @@ public struct ApiPlayerData
     public UInt32? GuildValidPassCount { get; set; }
     public string Avatar { get; set; }
 
-    public Color? Color { get; set; }
+    public GuildSaber.Utils.DiscordColor.Color? Color { get; set; }
 
     public List<Badge> Badges { get; set; }
     public List<Trophy>? Trophies { get; set; }

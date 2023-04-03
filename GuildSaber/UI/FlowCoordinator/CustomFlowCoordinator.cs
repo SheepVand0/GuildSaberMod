@@ -12,7 +12,14 @@ namespace GuildSaber.UI.FlowCoordinator
 
         protected abstract string Title { get; }
 
+        protected virtual void OnCreation() { }
+
         protected abstract (ViewController?, ViewController?, ViewController?) GetUIImplementation();
+
+        public void Awake()
+        {
+            OnCreation();
+        }
 
         protected override void DidActivate(
           bool firstActivation,

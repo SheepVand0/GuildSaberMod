@@ -1,4 +1,6 @@
 ﻿using GuildSaber.Logger;
+using IPA.Utilities;
+using OVR.OpenVR;
 using PlaylistManager.HarmonyPatches;
 using System;
 using System.Collections.Generic;
@@ -67,71 +69,108 @@ namespace GuildSaber.Utils
             return l_Origin;
         }
 
-        public static Texture2D CreateRoundedTexture(Texture2D p_Origin, float p_Radius, int p_Offset = 0)
+        public static Texture2D CreateRoundedTexture(Texture2D p_Origin, float p_Radius, int p_Offset = 0, bool p_PushPixels = false)
         {
             Texture2D l_Texture = p_Origin;
 
-            for (int l_X = 0; l_X < p_Origin.width; l_X++)
+            for (int l_i = 0; l_i < 4; l_i++)
             {
-                for (int l_Y = 0; l_Y < p_Origin.height; l_Y++)
+                for (int l_X = 0; l_X < p_Radius; l_X++)
                 {
-                    Vector2 l_RadiusPoint;
-                    //Corner Bottom Left
-                    if (l_X < p_Origin.width / 2 && l_Y < (p_Origin.height / 2) && l_X < p_Radius && l_Y < p_Radius + p_Offset)
+                    for (int l_Y = 0; l_Y < p_Radius; l_Y++)
                     {
-                        l_RadiusPoint = new Vector2(p_Radius, p_Radius + p_Offset);
-
-                        if (Vector2.Distance(l_RadiusPoint, new Vector2(l_X, l_Y)) > p_Radius)
+                        /// Corner Bottom Left
+                        if (l_i == 0)
                         {
-                            l_Texture.SetPixel(l_X, l_Y, UnityEngine.Color.red.ColorWithAlpha(0));
+                            Vector2 l_Point = new Vector2(l_X, l_Y + p_Offset);
+                            Vector2 l_RadiusPoint = new Vector2(p_Radius, p_Radius + p_Offset);
+
+                            if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                                l_Texture.SetPixel(l_X, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
+
+                            if (p_PushPixels)
+                            {
+                                UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
+                                l_Texture.SetPixel((int)(p_Radius + (p_Radius - l_Point.x)), (int)(p_Radius + (p_Radius - l_Point.y)), l_PixelColor);
+                            }
+
+                            continue;
                         }
 
-                        continue;
-                    }
-
-                    //Corner Bottom Right
-                    if (l_X > p_Origin.width / 2 && l_Y < (p_Origin.height / 2) && l_X > p_Origin.width - p_Radius && l_Y < p_Radius + p_Offset)
-                    {
-                        l_RadiusPoint = new Vector2(p_Origin.width - p_Radius, p_Radius + p_Offset);
-
-                        if (Vector2.Distance(l_RadiusPoint, new Vector2(l_X, l_Y)) > p_Radius)
+                        /// Corner Bottom Right
+                        if (l_i == 1)
                         {
-                            l_Texture.SetPixel(l_X, l_Y, UnityEngine.Color.red.ColorWithAlpha(0));
+                            Vector2 l_Point = new Vector2(l_X + (l_Texture.width - p_Radius), l_Y + p_Offset);
+                            Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, p_Radius + p_Offset);
+
+                            if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                                l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
+
+                            if (p_PushPixels)
+                            {
+                                UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
+                                l_Texture.SetPixel((int)((l_Texture.width - p_Radius * 2) + l_Point.x), (int)(p_Radius + (p_Radius - l_Point.y)), l_PixelColor);
+                            }
+
+                            continue;
                         }
 
-                        continue;
-                    }
-
-                    //Corner Top Left
-                    if (l_X < p_Origin.width / 2 && l_Y > (p_Origin.height / 2) && l_X < p_Radius && l_Y > p_Origin.height - p_Radius - p_Offset)
-                    {
-                        l_RadiusPoint = new Vector2(p_Radius, p_Origin.height - p_Radius - p_Offset);
-
-
-                        if (Vector2.Distance(l_RadiusPoint, new Vector2(l_X, l_Y)) > p_Radius)
+                        /// Corner Top Left
+                        if (l_i == 2)
                         {
-                            l_Texture.SetPixel(l_X, l_Y, UnityEngine.Color.red.ColorWithAlpha(0));
+                            Vector2 l_Point = new Vector2(l_X, l_Y + (l_Texture.height - p_Radius - p_Offset));
+                            Vector2 l_RadiusPoint = new Vector2(p_Radius, (l_Texture.height - p_Radius - p_Offset));
+
+                            if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                                l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
+
+                            if (p_PushPixels)
+                            {
+                                UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
+                                l_Texture.SetPixel((int)(p_Radius + (p_Radius - l_Point.x)), (int)((l_Texture.height - p_Radius * 2) + l_Point.y), l_PixelColor);
+                            }
                         }
 
-                        continue;
-                    }
-
-                    //Corner top right
-                    if (l_X > p_Origin.width / 2 && l_Y > (p_Origin.height / 2) && l_X > p_Origin.width - p_Radius && l_Y > p_Origin.height - p_Radius - p_Offset)
-                    {
-                        l_RadiusPoint = new Vector2(p_Origin.width - p_Radius, p_Origin.height - p_Radius - p_Offset);
-
-                        if (Vector2.Distance(l_RadiusPoint, new Vector2(l_X, l_Y)) > p_Radius)
+                        /// Corner Top Right
+                        if (l_i == 3)
                         {
-                            l_Texture.SetPixel(l_X, l_Y, UnityEngine.Color.red.ColorWithAlpha(0));
+                            Vector2 l_Point = new Vector2(l_X + (l_Texture.width - p_Radius), l_Y + (l_Texture.height - p_Radius - p_Offset));
+                            Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, l_Texture.height - p_Radius - p_Offset);
+
+                            if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                                l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
+
+                            if (p_PushPixels)
+                            {
+                                UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
+                                l_Texture.SetPixel((int)((l_Texture.width - p_Radius * 2) + l_Point.x), (int)((l_Texture.height - p_Radius * 2) + l_Point.y), l_PixelColor);
+                            }
                         }
 
-                        continue;
                     }
+                }
+            }
 
-                    if (l_Y > p_Origin.height - p_Offset || l_Y < p_Offset)
+            if (p_Offset > 0)
+            {
+                for (int l_i = 0; l_i < 2; l_i++)
+                {
+                    for (int l_X = 0; l_X < l_Texture.width; l_X++)
                     {
-                        l_Texture.SetPixel(l_X, l_Y, UnityEngine.Color.red.ColorWithAlpha(0));
+                        for (int l_Y = 0; l_Y < p_Offset; l_Y++)
+                        {
+                            if (l_i == 0)
+                            {
+                                l_Texture.SetPixel(l_X, l_Y, UnityEngine.Color.white.ColorWithAlpha(0));
+                                continue;
+                            }
+
+                            if (l_i == 1)
+                            {
+                                l_Texture.SetPixel(l_X, l_Y + (p_Offset + (l_Texture.height - p_Offset * 2)), UnityEngine.Color.white.ColorWithAlpha(0));
+                                continue;
+                            }
+                        }
                     }
                 }
             }

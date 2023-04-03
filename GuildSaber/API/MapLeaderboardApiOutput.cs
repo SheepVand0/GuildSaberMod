@@ -78,7 +78,7 @@ public struct ApiCustomDataStruct
     public string LevelName { get; set; }
     public float LevelValue { get; set; }
 
-    public Color LevelColor { get; set; }
+    public GuildSaber.Utils.DiscordColor.Color LevelColor { get; set; }
 
     public UInt32? CategoryID { get; set; }
     public string? CategoryName { get; set; }

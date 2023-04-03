@@ -304,6 +304,7 @@
     <Compile Include="UI\BeatSaberPlus\Settings.cs" />
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCardUI.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\Components\CategoryButton.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\Components\RoundedButton.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\CategorySelectionFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\GuildSelectionFlowCoordinator.cs" />
@@ -378,6 +379,7 @@
     <EmbeddedResource Include="Resources\ArrowRed.png" />
     <EmbeddedResource Include="UI\CustomLevelSelectionMenu\ViewControllers\Views\GuildDescription.bsml" />
     <EmbeddedResource Include="Resources\White.png" />
+    <EmbeddedResource Include="Resources\BorderSquare.png" />
     <Content Include="UI\CustomLevelSelectionMenu\ViewControllers\Views\CategorySelectionViewController.bsml" />
     <EmbeddedResource Include="Resources\Arrow.png" />
     <EmbeddedResource Include="Resources\GsWhiteLogo.png" />

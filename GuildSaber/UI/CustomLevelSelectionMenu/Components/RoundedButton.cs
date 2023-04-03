@@ -1,9 +1,13 @@
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
+using BeatSaberMarkupLanguage;
 using CP_SDK.Chat.Models;
 using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.API;
+using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.Utils;
 using UnityEngine;
 
@@ -85,8 +89,24 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
         Element.SetBackgroundColor(new UnityEngine.Color(0.4f, 0.4f, 0.4f));
     }
 
-    private void OnButtonClicked()
+    private async void OnButtonClicked()
     {
         if (m_GuildData.Equals(default)) return;
+
+        try
+        {
+            string l_Serialized = await new HttpClient().GetStringAsync($"https://api.guildsaber.com/categories/data/all?guild-id={m_GuildData.ID}");
+
+            List<ApiCategory> l_Categories = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ApiCategory>>(l_Serialized);
+
+            if (CategorySelectionFlowCoordinator.Instance == null)
+                CategorySelectionFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<CategorySelectionFlowCoordinator>();
+
+            CategorySelectionFlowCoordinator.Instance.ShowWithCategories(l_Categories);
+
+        } catch
+        {
+
+        }
     }
 }
