@@ -1,4 +1,5 @@
 using BeatSaberMarkupLanguage;
+using CP_SDK.UI;
 using GuildSaber.API;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers;
 using GuildSaber.UI.FlowCoordinator;
@@ -8,39 +9,34 @@ using System.Collections.Generic;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 
-internal class CategorySelectionFlowCoordinator : CustomFlowCoordinator
+internal class CategorySelectionFlowCoordinator : CP_SDK.UI.FlowCoordinator<CategorySelectionFlowCoordinator>
 {
-    public CategoriesSelectionViewController m_GuildcategorySelection;
+    public CategoriesSelectionViewController m_GuildcategorySelection = UISystem.CreateViewController<CategoriesSelectionViewController>();
 
     public static CategorySelectionFlowCoordinator Instance;
 
-    protected override string Title
-    {
-        get => "Categories";
-    }
-
-    protected override (ViewController?, ViewController?, ViewController?) GetUIImplementation()
-    {
-        if (m_GuildcategorySelection == null) m_GuildcategorySelection = BeatSaberUI.CreateViewController<CategoriesSelectionViewController>();
-
-        return (m_GuildcategorySelection, null, null);
-    }
-
     List<ApiCategory> m_Categories;
+    string m_GuildName;
 
-    public void ShowWithCategories(List<ApiCategory> p_Categories)
+    public override string Title => "Categories";
+
+    public override void Init()
+    {
+        base.Init();
+        Instance = this;
+    }
+
+    public void ShowWithCategories(string p_GuildName, List<ApiCategory> p_Categories)
     {
         m_Categories = p_Categories;
-        Show();
-    }
-
-    protected override void TransitionDidFinish()
-    {
-        base.TransitionDidFinish();
-
-        if (!gameObject.activeInHierarchy) return;
-
+        m_GuildName = p_GuildName;
+        Present();
         m_GuildcategorySelection.SetCategories(m_Categories);
+        m_GuildcategorySelection.SetGuildName(m_GuildName);
     }
 
+    protected override (IViewController, IViewController, IViewController) GetInitialViewsController()
+    {
+        return (m_GuildcategorySelection, null, null);
+    }
 }

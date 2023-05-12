@@ -145,6 +145,11 @@
       <HintPath>$(BeatSaberDir)\Plugins\SiraUtil.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="SixLabors.ImageSharp, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <Private>False</Private>
+      <HintPath>$(BeatSaberDir)\Libs\SixLabors.ImageSharp.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="SongCore">
       <HintPath>$(BeatSaberDir)\Plugins\SongCore.dll</HintPath>
       <Private>False</Private>
@@ -287,6 +292,7 @@
     <Compile Include="API\BeatLeaderReplayDownloader.cs" />
     <Compile Include="API\GuildApi.cs" />
     <Compile Include="API\MapLeaderboardApiOutput.cs" />
+    <Compile Include="API\PlaylistModel.cs" />
     <Compile Include="AssetBundles\AssetBundleLoader.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -305,14 +311,20 @@
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCardUI.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\Components\CategoryButton.cs" />
-    <Compile Include="UI\CustomLevelSelectionMenu\Components\RoundedButton.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\Components\MapButton.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\Components\PlaylistButton.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\Components\GuildSelectionButton.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\CategorySelectionFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\GuildSelectionFlowCoordinator.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\LevelSelectionFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\CategoriesSelectionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\LevelSelectionViewController.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\MapDetailsViewController.cs" />
     <Compile Include="UI\Defaults\GSSecondaryButton.cs" />
     <Compile Include="UI\FlowCoordinator\CustomFlowCoordinator.cs" />
+    <Compile Include="UI\InternalPlaylistsManager.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomLevelStatsView.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomText.cs" />
     <Compile Include="UI\Leaderboard\Components\LeaderboardScoreList.cs" />
@@ -350,7 +362,6 @@
     <EmbeddedResource Include="AssetBundles\gsbundle" />
     <None Include="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
     <EmbeddedResource Include="UI\Card\View\PlayerCard_UI.bsml" />
-    <EmbeddedResource Include="UI\CustomLevelSelectionMenu\ViewControllers\Views\GuildSelectionMenu.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\ModViewController.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeftModViewController.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardPanel.bsml" />
@@ -377,10 +388,8 @@
   <ItemGroup>
     <Content Include="GuildSaber.csproj.user" />
     <EmbeddedResource Include="Resources\ArrowRed.png" />
-    <EmbeddedResource Include="UI\CustomLevelSelectionMenu\ViewControllers\Views\GuildDescription.bsml" />
     <EmbeddedResource Include="Resources\White.png" />
     <EmbeddedResource Include="Resources\BorderSquare.png" />
-    <Content Include="UI\CustomLevelSelectionMenu\ViewControllers\Views\CategorySelectionViewController.bsml" />
     <EmbeddedResource Include="Resources\Arrow.png" />
     <EmbeddedResource Include="Resources\GsWhiteLogo.png" />
     <EmbeddedResource Include="Resources\GuildSaberLogoOrange4.png" />
@@ -392,9 +401,7 @@
     <EmbeddedResource Include="Resources\BSCCIconOrange.png" />
     <EmbeddedResource Include="Resources\CSIcon.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UI\CustomLevelSelectionMenu\Views\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

@@ -1,6 +1,8 @@
-﻿using CP_SDK.UI.Components;
+﻿using BeatSaberMarkupLanguage;
+using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.API;
+using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.Utils;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
         ApiCategory m_CurrentCategory = default;
 
+        string m_GuildName;
+
         public void SetCategoryData(ApiCategory p_Category)
         {
             m_CurrentCategory = p_Category;
@@ -37,6 +41,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             return l_But;
         }
 
+        public void SetGuildName(string p_GuildName)
+        {
+            m_GuildName = p_GuildName;
+        }
+
         private void OnButtonReady(CSecondaryButton p_Button)
         {
             SetWidth(20);
@@ -45,7 +54,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             if (BorderTexture == null)
             {
                 BorderTexture = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.BorderSquare.png");
-                BorderTexture = TextureUtils.CreateRoundedTexture(BorderTexture, 20, p_PushPixels: true);
+                BorderTexture = TextureUtils.CreateRoundedTexture(BorderTexture, 20);
             }
 
             p_Button.SetBackgroundSprite(Sprite.Create(BorderTexture, new Rect(0, 0, BorderTexture.width, BorderTexture.height), new Vector2()));
@@ -54,7 +63,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
         private void ShowCategoryLevels()
         {
+            if (LevelsFlowCoordinator.Instance == null)
+                LevelsFlowCoordinator.Instance = LevelsFlowCoordinator.Instance();
 
+            LevelsFlowCoordinator.Instance.ShowWithLevels(m_GuildName, m_CurrentCategory.Name);
         }
     }
 }

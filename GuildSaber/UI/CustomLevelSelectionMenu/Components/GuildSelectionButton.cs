@@ -7,6 +7,7 @@ using CP_SDK.Chat.Models;
 using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.API;
+using GuildSaber.Logger;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.Utils;
 using UnityEngine;
@@ -83,8 +84,8 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
         Element.SetBackgroundSprite(
             Sprite.Create(
                 l_FixedTexture,
-            new Rect(0, l_FixedHeight / (l_Texture.width / (l_Texture.height / 0.9f)), l_Texture.width, l_FixedHeight),
-            new Vector2())
+                new Rect(0, l_FixedHeight / (l_Texture.width / (l_Texture.height / 0.9f)), l_Texture.width, l_FixedHeight),
+                new Vector2())
             );
         Element.SetBackgroundColor(new UnityEngine.Color(0.4f, 0.4f, 0.4f));
     }
@@ -100,9 +101,10 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
             List<ApiCategory> l_Categories = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ApiCategory>>(l_Serialized);
 
             if (CategorySelectionFlowCoordinator.Instance == null)
-                CategorySelectionFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<CategorySelectionFlowCoordinator>();
+                CategorySelectionFlowCoordinator.Instance = CategorySelectionFlowCoordinator.Instance();
 
-            CategorySelectionFlowCoordinator.Instance.ShowWithCategories(l_Categories);
+            GSLogger.Instance.Log(m_GuildData.Name, IPA.Logging.Logger.LogLevel.InfoUp);
+            CategorySelectionFlowCoordinator.Instance.ShowWithCategories(m_GuildData.Name, l_Categories);
 
         } catch
         {

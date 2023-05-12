@@ -1,3 +1,4 @@
+using CP_SDK.UI;
 using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.UI.CustomLevelSelectionMenu.Components;
@@ -9,34 +10,27 @@ using System.Reflection;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers;
 
-public class CategoriesSelectionViewController : HMUI.ViewController
+public class CategoriesSelectionViewController : ViewController<CategoriesSelectionViewController>
 {
 
-    protected override void DidActivate(bool firstActivation, bool addedToHierarchy, bool screenSystemEnabling)
-    {
-        base.DidActivate(firstActivation, addedToHierarchy, screenSystemEnabling);
-
-        if (!firstActivation) return;
-
-        OnViewCreation();
-    }
+    private string m_GuildName = string.Empty;
 
     private XUIGLayout ButtonsGrid = null;
 
     private List<CategoryButton> ExistingButtons = new List<CategoryButton>();
 
-    private void OnViewCreation()
+    protected override void OnViewCreation()
     {
         Templates.FullRectLayout(
             XUIGLayout.Make(
                 )
             .SetWidth(85)
             .SetHeight(65)
+            .SetCellSize(new UnityEngine.Vector2(22, 22))
             .SetConstraint(UnityEngine.UI.GridLayoutGroup.Constraint.FixedColumnCount)
             .SetConstraintCount(3)
             .Bind(ref ButtonsGrid)
         ).BuildUI(transform);
-
     }
 
     public void SetCategories(List<ApiCategory> p_Categories)
@@ -54,9 +48,16 @@ public class CategoriesSelectionViewController : HMUI.ViewController
             } else
             {
                 ExistingButtons[l_i].SetCategoryData(p_Categories[l_i]);
+                ExistingButtons[l_i].Element.gameObject.SetActive(true);
             }
+            ExistingButtons[l_i].SetGuildName(m_GuildName);
         }
 
+    }
+
+    public void SetGuildName(string p_GuildName)
+    {
+        m_GuildName = p_GuildName;
     }
 
 }

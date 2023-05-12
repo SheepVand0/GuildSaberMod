@@ -1,5 +1,0 @@
-<bg>
-    <custom-list id="CategoryList" content="Categories">
-        <div id="ButtonTransform"/>
-    </custom-list>
-</bg>

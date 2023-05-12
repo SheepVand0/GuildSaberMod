@@ -56,7 +56,7 @@ public struct Trophy
 public struct ApiPlayerCategory
 {
     public string CategoryName { get; set; }
-    public UInt32 CategoryID { get; set; }
+    public int CategoryID { get; set; }
     public float? LevelValue { get; set; }
     public UInt32? LevelID { get; set; }
     public float? MaxLevelValue { get; set; }

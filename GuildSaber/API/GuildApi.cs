@@ -118,16 +118,15 @@ public static class GuildApi
     /// <param name="p_ID"></param>
     /// <param name="p_Guild"></param>
     /// <returns></returns>
-    public static ApiPlayerData GetPlayerByScoreSaberIdAndGuild(string p_ID, int p_Guild)
+    public static async Task<ApiPlayerData> GetPlayerByScoreSaberIdAndGuild(string p_ID, int p_Guild)
     {
         var l_ResultPlayer = default(ApiPlayerData);
         using var l_Client = new HttpClient();
 
         try
         {
-            Task<string> l_Result = l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{p_ID}/full?guild={p_Guild}");
-            l_Result.Wait();
-            l_ResultPlayer = JsonConvert.DeserializeObject<ApiPlayerData>(l_Result.Result);
+            string l_Result = await l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{p_ID}/full?guild={p_Guild}");
+            l_ResultPlayer = JsonConvert.DeserializeObject<ApiPlayerData>(l_Result);
             GuildSaberModule.SetState(GuildSaberModule.EModState.Functional);
         }
         catch (AggregateException l_AggregateException)
@@ -247,6 +246,21 @@ public static class GuildApi
     public static ApiPlayerData GetPlayerDataFromCurrent()
     {
         return PlayerCardUI.m_Player;
+    }
+
+    internal static async Task<List<ApiRankingLevel>> GetLevels(int p_GuildId, int p_CategoryId)
+    {
+        try
+        {
+            HttpClient l_Client = new HttpClient();
+            string l_CategoryString = (p_CategoryId == -1) ? string.Empty : $"&category-id={p_CategoryId}";
+            string l_Serialized = await l_Client.GetStringAsync($"https://api.guildsaber.com/levels/data/all?guild-id={p_GuildId}{l_CategoryString}");
+            List<ApiRankingLevel> l_Levels = JsonConvert.DeserializeObject<List<ApiRankingLevel>>(l_Serialized);
+            return l_Levels;
+        } catch(Exception l_E)
+        {
+            return default(List<ApiRankingLevel>);
+        }
     }
 }
 

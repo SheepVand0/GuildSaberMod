@@ -1,14 +1,4 @@
-﻿using GuildSaber.Logger;
-using IPA.Utilities;
-using OVR.OpenVR;
-using PlaylistManager.HarmonyPatches;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace GuildSaber.Utils
 {
@@ -64,8 +54,6 @@ namespace GuildSaber.Utils
 
             l_Origin.Apply();
 
-            File.WriteAllBytes("C:/ImageTest/tests.png", l_Origin.EncodeToPNG());
-
             return l_Origin;
         }
 
@@ -77,6 +65,8 @@ namespace GuildSaber.Utils
             {
                 for (int l_X = 0; l_X < p_Radius; l_X++)
                 {
+                    bool l_Moved = false;
+
                     for (int l_Y = 0; l_Y < p_Radius; l_Y++)
                     {
                         /// Corner Bottom Left
@@ -86,12 +76,15 @@ namespace GuildSaber.Utils
                             Vector2 l_RadiusPoint = new Vector2(p_Radius, p_Radius + p_Offset);
 
                             if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
-                                l_Texture.SetPixel(l_X, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
+                            {
+                                l_Moved = true;
+                                l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
+                            }
 
-                            if (p_PushPixels)
+                            if (p_PushPixels && !l_Moved)
                             {
                                 UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
-                                l_Texture.SetPixel((int)(p_Radius + (p_Radius - l_Point.x)), (int)(p_Radius + (p_Radius - l_Point.y)), l_PixelColor);
+                                l_Texture.SetPixel((int)(p_Radius + l_Point.x), (int)(p_Radius + l_Point.y), l_PixelColor);
                             }
 
                             continue;
@@ -104,12 +97,15 @@ namespace GuildSaber.Utils
                             Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, p_Radius + p_Offset);
 
                             if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                            {
+                                l_Moved = true;
                                 l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
+                            }
 
                             if (p_PushPixels)
                             {
                                 UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
-                                l_Texture.SetPixel((int)((l_Texture.width - p_Radius * 2) + l_Point.x), (int)(p_Radius + (p_Radius - l_Point.y)), l_PixelColor);
+                                l_Texture.SetPixel((int)((l_Texture.width - p_Radius * 2) + l_Point.x), (int)(p_Radius + (p_Radius - l_Point.y)), l_PixelColor.ColorWithAlpha(1));
                             }
 
                             continue;
@@ -122,12 +118,15 @@ namespace GuildSaber.Utils
                             Vector2 l_RadiusPoint = new Vector2(p_Radius, (l_Texture.height - p_Radius - p_Offset));
 
                             if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                            {
+                                l_Moved = true;
                                 l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
+                            }
 
                             if (p_PushPixels)
                             {
                                 UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
-                                l_Texture.SetPixel((int)(p_Radius + (p_Radius - l_Point.x)), (int)((l_Texture.height - p_Radius * 2) + l_Point.y), l_PixelColor);
+                                l_Texture.SetPixel((int)(p_Radius + (p_Radius - l_Point.x)), (int)((l_Texture.height - p_Radius * 2) + l_Point.y), l_PixelColor.ColorWithAlpha(1));
                             }
                         }
 
@@ -138,13 +137,17 @@ namespace GuildSaber.Utils
                             Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, l_Texture.height - p_Radius - p_Offset);
 
                             if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                            {
+                                l_Moved = true;
                                 l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
+                            }
 
                             if (p_PushPixels)
                             {
                                 UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
-                                l_Texture.SetPixel((int)((l_Texture.width - p_Radius * 2) + l_Point.x), (int)((l_Texture.height - p_Radius * 2) + l_Point.y), l_PixelColor);
+                                l_Texture.SetPixel((int)((l_Texture.width - p_Radius * 2) + l_Point.x), (int)((l_Texture.height - p_Radius * 2) + l_Point.y), l_PixelColor.ColorWithAlpha(1));
                             }
+
                         }
 
                     }
