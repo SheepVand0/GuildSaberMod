@@ -25,7 +25,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
         ApiCategory m_CurrentCategory = default;
 
-        string m_GuildName;
+        int m_GuildId;
 
         public void SetCategoryData(ApiCategory p_Category)
         {
@@ -41,9 +41,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             return l_But;
         }
 
-        public void SetGuildName(string p_GuildName)
+        public void SetGuildId(int p_GuildId)
         {
-            m_GuildName = p_GuildName;
+            m_GuildId = p_GuildId;
         }
 
         private void OnButtonReady(CSecondaryButton p_Button)
@@ -66,7 +66,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             if (LevelsFlowCoordinator.Instance == null)
                 LevelsFlowCoordinator.Instance = LevelsFlowCoordinator.Instance();
 
-            LevelsFlowCoordinator.Instance.ShowWithLevels(m_GuildName, m_CurrentCategory.Name);
+            LevelsFlowCoordinator.Instance.ShowWithLevels(m_GuildId, m_CurrentCategory);
         }
     }
 }

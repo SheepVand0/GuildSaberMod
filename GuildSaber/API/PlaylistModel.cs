@@ -11,15 +11,15 @@ namespace GuildSaber.API
         public string playlistTitle { get; set; }
         public string playlistAuthor { get; set; }
         public string playlistDescription { get; set; }
-        public PlaylistModelCustomData customData { get; set; }
+        public PlaylistModelCustomData customData;
+        public List<PlaylistModelSong> songs { get; set; }
         public string image { get; set; }
     }
 
     internal struct PlaylistModelCustomData
     {
         public string syncURL { get; set; }
-        public List<PlaylistModelSong> songs { get; set; }
-        public float? PlaylistLevel;
+        public float PlaylistLevel;
     }
 
     internal struct PlaylistModelSong

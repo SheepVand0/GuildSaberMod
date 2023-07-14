@@ -16,7 +16,7 @@ internal class CategorySelectionFlowCoordinator : CP_SDK.UI.FlowCoordinator<Cate
     public static CategorySelectionFlowCoordinator Instance;
 
     List<ApiCategory> m_Categories;
-    string m_GuildName;
+    int m_GuildId;
 
     public override string Title => "Categories";
 
@@ -26,13 +26,13 @@ internal class CategorySelectionFlowCoordinator : CP_SDK.UI.FlowCoordinator<Cate
         Instance = this;
     }
 
-    public void ShowWithCategories(string p_GuildName, List<ApiCategory> p_Categories)
+    public void ShowWithCategories(int p_GuildId, List<ApiCategory> p_Categories)
     {
         m_Categories = p_Categories;
-        m_GuildName = p_GuildName;
+        m_GuildId = p_GuildId;
         Present();
+        m_GuildcategorySelection.SetGuildId(p_GuildId);
         m_GuildcategorySelection.SetCategories(m_Categories);
-        m_GuildcategorySelection.SetGuildName(m_GuildName);
     }
 
     protected override (IViewController, IViewController, IViewController) GetInitialViewsController()

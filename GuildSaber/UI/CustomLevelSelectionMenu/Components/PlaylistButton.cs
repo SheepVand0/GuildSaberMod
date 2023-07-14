@@ -27,7 +27,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             return new PlaylistButton("PlaylistButton");
         }
 
-        protected List<PlaylistModelSong> m_Level;
+        protected List<PlaylistModelSong> m_Level = new List<PlaylistModelSong>();
 
         public PlaylistButton SetLevel(Texture2D p_Cover, List<PlaylistModelSong> p_Hashes)
         {
@@ -37,6 +37,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
                 Texture2D l_Cover = TextureUtils.CreateRoundedTexture(p_Cover, p_Cover.width * 0.01f);
                 Sprite l_Sprite = Sprite.Create(l_Cover, new Rect(0, 0, l_Cover.width, l_Cover.height), new Vector2());
                 SetBackgroundSprite(l_Sprite);
+                SetWidth(10);
+                SetHeight(10);
             });
             return this;
         }

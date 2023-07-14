@@ -13,7 +13,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers;
 public class CategoriesSelectionViewController : ViewController<CategoriesSelectionViewController>
 {
 
-    private string m_GuildName = string.Empty;
+    private int m_GuildId = 0;
 
     private XUIGLayout ButtonsGrid = null;
 
@@ -48,16 +48,17 @@ public class CategoriesSelectionViewController : ViewController<CategoriesSelect
             } else
             {
                 ExistingButtons[l_i].SetCategoryData(p_Categories[l_i]);
+                ExistingButtons[l_i].SetGuildId(m_GuildId);
                 ExistingButtons[l_i].Element.gameObject.SetActive(true);
             }
-            ExistingButtons[l_i].SetGuildName(m_GuildName);
+            ExistingButtons[l_i].SetGuildId(m_GuildId);
         }
 
     }
 
-    public void SetGuildName(string p_GuildName)
+    public void SetGuildId(int p_GuildId)
     {
-        m_GuildName = p_GuildName;
+        m_GuildId = p_GuildId;
     }
 
 }

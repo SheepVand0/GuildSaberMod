@@ -1,5 +1,6 @@
 ﻿using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers;
 using CP_SDK.UI;
+using GuildSaber.API;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
 {
@@ -11,9 +12,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
 
         public override string Title => "Play";
 
-        public void ShowWithLevels(string p_GuildName, string p_Category)
+        public void ShowWithLevels(int p_GuildId, ApiCategory p_Category)
         {
-            m_ViewController.SetLevels(p_GuildName, p_Category);
+            m_ViewController.SetLevels(p_GuildId, p_Category);
             Present();
         }
 

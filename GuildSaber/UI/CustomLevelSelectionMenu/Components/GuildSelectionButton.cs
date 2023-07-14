@@ -61,10 +61,10 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
         SetTooltip(l_Result);
     }
 
-    public void SetGuildData(GuildData p_GuildData)
+    public async void SetGuildData(GuildData p_GuildData)
     {
         m_GuildData = p_GuildData;
-        UpdateTexture();
+        await UpdateTexture();
     }
 
     public async Task UpdateTexture()
@@ -104,7 +104,7 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
                 CategorySelectionFlowCoordinator.Instance = CategorySelectionFlowCoordinator.Instance();
 
             GSLogger.Instance.Log(m_GuildData.Name, IPA.Logging.Logger.LogLevel.InfoUp);
-            CategorySelectionFlowCoordinator.Instance.ShowWithCategories(m_GuildData.Name, l_Categories);
+            CategorySelectionFlowCoordinator.Instance.ShowWithCategories(m_GuildData.ID, l_Categories);
 
         } catch
         {

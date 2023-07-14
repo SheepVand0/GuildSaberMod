@@ -262,6 +262,30 @@ public static class GuildApi
             return default(List<ApiRankingLevel>);
         }
     }
+
+    internal static async Task<List<PlaylistModel>> GetCategoryPlaylists(int p_GuildId, ApiCategory p_Category)
+    {
+        try
+        {
+            string l_CategoryQueryString = p_Category.ID != 0 ? $"category-id={p_Category.ID}" : string.Empty;
+            List<ApiRankingLevel> l_Levels = await GuildApi.GetLevels(p_GuildId, p_Category.ID);
+            HttpClient l_Client = new HttpClient();
+            List<PlaylistModel> l_Playlists = new List<PlaylistModel>();
+            for (int l_i = 0; l_i < l_Levels.Count; l_i++)
+            {
+                string l_QueryString = $"https://api.guildsaber.com/playlists/data/by-id/{l_Levels[l_i].ID}?player-id={GuildSaberModule.GSPlayerId}&{l_CategoryQueryString}";
+                PlaylistModel l_Playlist = JsonConvert.DeserializeObject<PlaylistModel>(await l_Client.GetStringAsync(l_QueryString));
+                l_Playlist.customData.PlaylistLevel = l_Levels[l_i].LevelNumber;
+                l_Playlists.Add(l_Playlist);
+            }
+
+            return l_Playlists;
+        } catch (Exception l_E)
+        {
+            GSLogger.Instance.Error(l_E, nameof(GuildApi), nameof(GetCategoryPlaylists));
+            return new List<PlaylistModel>();
+        }
+    }
 }
 
 public struct PlayerGuildsInfo
