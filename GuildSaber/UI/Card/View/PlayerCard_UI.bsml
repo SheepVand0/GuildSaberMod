@@ -26,8 +26,15 @@
                         <clickable-image pref-height="1" pref-width="1" preserve-aspect="false" src="~PlayerImageSrc" on-click="OnPPClick"/>
                     </grid>
                 </horizontal>
+              <vertical vertical-fit="MinSize">
                 <grid id="DetailsLevelsLayout" vertical-fit="MinSize" horizontal-fit="PreferredSize" cell-size-x="7" cell-size-y="5.5">
+                  
                 </grid>
+                <horizontal>
+                  <button id="leftlevelspagebutton" text="" on-click="LevelsPageBefore" />
+                  <button id="rightlevelspagebutton" text=">" on-click="LevelsPageNext" />
+                </horizontal>
+              </vertical>
             </horizontal>
         </grid>
     </bg>

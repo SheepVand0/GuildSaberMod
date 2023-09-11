@@ -67,27 +67,32 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
         await UpdateTexture();
     }
 
-    public async Task UpdateTexture()
+    public async Task UpdateTexture(bool p_WithDefaultLogo = false)
     {
         if (m_GuildData.Equals(default)) return;
+        try
+        {
+            GuildSaberUtils.ImageResult l_TextureResult = await GuildSaberUtils.GetImage(m_GuildData.Banner);
+            if (l_TextureResult.IsError || p_WithDefaultLogo) l_TextureResult.Texture = DefaultLogo;
 
-        GuildSaberUtils.ImageResult l_TextureResult = await GuildSaberUtils.GetImage(m_GuildData.Banner);
-        if (l_TextureResult.IsError) l_TextureResult.Texture = DefaultLogo;
+            Texture2D l_Texture = l_TextureResult.Texture;
 
-        Texture2D l_Texture = l_TextureResult.Texture;
+            int l_FixedHeight = l_Texture.width / (80 / 20);
 
-        int l_FixedHeight = l_Texture.width / (80 / 20);
+            int l_Radius = (int)(l_Texture.width * 0.01f);
+            Texture2D l_FixedTexture = TextureUtils.CreateRoundedTexture(l_Texture, l_Radius, (int)(l_FixedHeight / 1.5f));
 
-        int l_Radius = (int)(l_Texture.width * 0.01f);
-        Texture2D l_FixedTexture = TextureUtils.CreateRoundedTexture(l_Texture, l_Radius, (int)(l_FixedHeight/1.5f));
-
-        Element.SetBackgroundSprite(
-            Sprite.Create(
-                l_FixedTexture,
-                new Rect(0, l_FixedHeight / (l_Texture.width / (l_Texture.height / 0.9f)), l_Texture.width, l_FixedHeight),
-                new Vector2())
-            );
-        Element.SetBackgroundColor(new UnityEngine.Color(0.4f, 0.4f, 0.4f));
+            Element.SetBackgroundSprite(
+                Sprite.Create(
+                    l_FixedTexture,
+                    new Rect(0, l_FixedHeight / (l_Texture.width / (l_Texture.height / 0.9f)), l_Texture.width, l_FixedHeight),
+                    new Vector2())
+                );
+            Element.SetBackgroundColor(new UnityEngine.Color(0.4f, 0.4f, 0.4f));
+        } catch
+        {
+            await UpdateTexture(true);
+        }
     }
 
     private async void OnButtonClicked()

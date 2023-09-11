@@ -18,4 +18,9 @@ internal class GuildSelectionFlowCoordinator : CustomFlowCoordinator
         if (m_SelectionMenu == null) m_SelectionMenu = BeatSaberUI.CreateViewController<GuildSelectionMenu>();
         return (m_SelectionMenu, null, null);
     }
+
+    protected override void OnShow()
+    {
+        GuildSaberModule.IsInCustomPlayMenu = true;
+    }
 }

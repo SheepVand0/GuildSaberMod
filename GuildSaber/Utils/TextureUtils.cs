@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Runtime.CompilerServices;
+using UnityEngine;
 
 namespace GuildSaber.Utils
 {
-    internal class TextureUtils
+    internal static class TextureUtils
     {
 
         public static Texture2D MakeCorrespondHeight(Texture2D p_Texture, Rect p_Rect)
@@ -36,18 +37,19 @@ namespace GuildSaber.Utils
             {
                 for (int l_Y = 0; l_Y < p_Texture.height;l_Y++)
                 {
+                    Color l_CurrentPixel = l_Origin.GetPixel(l_X, l_Y);
+
                     float l_Color2Multiplier = (float)(p_Direction == EGradientDirection.Horizontal ? l_X : l_Y) / (float)(p_Direction == EGradientDirection.Horizontal ? l_Origin.width : l_Origin.height);
 
                     float l_Alpha = (p_UseAlpha) ? (l_FirstColor.a + (l_SecondColor.a * l_Color2Multiplier)) / 2 : l_Origin.GetPixel(l_X, l_Y).a;
 
-
                     l_Origin.SetPixel(
                         l_X, l_Y,
-                        new UnityEngine.Color(
-                            (l_FirstColor.r + (l_SecondColor.r * l_Color2Multiplier)) / 2,
-                            (l_FirstColor.g + (l_SecondColor.g * l_Color2Multiplier)) / 2,
-                            (l_FirstColor.b + (l_SecondColor.b * l_Color2Multiplier)) / 2,
-                            l_Alpha)
+                        new Color(
+                            l_CurrentPixel.r * ((l_FirstColor.r + (l_SecondColor.r * l_Color2Multiplier)) / 2),
+                            l_CurrentPixel.g * ((l_FirstColor.g + (l_SecondColor.g * l_Color2Multiplier)) / 2),
+                            l_CurrentPixel.b * ((l_FirstColor.b + (l_SecondColor.b * l_Color2Multiplier)) / 2),
+                            l_CurrentPixel.a * l_Alpha)
                         );
                 }
             }
@@ -180,6 +182,14 @@ namespace GuildSaber.Utils
 
             l_Texture.Apply();
             return l_Texture;
+        }
+
+        public static Texture2D GetCopy(this Texture2D p_Texture)
+        {
+            Texture2D l_New = new Texture2D(p_Texture.width, p_Texture.height);
+            Color[] l_Olds = p_Texture.GetPixels();
+            l_New.SetPixels(l_Olds);
+            return l_New;
         }
 
     }

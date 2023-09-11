@@ -1,5 +1,7 @@
-﻿using CP_SDK.UI.Components;
+﻿using BeatSaberPlus.SDK.Game;
+using CP_SDK.UI.Components;
 using CP_SDK.XUI;
+using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.UI.Defaults;
 using GuildSaber.Utils;
 using HMUI;
@@ -23,6 +25,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         protected XUIText m_MapName;
         protected XUIText m_MapAuthor;
         protected XUIText m_MapDuration;
+        protected XUIText m_Modifiers;
         protected XUIImage m_MapCover;
         protected GSSecondaryButton m_PracticeButton;
         protected GSSecondaryButton m_PlayButton;
@@ -65,6 +68,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 XUIImage.Make()
                     .SetWidth(20)
                     .SetHeight(20)
+                    .SetType(UnityEngine.UI.Image.Type.Simple)
                     .Bind(ref m_MapCover),
                 XUIVLayout.Make(
                     XUIHLayout.Make(
@@ -82,13 +86,25 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
             XUIHLayout.Make(
                 GSSecondaryButton.Make("Practice", 24, 15),
-                GSSecondaryButton.Make("Play", 24, 15)
+                GSSecondaryButton.Make("Play", 24, 15).OnClick(async () =>
+                {
+                    LevelsFlowCoordinator.Instance.Dismiss();
+                    CategorySelectionFlowCoordinator.Instance.Dismiss();
+                    PlayerData l_PlayerData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().First().playerData;
+                    await Task.Delay(500);
+                    OverrideEnvironmentSettings l_OverrideEnvironmentSettings = l_PlayerData.overrideEnvironmentSettings;
+                    Levels.PlaySong(m_Beatmap.level, 
+                        m_Beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic, 
+                        m_Beatmap.difficulty,
+                        l_OverrideEnvironmentSettings, 
+                        l_PlayerData.colorSchemesSettings.GetSelectedColorScheme());
+                })
             ).BuildUI(Element.transform);
         }
 
-        protected IDifficultyBeatmap m_Beatmap;
+        protected IDifficultyBeatmap m_Beatmap = null;
 
-        static string DurationFormat(float p_Duration)
+        public static string DurationFormat(float p_Duration)
         {
             int l_Minutes = (int)(p_Duration / 60);
             int l_Hours = (int)(p_Duration / (60*60));
@@ -96,7 +112,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
             string l_SHours = (l_Hours > 0) ? $"{l_Hours}:" : string.Empty;
 
-            return $"{l_SHours}{l_Minutes}{l_Seconds}";
+            return $"{l_SHours}{l_Minutes}:{l_Seconds}";
         }
 
         public MapDetails SetMap(IDifficultyBeatmap p_Beatmap)
@@ -104,13 +120,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             m_Beatmap = p_Beatmap;
             OnReady(async x =>
             {
-                m_MapName.SetText(p_Beatmap.level.songName);
+                m_MapName.SetText(GuildSaberUtils.GetPlayerNameToFit(p_Beatmap.level.songName, 25));
                 m_MapAuthor.SetText(p_Beatmap.level.songAuthorName);
                 m_MapDuration.SetText(DurationFormat(p_Beatmap.level.songDuration));
 
-                Sprite l_Sprite = await p_Beatmap.level.GetCoverImageAsync(new CancellationToken());
-                Texture2D l_Tex = l_Sprite.texture;
-                l_Tex = TextureUtils.CreateRoundedTexture(l_Tex, l_Tex.width * 0.01f);
+                Sprite l_Sprite = (await p_Beatmap.level.GetCoverImageAsync(new CancellationToken()));
+                Texture2D l_Tex = l_Sprite.texture.GetCopy();
+                l_Tex = TextureUtils.CreateRoundedTexture(l_Tex, l_Tex.width * 0.05f);
+                
                 m_MapCover.SetSprite(Sprite.Create(l_Tex, new Rect(0, 0, l_Tex.width, l_Tex.height), new Vector2()));
             });
             return this;

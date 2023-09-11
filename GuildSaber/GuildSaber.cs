@@ -90,6 +90,8 @@ namespace GuildSaber
 
         private static bool m_PatchedPlayingButtonsPanel = false;
 
+        internal static bool IsInCustomPlayMenu = false;
+
         internal static ModFlowCoordinator m_ModFlowCoordinator;
 
         private static void ShowGuildFlow()

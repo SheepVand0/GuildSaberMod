@@ -90,6 +90,11 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Colors">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\Colors.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="GameplayCore, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <Private>False</Private>
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\GameplayCore.dll</HintPath>
@@ -157,6 +162,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -290,6 +296,7 @@
     <Compile Include="API\ApiRankedDifficultyCollection.cs" />
     <Compile Include="API\ApiRankLevel.cs" />
     <Compile Include="API\BeatLeaderReplayDownloader.cs" />
+    <Compile Include="API\BeatSaverApi.cs" />
     <Compile Include="API\GuildApi.cs" />
     <Compile Include="API\MapLeaderboardApiOutput.cs" />
     <Compile Include="API\PlaylistModel.cs" />
@@ -321,7 +328,7 @@
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\LevelSelectionViewController.cs" />
-    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\MapDetailsViewController.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\MapDetails.cs" />
     <Compile Include="UI\Defaults\GSSecondaryButton.cs" />
     <Compile Include="UI\FlowCoordinator\CustomFlowCoordinator.cs" />
     <Compile Include="UI\InternalPlaylistsManager.cs" />

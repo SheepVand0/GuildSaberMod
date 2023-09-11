@@ -34,8 +34,12 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
     [UIComponent("PlayerNameText")] public TextMeshProUGUI m_PlayerNameText;
     [UIComponent("PlayerGlobalLevelText")] public TextMeshProUGUI m_PlayerGlobalLevelText;
 
+    [UIComponent("leftlevelspagebutton")] public Button m_LeftLevelsPageButton;
+    [UIComponent("rightlevelspagebutton")] public Button m_RightLevelsPageButton;
+
     public List<PlayerRankUI> m_Ranks = new List<PlayerRankUI>();
     public List<PlayerLevelUI> m_Levels = new List<PlayerLevelUI>();
+    public int m_LevelsSelectedPage = 0;
     public FloatingScreen m_CardScreen;
     public bool m_AllowCustomCardColors;
     public bool m_AllowCustomCardGradient;
@@ -137,6 +141,8 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
     protected override void OnViewCreation()
     {
         if (PlayerCardUI.m_Player.Equals(null)) return;
+
+        m_LeftLevelsPageButton.SetButtonText("<");
 
         m_DropdownAvailableGuilds.Clear();
         foreach (GuildData l_Current in GuildSaberModule.AvailableGuilds) m_DropdownAvailableGuilds.Add(l_Current.SmallName ?? l_Current.Name);
@@ -270,9 +276,12 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
     /// <summary>
     ///     Refresh cards Visuals
     /// </summary>
-    public void Refresh()
+    public void Refresh(bool p_OnlySetLevels = false)
     {
         try {
+            if (p_OnlySetLevels)
+                goto LevelsManaging;
+
             if (GuildSaberModule.CardSelectedGuild.Equals(default(GuildData))) return;
 
             ///Checking
@@ -300,9 +309,30 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
                 m_Ranks[l_i].SetValues(l_Rank.PointsName, l_Rank.Rank.ToString());
             }
 
-            ///Set Levels
+LevelsManaging:
+
+///Set Levels
             int l_CategoryDataCount = PlayerCardUI.m_Player.CategoryData.Count;
+            if (l_CategoryDataCount - ((m_LevelsSelectedPage + 1) * 4) < 0)
+                l_CategoryDataCount -= (m_LevelsSelectedPage + 1 * 4) - 4;
+            else
+                l_CategoryDataCount = 4;
+
             for (int l_i = 0; l_i < l_CategoryDataCount; l_i++) {
+
+                GSLogger.Instance.Log((int)(l_i / 4) < m_LevelsSelectedPage, IPA.Logging.Logger.LogLevel.InfoUp);
+                if ((int)(l_i / 4) < m_LevelsSelectedPage || l_i > m_LevelsSelectedPage + 3)
+                {
+                    try
+                    {
+                        m_Levels[l_i].ResetComponent();
+                    } catch
+                    {
+
+                    }
+                    continue;
+                }
+
                 ApiPlayerCategory l_Cat = PlayerCardUI.m_Player.CategoryData[l_i];
                 int l_FontSize = (int)(2 / (l_CategoryDataCount * 0.11f));
                 if (l_FontSize < 1) l_FontSize = 2;
@@ -324,6 +354,11 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
                     m_Levels[l_i].SetValues(l_Cat.CategoryName, l_Cat.LevelValue?.ToString("0.0"), l_FontSize);
                 }
             }
+
+            m_RightLevelsPageButton.interactable = (int)(m_Levels.Count / 4) != (m_LevelsSelectedPage);
+            m_LeftLevelsPageButton.interactable = m_LevelsSelectedPage > 0;
+
+            if (p_OnlySetLevels) return;
 
             m_PlayerNumberOfPasses.text = PlayerCardUI.m_Player.GuildValidPassCount.ToString();
             m_PlayerNameText.text = GuildSaberUtils.GetPlayerNameToFit(PlayerCardUI.m_Player.Name, 16);
@@ -348,7 +383,7 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
         float l_LevelsSize = m_Levels.Count;
         if (l_ShowDetailsLevels) {
             //When the details levels is visible
-            m_CardScreen.ScreenSize = new Vector2((68 + PlayerCardUI.m_Player.Name.Length * 1.2f + l_LevelsSize) * 0.9f, 28 + l_LevelsSize * 0.65f + m_Ranks.Count * 2);
+            m_CardScreen.ScreenSize = new Vector2((68 + PlayerCardUI.m_Player.Name.Length * 1.2f + 40) * 0.9f, 40);
             m_ElementsGrid.cellSize = new Vector2((40 + PlayerCardUI.m_Player.Name.Length + l_LevelsSize) * 1.1f, 40);
             m_DetailsLevelsLayout.cellSize = new Vector2(12 - l_LevelsSize * 0.1f, 10.5f - l_LevelsSize * 0.1f);
             m_ElementsGrid.spacing = new Vector2(7, 7);
@@ -359,6 +394,26 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
             m_ElementsGrid.cellSize = new Vector2(25 + PlayerCardUI.m_Player.Name.Length, 40);
             m_ElementsGrid.spacing = new Vector2(1, 7);
         }
+    }
+
+    [UIAction("LevelsPageBefore")]
+    private void LevelsPageBefore()
+    {
+        if (m_LevelsSelectedPage == 0) 
+            return;
+        m_LevelsSelectedPage -= 1;
+
+        Refresh(true);
+    }
+
+    [UIAction("LevelsPageNext")]
+    private void LevelsPageNext()
+    {
+        if (m_LevelsSelectedPage == (int)(m_Levels.Count / 4))
+            return;
+        m_LevelsSelectedPage += 1;
+
+        Refresh(true);
     }
 
     ////////////////////////////////////////////////////////////////////////////

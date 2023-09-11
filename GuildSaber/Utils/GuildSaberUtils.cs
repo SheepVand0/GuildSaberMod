@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using CP_SDK.Network;
 using GuildSaber.API;
 using GuildSaber.Logger;
 using TMPro;
@@ -184,7 +185,7 @@ public static class GuildSaberUtils
         bool l_IsError = false;
 
         try {
-            using (var l_Client = new WebClient()) {
+            using (var l_Client = new System.Net.WebClient()) {
                 bool l_MoveNext = false;
                 byte[] l_Bytes = await l_Client.DownloadDataTaskAsync(new Uri(p_Url));
 
@@ -200,5 +201,27 @@ public static class GuildSaberUtils
         }
 
         return new ImageResult(l_NewTexture, l_IsError);
+    }
+
+    public static int Diff(int p_Value1, int p_Value2)
+    {
+        if (p_Value1 < p_Value2)
+            return p_Value2 - p_Value1;
+        else
+            return p_Value1 - p_Value2;
+    }
+
+    public static async Task<CP_SDK.Network.WebResponse> GetStringAsync(string p_Url)
+    {
+        bool l_Finished = false;
+        CP_SDK.Network.WebResponse l_Result = null;
+        var l_Client = CP_SDK.Network.WebClient.GlobalClient;
+        l_Client.GetAsync(p_Url, new System.Threading.CancellationToken(), (x) =>
+        {
+            l_Finished = true;
+            l_Result = x;
+        });
+        await WaitUtils.Wait(() => l_Finished, 1);
+        return l_Result;
     }
 }

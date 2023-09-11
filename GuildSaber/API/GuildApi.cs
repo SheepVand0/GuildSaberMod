@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BS_Utils.Gameplay;
+using CP_SDK.Network;
 using GuildSaber.Configuration;
 using GuildSaber.Logger;
 using GuildSaber.UI.Card;
@@ -53,22 +54,20 @@ public static class GuildApi
 
         try
         {
-            using var l_Client = new HttpClient();
-            ApiPlayerData l_DefinedPlayer;
+            WebClient l_Client = CP_SDK.Network.WebClient.GlobalClient;
+
+            ApiPlayerData l_DefinedPlayer = default;
             if (GuildSaberModule.GSPlayerId == null)
             {
-                string l_SerializedPlayer =
-                    await l_Client.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{GuildSaberModule.SsPlayerId}/1");
-                var l_Player = JsonConvert.DeserializeObject<ApiPlayerData>(l_SerializedPlayer);
+                var l_Player = JsonConvert.DeserializeObject<ApiPlayerData>((await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{GuildSaberModule.SsPlayerId}/1")).BodyString);
                 l_DefinedPlayer = l_Player;
                 GuildSaberModule.GSPlayerId = (int)l_Player.ID;
             }
             else
             {
-                string l_SerializedPlayer
-                    = await l_Client.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{GuildSaberModule.SsPlayerId}/1{(p_UseGuild ? "?guild-id=" + l_SelectedGuildId : string.Empty)}");
-                var l_Player = JsonConvert.DeserializeObject<ApiPlayerData>(l_SerializedPlayer);
+                var l_Player = JsonConvert.DeserializeObject<ApiPlayerData>((await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{GuildSaberModule.SsPlayerId}/1{(p_UseGuild ? "?guild-id=" + l_SelectedGuildId : string.Empty)}")).BodyString);
                 l_DefinedPlayer = l_Player;
+                
             }
             GuildSaberModule.SetState(GuildSaberModule.EModState.Functional);
             return l_DefinedPlayer;
@@ -92,11 +91,9 @@ public static class GuildApi
         {
             ApiPlayerData l_Player = await GetPlayerInfoFromAPI(p_UseGuild: false);
 
-            var l_Client = new HttpClient();
+            var l_Client = CP_SDK.Network.WebClient.GlobalClient;
 
-            Task<string> l_SerializedGuilds = l_Client.GetStringAsync($"https://api.guildsaber.com/guilds/data/all?player-id={l_Player.ID}");
-            l_SerializedGuilds.Wait();
-            var l_GuildCollection = JsonConvert.DeserializeObject<ApiGuildCollection>(l_SerializedGuilds.Result);
+            var l_GuildCollection = JsonConvert.DeserializeObject<ApiGuildCollection>((await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/guilds/data/all?player-id={l_Player.ID}")).BodyString);
             List<GuildData> l_Guilds = l_GuildCollection.Guilds;
 
 
@@ -257,7 +254,8 @@ public static class GuildApi
             string l_Serialized = await l_Client.GetStringAsync($"https://api.guildsaber.com/levels/data/all?guild-id={p_GuildId}{l_CategoryString}");
             List<ApiRankingLevel> l_Levels = JsonConvert.DeserializeObject<List<ApiRankingLevel>>(l_Serialized);
             return l_Levels;
-        } catch(Exception l_E)
+        }
+        catch (Exception l_E)
         {
             return default(List<ApiRankingLevel>);
         }
@@ -280,7 +278,8 @@ public static class GuildApi
             }
 
             return l_Playlists;
-        } catch (Exception l_E)
+        }
+        catch (Exception l_E)
         {
             GSLogger.Instance.Error(l_E, nameof(GuildApi), nameof(GetCategoryPlaylists));
             return new List<PlaylistModel>();
