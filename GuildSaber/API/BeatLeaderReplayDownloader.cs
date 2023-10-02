@@ -10,7 +10,7 @@ namespace GuildSaber.API;
 public static class BeatLeaderReplayDownloader
 {
 
-    public static async Task<Replay?> GetReplay(string p_Link)
+    /*public static async Task<Replay?> GetReplay(string p_Link)
     {
         var l_Client = new WebClient();
 
@@ -36,5 +36,5 @@ public static class BeatLeaderReplayDownloader
             return null;
         }
         return l_NewData;
-    }
+    }*/
 }

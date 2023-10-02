@@ -212,6 +212,11 @@
       <Private>False</Private>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
@@ -301,9 +306,11 @@
     <Compile Include="API\MapLeaderboardApiOutput.cs" />
     <Compile Include="API\PlaylistModel.cs" />
     <Compile Include="AssetBundles\AssetBundleLoader.cs" />
+    <Compile Include="Bot\BotManager.cs" />
     <Compile Include="Events.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GuildSaber.cs" />
+    <Compile Include="Harmony\CustomLevelSelectionMenu\OnMapStarted.cs" />
     <Compile Include="Harmony\OnNoteCutPatch.cs" />
     <Compile Include="Harmony\Patches.cs" />
     <Compile Include="Harmony\SecretPatches.cs" />
@@ -324,11 +331,14 @@
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\CategorySelectionFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\GuildSelectionFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\LevelSelectionFlowCoordinator.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\PracticeMenuFlowCoordinator.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\Practice\PracticeManager.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\CategoriesSelectionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\LevelSelectionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\MapDetails.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\PracticeViewController.cs" />
     <Compile Include="UI\Defaults\GSSecondaryButton.cs" />
     <Compile Include="UI\FlowCoordinator\CustomFlowCoordinator.cs" />
     <Compile Include="UI\InternalPlaylistsManager.cs" />
@@ -347,6 +357,7 @@
     <Compile Include="UI\Leaderboard\GuildSaberLeaderboardView.cs" />
     <Compile Include="UI\Leaderboard\Managers\LeaderboardHeaderManager.cs" />
     <Compile Include="UI\Leaderboard\Managers\LeaderboardStatsViewManager.cs" />
+    <Compile Include="UI\Others\EmptyViewController.cs" />
     <Compile Include="UI\Playlists\CategoryUI.cs" />
     <Compile Include="UI\Settings\LeftModViewController.cs" />
     <Compile Include="UI\FlowCoordinator\ModFlowCoordinator.cs" />
@@ -360,6 +371,7 @@
     <Compile Include="Utils\GuildSaberUtils.cs" />
     <Compile Include="Utils\SliderSettingsFix.cs" />
     <Compile Include="Utils\TextureUtils.cs" />
+    <Compile Include="Utils\ToggleSettingFix.cs" />
     <Compile Include="Utils\WaitUtils.cs" />
   </ItemGroup>
   <ItemGroup>

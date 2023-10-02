@@ -106,7 +106,7 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
             List<ApiCategory> l_Categories = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ApiCategory>>(l_Serialized);
 
             if (CategorySelectionFlowCoordinator.Instance == null)
-                CategorySelectionFlowCoordinator.Instance = CategorySelectionFlowCoordinator.Instance();
+                CategorySelectionFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<CategorySelectionFlowCoordinator>();
 
             GSLogger.Instance.Log(m_GuildData.Name, IPA.Logging.Logger.LogLevel.InfoUp);
             CategorySelectionFlowCoordinator.Instance.ShowWithCategories(m_GuildData.ID, l_Categories);

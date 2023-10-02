@@ -172,7 +172,7 @@ namespace GuildSaber.UI.Leaderboard.Components
         ////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////////////////////////////////////////
 
-        [UIAction("StartReplay")]
+        /*[UIAction("StartReplay")]
         private async void StartReplay()
         {
             m_ModalReplay.interactable = false;
@@ -221,7 +221,7 @@ namespace GuildSaber.UI.Leaderboard.Components
             LeaderboardScoreList.ReplayLaunchData = l_Data;
             LeaderboardScoreList.StartedReplayFromMod = true;
 
-        }
+        }*/
 
         private void OnReplayFinished(ReplayLaunchData p_LaunchData)
         {

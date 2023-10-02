@@ -8,6 +8,7 @@ using BeatSaberMarkupLanguage;
 using BeatSaberPlus.SDK;
 using CP_SDK;
 using CP_SDK.Config;
+using CP_SDK.UI;
 using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.Configuration;
@@ -16,6 +17,7 @@ using GuildSaber.UI.Card;
 using GuildSaber.UI.Defaults;
 using GuildSaber.UI.FlowCoordinator;
 using GuildSaber.UI.Leaderboard;
+using GuildSaber.UI.Others;
 using GuildSaber.Utils;
 using HarmonyLib;
 using HMUI;
@@ -30,12 +32,12 @@ using UnityEngine;
 #nullable enable
 namespace GuildSaber
 {
-    public class GuildSaberModule : BSPModuleBase<GuildSaberModule>
+    public class GuildSaberModule : CP_SDK.ModuleBase<GuildSaberModule>
     {
         public const int SCORES_BY_PAGE = 10;
         public static bool Restarting = false;
         public static bool s_BeatLeaderInstalled;
-        private Settings m_SettingsView;
+        private Settings m_SettingsView = null;
 
         public override EIModuleBaseType Type => EIModuleBaseType.Integrated;
 
@@ -75,16 +77,16 @@ namespace GuildSaber
 
         public static HarmonyLib.Harmony HarmonyInstance => new("SheepVand.BeatSaber.GuildSaber");
 
-        protected override (ViewController?, ViewController?, ViewController?) GetSettingsUIImplementation()
+        protected override (IViewController, IViewController, IViewController) GetSettingsViewControllersImplementation()
         {
             if (m_SettingsView == null)
-                m_SettingsView = BeatSaberUI.CreateViewController<Settings>();
+                m_SettingsView = UISystem.CreateViewController<Settings>();
             return (m_SettingsView, null, null);
         }
 
         private async void EnableLeader()
         {
-            Task task = await WaitUtils.Wait(() =>GameObject.Find("LeaderboardNavigationButtonsPanel") != null, 100);
+            Task task = await WaitUtils.Wait(() => GameObject.Find("LeaderboardNavigationButtonsPanel") != null, 100);
             GuildSaberCustomLeaderboard.Instance.Initialize();
         }
 
@@ -98,14 +100,16 @@ namespace GuildSaber
         {
             if (m_ModFlowCoordinator == null)
                 m_ModFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<ModFlowCoordinator>();
-            m_ModFlowCoordinator.Show();
+            m_ModFlowCoordinator.Present();
         }
 
-        internal static async void PatchPlayingButtonsPanel(UnityEngine.SceneManagement.Scene p_Old, UnityEngine.SceneManagement.Scene p_New)
+        internal static async void StartupPatches(UnityEngine.SceneManagement.Scene p_Old, UnityEngine.SceneManagement.Scene p_New)
         {
             if (p_New.name == "MainMenu" && !m_PatchedPlayingButtonsPanel)
             {
-                UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= PatchPlayingButtonsPanel;
+                UISystem.CreateViewController<EmptyViewController>();
+
+                UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= StartupPatches;
                 Transform l_SoloButtonParent = null;
                 await WaitUtils.Wait(() =>
                 {
@@ -119,6 +123,14 @@ namespace GuildSaber
                 UI.Defaults.GSSecondaryButton.Make  ("<i>Guild Saber", /*27, 48*/27, 48, p_OnClick: new Action(ShowGuildFlow)).Bind(ref l_Button).BuildUI(l_SoloButtonParent);
                 //l_Button.Element.ButtonC.GetComponent<TextMeshProUGUI>();
                 m_PatchedPlayingButtonsPanel = true;
+
+                Resources.FindObjectsOfTypeAll<SettingsNavigationController>()[0].didFinishEvent += (p_Value) =>
+                {
+                    if (p_Value == SettingsNavigationController.FinishAction.Apply)
+                    {
+                        m_PatchedPlayingButtonsPanel = false;
+                    }
+                };
             }
         }
 

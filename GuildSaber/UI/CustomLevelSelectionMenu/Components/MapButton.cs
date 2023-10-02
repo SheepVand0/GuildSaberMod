@@ -17,6 +17,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
     internal class MapButton : XUISecondaryButton
     {
         IDifficultyBeatmap m_Beatmap;
+        Sprite m_BeatmapCover;
 
         protected MapButton(IDifficultyBeatmap p_Beatmap, Action p_OnClick = null) : base("MapButton", string.Empty, p_OnClick)
         {
@@ -30,7 +31,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             OnClick(OnClicked);
         }
 
-        public string GetMapName() => m_Beatmap.SerializedName();
+        public string GetMapName() => m_Beatmap.level.songName;
 
         public static MapButton Make(IDifficultyBeatmap p_Beatmap)
         {
@@ -40,18 +41,25 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
         public void SetBeatmap(IDifficultyBeatmap p_Beatmap)
         {
             m_Beatmap = p_Beatmap;
-            OnReady(x =>
+            OnReady(async x =>
             {
-                UpdateVisuals();
+                m_BeatmapCover = await m_Beatmap.level.GetCoverImageAsync(new System.Threading.CancellationToken());
+                CP_SDK.Unity.MTMainThreadInvoker.Enqueue(UpdateVisuals);
             });
         }
 
-        public async void UpdateVisuals()
+        public void UpdateVisuals()
         {
             Element.GetComponentInChildren<DefaultCText>().TMProUGUI.richText = true;
             SetText($"{Utils.GuildSaberUtils.GetPlayerNameToFit(m_Beatmap.level.songName, 16)} {MapDetails.DurationFormat(m_Beatmap.level.songDuration)}\n<size=3>{m_Beatmap.level.songAuthorName}");
 
-            Sprite l_MapCover = await m_Beatmap.level.GetCoverImageAsync(new System.Threading.CancellationToken());
+            Sprite l_MapCover = m_BeatmapCover;
+
+            if (l_MapCover == null)
+            {
+                var l_MapCoverTexture = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GuildSaberLogo.png");
+                l_MapCover = Sprite.Create(l_MapCoverTexture, new Rect(0, 0, l_MapCoverTexture.width, l_MapCoverTexture.height), new Vector2());
+            }
 
             Texture2D l_Texture = l_MapCover.texture.GetCopy();
 
@@ -66,7 +74,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
                     new Rect(0, l_FixedHeight / (l_Texture.width / (l_Texture.height / 0.9f)), l_Texture.width, l_FixedHeight),
                     new Vector2())
                 );
-            Element.SetBackgroundColor(new Color(1f, 1f, 1f));
+            Element.SetBackgroundColor(new Color(1f, 1f, 1f, 0.5f));
         }
 
         private void OnClicked()

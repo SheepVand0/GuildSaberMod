@@ -33,7 +33,7 @@ namespace GuildSaber
             Plugin.Instance = this;
             GSLogger gsLogger = new GSLogger(p_Logger);
             GuildSaberModule.HarmonyInstance.PatchAll();
-            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += GuildSaberModule.PatchPlayingButtonsPanel;
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += GuildSaberModule.StartupPatches;
         }
 
 
@@ -42,7 +42,7 @@ namespace GuildSaber
         {
             if (SelectionFlowCoordinator == null)
                 SelectionFlowCoordinator = BeatSaberUI.CreateFlowCoordinator<GuildSelectionFlowCoordinator>();
-            SelectionFlowCoordinator.Show();
+            SelectionFlowCoordinator.Present();
         }
 
         [OnExit]

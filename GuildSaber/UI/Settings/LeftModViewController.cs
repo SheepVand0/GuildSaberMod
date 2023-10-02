@@ -52,12 +52,12 @@ public class LeftModViewController : ViewController<LeftModViewController>
         }
     }
 
-    protected override string GetViewContentDescription() { return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.GuildSaber.View.LeftModViewController.bsml"); }
+    //protected override string GetViewContentDescription() { return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.GuildSaber.View.LeftModViewController.bsml"); }
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    protected override void OnViewCreation() { Backgroundable.SetOpacity(m_BG, 0.5f); }
+    //protected override void OnViewCreation() { Backgroundable.SetOpacity(m_BG, 0.5f); }
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////

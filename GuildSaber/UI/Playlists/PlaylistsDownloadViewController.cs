@@ -88,13 +88,13 @@ namespace GuildSaber.UI.GuildSaber
             set => JsonConfig<GSConfig>.Instance.UwUMode = value;
         }
 
-        protected override string GetViewContentDescription() => Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.GuildSaber.View.ModViewController.bsml");
+        //protected override string GetViewContentDescription() => Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.GuildSaber.View.ModViewController.bsml");
 
         public event PlaylistViewController.OnOnlyPassedMapsChange e_OnUnPassedOnlyValueChanged;
 
         protected override void OnViewCreation()
         {
-            BeatSaberPlus.SDK.UI.Backgroundable.SetOpacity(m_BG, 0.5f);
+            //BeatSaberPlus.SDK.UI.Backgroundable.SetOpacity(m_BG, 0.5f);
             if (GuildSaberModule.ModState == GuildSaberModule.EModState.APIError)
                 return;
             UpdateCategories();

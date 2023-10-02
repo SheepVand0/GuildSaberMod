@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers;
 
-public class CategoriesSelectionViewController : ViewController<CategoriesSelectionViewController>
+public class CategoriesSelectionViewController : BeatSaberPlus.SDK.UI.ViewController<CategoriesSelectionViewController>
 {
 
     private int m_GuildId = 0;

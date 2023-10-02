@@ -86,5 +86,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
         {
             LevelSelectionViewController.Instance.SetSelectedPlaylist(m_LevelNumber);
         }
+
     }
 }

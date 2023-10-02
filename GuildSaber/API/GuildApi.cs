@@ -54,7 +54,7 @@ public static class GuildApi
 
         try
         {
-            WebClient l_Client = CP_SDK.Network.WebClient.GlobalClient;
+            CP_SDK.Network.WebClientCore l_Client = CP_SDK.Network.WebClientCore.GlobalClient;
 
             ApiPlayerData l_DefinedPlayer = default;
             if (GuildSaberModule.GSPlayerId == null)
@@ -91,7 +91,7 @@ public static class GuildApi
         {
             ApiPlayerData l_Player = await GetPlayerInfoFromAPI(p_UseGuild: false);
 
-            var l_Client = CP_SDK.Network.WebClient.GlobalClient;
+            var l_Client = CP_SDK.Network.WebClientCore.GlobalClient;
 
             var l_GuildCollection = JsonConvert.DeserializeObject<ApiGuildCollection>((await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/guilds/data/all?player-id={l_Player.ID}")).BodyString);
             List<GuildData> l_Guilds = l_GuildCollection.Guilds;

@@ -215,7 +215,7 @@ public static class GuildSaberUtils
     {
         bool l_Finished = false;
         CP_SDK.Network.WebResponse l_Result = null;
-        var l_Client = CP_SDK.Network.WebClient.GlobalClient;
+        var l_Client = CP_SDK.Network.WebClientCore.GlobalClient;
         l_Client.GetAsync(p_Url, new System.Threading.CancellationToken(), (x) =>
         {
             l_Finished = true;

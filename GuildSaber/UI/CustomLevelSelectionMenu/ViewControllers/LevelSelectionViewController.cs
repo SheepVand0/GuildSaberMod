@@ -22,10 +22,11 @@ using System.Configuration;
 using GuildSaber.UI.Defaults;
 using PlaylistManager.HarmonyPatches;
 using JetBrains.Annotations;
+using GuildSaber.UI.Others;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 {
-    internal class LevelSelectionViewController : ViewController<LevelSelectionViewController>
+    internal class LevelSelectionViewController : BeatSaberPlus.SDK.UI.ViewController<LevelSelectionViewController>
     {
         internal static LevelSelectionViewController Instance;
 
@@ -53,6 +54,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         protected XUISecondaryButton m_DownloadMapsButton;
 
+        protected XUITextInput m_SearchTextInput;
+
         protected string m_SearchValue = string.Empty;
 
         protected override void OnViewCreation()
@@ -70,10 +73,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                     {
                         m_SearchValue = val;
                         UpdateMapList(false, true);
-                    }),
+                    }).Bind(ref m_SearchTextInput),
                     GSSecondaryButton.Make("x", 5, 5).OnClick(() =>
                     {
                         m_SearchValue = string.Empty;
+                        m_SearchTextInput.Element.SetValue(string.Empty);
                         UpdateMapList(false, true);
                     })
                     ),
@@ -160,7 +164,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
             SetMode(EMode.Loading);
 
-            GSLogger.Instance.Log(p_GuildId, IPA.Logging.Logger.LogLevel.InfoUp);
+            //GSLogger.Instance.Log(p_GuildId, IPA.Logging.Logger.LogLevel.InfoUp);
 
             GuildData l_Guild = GuildSaberModule.AvailableGuilds.Where((x) => x.ID == p_GuildId).ElementAt(0);
 
@@ -171,8 +175,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 GuildName = l_Guild.Name;
                 CategoryName = p_Category.Name;
 
-                GSLogger.Instance.Log(GuildName, IPA.Logging.Logger.LogLevel.InfoUp);
-                GSLogger.Instance.Log(CategoryName, IPA.Logging.Logger.LogLevel.InfoUp);
+                //GSLogger.Instance.Log(GuildName, IPA.Logging.Logger.LogLevel.InfoUp);
+                //GSLogger.Instance.Log(CategoryName, IPA.Logging.Logger.LogLevel.InfoUp);
 
                 List<PlaylistModel> l_Playlists = await InternalPlaylistsManager.LoadPlaylists(GuildName, CategoryName);
                 Playlists = l_Playlists;
@@ -191,7 +195,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                     return;
                 }
 
-                await UpdateLevelsOnUI();
+                UpdateLevelsOnUI();
 
                 SetMode(EMode.Normal);
 
@@ -209,13 +213,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 l_Index.SetActive(false);
         }
 
-        public async Task<Task> UpdateLevelsOnUI()
+        public void UpdateLevelsOnUI()
         {
             ClearUILevels();
 
             foreach (var l_Index in UIPlaylists)
             {
-                l_Index.SetActive(false);
+                l_Index.SetHeight(0);
+                l_Index.SetWidth(0);
             }
 
             for (int l_i = 0; l_i < Playlists.Count();l_i++)
@@ -238,8 +243,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                     UIPlaylists[l_i].SetLevel(l_Model.image, l_Songs, l_Model.customData.PlaylistLevel);
                 }
             }
-
-            return Task.CompletedTask;
         }
 
         public async void SetSelectedPlaylist(float p_Level)
@@ -257,6 +260,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             }
 
             m_MapList.Element.ScrollTo(0, false);
+
+            HideMapsButton();
+
+            m_SearchTextInput.SetValue(string.Empty);
 
             for (int l_i = 0; l_i < l_Playlist.songs.Count();l_i++)
             {
@@ -281,7 +288,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                                 if (l_PlaylistDiff.name.ToLower() == l_Difficulty.difficulty.ToString().ToLower() && l_PlaylistDiff.characteristic == l_Beatmapset.beatmapCharacteristic.serializedName)
                                 {
                                     Beatmaps.Add(l_Difficulty);
-                                    UpdateMapButtonAtIndex(l_i, l_Difficulty);
+                                    //UpdateMapButtonAtIndex(l_i, l_Difficulty);
                                 }
                             }
                         }
@@ -289,9 +296,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 });
             }
 
-            GSLogger.Instance.Log(Beatmaps.Count, IPA.Logging.Logger.LogLevel.InfoUp);
-
-            UpdateMapList(false);
+            UpdateMapList(true);
         }
 
         public async void DownloadLevels()
@@ -309,10 +314,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             MapsToDownload.Clear();
         }
 
-        private async void OnMapsFinishedToRefresh(SongCore.Loader arg1, System.Collections.Concurrent.ConcurrentDictionary<string, CustomPreviewBeatmapLevel> arg2)
+        private void OnMapsFinishedToRefresh(SongCore.Loader arg1, System.Collections.Concurrent.ConcurrentDictionary<string, CustomPreviewBeatmapLevel> arg2)
         {
             SongCore.Loader.SongsLoadedEvent -= OnMapsFinishedToRefresh;
-            await Task.Delay(500);
             SetSelectedPlaylist(m_SelectedLevel);
             m_StatusText.SetText(string.Empty);
         }
@@ -329,7 +333,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
             } catch (Exception p_E)
             {
-                GSLogger.Instance.Error(p_E, nameof(LevelSelectionViewController), nameof(GetSongFromHash));
+                //GSLogger.Instance.Error(p_E, nameof(LevelSelectionViewController), nameof(GetSongFromHash));
                 if (Callback != null)
                     Callback.Invoke(null);
                 return null;
@@ -338,6 +342,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
+
+        public void HideMapsButton()
+        {
+            foreach (var l_Index in UIMaps)
+            {
+                l_Index.SetActive(false);
+            }
+        }
 
         public void UpdateMapList(bool p_RefreshVisuals = true, bool p_UpdateFromSearch = false)
         {
@@ -352,10 +364,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             }
 
             if (p_RefreshVisuals)
-                foreach (var l_Index in UIMaps)
-                    l_Index.SetActive(false);
+                HideMapsButton();
 
-            if (p_UpdateFromSearch)
+            if (p_UpdateFromSearch == true)
             {
                 foreach(var l_Index in UIMaps)
                 {
@@ -384,6 +395,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             {
                 UIMaps.Add(MapButton.Make(p_Beatmap));
                 UIMaps[p_Index].BuildUI(m_MapList.Element.Container);
+                UIMaps[p_Index].SetActive(true);
             }
             else
             {
@@ -429,20 +441,25 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             int l_Score = 0;
             int l_RequierdScore = p_SearchValue.Length;
 
-            foreach (var l_Index in p_SearchValue)
+            string l_Name = p_Name.ToLower();
+            string l_SearchValue = p_SearchValue.ToLower();
+
+            foreach (var l_Index in l_SearchValue)
             {
-                if (p_Name.Contains(l_Index))
+                if (l_Name.Contains(l_Index))
                     l_Score += 1;
             }
-            return GuildSaberUtils.Diff(l_Score, l_RequierdScore) <= 1;
+            return GuildSaberUtils.Diff(l_Score, l_RequierdScore) == 0;
         }
 
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
 
-        protected override void OnViewActivation()
+        /*protected override void OnViewActivation()
         {
-            GameObject.Find("LeftScreen").SetActive(true);
+            //GameObject.Find("LeftScreen").SetActive(true);
+
+            //CampaignFlowCoordinator
         }
 
         protected override void OnViewDeactivation()
@@ -454,6 +471,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             {
 
             }
-        }
+        }*/
     }
 }

@@ -1,4 +1,5 @@
-﻿using BeatSaberPlus.SDK.Game;
+﻿using BeatSaberMarkupLanguage;
+using BeatSaberPlus.SDK.Game;
 using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
@@ -22,6 +23,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             OnReady(OnLayoutReady);
         }
 
+        protected int m_OldWidth = 0;
+
         protected XUIText m_MapName;
         protected XUIText m_MapAuthor;
         protected XUIText m_MapDuration;
@@ -30,9 +33,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         protected GSSecondaryButton m_PracticeButton;
         protected GSSecondaryButton m_PlayButton;
 
+        internal static AudioSource m_MapPreviewAudio;
+
         public static MapDetails Make()
         {
-            XUIImage l_Cover = XUIImage.Make();
+            /*XUIImage l_Cover = XUIImage.Make();
             l_Cover.SetWidth(20).SetHeight(20);
 
             XUIText l_MapName = XUIText.Make(string.Empty);
@@ -50,7 +55,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                     )
                 )
                 .SetHeight(20)
-                .SetWidth(50);
+                .SetWidth(50);*/
 
             return new MapDetails();
         }
@@ -80,26 +85,32 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                     XUIText.Make(string.Empty)
                         .Bind(ref m_MapAuthor)
                 )
-            ).SetWidth(50)
+            ).SetWidth(60)
              .SetHeight(20)
              .BuildUI(Element.transform);
 
+            if (m_MapPreviewAudio == null)
+                m_MapPreviewAudio = Resources.FindObjectsOfTypeAll<AudioSource>().First();
+
             XUIHLayout.Make(
-                GSSecondaryButton.Make("Practice", 24, 15),
+                GSSecondaryButton.Make("Practice", 24, 15).OnClick(OnPracticeClicked),
                 GSSecondaryButton.Make("Play", 24, 15).OnClick(async () =>
                 {
-                    LevelsFlowCoordinator.Instance.Dismiss();
-                    CategorySelectionFlowCoordinator.Instance.Dismiss();
+                    //LevelsFlowCoordinator.Instance.Dismiss();
+                    //CategorySelectionFlowCoordinator.Instance.Dismiss();
                     PlayerData l_PlayerData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().First().playerData;
                     await Task.Delay(500);
                     OverrideEnvironmentSettings l_OverrideEnvironmentSettings = l_PlayerData.overrideEnvironmentSettings;
+                    
                     Levels.PlaySong(m_Beatmap.level, 
                         m_Beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic, 
                         m_Beatmap.difficulty,
-                        l_OverrideEnvironmentSettings, 
-                        l_PlayerData.colorSchemesSettings.GetSelectedColorScheme());
+                        l_OverrideEnvironmentSettings,
+                        l_PlayerData.colorSchemesSettings.GetSelectedColorScheme(), l_PlayerData.gameplayModifiers, l_PlayerData.playerSpecificSettings);
                 })
             ).BuildUI(Element.transform);
+
+            SetActive(false);
         }
 
         protected IDifficultyBeatmap m_Beatmap = null;
@@ -110,9 +121,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             int l_Hours = (int)(p_Duration / (60*60));
             int l_Seconds = (int)p_Duration - (l_Minutes * 60) - (l_Hours * 60);
 
-            string l_SHours = (l_Hours > 0) ? $"{l_Hours}:" : string.Empty;
+            string l_SHours = (l_Hours > 0) ? $"{l_Hours:00}:" : string.Empty;
 
-            return $"{l_SHours}{l_Minutes}:{l_Seconds}";
+            return $"{l_SHours}{l_Minutes:00}:{l_Seconds:00}";
         }
 
         public MapDetails SetMap(IDifficultyBeatmap p_Beatmap)
@@ -120,17 +131,40 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             m_Beatmap = p_Beatmap;
             OnReady(async x =>
             {
-                m_MapName.SetText(GuildSaberUtils.GetPlayerNameToFit(p_Beatmap.level.songName, 25));
-                m_MapAuthor.SetText(p_Beatmap.level.songAuthorName);
-                m_MapDuration.SetText(DurationFormat(p_Beatmap.level.songDuration));
 
                 Sprite l_Sprite = (await p_Beatmap.level.GetCoverImageAsync(new CancellationToken()));
-                Texture2D l_Tex = l_Sprite.texture.GetCopy();
-                l_Tex = TextureUtils.CreateRoundedTexture(l_Tex, l_Tex.width * 0.05f);
-                
-                m_MapCover.SetSprite(Sprite.Create(l_Tex, new Rect(0, 0, l_Tex.width, l_Tex.height), new Vector2()));
+
+                CP_SDK.Unity.MTMainThreadInvoker.Enqueue(() =>
+                {
+                    m_MapName.SetText(GuildSaberUtils.GetPlayerNameToFit(p_Beatmap.level.songName, 20));
+                    m_MapAuthor.SetText(p_Beatmap.level.songAuthorName);
+                    m_MapDuration.SetText(DurationFormat(p_Beatmap.level.songDuration));
+
+                    Texture2D l_Tex = l_Sprite.texture.GetCopy();
+                    l_Tex = TextureUtils.CreateRoundedTexture(l_Tex, l_Tex.width * 0.05f);
+
+                    m_MapCover.SetSprite(Sprite.Create(l_Tex, new Rect(0, 0, l_Tex.width, l_Tex.height), new Vector2()));
+                    PlaySongPreview();
+                    SetActive(true);
+                });
             });
             return this;
+        }
+
+        public void PlaySongPreview()
+        {
+            m_MapPreviewAudio.Stop();
+            m_MapPreviewAudio.clip = m_Beatmap.level.beatmapLevelData.audioClip;
+            m_MapPreviewAudio.time = m_Beatmap.level.previewStartTime;
+            m_MapPreviewAudio.Play();
+            m_MapPreviewAudio.volume = 1;
+        }
+
+        protected void OnPracticeClicked()
+        {
+            if (PracticeMenuFlowCoordinator.Instance == null)
+                PracticeMenuFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<PracticeMenuFlowCoordinator>();
+            PracticeMenuFlowCoordinator.Instance.ShowWithBeatmap(m_Beatmap);
         }
     }
 }

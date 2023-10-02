@@ -37,17 +37,17 @@ namespace GuildSaber.UI.FlowCoordinator
         protected override void BackButtonWasPressed(ViewController topViewController)
         {
             base.BackButtonWasPressed(topViewController);
-            Hide();
+            Dismiss();
         }
 
-        public void Show()
+        public void Present()
         {
             m_LastFlowCoordinator = BeatSaberUI.MainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf();
             m_LastFlowCoordinator.PresentFlowCoordinator(this);
             OnShow();
         }
 
-        public void Hide()
+        public void Dismiss()
         {
             if (m_LastFlowCoordinator == null)
                 return;

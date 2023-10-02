@@ -15,6 +15,7 @@ using GuildSaber.Time;
 using GuildSaber.Utils;
 using HMUI;
 using IPA.Utilities;
+using SixLabors.ImageSharp.PixelFormats;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -130,7 +131,6 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
         // ReSharper disable once ValueParameterNotUsed
         set { }
     }
-    protected override string GetViewContentDescription() { return Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.Card.View.PlayerCard_UI.bsml"); }
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -140,6 +140,10 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
     /// </summary>
     protected override void OnViewCreation()
     {
+        string l_CardData = Utilities.GetResourceContent(Assembly.GetExecutingAssembly(), "GuildSaber.UI.Card.View.PlayerCard_UI.bsml");
+
+        BSMLParser.instance.Parse(l_CardData, gameObject, this);
+
         if (PlayerCardUI.m_Player.Equals(null)) return;
 
         m_LeftLevelsPageButton.SetButtonText("<");
@@ -153,26 +157,29 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
         m_GuildSelector.Value = l_CurrentGuild.SmallName ?? l_CurrentGuild.Name;
         m_GuildSelector.ApplyValue();
 
+        
+
         GuildSaberModule.CardSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild);
 
         ///Settings setup
         var l_SettingAction = new BSMLAction(this, GetType().GetMethod(nameof(OnSettingChanged), BindingFlags.Instance | BindingFlags.NonPublic));
 
-        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleShowHandle, l_SettingAction, GSConfig.Instance.CardHandleVisible, false);
-        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleDetailedLevels, l_SettingAction, GSConfig.Instance.ShowDetailsLevels, false);
-        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleShowPlayTime, l_SettingAction, GSConfig.Instance.ShowPlayTime, false);
+        
+        Utils.ToggleSettingFix.Setup(m_ToggleShowHandle, l_SettingAction, GSConfig.Instance.CardHandleVisible, false);
+        ToggleSettingFix.Setup(m_ToggleDetailedLevels, l_SettingAction, GSConfig.Instance.ShowDetailsLevels, false);
+        ToggleSettingFix.Setup(m_ToggleShowPlayTime, l_SettingAction, GSConfig.Instance.ShowPlayTime, false);
 
-        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleCustomCardColors, l_SettingAction, GSConfig.Instance.UseCustomColor, false);
-        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleCustomCardGradient, l_SettingAction, GSConfig.Instance.UseCustomColorGradient, false);
-        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleInvertGradient, l_SettingAction, GSConfig.Instance.InvertGradient, false);
+        ToggleSettingFix.Setup(m_ToggleCustomCardColors, l_SettingAction, GSConfig.Instance.UseCustomColor, false);
+        ToggleSettingFix.Setup(m_ToggleCustomCardGradient, l_SettingAction, GSConfig.Instance.UseCustomColorGradient, false);
+        ToggleSettingFix.Setup(m_ToggleInvertGradient, l_SettingAction, GSConfig.Instance.InvertGradient, false);
         Utils.ColorSettingsFix.Setup(m_CustomColorSettings, l_SettingAction, GSConfig.Instance.CustomColor, false);
         Utils.ColorSettingsFix.Setup(m_CustomColorSettings1, l_SettingAction, GSConfig.Instance.CustomColor1, false);
         Utils.SliderSettingsFix.Setup(m_CardColorMultiplier, l_SettingAction, null, GSConfig.Instance.GradientColor1Multiplier, true);
 
-        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleCustomPointsColor, l_SettingAction, GSConfig.Instance.UseCustomPointsColor, false);
+        ToggleSettingFix.Setup(m_ToggleCustomPointsColor, l_SettingAction, GSConfig.Instance.UseCustomPointsColor, false);
         Utils.ColorSettingsFix.Setup(m_CustomPointsColor, l_SettingAction, GSConfig.Instance.CustomPointsColor, false);
 
-        BeatSaberPlus.SDK.UI.ToggleSetting.Setup(m_ToggleUseCustomNameColor, l_SettingAction, GSConfig.Instance.UseCustomNameGradientColor, false);
+        ToggleSettingFix.Setup(m_ToggleUseCustomNameColor, l_SettingAction, GSConfig.Instance.UseCustomNameGradientColor, false);
         Utils.ColorSettingsFix.Setup(m_CustomNameColor, l_SettingAction, GSConfig.Instance.CustomNameGradientColor, false);
         Utils.SliderSettingsFix.Setup(m_NameGradientMutiliplier, l_SettingAction, null, GSConfig.Instance.NameGradientColor0Multiplier, true);
 
@@ -311,7 +318,7 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
 
 LevelsManaging:
 
-///Set Levels
+            ///Set Levels
             int l_CategoryDataCount = PlayerCardUI.m_Player.CategoryData.Count;
             if (l_CategoryDataCount - ((m_LevelsSelectedPage + 1) * 4) < 0)
                 l_CategoryDataCount -= (m_LevelsSelectedPage + 1 * 4) - 4;
@@ -383,7 +390,7 @@ LevelsManaging:
         float l_LevelsSize = m_Levels.Count;
         if (l_ShowDetailsLevels) {
             //When the details levels is visible
-            m_CardScreen.ScreenSize = new Vector2((68 + PlayerCardUI.m_Player.Name.Length * 1.2f + 40) * 0.9f, 40);
+            m_CardScreen.ScreenSize = new Vector2((42 + PlayerCardUI.m_Player.Name.Length * 1.2f + 40) * 0.9f, 40);
             m_ElementsGrid.cellSize = new Vector2((40 + PlayerCardUI.m_Player.Name.Length + l_LevelsSize) * 1.1f, 40);
             m_DetailsLevelsLayout.cellSize = new Vector2(12 - l_LevelsSize * 0.1f, 10.5f - l_LevelsSize * 0.1f);
             m_ElementsGrid.spacing = new Vector2(7, 7);

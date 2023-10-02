@@ -1,4 +1,4 @@
-﻿using BeatSaberPlus.SDK.UI;
+﻿using CP_SDK.UI;
 using CP_SDK.XUI;
 using GuildSaber.Configuration;
 using GuildSaber.UI.Card;
@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GuildSaber.UI.BeatSaberPlusSettings;
 
-internal class Settings : EmptyViewController<Settings>
+internal class Settings : ViewController<Settings>
 {
     private XUIToggle m_BoolCardEnabled = null;
 

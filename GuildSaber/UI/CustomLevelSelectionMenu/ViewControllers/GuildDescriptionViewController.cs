@@ -10,7 +10,7 @@ using TMPro;
 // ReSharper disable once CheckNamespace
 namespace GuildSaber.UI.CustomLevelSelectionMenu;
 
-internal class GuildDescriptionLine
+/*internal class GuildDescriptionLine
 {
 
     ////////////////////////////////////////////////////////////////////////////
@@ -100,4 +100,4 @@ internal class GuildDescriptionViewController : ViewController<GuildDescriptionV
 
         m_LineList.tableView.ReloadData();
     }
-}
+}*/
