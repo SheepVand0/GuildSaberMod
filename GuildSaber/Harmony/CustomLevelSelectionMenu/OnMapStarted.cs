@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using static BeatmapObjectSpawnMovementData;
 using PViewController = GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.PracticeViewController;
 using IPA.Utilities;
+using GuildSaber.UI.CustomLevelSelectionMenu;
 
 namespace GuildSaber.Harmony.CustomLevelSelectionMenu
 {
@@ -19,7 +20,7 @@ namespace GuildSaber.Harmony.CustomLevelSelectionMenu
     {
         public static void Prefix(BeatmapObjectSpawnMovementData __instance, ref int noteLinesCount, ref float startNoteJumpMovementSpeed, ref float startBpm, ref NoteJumpValueType noteJumpValueType, ref float noteJumpValue, ref IJumpOffsetYProvider jumpOffsetYProvider, ref Vector3 rightVec, ref Vector3 forwardVec)
         {
-            if (!PracticeMenuFlowCoordinator.IsPractice) return;
+            if (!CustomLevelSelectionMenuReferences.IsInPractice) return;
 
             startNoteJumpMovementSpeed = PViewController.Instance.GetCustomNJS();
         }

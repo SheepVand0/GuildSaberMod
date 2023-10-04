@@ -19,6 +19,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
         IDifficultyBeatmap m_Beatmap;
         Sprite m_BeatmapCover;
 
+        public static event Action<IDifficultyBeatmap> eOnMapSelected;
+
         protected MapButton(IDifficultyBeatmap p_Beatmap, Action p_OnClick = null) : base("MapButton", string.Empty, p_OnClick)
         {
             SetWidth(45);
@@ -66,7 +68,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             int l_FixedHeight = l_Texture.width / (4);
 
             float l_Radius = (l_Texture.width * 0.05f);
-            Texture2D l_FixedTexture = CreateRoundedTexture(l_Texture, l_Radius, (int)(l_FixedHeight / 1.5f));
+            Texture2D l_FixedTexture = AddOffset(/*CreateRoundedTexture(l_Texture, l_Radius)*/ l_Texture, (int)(l_FixedHeight / 1.5f));
 
             Element.SetBackgroundSprite(
                 Sprite.Create(
@@ -80,6 +82,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
         private void OnClicked()
         {
             LevelSelectionViewController.Instance.SetSelectedMap(m_Beatmap);
+            eOnMapSelected?.Invoke(m_Beatmap);
         }
     }
 }

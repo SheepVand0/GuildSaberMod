@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -19,6 +20,10 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
     private GuildData m_GuildData = default;
 
     public static Texture2D DefaultLogo = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
+
+    public static Texture2D SelectedGuildTexture = null;
+
+    protected Texture2D GuildTexture = null;
 
     public GuildSelectionButton(GuildData p_GuildData) : base("GuildSelectionButton", string.Empty, null)
     {
@@ -77,20 +82,24 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
 
             Texture2D l_Texture = l_TextureResult.Texture;
 
-            int l_FixedHeight = l_Texture.width / (80 / 20);
+            //int l_FixedHeight = l_Texture.width / (80 / 20);
 
             int l_Radius = (int)(l_Texture.width * 0.01f);
-            Texture2D l_FixedTexture = TextureUtils.CreateRoundedTexture(l_Texture, l_Radius, (int)(l_FixedHeight / 1.5f));
+            var l_FixedHeightObject = TextureUtils.GetHeigth((int)(l_Texture.width * (float)(20 / 80)), l_Texture.width, l_Texture.height);
+            Texture2D l_FixedTexture = TextureUtils.AddOffset(TextureUtils.CreateRoundedTexture(l_Texture, l_Radius), l_FixedHeightObject.RoundedTextureOffset);
 
             Element.SetBackgroundSprite(
                 Sprite.Create(
                     l_FixedTexture,
-                    new Rect(0, l_FixedHeight / (l_Texture.width / (l_Texture.height / 0.9f)), l_Texture.width, l_FixedHeight),
+                    new Rect(0, 0, l_FixedTexture.width, l_FixedTexture.height),
                     new Vector2())
                 );
+
+            GuildTexture = l_TextureResult.Texture;
             Element.SetBackgroundColor(new UnityEngine.Color(0.4f, 0.4f, 0.4f));
-        } catch
+        } catch (Exception l_E)
         {
+            GSLogger.Instance.Error(l_E, nameof(GuildSelectionButton), nameof(UpdateTexture));
             await UpdateTexture(true);
         }
     }
@@ -108,9 +117,10 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
             if (CategorySelectionFlowCoordinator.Instance == null)
                 CategorySelectionFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<CategorySelectionFlowCoordinator>();
 
+            SelectedGuildTexture = GuildTexture;
             GSLogger.Instance.Log(m_GuildData.Name, IPA.Logging.Logger.LogLevel.InfoUp);
             CategorySelectionFlowCoordinator.Instance.ShowWithCategories(m_GuildData.ID, l_Categories);
-
+            CustomLevelSelectionMenuReferences.SelectedGuildId = m_GuildData.ID;
         } catch
         {
 

@@ -7,6 +7,7 @@ using GuildSaber.UI.FlowCoordinator;
 using HMUI;
 using UnityEngine;
 using System.Linq;
+using LDViewController = GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.GuildSaberLeaderboardViewController;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
 {
@@ -40,7 +41,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
             l_GameplaySetupViewController.__Activate(false, true);
             l_GameplaySetupViewController.Setup(true, true, true, false, PlayerSettingsPanelController.PlayerSettingsPanelLayout.All);
 
-            return (m_ViewController, l_GameplaySetupViewController, null);
+            if (LDViewController.Instance == null)
+                LDViewController.Instance = BeatSaberUI.CreateViewController<LDViewController>();
+
+            return (m_ViewController, l_GameplaySetupViewController, LDViewController.Instance);
         }
     }
 }

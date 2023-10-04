@@ -10,7 +10,7 @@ namespace GuildSaber.Utils
         {
             if (p_Rect.y >= p_Texture.height) return p_Texture;
 
-            UnityEngine.Color[] l_Texture = p_Texture.GetPixels(0, (int)(p_Texture.width - p_Rect.y)/2, p_Texture.width, (int)p_Rect.height);
+            UnityEngine.Color[] l_Texture = p_Texture.GetPixels(0, (int)(p_Texture.width - p_Rect.y) / 2, p_Texture.width, (int)p_Rect.height);
 
             // ReSharper disable once PossibleLossOfFraction
             var l_ResultTexture = new Texture2D(p_Texture.width, (int)p_Rect.height);
@@ -33,9 +33,9 @@ namespace GuildSaber.Utils
             UnityEngine.Color l_FirstColor = (p_Invert) ? p_Color1 : p_Color2;
             UnityEngine.Color l_SecondColor = (p_Invert) ? p_Color2 : p_Color1;
 
-            for (int l_X = 0; l_X < p_Texture.width;l_X++)
+            for (int l_X = 0; l_X < p_Texture.width; l_X++)
             {
-                for (int l_Y = 0; l_Y < p_Texture.height;l_Y++)
+                for (int l_Y = 0; l_Y < p_Texture.height; l_Y++)
                 {
                     Color l_CurrentPixel = l_Origin.GetPixel(l_X, l_Y);
 
@@ -59,9 +59,32 @@ namespace GuildSaber.Utils
             return l_Origin;
         }
 
-        public static Texture2D CreateRoundedTexture(Texture2D p_Origin, float p_Radius, int p_Offset = 0, bool p_PushPixels = false)
+        public static Texture2D AddOffset(Texture2D p_Origin, int p_Offset)
+        {
+            int l_Height = p_Origin.height - (p_Offset * 2);
+            if (l_Height <= 0)
+                l_Height = p_Origin.height;
+            Texture2D l_Result = new Texture2D(p_Origin.width, l_Height);
+            Color[] l_Colors = p_Origin.GetPixels();
+            for (int l_X = 0; l_X < l_Result.width; l_X++)
+            {
+                for (int l_Y = 0; l_Y < l_Result.height; l_Y++)
+                {
+                    int l_FixedY = l_Y + p_Offset;
+                    if (l_Result.height == p_Origin.height)
+                        l_FixedY = l_Y;
+
+                    l_Result.SetPixel(l_X, l_Y, p_Origin.GetPixel(l_X, l_FixedY));
+                }
+            }
+            l_Result.Apply();
+            return l_Result;
+        }
+
+        public static Texture2D CreateRoundedTexture(Texture2D p_Origin, float p_Radius, bool p_PushPixels = false)
         {
             Texture2D l_Texture = p_Origin;
+            
 
             for (int l_i = 0; l_i < 4; l_i++)
             {
@@ -74,8 +97,8 @@ namespace GuildSaber.Utils
                         /// Corner Bottom Left
                         if (l_i == 0)
                         {
-                            Vector2 l_Point = new Vector2(l_X, l_Y + p_Offset);
-                            Vector2 l_RadiusPoint = new Vector2(p_Radius, p_Radius + p_Offset);
+                            Vector2 l_Point = new Vector2(l_X, l_Y);
+                            Vector2 l_RadiusPoint = new Vector2(p_Radius, p_Radius);
 
                             if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
                             {
@@ -95,8 +118,8 @@ namespace GuildSaber.Utils
                         /// Corner Bottom Right
                         if (l_i == 1)
                         {
-                            Vector2 l_Point = new Vector2(l_X + (l_Texture.width - p_Radius), l_Y + p_Offset);
-                            Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, p_Radius + p_Offset);
+                            Vector2 l_Point = new Vector2(l_X + (l_Texture.width - p_Radius), l_Y);
+                            Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, p_Radius);
 
                             if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
                             {
@@ -116,8 +139,8 @@ namespace GuildSaber.Utils
                         /// Corner Top Left
                         if (l_i == 2)
                         {
-                            Vector2 l_Point = new Vector2(l_X, l_Y + (l_Texture.height - p_Radius - p_Offset));
-                            Vector2 l_RadiusPoint = new Vector2(p_Radius, (l_Texture.height - p_Radius - p_Offset));
+                            Vector2 l_Point = new Vector2(l_X, l_Y + (l_Texture.height - p_Radius));
+                            Vector2 l_RadiusPoint = new Vector2(p_Radius, (l_Texture.height - p_Radius));
 
                             if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
                             {
@@ -135,8 +158,8 @@ namespace GuildSaber.Utils
                         /// Corner Top Right
                         if (l_i == 3)
                         {
-                            Vector2 l_Point = new Vector2(l_X + (l_Texture.width - p_Radius), l_Y + (l_Texture.height - p_Radius - p_Offset));
-                            Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, l_Texture.height - p_Radius - p_Offset);
+                            Vector2 l_Point = new Vector2(l_X + (l_Texture.width - p_Radius), l_Y + (l_Texture.height - p_Radius));
+                            Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, l_Texture.height - p_Radius);
 
                             if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
                             {
@@ -156,30 +179,6 @@ namespace GuildSaber.Utils
                 }
             }
 
-            if (p_Offset > 0)
-            {
-                for (int l_i = 0; l_i < 2; l_i++)
-                {
-                    for (int l_X = 0; l_X < l_Texture.width; l_X++)
-                    {
-                        for (int l_Y = 0; l_Y < p_Offset; l_Y++)
-                        {
-                            if (l_i == 0)
-                            {
-                                l_Texture.SetPixel(l_X, l_Y, UnityEngine.Color.white.ColorWithAlpha(0));
-                                continue;
-                            }
-
-                            if (l_i == 1)
-                            {
-                                l_Texture.SetPixel(l_X, l_Y + (p_Offset + (l_Texture.height - p_Offset * 2)), UnityEngine.Color.white.ColorWithAlpha(0));
-                                continue;
-                            }
-                        }
-                    }
-                }
-            }
-
             l_Texture.Apply();
             return l_Texture;
         }
@@ -192,5 +191,22 @@ namespace GuildSaber.Utils
             return l_New;
         }
 
+        public struct FixedHeigth
+        {
+            public int NewHeigth;
+            public int Position;
+            public int RoundedTextureOffset;
+        }
+
+        public static FixedHeigth GetHeigth(int p_WantedImageSize, int p_Width, int p_Heigth)
+        {
+            int l_FixedHeigth = p_WantedImageSize;
+            FixedHeigth l_Result = new FixedHeigth();
+            l_Result.NewHeigth = l_FixedHeigth;
+            l_Result.Position = (int)(p_Heigth / 2) + (p_WantedImageSize / 2);
+            l_Result.RoundedTextureOffset = (int)(p_Heigth / 2) - (p_WantedImageSize / 2);
+            return l_Result;
+
+        }
     }
 }

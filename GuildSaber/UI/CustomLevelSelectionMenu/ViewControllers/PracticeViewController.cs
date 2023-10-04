@@ -78,14 +78,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                     .OnValueChanged(OnNJSSliderChanged),
                     GSSecondaryButton.Make("Play", 24, 15).OnClick(() =>
                     {
-                        PracticeMenuFlowCoordinator.IsPractice = true;
+                        CustomLevelSelectionMenuReferences.IsInPractice = true;
                         PlayerData l_PlayerData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().First().playerData;
                         GSBeatmapUtils.PlaySong(m_Beatmap,
                             l_PlayerData.overrideEnvironmentSettings, l_PlayerData.colorSchemesSettings.GetSelectedColorScheme(),
                             l_PlayerData.gameplayModifiers, l_PlayerData.playerSpecificSettings, new PracticeSettings(m_Time, m_SpeedMutliplier), p_OnMapFinished: (x, y) =>
                             {
                                 GSLogger.Instance.Log("Exiting practice mode", IPA.Logging.Logger.LogLevel.NoticeUp);
-                                PracticeMenuFlowCoordinator.IsPractice = false;
+                                CustomLevelSelectionMenuReferences.IsInPractice = false;
                             });
                     })
                     ).SetWidth(100)

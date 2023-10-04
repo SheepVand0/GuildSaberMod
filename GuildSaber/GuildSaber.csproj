@@ -328,6 +328,7 @@
     <Compile Include="UI\CustomLevelSelectionMenu\Components\MapButton.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\Components\PlaylistButton.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\Components\GuildSelectionButton.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\CustomLevelSelectionMenuReferences.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\CategorySelectionFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\GuildSelectionFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\LevelSelectionFlowCoordinator.cs" />
@@ -336,10 +337,15 @@
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\CategoriesSelectionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardCell.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardPanel.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardScopeSelector.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\GuildSaberLeaderboardViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\LevelSelectionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\MapDetails.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\PracticeViewController.cs" />
     <Compile Include="UI\Defaults\GSSecondaryButton.cs" />
+    <Compile Include="UI\Defaults\GSTransparentButton.cs" />
     <Compile Include="UI\FlowCoordinator\CustomFlowCoordinator.cs" />
     <Compile Include="UI\InternalPlaylistsManager.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomLevelStatsView.cs" />
@@ -406,6 +412,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="GuildSaber.csproj.user" />
+    <EmbeddedResource Include="Resources\AroundMeIcon.png" />
+    <EmbeddedResource Include="Resources\CountryIcon.png" />
+    <EmbeddedResource Include="Resources\GlobalIcon.png" />
     <EmbeddedResource Include="Resources\ArrowRed.png" />
     <EmbeddedResource Include="Resources\White.png" />
     <EmbeddedResource Include="Resources\BorderSquare.png" />

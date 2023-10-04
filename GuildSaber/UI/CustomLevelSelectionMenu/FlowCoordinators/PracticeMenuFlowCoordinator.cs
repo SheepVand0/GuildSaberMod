@@ -11,8 +11,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
 {
     internal class PracticeMenuFlowCoordinator : CustomFlowCoordinator
     {
-        internal static bool IsPractice;
-
         internal static PracticeMenuFlowCoordinator Instance;
 
         protected override string Title => "Practice";

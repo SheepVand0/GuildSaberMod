@@ -23,6 +23,7 @@ using GuildSaber.UI.Defaults;
 using PlaylistManager.HarmonyPatches;
 using JetBrains.Annotations;
 using GuildSaber.UI.Others;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 {
@@ -161,6 +162,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         public async void SetLevels(int p_GuildId, ApiCategory p_Category)
         {
             await WaitUtils.Wait(() => m_WorkingLayout != null, 1);
+
+            GuildSaberLeaderboardViewController.Instance.SetGuild(p_GuildId);
 
             SetMode(EMode.Loading);
 
