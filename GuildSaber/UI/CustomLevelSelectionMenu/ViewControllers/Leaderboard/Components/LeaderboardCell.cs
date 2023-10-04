@@ -37,24 +37,29 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             float l_FontSize = 2;
 
             XUIHLayout.Make(
-                XUIText.Make("1 - ")
-                    .SetAlign(TMPro.TextAlignmentOptions.Left)
-                    .SetFontSize(l_FontSize)
-                    .Bind(ref m_RankText),
-                XUIText.Make("Sheep").Bind(ref m_NameText)
-                    .SetFontSize(l_FontSize)
-                    .SetAlign(TMPro.TextAlignmentOptions.Left),
-                XUIText.Make("0.00").Bind(ref m_PointsText)
-                    .SetFontSize(l_FontSize)
-                    .SetAlign(TMPro.TextAlignmentOptions.Left),
-                XUIText.Make("69000000").Bind(ref m_ScoreText).SetColor(new UnityEngine.Color(1, 1, 1, 0.7f))
-                    .SetFontSize(l_FontSize)
-                    .SetAlign(TMPro.TextAlignmentOptions.Right),
-                XUIText.Make("69.00%").Bind(ref m_AccText)
-                    .SetFontSize(l_FontSize)
-                    .SetAlign(TMPro.TextAlignmentOptions.Right)
-            ).BuildUI(Element.LElement.transform);
-            SetWidth(90);
+                XUIHLayout.Make(
+                    XUIText.Make("1 - ")
+                        .SetAlign(TMPro.TextAlignmentOptions.Left)
+                        .SetFontSize(l_FontSize)
+                        .Bind(ref m_RankText),
+                    XUIText.Make("Sheep").Bind(ref m_NameText)
+                        .SetFontSize(l_FontSize)
+                        .SetAlign(TMPro.TextAlignmentOptions.Left),
+                    XUIText.Make("0.00").Bind(ref m_PointsText)
+                        .SetFontSize(l_FontSize)
+                        .SetAlign(TMPro.TextAlignmentOptions.Left)
+                ).SetWidth(40),
+                XUIHLayout.Make(
+                    XUIText.Make("69000000").Bind(ref m_ScoreText).SetColor(new UnityEngine.Color(1, 1, 1, 0.7f))
+                        .SetFontSize(l_FontSize)
+                        .SetAlign(TMPro.TextAlignmentOptions.Right),
+                    XUIText.Make("69.00%").Bind(ref m_AccText)
+                        .SetFontSize(l_FontSize)
+                        .SetAlign(TMPro.TextAlignmentOptions.Right)
+                )
+            )
+            .BuildUI(Element.LElement.transform);
+            SetWidth(80);
             SetHeight(4);
             Element.SetBackgroundColor(new Color(0, 0, 0, 0.7f));
         }
@@ -71,7 +76,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
         public void SetScore(ApiMapLeaderboardContentStruct p_Score, int p_MaxScore)
         {
-            m_RankText.SetText($"{p_Score.ID} - ");
+            m_RankText.SetText($"{p_Score.Rank} - ");
             m_NameText.SetText($"{p_Score.Name}");
             var l_Points = p_Score.PointsData.Where(x => x.PointsType == m_SelectedPointsType.PointsType).First();
             m_PointsText.SetText($"{l_Points.Points:0,00} {l_Points.PointsName.ToUpper()}");
