@@ -46,11 +46,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             OnReady(async x =>
             {
                 m_BeatmapCover = await m_Beatmap.level.GetCoverImageAsync(new System.Threading.CancellationToken());
-                CP_SDK.Unity.MTMainThreadInvoker.Enqueue(UpdateVisuals);
+                UpdateVisuals();
             });
         }
 
-        public void UpdateVisuals()
+        public async void UpdateVisuals()
         {
             Element.GetComponentInChildren<DefaultCText>().TMProUGUI.richText = true;
             SetText($"{Utils.GuildSaberUtils.GetPlayerNameToFit(m_Beatmap.level.songName, 16)} {MapDetails.DurationFormat(m_Beatmap.level.songDuration)}\n<size=3>{m_Beatmap.level.songAuthorName}");
@@ -59,21 +59,22 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
             if (l_MapCover == null)
             {
-                var l_MapCoverTexture = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GuildSaberLogo.png");
+                var l_MapCoverTexture = CustomLevelSelectionMenuReferences.DefaultLogo;
                 l_MapCover = Sprite.Create(l_MapCoverTexture, new Rect(0, 0, l_MapCoverTexture.width, l_MapCoverTexture.height), new Vector2());
             }
 
-            Texture2D l_Texture = l_MapCover.texture.GetCopy();
+            Texture2D l_Texture = l_MapCover.texture;
 
-            int l_FixedHeight = l_Texture.width / (4);
+            //int l_FixedHeight = l_Texture.width / (4);
+            TextureUtils.FixedHeight l_FixedHeight = TextureUtils.GetHeight(45, 20, l_Texture.width, l_Texture.height);
 
             float l_Radius = (l_Texture.width * 0.05f);
-            Texture2D l_FixedTexture = AddOffset(/*CreateRoundedTexture(l_Texture, l_Radius)*/ l_Texture, (int)(l_FixedHeight / 1.5f));
+            Texture2D l_FixedTexture = await AddOffset(l_Texture, l_FixedHeight.TextureOffset);
 
             Element.SetBackgroundSprite(
                 Sprite.Create(
                     l_FixedTexture,
-                    new Rect(0, l_FixedHeight / (l_Texture.width / (l_Texture.height / 0.9f)), l_Texture.width, l_FixedHeight),
+                    new Rect(0, 0, l_Texture.width, l_FixedTexture.height),
                     new Vector2())
                 );
             Element.SetBackgroundColor(new Color(1f, 1f, 1f, 0.5f));

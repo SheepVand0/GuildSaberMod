@@ -57,8 +57,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                     XUIVLayout.Make(
                         
                         )
-                    .SetSpacing(0)
-                    .Bind(ref m_LeaderboardCellsContainer)
+                        .SetSpacing(-0.5f)
+                        .Bind(ref m_LeaderboardCellsContainer)
                     )
                 ).BuildUI(transform);
 
@@ -96,7 +96,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
             Texture2D l_Result;
             if (l_Banner.IsError)
             {
-                l_Result = GuildSelectionButton.DefaultLogo;
+                l_Result = CustomLevelSelectionMenuReferences.DefaultLogo;
             } else
             {
                 l_Result = l_Banner.Texture;

@@ -299,6 +299,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 });
             }
 
+            //GSLogger.Instance.Log("Freezing ?", IPA.Logging.Logger.LogLevel.ErrorUp);
+
             UpdateMapList(true);
         }
 

@@ -134,19 +134,17 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
                 Sprite l_Sprite = (await p_Beatmap.level.GetCoverImageAsync(new CancellationToken()));
 
-                CP_SDK.Unity.MTMainThreadInvoker.Enqueue(() =>
-                {
-                    m_MapName.SetText(GuildSaberUtils.GetPlayerNameToFit(p_Beatmap.level.songName, 20));
-                    m_MapAuthor.SetText(p_Beatmap.level.songAuthorName);
-                    m_MapDuration.SetText(DurationFormat(p_Beatmap.level.songDuration));
+                m_MapName.SetText(GuildSaberUtils.GetPlayerNameToFit(p_Beatmap.level.songName, 20));
+                m_MapAuthor.SetText(p_Beatmap.level.songAuthorName);
+                m_MapDuration.SetText(DurationFormat(p_Beatmap.level.songDuration));
 
-                    Texture2D l_Tex = l_Sprite.texture.GetCopy();
-                    l_Tex = TextureUtils.CreateRoundedTexture(l_Tex, l_Tex.width * 0.05f);
+                Texture2D l_Tex = l_Sprite.texture.GetCopy();
+                l_Tex = await TextureUtils.CreateRoundedTexture(l_Tex, l_Tex.width * 0.05f);
 
-                    m_MapCover.SetSprite(Sprite.Create(l_Tex, new Rect(0, 0, l_Tex.width, l_Tex.height), new Vector2()));
-                    PlaySongPreview();
-                    SetActive(true);
-                });
+                m_MapCover.SetSprite(Sprite.Create(l_Tex, new Rect(0, 0, l_Tex.width, l_Tex.height), new Vector2()));
+                PlaySongPreview();
+                SetActive(true);
+                
             });
             return this;
         }

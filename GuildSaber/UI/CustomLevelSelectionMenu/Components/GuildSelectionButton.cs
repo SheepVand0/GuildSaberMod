@@ -19,8 +19,6 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
 {
     private GuildData m_GuildData = default;
 
-    public static Texture2D DefaultLogo = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
-
     public static Texture2D SelectedGuildTexture = null;
 
     protected Texture2D GuildTexture = null;
@@ -78,15 +76,15 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
         try
         {
             GuildSaberUtils.ImageResult l_TextureResult = await GuildSaberUtils.GetImage(m_GuildData.Banner);
-            if (l_TextureResult.IsError || p_WithDefaultLogo) l_TextureResult.Texture = DefaultLogo;
+            if (l_TextureResult.IsError || p_WithDefaultLogo) l_TextureResult.Texture = CustomLevelSelectionMenuReferences.DefaultLogo;
 
             Texture2D l_Texture = l_TextureResult.Texture;
 
             //int l_FixedHeight = l_Texture.width / (80 / 20);
 
             int l_Radius = (int)(l_Texture.width * 0.01f);
-            var l_FixedHeightObject = TextureUtils.GetHeigth((int)(l_Texture.width * (float)(20 / 80)), l_Texture.width, l_Texture.height);
-            Texture2D l_FixedTexture = TextureUtils.AddOffset(TextureUtils.CreateRoundedTexture(l_Texture, l_Radius), l_FixedHeightObject.RoundedTextureOffset);
+            var l_FixedHeightObject = TextureUtils.GetHeight(80, 20, l_Texture.width, l_Texture.height);
+            Texture2D l_FixedTexture = await TextureUtils.AddOffset(await TextureUtils.CreateRoundedTexture(l_Texture, l_Radius), l_FixedHeightObject.TextureOffset);
 
             Element.SetBackgroundSprite(
                 Sprite.Create(

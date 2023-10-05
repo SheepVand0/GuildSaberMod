@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using GuildSaber.Logger;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace GuildSaber.Utils
@@ -26,66 +28,78 @@ namespace GuildSaber.Utils
             Vertical
         }
 
-        public static Texture2D Gradient(Texture2D p_Texture, UnityEngine.Color p_Color1, UnityEngine.Color p_Color2, EGradientDirection p_Direction = EGradientDirection.Horizontal, bool p_Invert = false, bool p_UseAlpha = false)
+        public static async Task<Texture2D> Gradient(Texture2D p_Texture, UnityEngine.Color p_Color1, UnityEngine.Color p_Color2, EGradientDirection p_Direction = EGradientDirection.Horizontal, bool p_Invert = false, bool p_UseAlpha = false)
         {
             Texture2D l_Origin = p_Texture;
 
             UnityEngine.Color l_FirstColor = (p_Invert) ? p_Color1 : p_Color2;
             UnityEngine.Color l_SecondColor = (p_Invert) ? p_Color2 : p_Color1;
-
-            for (int l_X = 0; l_X < p_Texture.width; l_X++)
+            await Task.Run(() =>
             {
-                for (int l_Y = 0; l_Y < p_Texture.height; l_Y++)
+                for (int l_X = 0; l_X < p_Texture.width; l_X++)
                 {
-                    Color l_CurrentPixel = l_Origin.GetPixel(l_X, l_Y);
+                    for (int l_Y = 0; l_Y < p_Texture.height; l_Y++)
+                    {
+                        Color l_CurrentPixel = l_Origin.GetPixel(l_X, l_Y);
 
-                    float l_Color2Multiplier = (float)(p_Direction == EGradientDirection.Horizontal ? l_X : l_Y) / (float)(p_Direction == EGradientDirection.Horizontal ? l_Origin.width : l_Origin.height);
+                        float l_Color2Multiplier = (float)(p_Direction == EGradientDirection.Horizontal ? l_X : l_Y) / (float)(p_Direction == EGradientDirection.Horizontal ? l_Origin.width : l_Origin.height);
 
-                    float l_Alpha = (p_UseAlpha) ? (l_FirstColor.a + (l_SecondColor.a * l_Color2Multiplier)) / 2 : l_Origin.GetPixel(l_X, l_Y).a;
+                        float l_Alpha = (p_UseAlpha) ? (l_FirstColor.a + (l_SecondColor.a * l_Color2Multiplier)) / 2 : l_Origin.GetPixel(l_X, l_Y).a;
 
-                    l_Origin.SetPixel(
-                        l_X, l_Y,
-                        new Color(
-                            l_CurrentPixel.r * ((l_FirstColor.r + (l_SecondColor.r * l_Color2Multiplier)) / 2),
-                            l_CurrentPixel.g * ((l_FirstColor.g + (l_SecondColor.g * l_Color2Multiplier)) / 2),
-                            l_CurrentPixel.b * ((l_FirstColor.b + (l_SecondColor.b * l_Color2Multiplier)) / 2),
-                            l_CurrentPixel.a * l_Alpha)
-                        );
+                        l_Origin.SetPixel(
+                            l_X, l_Y,
+                            new Color(
+                                l_CurrentPixel.r * ((l_FirstColor.r + (l_SecondColor.r * l_Color2Multiplier)) / 2),
+                                l_CurrentPixel.g * ((l_FirstColor.g + (l_SecondColor.g * l_Color2Multiplier)) / 2),
+                                l_CurrentPixel.b * ((l_FirstColor.b + (l_SecondColor.b * l_Color2Multiplier)) / 2),
+                                l_CurrentPixel.a * l_Alpha)
+                            );
+                    }
                 }
-            }
-
+            });
             l_Origin.Apply();
 
             return l_Origin;
         }
 
-        public static Texture2D AddOffset(Texture2D p_Origin, int p_Offset)
+        public async static Task<Texture2D> AddOffset(Texture2D p_Origin, int p_Offset)
         {
             int l_Height = p_Origin.height - (p_Offset * 2);
-            if (l_Height <= 0)
-                l_Height = p_Origin.height;
-            Texture2D l_Result = new Texture2D(p_Origin.width, l_Height);
-            Color[] l_Colors = p_Origin.GetPixels();
-            for (int l_X = 0; l_X < l_Result.width; l_X++)
-            {
-                for (int l_Y = 0; l_Y < l_Result.height; l_Y++)
-                {
-                    int l_FixedY = l_Y + p_Offset;
-                    if (l_Result.height == p_Origin.height)
-                        l_FixedY = l_Y;
 
-                    l_Result.SetPixel(l_X, l_Y, p_Origin.GetPixel(l_X, l_FixedY));
-                }
+            if (l_Height <= 0)
+            {
+                l_Height = p_Origin.height;
             }
+            Texture2D l_Result = new Texture2D(p_Origin.width, l_Height);
+            
+            await Task.Run(() =>
+            {
+                Color[] l_Colors = p_Origin.GetPixels();
+
+                for (int l_X = 0; l_X < l_Result.width; l_X++)
+                {
+                    for (int l_Y = 0; l_Y < l_Result.height; l_Y++)
+                    {
+                        int l_FixedY = l_Y + p_Offset;
+                        if (l_Result.height == p_Origin.height)
+                            l_FixedY = l_Y;
+
+                        l_Result.SetPixel(l_X, l_Y, p_Origin.GetPixel(l_X, l_FixedY));
+                    }
+                }
+            });
             l_Result.Apply();
             return l_Result;
         }
 
-        public static Texture2D CreateRoundedTexture(Texture2D p_Origin, float p_Radius, bool p_PushPixels = false)
+        public static async Task<Texture2D> CreateRoundedTexture(Texture2D p_Origin, float p_Radius, bool p_PushPixels = false)
         {
             Texture2D l_Texture = p_Origin;
-            
 
+            await Task.Run(() =>
+            {
+
+            
             for (int l_i = 0; l_i < 4; l_i++)
             {
                 for (int l_X = 0; l_X < p_Radius; l_X++)
@@ -178,7 +192,7 @@ namespace GuildSaber.Utils
                     }
                 }
             }
-
+            });
             l_Texture.Apply();
             return l_Texture;
         }
@@ -191,20 +205,20 @@ namespace GuildSaber.Utils
             return l_New;
         }
 
-        public struct FixedHeigth
+        public struct FixedHeight
         {
-            public int NewHeigth;
+            public int NewHeight;
             public int Position;
-            public int RoundedTextureOffset;
+            public int TextureOffset;
         }
 
-        public static FixedHeigth GetHeigth(int p_WantedImageSize, int p_Width, int p_Heigth)
+        public static FixedHeight GetHeight(int p_ImageViewWidth, int p_ImageViewHeight, int p_TextureWidth, int p_TextureHeigth)
         {
-            int l_FixedHeigth = p_WantedImageSize;
-            FixedHeigth l_Result = new FixedHeigth();
-            l_Result.NewHeigth = l_FixedHeigth;
-            l_Result.Position = (int)(p_Heigth / 2) + (p_WantedImageSize / 2);
-            l_Result.RoundedTextureOffset = (int)(p_Heigth / 2) - (p_WantedImageSize / 2);
+            int l_WantedImageSize = (int)(p_TextureWidth * ((float)p_ImageViewHeight / p_ImageViewWidth));
+            int l_FixedHeigth = l_WantedImageSize;
+            FixedHeight l_Result = new FixedHeight();
+            l_Result.NewHeight = l_FixedHeigth;
+            l_Result.TextureOffset = (p_TextureHeigth / 2) - (l_WantedImageSize / 2);
             return l_Result;
 
         }

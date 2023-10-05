@@ -46,7 +46,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             m_GuildId = p_GuildId;
         }
 
-        private void OnButtonReady(CSecondaryButton p_Button)
+        private async void OnButtonReady(CSecondaryButton p_Button)
         {
             SetWidth(20);
             SetHeight(20);
@@ -54,7 +54,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             if (BorderTexture == null)
             {
                 BorderTexture = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.BorderSquare.png");
-                BorderTexture = TextureUtils.CreateRoundedTexture(BorderTexture, 20);
+                BorderTexture = await TextureUtils.CreateRoundedTexture(BorderTexture, 20);
             }
 
             p_Button.SetBackgroundSprite(Sprite.Create(BorderTexture, new Rect(0, 0, BorderTexture.width, BorderTexture.height), new Vector2()));
