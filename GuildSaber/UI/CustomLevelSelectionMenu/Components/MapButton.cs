@@ -25,11 +25,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
         {
             SetWidth(45);
             SetHeight(20);
-            OnReady(x =>
-            {
-                SetBeatmap(p_Beatmap);
-                UpdateVisuals();
-            });
+            
+            SetBeatmap(p_Beatmap);
+            //UpdateVisuals();
+            
             OnClick(OnClicked);
         }
 
@@ -40,12 +39,20 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             return new MapButton(p_Beatmap);
         }
 
-        public void SetBeatmap(IDifficultyBeatmap p_Beatmap)
+        public async void SetBeatmap(IDifficultyBeatmap p_Beatmap)
         {
             m_Beatmap = p_Beatmap;
-            OnReady(async x =>
+            
+            if (m_Beatmap == null)
             {
-                m_BeatmapCover = await m_Beatmap.level.GetCoverImageAsync(new System.Threading.CancellationToken());
+                Hide();
+                return;
+            }
+
+            m_BeatmapCover = await m_Beatmap.level.GetCoverImageAsync(new System.Threading.CancellationToken());
+            OnReady(x =>
+            {
+                Show();
                 UpdateVisuals();
             });
         }
@@ -84,6 +91,16 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
         {
             LevelSelectionViewController.Instance.SetSelectedMap(m_Beatmap);
             eOnMapSelected?.Invoke(m_Beatmap);
+        }
+
+        public void Hide()
+        {
+            SetActive(false);
+        }
+
+        public void Show()
+        {
+            SetActive(true);
         }
     }
 }

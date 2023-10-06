@@ -33,7 +33,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         protected GSSecondaryButton m_PracticeButton;
         protected GSSecondaryButton m_PlayButton;
 
-        internal static AudioSource m_MapPreviewAudio;
+        internal static SongPreviewPlayer m_MapPreviewAudio;
+
+        internal static PlayerData m_PlayerData;
 
         public static MapDetails Make()
         {
@@ -56,6 +58,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 )
                 .SetHeight(20)
                 .SetWidth(50);*/
+            m_PlayerData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().First().playerData;
 
             return new MapDetails();
         }
@@ -90,7 +93,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
              .BuildUI(Element.transform);
 
             if (m_MapPreviewAudio == null)
-                m_MapPreviewAudio = Resources.FindObjectsOfTypeAll<AudioSource>().First();
+                m_MapPreviewAudio = Resources.FindObjectsOfTypeAll<SongPreviewPlayer>().First();
 
             XUIHLayout.Make(
                 GSSecondaryButton.Make("Practice", 24, 15).OnClick(OnPracticeClicked),
@@ -132,13 +135,13 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             OnReady(async x =>
             {
 
-                Sprite l_Sprite = (await p_Beatmap.level.GetCoverImageAsync(new CancellationToken()));
+                Sprite l_Sprite = await p_Beatmap.level.GetCoverImageAsync(new CancellationToken());
 
                 m_MapName.SetText(GuildSaberUtils.GetPlayerNameToFit(p_Beatmap.level.songName, 20));
                 m_MapAuthor.SetText(p_Beatmap.level.songAuthorName);
                 m_MapDuration.SetText(DurationFormat(p_Beatmap.level.songDuration));
 
-                Texture2D l_Tex = l_Sprite.texture.GetCopy();
+                Texture2D l_Tex = l_Sprite.texture;
                 l_Tex = await TextureUtils.CreateRoundedTexture(l_Tex, l_Tex.width * 0.05f);
 
                 m_MapCover.SetSprite(Sprite.Create(l_Tex, new Rect(0, 0, l_Tex.width, l_Tex.height), new Vector2()));
@@ -151,11 +154,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         public void PlaySongPreview()
         {
-            m_MapPreviewAudio.Stop();
-            m_MapPreviewAudio.clip = m_Beatmap.level.beatmapLevelData.audioClip;
-            m_MapPreviewAudio.time = m_Beatmap.level.previewStartTime;
-            m_MapPreviewAudio.Play();
-            m_MapPreviewAudio.volume = 1;
+            m_MapPreviewAudio.FadeOut(0.25f);
+
+            m_MapPreviewAudio.CrossfadeTo(m_Beatmap.level.beatmapLevelData.audioClip, 1, m_Beatmap.level.previewStartTime, m_Beatmap.level.previewDuration, null) ;
         }
 
         protected void OnPracticeClicked()

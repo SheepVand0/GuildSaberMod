@@ -30,7 +30,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         protected float m_SpeedMutliplier = 1;
         protected float m_NJS;
 
-        protected AudioSource m_PreviewAudio;
+        protected SongPreviewPlayer m_PreviewAudio;
 
         public void SetBeatmap(IDifficultyBeatmap p_Beatmap)
         {
@@ -39,7 +39,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             if (m_PreviewAudio == null)
                 m_PreviewAudio = MapDetails.m_MapPreviewAudio;
 
-            m_PreviewAudio.clip = m_Beatmap.level.beatmapLevelData.audioClip;
             m_TimeSlider.SetMaxValue(m_Beatmap.level.beatmapLevelData.audioClip.length - 0.01f);
             m_TimeSlider.SetValue(0);
             m_TimeSlider.SetIncrements(0.1f);
@@ -107,9 +106,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         protected void OnTimeSliderChanged(float p_Value)
         {
             m_Time = p_Value;
-            m_PreviewAudio.Stop();
+            m_PreviewAudio.CrossfadeTo(m_Beatmap.level.beatmapLevelData.audioClip, 1, m_Time, 10, null);
+            /*m_PreviewAudio.Stop();
             m_PreviewAudio.time = p_Value;
-            m_PreviewAudio.Play();
+            m_PreviewAudio.Play();*/
         }
 
         protected void OnSpeedSliderChanged(float p_Value)

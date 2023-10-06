@@ -39,8 +39,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             OnReady(async x =>
             {
                 byte[] l_ImageBytes = new byte[p_Base64.Length];
-                l_ImageBytes = Convert.FromBase64String(p_Base64);
-
+                await Task.Run(() =>
+                {
+                    l_ImageBytes = Convert.FromBase64String(p_Base64);
+                });
+                
                 Image<Rgba32> l_Image = null;
                 Texture2D l_LevelCover = null;
 
