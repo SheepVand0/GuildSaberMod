@@ -338,8 +338,11 @@
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardCell.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardHeaderPanel.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardPanel.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardPointsSelector.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardScopeSelector.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardScoreDetailsModal.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\GuildSaberLeaderboardViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\LevelSelectionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\MapDetails.cs" />
@@ -373,8 +376,11 @@
     <Compile Include="Utils\Color.cs" />
     <Compile Include="Utils\ColorSettingsFix.cs" />
     <Compile Include="Utils\EnumFlagHelper.cs" />
+    <Compile Include="Utils\Formatters.cs" />
     <Compile Include="Utils\GSBeatmapUtils.cs" />
     <Compile Include="Utils\GuildSaberUtils.cs" />
+    <Compile Include="Utils\ModalAnimation.cs" />
+    <Compile Include="Utils\ModalUtils.cs" />
     <Compile Include="Utils\SliderSettingsFix.cs" />
     <Compile Include="Utils\TextureUtils.cs" />
     <Compile Include="Utils\ToggleSettingFix.cs" />

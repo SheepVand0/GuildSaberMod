@@ -140,7 +140,7 @@ internal class GuildSaberLeaderboardPanel : BSMLAutomaticViewController
                     }
                     break;
                 case ReloadMode.FromApi:
-                    m_PlayerData = await GuildApi.GetPlayerInfoFromAPI(false, m_SelectedGuild);
+                    m_PlayerData = await GuildApi.GetPlayerData(false, m_SelectedGuild);
                     break;
                 default:
                     return;

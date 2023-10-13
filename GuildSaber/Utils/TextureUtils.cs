@@ -44,7 +44,7 @@ namespace GuildSaber.Utils
 
                         float l_Color2Multiplier = (float)(p_Direction == EGradientDirection.Horizontal ? l_X : l_Y) / (float)(p_Direction == EGradientDirection.Horizontal ? l_Origin.width : l_Origin.height);
 
-                        float l_Alpha = (p_UseAlpha) ? (l_FirstColor.a + (l_SecondColor.a * l_Color2Multiplier)) / 2 : l_Origin.GetPixel(l_X, l_Y).a;
+                        float l_Alpha = (p_UseAlpha) ? ((l_FirstColor.a + l_SecondColor.a) / 2) * l_Color2Multiplier : l_Origin.GetPixel(l_X, l_Y).a;
 
                         l_Origin.SetPixel(
                             l_X, l_Y,
@@ -71,7 +71,7 @@ namespace GuildSaber.Utils
                 l_Height = p_Origin.height;
             }
             Texture2D l_Result = new Texture2D(p_Origin.width, l_Height);
-            
+
             await Task.Run(() =>
             {
                 Color[] l_Colors = p_Origin.GetPixels();
@@ -92,106 +92,110 @@ namespace GuildSaber.Utils
             return l_Result;
         }
 
+        private static Color m_TransparentColor = new Color(1, 0, 0, 0);
+
         public static async Task<Texture2D> CreateRoundedTexture(Texture2D p_Origin, float p_Radius, bool p_PushPixels = false)
         {
             Texture2D l_Texture = p_Origin;
 
+            
+
             await Task.Run(() =>
             {
 
-            
-            for (int l_i = 0; l_i < 4; l_i++)
-            {
-                for (int l_X = 0; l_X < p_Radius; l_X++)
+
+                for (int l_i = 0; l_i < 4; l_i++)
                 {
-                    bool l_Moved = false;
-
-                    for (int l_Y = 0; l_Y < p_Radius; l_Y++)
+                    for (int l_X = 0; l_X < p_Radius; l_X++)
                     {
-                        /// Corner Bottom Left
-                        if (l_i == 0)
+                        bool l_Moved = false;
+
+                        for (int l_Y = 0; l_Y < p_Radius; l_Y++)
                         {
-                            Vector2 l_Point = new Vector2(l_X, l_Y);
-                            Vector2 l_RadiusPoint = new Vector2(p_Radius, p_Radius);
-
-                            if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                            /// Corner Bottom Left
+                            if (l_i == 0)
                             {
-                                l_Moved = true;
-                                l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
+                                Vector2 l_Point = new Vector2(l_X, l_Y);
+                                Vector2 l_RadiusPoint = new Vector2(p_Radius, p_Radius);
+
+                                if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                                {
+                                    l_Moved = true;
+                                    l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, m_TransparentColor);
+                                }
+
+                                if (p_PushPixels && !l_Moved)
+                                {
+                                    UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
+                                    l_Texture.SetPixel((int)(p_Radius + l_Point.x), (int)(p_Radius + l_Point.y), l_PixelColor);
+                                }
+
+                                continue;
                             }
 
-                            if (p_PushPixels && !l_Moved)
+                            /// Corner Bottom Right
+                            if (l_i == 1)
                             {
-                                UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
-                                l_Texture.SetPixel((int)(p_Radius + l_Point.x), (int)(p_Radius + l_Point.y), l_PixelColor);
+                                Vector2 l_Point = new Vector2(l_X + (l_Texture.width - p_Radius), l_Y);
+                                Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, p_Radius);
+
+                                if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                                {
+                                    l_Moved = true;
+                                    l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, m_TransparentColor);
+                                }
+
+                                if (p_PushPixels)
+                                {
+                                    UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
+                                    l_Texture.SetPixel((int)((l_Texture.width - p_Radius * 2) + l_Point.x), (int)(p_Radius + (p_Radius - l_Point.y)), l_PixelColor.ColorWithAlpha(1));
+                                }
+
+                                continue;
                             }
 
-                            continue;
+                            /// Corner Top Left
+                            if (l_i == 2)
+                            {
+                                Vector2 l_Point = new Vector2(l_X, l_Y + (l_Texture.height - p_Radius));
+                                Vector2 l_RadiusPoint = new Vector2(p_Radius, (l_Texture.height - p_Radius));
+
+                                if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                                {
+                                    l_Moved = true;
+                                    l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, m_TransparentColor);
+                                }
+
+                                if (p_PushPixels)
+                                {
+                                    UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
+                                    l_Texture.SetPixel((int)(p_Radius + (p_Radius - l_Point.x)), (int)((l_Texture.height - p_Radius * 2) + l_Point.y), l_PixelColor.ColorWithAlpha(1));
+                                }
+                            }
+
+                            /// Corner Top Right
+                            if (l_i == 3)
+                            {
+                                Vector2 l_Point = new Vector2(l_X + (l_Texture.width - p_Radius), l_Y + (l_Texture.height - p_Radius));
+                                Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, l_Texture.height - p_Radius);
+
+                                if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
+                                {
+                                    l_Moved = true;
+                                    l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, m_TransparentColor);
+                                }
+
+                                if (p_PushPixels)
+                                {
+                                    UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
+                                    l_Texture.SetPixel((int)((l_Texture.width - p_Radius * 2) + l_Point.x), (int)((l_Texture.height - p_Radius * 2) + l_Point.y), l_PixelColor.ColorWithAlpha(1));
+                                }
+
+                            }
+
                         }
-
-                        /// Corner Bottom Right
-                        if (l_i == 1)
-                        {
-                            Vector2 l_Point = new Vector2(l_X + (l_Texture.width - p_Radius), l_Y);
-                            Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, p_Radius);
-
-                            if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
-                            {
-                                l_Moved = true;
-                                l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
-                            }
-
-                            if (p_PushPixels)
-                            {
-                                UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
-                                l_Texture.SetPixel((int)((l_Texture.width - p_Radius * 2) + l_Point.x), (int)(p_Radius + (p_Radius - l_Point.y)), l_PixelColor.ColorWithAlpha(1));
-                            }
-
-                            continue;
-                        }
-
-                        /// Corner Top Left
-                        if (l_i == 2)
-                        {
-                            Vector2 l_Point = new Vector2(l_X, l_Y + (l_Texture.height - p_Radius));
-                            Vector2 l_RadiusPoint = new Vector2(p_Radius, (l_Texture.height - p_Radius));
-
-                            if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
-                            {
-                                l_Moved = true;
-                                l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
-                            }
-
-                            if (p_PushPixels)
-                            {
-                                UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
-                                l_Texture.SetPixel((int)(p_Radius + (p_Radius - l_Point.x)), (int)((l_Texture.height - p_Radius * 2) + l_Point.y), l_PixelColor.ColorWithAlpha(1));
-                            }
-                        }
-
-                        /// Corner Top Right
-                        if (l_i == 3)
-                        {
-                            Vector2 l_Point = new Vector2(l_X + (l_Texture.width - p_Radius), l_Y + (l_Texture.height - p_Radius));
-                            Vector2 l_RadiusPoint = new Vector2(l_Texture.width - p_Radius, l_Texture.height - p_Radius);
-
-                            if (Vector2.Distance(l_Point, l_RadiusPoint) > p_Radius)
-                            {
-                                l_Moved = true;
-                                l_Texture.SetPixel((int)l_Point.x, (int)l_Point.y, UnityEngine.Color.white.ColorWithAlpha(0));
-                            }
-
-                            if (p_PushPixels)
-                            {
-                                UnityEngine.Color l_PixelColor = l_Texture.GetPixel((int)l_Point.x, (int)l_Point.y);
-                                l_Texture.SetPixel((int)((l_Texture.width - p_Radius * 2) + l_Point.x), (int)((l_Texture.height - p_Radius * 2) + l_Point.y), l_PixelColor.ColorWithAlpha(1));
-                            }
-
-                        }
-
                     }
                 }
-            }
             });
             l_Texture.Apply();
             return l_Texture;
@@ -221,6 +225,41 @@ namespace GuildSaber.Utils
             l_Result.TextureOffset = (p_TextureHeigth / 2) - (l_WantedImageSize / 2);
             return l_Result;
 
+        }
+
+        public static async Task<Texture2D> CreateFlatTexture(int p_Width, int p_Height, Color p_Color)
+        {
+            Texture2D l_Texture = new Texture2D(p_Width, p_Height, TextureFormat.RGBA64, false);
+
+            await Task.Run(() =>
+            {
+                for (int l_X = 0; l_X < p_Width; l_X++)
+                {
+                    for (int l_Y = 0; l_Y < p_Height; l_Y++)
+                    {
+                        l_Texture.SetPixel(l_X, l_Y, p_Color);
+                    }
+                }
+            });
+            l_Texture.Apply();
+            return l_Texture;
+        }
+
+        public static async Task<Texture2D> AddLine(Texture2D p_Texture, int p_Width, int p_Height, int p_PosX, int p_PosY, Color p_LineColor)
+        {
+            await Task.Run(() =>
+            {
+                for (int l_X = 0; l_X < p_Width; l_X++)
+                {
+                    for (int l_Y = 0;l_Y < p_Height;l_Y++)
+                    {
+                        p_Texture.SetPixel(l_X + p_PosX, l_Y + p_PosY, p_LineColor);
+                    }
+                }
+            });
+            p_Texture.Apply();
+
+            return p_Texture;
         }
     }
 }

@@ -66,6 +66,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             if (LevelsFlowCoordinator.Instance == null)
                 LevelsFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<LevelsFlowCoordinator>();
 
+            CustomLevelSelectionMenuReferences.SelectedCategory = m_CurrentCategory;
             LevelsFlowCoordinator.Instance.ShowWithLevels(m_GuildId, m_CurrentCategory);
         }
     }

@@ -57,7 +57,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                     .Bind(ref m_TimeSlider)
                     .SetInteger(false)
                     .OnValueChanged(OnTimeSliderChanged)
-                    .SetFormatter(MapDetails.DurationFormat),
+                    .SetFormatter(Formatters.SimpleTimeFormat),
                     XUIText.Make("Speed : "),
                     XUISlider.Make()
                     .Bind(ref m_SpeedSlider)

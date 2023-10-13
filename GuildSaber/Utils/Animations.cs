@@ -31,6 +31,26 @@ namespace GuildSaber.Utils
 
         private float m_StartTime = 0;
 
+        public float GetStart() => m_Start;
+        public float GetEnd() => m_End;
+        public bool IsPlaying() => m_Started;
+        public float Duration() => m_Duration;
+
+        protected virtual void OnPlay()
+        {
+
+        }
+
+        protected virtual void OnStop()
+        {
+
+        }
+
+        protected virtual void OnInit()
+        {
+
+        }
+
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
 
@@ -46,10 +66,11 @@ namespace GuildSaber.Utils
             m_End = p_Value;
             m_ValueDuration = m_End - m_Start;
             m_Duration = p_Duration;
+            OnInit();
         }
 
         ////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
         /// <summary>
         /// Get value from current time, start and end
@@ -85,6 +106,7 @@ namespace GuildSaber.Utils
             }
 
             m_Started = true;
+            OnPlay();
         }
 
         /// <summary>
@@ -93,7 +115,9 @@ namespace GuildSaber.Utils
         public void Stop()
         {
             m_Started = false;
+            OnStop();
         }
+
     }
 
     public class Vector3Animation : MonoBehaviour

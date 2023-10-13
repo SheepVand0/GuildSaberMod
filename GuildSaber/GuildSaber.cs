@@ -1,11 +1,5 @@
-﻿// Decompiled with JetBrains decompiler
-// Type: GuildSaber.GuildSaberModule
-// Assembly: GuildSaber, Version=0.2.5.0, Culture=neutral, PublicKeyToken=null
-// MVID: 2E8F8B5B-092B-47A3-9F65-4C90A48B7328
-// Assembly location: C:\Users\user\Desktop\GuildSaber.dll
-
+﻿
 using BeatSaberMarkupLanguage;
-using BeatSaberPlus.SDK;
 using CP_SDK;
 using CP_SDK.Config;
 using CP_SDK.UI;
@@ -14,18 +8,14 @@ using GuildSaber.API;
 using GuildSaber.Configuration;
 using GuildSaber.UI.BeatSaberPlusSettings;
 using GuildSaber.UI.Card;
-using GuildSaber.UI.Defaults;
 using GuildSaber.UI.FlowCoordinator;
 using GuildSaber.UI.Leaderboard;
 using GuildSaber.UI.Others;
 using GuildSaber.Utils;
-using HarmonyLib;
-using HMUI;
 using IPA.Loader;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 
 
@@ -76,6 +66,7 @@ namespace GuildSaber
         public static GuildSaberModule.EModErrorState ModErrorState { get; internal set; } = GuildSaberModule.EModErrorState.NoError;
 
         public static HarmonyLib.Harmony HarmonyInstance => new("SheepVand.BeatSaber.GuildSaber");
+        public static ApiPlayerData BasicPlayerData { get; internal set; } = default;
 
         protected override (IViewController, IViewController, IViewController) GetSettingsViewControllersImplementation()
         {
@@ -136,6 +127,8 @@ namespace GuildSaber
 
         protected override async void OnEnable()
         {
+            BasicPlayerData = await GuildApi.GetPlayerData(false, p_UseGuild: false);
+
             PluginMetadata l_BeatLeaderPlugin = PluginManager.GetPluginFromId("BeatLeader");
             s_BeatLeaderInstalled = l_BeatLeaderPlugin != null;
             AvailableGuilds = (await GuildApi.GetPlayerGuildsInfo()).AvailableGuilds;

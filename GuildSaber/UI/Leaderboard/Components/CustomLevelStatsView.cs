@@ -1,6 +1,7 @@
 ﻿using BeatSaberMarkupLanguage.Attributes;
 using GuildSaber.API;
 using GuildSaber.UI.Leaderboard.Components.SubComponents;
+using GuildSaber.Utils.DiscordColor;
 using HMUI;
 using TMPro;
 using UnityEngine;
@@ -72,7 +73,7 @@ internal class CustomLevelStatsView : CustomUIComponent
         m_MainButton.gameObject.SetActive(true);
         m_CRank.SetText($"#{p_Rank}");
         m_CName.SetText(p_Name);
-        m_CPassState.SetText($"State : <color=#{PassState.GetColorFromPassState(p_State)}>{p_State}</color>");
+        m_CPassState.SetText($"State : <color=#{ColorUtility.ToHtmlStringRGBA(PassState.GetColorFromPassState(p_State))}>{p_State}</color>");
     }
 
     /// <summary>
@@ -86,7 +87,7 @@ internal class CustomLevelStatsView : CustomUIComponent
     public void SetModalInfo(int p_BadCuts, int p_MissedNotes, int? p_Pauses, EHMD p_Hmd)
     {
         if (p_BadCuts == 0 && p_MissedNotes == 0) {
-            m_CBadCuts.color = Color.green;
+            m_CBadCuts.color = UnityEngine.Color.green;
             m_CBadCuts.text = "Full Combo";
             m_CMissedNotes.text = string.Empty;
         }
@@ -95,7 +96,7 @@ internal class CustomLevelStatsView : CustomUIComponent
             m_CMissedNotes.text = $"<color=#adadad>Missed Notes : <color=#b50000>{p_MissedNotes}</color>";
         }
         if (p_Pauses != null)
-            m_CPauses.text = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.white)}>Pauses : <color=#{(p_Pauses == 0 ? ColorUtility.ToHtmlStringRGB(Color.green) : ColorUtility.ToHtmlStringRGB(Color.red))}>{p_Pauses}";
+            m_CPauses.text = $"<color=#{ColorUtility.ToHtmlStringRGB(UnityEngine.Color.white)}>Pauses : <color=#{(p_Pauses == 0 ? ColorUtility.ToHtmlStringRGB(UnityEngine.Color.green) : ColorUtility.ToHtmlStringRGB(UnityEngine.Color.red))}>{p_Pauses}";
         else
             m_CPauses.text = "Pauses : ?";
         m_CHMD.text = $"Set on : {p_Hmd}";
@@ -103,7 +104,7 @@ internal class CustomLevelStatsView : CustomUIComponent
 #nullable disable
 
     ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
     /// <summary>
     ///     Reset informations and hide
@@ -117,7 +118,7 @@ internal class CustomLevelStatsView : CustomUIComponent
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
     /// <summary>
     ///     Show Modal

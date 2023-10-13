@@ -16,7 +16,35 @@ namespace GuildSaber.API;
 
 public static class GuildApi
 {
-    ///This class is ugly lol
+    public const string PASS_POINTS_TYPE = "pass";
+    public const string ACC_POINTS_TYPE = "acc";
+
+    /*///This class is ugly lol
+
+    public static async Task<ApiPlayerData> Init()
+    {
+
+
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+
+    public static async Task<ApiPlayerData> GetBasicPlayerData(int p_GuildSaberID)
+    {
+        try
+        {
+            var l_SerializedData = (await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/players/data/by-id/{p_GuildSaberID}/0")).BodyString;
+            var l_FinalData = JsonConvert.DeserializeObject<ApiPlayerData>(l_SerializedData);
+            return l_FinalData;
+        } catch (Exception ex)
+        {
+            GSLogger.Instance.Error(ex, nameof(GuildApi), nameof(GetBasicPlayerData));
+            return default;
+        }
+
+    }*/
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -28,7 +56,7 @@ public static class GuildApi
     /// <param name="p_GuildId">Guild ID</param>
     /// <param name="p_UseGuild">Info from a guild or default ?</param>
     /// <returns></returns>
-    public static async Task<ApiPlayerData> GetPlayerInfoFromAPI(bool p_GuildFromConfig = true, int p_GuildId = 0, bool p_UseGuild = true)
+    public static async Task<ApiPlayerData> GetPlayerData(bool p_GuildFromConfig = true, int p_GuildId = 0, bool p_UseGuild = true)
     {
         // ReSharper disable once JoinDeclarationAndInitializer
         ulong l_PlayerId;
@@ -37,7 +65,7 @@ public static class GuildApi
         // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         if (l_PlayerId == 0)
         {
-            GSLogger.Instance.Error(new Exception("Cannot get player Id"), nameof(GuildApi), nameof(GetPlayerInfoFromAPI));
+            GSLogger.Instance.Error(new Exception("Cannot get player Id"), nameof(GuildApi), nameof(GetPlayerData));
             return default(ApiPlayerData);
         }
 
@@ -76,7 +104,7 @@ public static class GuildApi
         {
             GuildSaberModule.SetState(GuildSaberModule.EModState.APIError);
             GuildSaberModule.SetErrorState(l_E);
-            GSLogger.Instance.Error(l_E, nameof(GuildApi), nameof(GetPlayerInfoFromAPI));
+            GSLogger.Instance.Error(l_E, nameof(GuildApi), nameof(GetPlayerData));
             throw;
         }
     }
@@ -89,7 +117,7 @@ public static class GuildApi
     {
         try
         {
-            ApiPlayerData l_Player = await GetPlayerInfoFromAPI(p_UseGuild: false);
+            ApiPlayerData l_Player = await GetPlayerData(p_UseGuild: false);
 
             var l_Client = CP_SDK.Network.WebClientCore.GlobalClient;
 
@@ -315,12 +343,12 @@ internal class PassState
         UpdatedScore = 1 << 7
     }
 
-    public static string GetColorFromPassState(EState p_State)
+    public static Color GetColorFromPassState(EState p_State)
     {
         if (p_State.HasFlag(EState.NeedConfirmation))
-            return ColorUtility.ToHtmlStringRGBA(Color.yellow);
+            return Color.yellow;
         else if (!p_State.HasFlag(EState.Allowed))
-            return ColorUtility.ToHtmlStringRGBA(Color.red);
-        return ColorUtility.ToHtmlStringRGBA(Color.green);
+            return Color.red;
+        return Color.green;
     }
 }

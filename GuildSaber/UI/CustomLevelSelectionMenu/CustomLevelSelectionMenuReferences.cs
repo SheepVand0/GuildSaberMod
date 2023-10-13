@@ -1,4 +1,5 @@
 ﻿using BeatLeader.Replayer;
+using GuildSaber.API;
 using GuildSaber.Utils;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
         public static int SelectedGuildId;
         public static bool IsInPractice;
         public static Texture2D DefaultLogo = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
+        public static ApiCategory SelectedCategory;
     }
 }

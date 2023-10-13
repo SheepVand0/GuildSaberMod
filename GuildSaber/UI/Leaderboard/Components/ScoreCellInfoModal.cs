@@ -135,7 +135,7 @@ namespace GuildSaber.UI.Leaderboard.Components
                     PassState = API.PassState.EState.Denied;
             }
 
-            m_ModalPassState.text = $"Pass state : <color=#{API.PassState.GetColorFromPassState(PassState)}>{PassState}</color>";
+            m_ModalPassState.text = $"Pass state : <color=#{ColorUtility.ToHtmlStringRGBA(API.PassState.GetColorFromPassState(PassState))}>{PassState}</color>";
             m_ModalHMD.text = $"Set on : {HMD}";
 
             DateTime l_Time = CP_SDK.Misc.Time.FromUnixTime(CP_SDK.Misc.Time.UnixTimeNow() - UnixTimeSet);

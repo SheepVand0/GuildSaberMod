@@ -1,7 +1,9 @@
 ﻿using CP_SDK.UI.Components;
 using CP_SDK.XUI;
+using GuildSaber.Logger;
 using GuildSaber.UI.Defaults;
 using GuildSaber.Utils;
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
         private static readonly Color m_Grey = new Color(1, 1, 1, 0.8f);
 
         public event Action<ELeaderboardScope> eOnScopeChanged;
+        public event Action eOnPageChanged;
 
         protected LeaderboardScopeSelector(string p_Name, params IXUIElement[] p_Childs) : base(p_Name, p_Childs)
         {
@@ -29,6 +32,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
         }
 
         protected ELeaderboardScope m_SelectedScope;
+        protected int m_Page;
+        protected int m_MaxPage;
 
         protected XUISecondaryButton m_PageUpButton;
         protected XUISecondaryButton m_PageDownButton;
@@ -46,18 +51,35 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
         {
 
             XUISecondaryButton.Make("^")
+                .OnClick(OnPageUpPressed)
                 .Bind(ref m_PageUpButton).BuildUI(Element.LElement.transform);
 
             XUIVLayout.Make(
                 XUIIconButton.Make()
+                    .OnClick(() =>
+                    {
+                        SetScope(ELeaderboardScope.Global);
+                    })
                     .Bind(ref m_WorldButton),
                 XUIIconButton.Make()
+                    .OnClick(() =>
+                    {
+                        SetScope(ELeaderboardScope.Around);
+                    })
                     .Bind(ref m_MeButton),
                 XUIIconButton.Make()
+                    .OnClick(() =>
+                    {
+                        SetScope(ELeaderboardScope.Country);
+                    })
                     .Bind(ref m_CountryButton)
-            ).BuildUI(Element.LElement.transform);
+            )
+            .SetBackground(true)
+            .SetBackgroundColor(new Color(0, 0, 0, 0.7f))
+            .BuildUI(Element.LElement.transform);
 
             XUISecondaryButton.Make("v")
+                .OnClick(OnPageDownPressed)
                 .Bind(ref m_PageDownButton)
                 .BuildUI(Element.LElement.transform);
 
@@ -73,6 +95,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             m_ScopeButtons.Add(ELeaderboardScope.Around, m_MeButton);
             m_ScopeButtons.Add(ELeaderboardScope.Country, m_CountryButton);
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
         public void SetScope(ELeaderboardScope p_Scope)
         {
@@ -90,19 +115,63 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
                     {
                         l_Index.Value.SetColor(m_Grey);
                     }
-                } catch
+                }
+                catch (Exception ex)
                 {
-
+                    GSLogger.Instance.Error(ex, nameof(LeaderboardScopeSelector), nameof(SetScope));
                 }
             }
 
             eOnScopeChanged?.Invoke(m_SelectedScope);
         }
 
-        public ELeaderboardScope GetSelectedScope()
+        public void SetPage(int p_Page, int p_MaxPage)
         {
-            return m_SelectedScope;
+            m_Page = p_Page;
+            m_MaxPage = p_MaxPage;
+            UpdatePageButtons();
+        }  
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
+        public void UpdatePageButtons()
+        {
+            m_PageUpButton.SetInteractable(m_Page > 1);
+            m_PageDownButton.SetInteractable(m_Page < m_MaxPage);
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
+        protected void OnPageDownPressed()
+        {
+            m_Page += 1;
+            eOnPageChanged?.Invoke();
+            UpdatePageButtons();
+        }
+
+        protected void OnPageUpPressed()
+        {
+            if (m_Page == 1)
+            {
+                UpdatePageButtons();
+                return;
+            }
+
+            m_Page -= 1;
+            UpdatePageButtons();
+            eOnPageChanged?.Invoke();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
+        public ELeaderboardScope GetSelectedScope() => m_SelectedScope;
+
+        public int GetPage() => m_Page;
+
+        public int GetMaxPage() => m_MaxPage;
 
     }
 }

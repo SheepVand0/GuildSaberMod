@@ -217,7 +217,7 @@ internal class PlayerCardUI
             GuildSaberModule.CardSelectedGuild = GuildSaberModule.AvailableGuilds[0];
         }
 
-        ApiPlayerData l_Player = await GuildApi.GetPlayerInfoFromAPI(false, GSConfig.Instance.SelectedGuild);
+        ApiPlayerData l_Player = await GuildApi.GetPlayerData(false, GSConfig.Instance.SelectedGuild);
 
         if (l_Player.Equals(null)) {
             GSLogger.Instance.Error(new Exception("Failed Getting Player Info"), nameof(PlayerCardUI), nameof(CreateCard));
@@ -317,7 +317,7 @@ internal class PlayerCardUI
                 return;
             }
 
-            ApiPlayerData l_Player = await GuildApi.GetPlayerInfoFromAPI();
+            ApiPlayerData l_Player = await GuildApi.GetPlayerData();
             if (l_Player.Equals(null)) {
                 SetCardActive(false);
                 return;

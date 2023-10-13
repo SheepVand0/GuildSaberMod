@@ -1,8 +1,10 @@
 ﻿using CP_SDK.UI.Components;
 using CP_SDK.UI.DefaultComponents;
 using CP_SDK.XUI;
+using GuildSaber.Logger;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers;
 using GuildSaber.Utils;
+using IPA.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,67 +18,81 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 {
     internal class MapButton : XUISecondaryButton
     {
+        public const int MAP_BUTTON_HEIGHT = 20;
+
         IDifficultyBeatmap m_Beatmap;
         Sprite m_BeatmapCover;
+
+        protected bool m_IsSelected = false;
 
         public static event Action<IDifficultyBeatmap> eOnMapSelected;
 
         protected MapButton(IDifficultyBeatmap p_Beatmap, Action p_OnClick = null) : base("MapButton", string.Empty, p_OnClick)
         {
             SetWidth(45);
-            SetHeight(20);
+            SetHeight(MAP_BUTTON_HEIGHT);
             
-            SetBeatmap(p_Beatmap);
-            //UpdateVisuals();
+            if (p_Beatmap != null)
+                SetBeatmap(p_Beatmap);
             
             OnClick(OnClicked);
+            eOnMapSelected += (x) => m_IsSelected = false;
         }
 
-        public string GetMapName() => m_Beatmap.level.songName;
+        public static MapButton Make()
+        {
+            return new MapButton(null);
+        }
 
         public static MapButton Make(IDifficultyBeatmap p_Beatmap)
         {
             return new MapButton(p_Beatmap);
         }
 
-        public async void SetBeatmap(IDifficultyBeatmap p_Beatmap)
+        public string GetMapName() => m_Beatmap.level.songName;
+
+        public IDifficultyBeatmap GetBeatmap() => m_Beatmap;
+
+        public bool IsSelected() => m_IsSelected;
+
+        public async Task<Task> SetBeatmap(IDifficultyBeatmap p_Beatmap)
         {
             m_Beatmap = p_Beatmap;
             
             if (m_Beatmap == null)
             {
                 Hide();
-                return;
+                return Task.CompletedTask;
             }
 
+            GSLogger.Instance.Log(p_Beatmap == null, IPA.Logging.Logger.LogLevel.InfoUp);
+
             m_BeatmapCover = await m_Beatmap.level.GetCoverImageAsync(new System.Threading.CancellationToken());
-            OnReady(x =>
+            if (m_BeatmapCover == null)
             {
-                Show();
-                UpdateVisuals();
-            });
+                var l_MapCoverTexture = CustomLevelSelectionMenuReferences.DefaultLogo;
+                m_BeatmapCover = Sprite.Create(l_MapCoverTexture, new Rect(0, 0, l_MapCoverTexture.width, l_MapCoverTexture.height), new Vector2());
+            }
+
+            Show();
+            UpdateVisuals();
+
+            return Task.CompletedTask;
         }
 
         public async void UpdateVisuals()
         {
             Element.GetComponentInChildren<DefaultCText>().TMProUGUI.richText = true;
-            SetText($"{Utils.GuildSaberUtils.GetPlayerNameToFit(m_Beatmap.level.songName, 16)} {MapDetails.DurationFormat(m_Beatmap.level.songDuration)}\n<size=3>{m_Beatmap.level.songAuthorName}");
+            SetText($"{Utils.GuildSaberUtils.GetPlayerNameToFit(m_Beatmap.level.songName, 14)} {Formatters.SimpleTimeFormat(m_Beatmap.level.songDuration)}\n<size=3>{m_Beatmap.level.songAuthorName}");
 
             Sprite l_MapCover = m_BeatmapCover;
 
-            if (l_MapCover == null)
-            {
-                var l_MapCoverTexture = CustomLevelSelectionMenuReferences.DefaultLogo;
-                l_MapCover = Sprite.Create(l_MapCoverTexture, new Rect(0, 0, l_MapCoverTexture.width, l_MapCoverTexture.height), new Vector2());
-            }
-
             Texture2D l_Texture = l_MapCover.texture;
 
-            //int l_FixedHeight = l_Texture.width / (4);
-            TextureUtils.FixedHeight l_FixedHeight = TextureUtils.GetHeight(45, 20, l_Texture.width, l_Texture.height);
+            FixedHeight l_FixedHeight = GetHeight(45, 20, l_Texture.width, l_Texture.height);
 
-            float l_Radius = (l_Texture.width * 0.05f);
             Texture2D l_FixedTexture = await AddOffset(l_Texture, l_FixedHeight.TextureOffset);
+
 
             Element.SetBackgroundSprite(
                 Sprite.Create(
@@ -89,18 +105,24 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
         private void OnClicked()
         {
+            if (m_IsSelected == true)
+                return;
+
             LevelSelectionViewController.Instance.SetSelectedMap(m_Beatmap);
             eOnMapSelected?.Invoke(m_Beatmap);
+            m_IsSelected = true;
         }
 
         public void Hide()
         {
             SetActive(false);
+            //SetHeight(0);
         }
 
         public void Show()
         {
             SetActive(true);
+            //SetHeight(MAP_BUTTON_HEIGHT);
         }
     }
 }
