@@ -92,7 +92,7 @@ namespace GuildSaber.Utils
             return l_Result;
         }
 
-        private static Color m_TransparentColor = new Color(1, 0, 0, 0);
+        private static Color m_TransparentColor = new Color(0, 0, 0, 0);
 
         public static async Task<Texture2D> CreateRoundedTexture(Texture2D p_Origin, float p_Radius, bool p_PushPixels = false)
         {

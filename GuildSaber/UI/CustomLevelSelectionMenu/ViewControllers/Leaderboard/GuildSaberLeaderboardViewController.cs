@@ -67,12 +67,12 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
             Templates.FullRectLayout(
                 XUIHLayout.Make(
                     m_LeaderboardPanel = LeaderboardPanel.Make()
-                    )
-                    .SetWidth(100)
-                    .Bind(ref m_LeaderboardPanelContainer),
-                m_HeaderPanel = LeaderboardHeaderPanel.Make(
-                    
-                ),
+                )
+                .SetWidth(100)
+                .SetHeight(20)
+                .Bind(ref m_LeaderboardPanelContainer),
+                m_HeaderPanel = (LeaderboardHeaderPanel)LeaderboardHeaderPanel.Make()
+                .SetHeight(LeaderboardHeaderPanel.HEADER_HEIGHT),
                 XUIHLayout.Make(
                     XUIText.Make("Error loading leaderboard").SetColor(Color.red).Bind(ref m_ErrorText),
                     XUIText.Make("No score set on this leaderboard").SetColor(Color.yellow).Bind(ref m_NoScoreText),
@@ -97,7 +97,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                         .SetHeight(10 * LeaderboardCell.CELL_HEIGHT)
                     //.OnReady(x => x.HOrVLayoutGroup.childControlHeight = false)
                     )
-                ).SetHeight(15)
+                )
+                .SetSpacing(0)
+                .SetHeight(15)
                 .Bind(ref m_MainLayout)
                 .BuildUI(transform);
 

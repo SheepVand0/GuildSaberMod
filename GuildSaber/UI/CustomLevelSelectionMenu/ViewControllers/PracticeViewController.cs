@@ -2,6 +2,7 @@
 using CP_SDK.XUI;
 using GuildSaber.Logger;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.UI.Defaults;
 using GuildSaber.Utils;
 using System;
@@ -52,23 +53,23 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         {
             Templates.FullRectLayout(
                 XUIVLayout.Make(
-                    XUIText.Make("Time : "),
-                    XUISlider.Make()
+                    GSText.Make("Time : "),
+                    GSSlider.Make()
                     .Bind(ref m_TimeSlider)
                     .SetInteger(false)
                     .OnValueChanged(OnTimeSliderChanged)
                     .SetFormatter(Formatters.SimpleTimeFormat),
-                    XUIText.Make("Speed : "),
-                    XUISlider.Make()
+                    GSText.Make("Speed : "),
+                    GSSlider.Make()
                     .Bind(ref m_SpeedSlider)
                     .SetInteger(false)
                     .SetMinValue(0.1f)
                     .SetMaxValue(3)
-                    .SetIncrements(0.1f)
-                    .SetFormatter(null)
+                    .SetIncrements(0.05f)
+                    .SetFormatter(Formatters.Percent)
                     .OnValueChanged(OnSpeedSliderChanged),
-                    XUIText.Make("Note Jump Speed : "),
-                    XUISlider.Make()
+                    GSText.Make("Note Jump Speed : "),
+                    GSSlider.Make()
                     .Bind(ref m_NJSSlider)
                     .SetMinValue(1)
                     .SetMaxValue(50)
@@ -83,7 +84,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                             l_PlayerData.overrideEnvironmentSettings, l_PlayerData.colorSchemesSettings.GetSelectedColorScheme(),
                             l_PlayerData.gameplayModifiers, l_PlayerData.playerSpecificSettings, new PracticeSettings(m_Time, m_SpeedMutliplier), p_OnMapFinished: (x, y) =>
                             {
-                                GSLogger.Instance.Log("Exiting practice mode", IPA.Logging.Logger.LogLevel.NoticeUp);
+                                //GSLogger.Instance.Log("Exiting practice mode", IPA.Logging.Logger.LogLevel.NoticeUp);
                                 CustomLevelSelectionMenuReferences.IsInPractice = false;
                             });
                     })
@@ -103,8 +104,21 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             return $"{(p_Value * 100):00}";
         }
 
-        protected void OnTimeSliderChanged(float p_Value)
+        private bool m_TimeSliderChanging = false;
+
+        float m_LastTimeValue = 0;
+
+        protected async void OnTimeSliderChanged(float p_Value)
         {
+            await Task.Delay(500);
+
+            if (m_LastTimeValue != p_Value)
+            {
+                m_LastTimeValue = p_Value;
+                return;
+            }
+            
+
             m_Time = p_Value;
             m_PreviewAudio.CrossfadeTo(m_Beatmap.level.beatmapLevelData.audioClip, 1, m_Time, 10, null);
             /*m_PreviewAudio.Stop();

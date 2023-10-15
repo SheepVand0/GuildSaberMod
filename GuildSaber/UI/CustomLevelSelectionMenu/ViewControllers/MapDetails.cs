@@ -3,6 +3,7 @@ using BeatSaberPlus.SDK.Game;
 using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.UI.Defaults;
 using GuildSaber.Utils;
 using HMUI;
@@ -25,11 +26,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         protected int m_OldWidth = 0;
 
-        protected XUIText m_MapName;
-        protected XUIText m_MapAuthor;
-        protected XUIText m_MapDuration;
-        protected XUIText m_Modifiers;
-        protected XUIText m_MapMapper;
+        protected GSText m_MapName;
+        protected GSText m_MapAuthor;
+        protected GSText m_MapDuration;
+        protected GSText m_Modifiers;
+        protected GSText m_MapMapper;
         protected XUIImage m_MapCover;
         protected GSSecondaryButton m_PracticeButton;
         protected GSSecondaryButton m_PlayButton;
@@ -63,21 +64,19 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                     .SetHeight(20),
                 XUIVLayout.Make(
                     XUIHLayout.Make(
-                            XUIText.Make(string.Empty)
-                                .SetAlign(TMPro.TextAlignmentOptions.Left)
-                                .Bind(ref m_MapName),
-                            XUIText.Make(string.Empty)
+                            m_MapName = (GSText)GSText.Make(string.Empty)
+                                .SetAlign(TMPro.TextAlignmentOptions.Left),
+                            m_MapDuration = (GSText)GSText.Make(string.Empty)
                                 .SetAlign(TMPro.TextAlignmentOptions.Right)
-                                .Bind(ref m_MapDuration)
                      ).OnReady(x => x.CSizeFitter.horizontalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained),
                     XUIHLayout.Make(
-                        XUIText.Make(string.Empty)
+                        GSText.Make(string.Empty)
                             .Bind(ref m_MapAuthor),
-                        XUIText.Make(string.Empty)
+                        m_MapMapper = (GSText)GSText.Make(string.Empty)
                             .SetColor(new Color(0, 0.8f, 1, 0.7f))
-                            .Bind(ref m_MapMapper)
                     ).ForEachDirect<XUIText>((x) => x.SetFontSize(2))
                 ).SetWidth(40)
+                .OnReady(x => x.LElement.preferredWidth = 40)
             ).SetWidth(60)
              .SetHeight(20)
              .BuildUI(Element.transform);
@@ -86,13 +85,15 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 m_MapPreviewAudio = Resources.FindObjectsOfTypeAll<SongPreviewPlayer>().First();
 
             XUIHLayout.Make(
-                GSSecondaryButton.Make("Practice", 24, 15).OnClick(OnPracticeClicked),
-                GSSecondaryButton.Make("Play", 24, 15).OnClick(async () =>
+                m_PracticeButton = (GSSecondaryButton)GSSecondaryButton.Make("Practice", 24, 15).OnClick(OnPracticeClicked),
+                m_PlayButton = (GSSecondaryButton)GSSecondaryButton.Make("Play", 24, 15).OnClick(async () =>
                 {
                     PlayerData l_PlayerData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().First().playerData;
-                    await Task.Delay(500);
+                    //await Task.Delay(500);
                     OverrideEnvironmentSettings l_OverrideEnvironmentSettings = l_PlayerData.overrideEnvironmentSettings;
-                    
+
+                    //m_PlayButton.SetInteractable(false);
+
                     Levels.PlaySong(m_Beatmap.level, 
                         m_Beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic, 
                         m_Beatmap.difficulty,
@@ -105,8 +106,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         }
 
         protected IDifficultyBeatmap m_Beatmap = null;
-
-        
 
         public MapDetails SetMap(IDifficultyBeatmap p_Beatmap)
         {

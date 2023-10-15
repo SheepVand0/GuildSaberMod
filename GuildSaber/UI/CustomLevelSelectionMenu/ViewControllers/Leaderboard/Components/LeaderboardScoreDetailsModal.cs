@@ -25,6 +25,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
         XUIText m_NameText;
         XUIText m_ScoreText;
         XUIText m_AccuracyText;
+        XUIText m_ModifiersText;
         XUIText m_FullComboText;
         XUIText m_MissText;
         XUIText m_BadCutsText;
@@ -46,6 +47,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
                 XUIText.Make("Name").Bind(ref m_NameText),
                 XUIText.Make("Score").Bind(ref m_ScoreText),
                 XUIText.Make("Accuracy").Bind(ref m_AccuracyText),
+                XUIText.Make("").Bind(ref m_ModifiersText),
                 XUIHLayout.Make(
                     XUIText.Make($"<color=#{ColorUtility.ToHtmlStringRGB(Color.green)}>Full Combo").Bind(ref m_FullComboText),
                     XUIText.Make("Miss").Bind(ref m_MissText),
@@ -80,7 +82,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             IsCreated = true;
 
             RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 70);
-            RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 70);
+            RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 85);
+
+            GetComponentInChildren<Image>().color = Color.black.ColorWithAlpha(0.95f);
 
             ModalUtils.OnModalShow(this);
         }
@@ -100,7 +104,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
         {
             m_NameText.SetText(p_Score.Name);
             m_ScoreText.SetText(GetFormattedText("Score", p_Score.ModifiedScore.ToString(), Color.white));
-            m_AccuracyText.SetText(GetFormattedText("Acc", (((float)p_Score.BaseScore / p_MaxScore)*100).ToString(), Color.white));
+            m_AccuracyText.SetText(GetFormattedText("Acc", (((float)p_Score.BaseScore / p_MaxScore)*100).ToString("0.00") + "%", Color.white));
+            m_ModifiersText.SetActive(p_Score.Modifiers != string.Empty);
+            m_ModifiersText.SetText(GetFormattedText("Modifiers", p_Score.Modifiers, Color.white));
 
             if (p_Score.FullCombo)
             {

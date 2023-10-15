@@ -12,13 +12,12 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
     internal class LeaderboardCell : XUISecondaryButton
     {
 
-        public const int CELL_HEIGHT = 2;
+        public const int CELL_HEIGHT = 4;
 
-        XUIText m_RankText;
-        XUIText m_NameText;
-        XUIText m_PointsText;
-        XUIText m_ScoreAccText;
-        XUIText m_AccText;
+        GSText m_RankText;
+        GSText m_ScoreAccText;
+
+        public static Color s_Blue = new Color(0.0f, 0.8f, 1f, 0.8f);
 
         protected LeaderboardCell(string p_Name, string p_Label, Action p_OnClick = null) : base(p_Name, p_Label, p_OnClick)
         {
@@ -42,14 +41,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
         private async void OnCreation(CSecondaryButton p_Button)
         {
-            float l_FontSize = 2;
+            float l_FontSize = 3f;
 
             XUIHLayout.Make(
                 XUIHLayout.Make(
-                    XUIText.Make("1").Bind(ref m_RankText).SetAlign(TMPro.TextAlignmentOptions.CaplineLeft),
+                    GSText.Make("1").Bind(ref m_RankText).SetAlign(TMPro.TextAlignmentOptions.CaplineLeft),
                     //XUIText.Make("Sheep").Bind(ref m_NameText).SetAlign(TMPro.TextAlignmentOptions.Left),
                     //XUIText.Make("0.00").Bind(ref m_PointsText).SetAlign(TMPro.TextAlignmentOptions.Left),
-                    XUIText.Make("").Bind(ref m_ScoreAccText).SetColor(new Color(1, 1, 1, 0.7f)).SetAlign(TMPro.TextAlignmentOptions.Right)
+                    GSText.Make("").Bind(ref m_ScoreAccText).SetColor(new Color(1, 1, 1, 0.7f)).SetAlign(TMPro.TextAlignmentOptions.CaplineLeft)
                 //XUIText.Make(".00%").Bind(ref m_AccText).SetAlign(TMPro.TextAlignmentOptions.Right)
                 )
                 .ForEachDirect<XUIText>((x) =>
@@ -67,15 +66,17 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
                 })
             )
             .SetWidth(80)
+            .SetHeight(CELL_HEIGHT)
             .BuildUI(Element.LElement.transform);
 
             SetWidth(80);
             SetHeight(CELL_HEIGHT);
-
+            Element.LElement.minHeight = CELL_HEIGHT;
+            Element.LElement.preferredHeight = CELL_HEIGHT;
 
             p_Button.SetBackgroundColor(new Color(1, 1, 1, 0.7f));
 
-            Texture2D l_Background = await TextureUtils.CreateFlatTexture(80 * 15, 2 * 15, Color.black);
+            Texture2D l_Background = await TextureUtils.CreateFlatTexture(80 * 25, 2 * 25, Color.black);
             Texture2D l_BackgroundWithLine = await TextureUtils.AddLine(l_Background, l_Background.width, 1, 0, 0, Color.white.ColorWithAlpha(1));
             //l_BackgroundWithLine.mipMapBias = 1;
 
@@ -113,16 +114,26 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
                 l_PointsStr = string.Empty;
             }
 
-            float l_Acc = ((float)p_Score.ModifiedScore / p_MaxScore) * 100;
+            float l_Acc = ((float)p_Score.BaseScore / p_MaxScore) * 100;
 
             Color l_RankNameColor = Color.white;
             if (p_Score.Name == GuildSaberModule.BasicPlayerData.Name)
-                l_RankNameColor = Color.blue;
+                l_RankNameColor = s_Blue;
 
-            
-            m_RankText.SetText($"<color=#{ColorUtility.ToHtmlStringRGB(l_RankNameColor)}>{p_Score.Rank} <pos=15%>{GuildSaberUtils.GetPlayerNameToFit(p_Score.Name, 18)} <pos=60%>{l_PointsStr}");
-            m_ScoreAccText.SetText($"{p_Score.ModifiedScore} <pos=20%>{l_Acc:0.00}%");
+            string l_PassStateText = string.Empty;
+            if (((PassState.EState)p_Score.State).HasFlag(PassState.EState.Allowed) == false)
+                l_PassStateText = $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>D";
 
+
+            m_RankText.SetText(
+                $"<color=#{ColorUtility.ToHtmlStringRGBA(l_RankNameColor.ColorWithAlpha(0.8f))}>{p_Score.Rank} <pos=15%><i>{GuildSaberUtils.GetPlayerNameToFit(p_Score.Name, 18)} <pos=60%>{l_PointsStr} <pos=75%>{l_PassStateText}");
+            //m_ScoreAccText.SetText($"<align=right><pos=-50%>{p_Score.Modifiers} <pos=-60%>{l_Acc:0.00}% <pos=-85%>{p_Score.ModifiedScore}");
+            string l_Modifiers = string.Empty;
+            if (p_Score.Modifiers != string.Empty)
+            {
+                l_Modifiers = "M";
+            }
+            m_ScoreAccText.SetText($"<pos=55%><mspace=0.5em><align=right>{p_Score.BaseScore}<mspace=0em><align=left> <pos=80%><color=#{ColorUtility.ToHtmlStringRGB(m_GuildColor)}>{l_Acc:0.00}% <pos=95%><color=#{ColorUtility.ToHtmlStringRGBA(new Color(1, 1, 1, 0.6f))}>{l_Modifiers}");
         }
 
         public void Hide()

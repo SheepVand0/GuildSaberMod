@@ -35,6 +35,8 @@ namespace GuildSaber.UI.Defaults
 
         static Texture2D s_WhiteTexture = null;
 
+        public virtual Color GetColor() => Color.black.ColorWithAlpha(0.7f);
+
         private async void SetupStyle(CSecondaryButton p_Button)
         {
             SetWidth(m_Width);
@@ -52,10 +54,11 @@ namespace GuildSaber.UI.Defaults
             }
             Texture2D l_NewTex = await Utils.TextureUtils.CreateRoundedTexture(await Utils.TextureUtils.Gradient(l_Tex, new Color(1, 1, 1, 0.7f), new Color(1f, 1f, 1f, 1), p_UseAlpha: true), 10);
             Sprite l_Sprite = Sprite.Create(l_NewTex, new Rect(0, 0, l_Tex.width, l_Tex.height), new Vector2(0, 0), 1000, 0, SpriteMeshType.FullRect);
-            p_Button.SetBackgroundColor(new Color(0, 0, 0, 0.7f));
+            p_Button.SetBackgroundColor(GetColor());
             p_Button.SetBackgroundSprite(l_Sprite);
             //XUIImage.Make(l_Sprite).BuildUI(p_Button.transform);
             //p_Button.SetBackgroundSprite(l_Sprite);
+            //Element.GetComponentInChildren<>
         }
     }
 }

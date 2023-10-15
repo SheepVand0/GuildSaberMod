@@ -64,5 +64,10 @@ namespace GuildSaber.Utils
 
             return $"{l_SHours}{l_Minutes:00}:{l_Seconds:00}";
         }
+
+        public static string Percent(float p_Value)
+        {
+            return (p_Value * 100).ToString("0") + "%";
+        }
     }
 }

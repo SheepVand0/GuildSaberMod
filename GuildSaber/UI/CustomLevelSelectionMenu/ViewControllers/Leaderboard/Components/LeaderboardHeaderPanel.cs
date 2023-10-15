@@ -15,11 +15,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
     {
 
         public const int HEADER_WIDTH = 100;
-        public const int HEADER_HEIGHT = 10;
+        public const int HEADER_HEIGHT = 7;
 
         private Color m_GuildColor = Color.white;
 
-        protected XUIText m_Text;
+        protected GSText m_Text;
         protected PointsData m_PointsData;
         protected float m_Level;
         protected string m_LevelName;
@@ -36,16 +36,18 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
         protected void OnElementCreation(CHOrVLayout p_layout)
         {
-            SetWidth(HEADER_WIDTH);
-            SetHeight(HEADER_HEIGHT);
-            XUIText.Make(string.Empty)
+            GSText.Make(string.Empty)
                 .Bind(ref m_Text)
                 .BuildUI(Element.LElement.transform);
+            SetWidth(HEADER_WIDTH);
+            SetHeight(HEADER_HEIGHT);
+            Element.LElement.minHeight = HEADER_HEIGHT;
+            Element.LElement.preferredHeight = HEADER_HEIGHT;
         }
 
         public async void UpdateBackground()
         {
-            Texture2D l_Background = await TextureUtils.Gradient(await TextureUtils.CreateFlatTexture(HEADER_WIDTH * 10, HEADER_HEIGHT * 10, Color.white), Color.black.ColorWithAlpha(0), m_GuildColor.ColorWithAlpha(1) * 2, p_UseAlpha: true);
+            Texture2D l_Background = await TextureUtils.Gradient(await TextureUtils.CreateFlatTexture(HEADER_WIDTH * 10, HEADER_HEIGHT * 10, Color.white), Color.black.ColorWithAlpha(0), m_GuildColor.ColorWithAlpha(1) * 0.8f, p_UseAlpha: true);
             Texture2D l_RoundedBackground = await TextureUtils.CreateRoundedTexture(l_Background, 10);
             SetBackground(true);
             SetBackgroundSprite(Sprite.Create(l_RoundedBackground, new Rect(0, 0, l_RoundedBackground.width, l_RoundedBackground.height), new Vector2()));
@@ -73,8 +75,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
         public void UpdateText()
         {
+            m_Text.SetFontSize(4);
             string l_Text = $"Level {m_Level:0,0} - {m_LevelName} - {m_PointsData.Points:0,00} {m_PointsData.PointsName}";
-            m_Text.SetText(l_Text.ToUpper());
+            m_Text.SetText("<voffset=1em>" + l_Text.ToUpper() + "</voffset>");
         }
     }
 }

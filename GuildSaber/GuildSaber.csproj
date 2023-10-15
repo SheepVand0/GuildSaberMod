@@ -337,6 +337,7 @@
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\CategoriesSelectionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
+    <Compile Include="UI\Defaults\GSText.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardCell.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardHeaderPanel.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardPanel.cs" />
@@ -348,6 +349,7 @@
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\MapDetails.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\PracticeViewController.cs" />
     <Compile Include="UI\Defaults\GSSecondaryButton.cs" />
+    <Compile Include="UI\Defaults\GSSlider.cs" />
     <Compile Include="UI\Defaults\GSTransparentButton.cs" />
     <Compile Include="UI\FlowCoordinator\CustomFlowCoordinator.cs" />
     <Compile Include="UI\InternalPlaylistsManager.cs" />
@@ -408,6 +410,7 @@
     <EmbeddedResource Include="UI\Leaderboard\Components\Views\CustomLevelStatsView.bsml" />
     <EmbeddedResource Include="UI\Leaderboard\Components\Views\ScoreCellInfoModal.bsml" />
     <EmbeddedResource Include="UI\Leaderboard\Components\Views\LeaderboardScoreList.bsml" />
+    <EmbeddedResource Include="Resources\Teko-Medium.ttf" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BeatSaberModdingTools.Tasks">
