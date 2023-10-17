@@ -1,7 +1,9 @@
 ﻿using BeatSaberMarkupLanguage;
 using BeatSaberPlus.SDK.Game;
 using CP_SDK.UI.Components;
+using CP_SDK.Unity;
 using CP_SDK.XUI;
+using GuildSaber.Logger;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.UI.Defaults;
@@ -98,7 +100,20 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                         m_Beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic, 
                         m_Beatmap.difficulty,
                         l_OverrideEnvironmentSettings,
-                        l_PlayerData.colorSchemesSettings.GetSelectedColorScheme(), l_PlayerData.gameplayModifiers, l_PlayerData.playerSpecificSettings);
+                        l_PlayerData.colorSchemesSettings.GetSelectedColorScheme(), l_PlayerData.gameplayModifiers, l_PlayerData.playerSpecificSettings, 
+                        async (p_SceneSetupData ,p_LevelCompletionResults, p_Beatmap) =>
+                        {
+                            //return;
+                            GSLogger.Instance.Log("Showing results", IPA.Logging.Logger.LogLevel.InfoUp);
+                            var l_ResultsViewController = Resources.FindObjectsOfTypeAll<ResultsViewController>().First();
+                            l_ResultsViewController.Init(p_LevelCompletionResults, 
+                                await p_Beatmap.GetBeatmapDataAsync(p_SceneSetupData.environmentInfo, l_PlayerData.playerSpecificSettings), 
+                                p_Beatmap, CustomLevelSelectionMenuReferences.IsInPractice, false);
+                            MTCoroutineStarter.Start(LevelSelectionViewController.Instance.PresentViewControllerCoroutine(l_ResultsViewController, null, ViewController.AnimationDirection.Vertical, false));
+                            
+                            l_ResultsViewController.continueButtonPressedEvent += OnResultsContinueButtonPressed;
+                            
+                        });
                 })
             ).BuildUI(Element.transform);
 
@@ -106,6 +121,13 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         }
 
         protected IDifficultyBeatmap m_Beatmap = null;
+
+        private void OnResultsContinueButtonPressed(ResultsViewController p_Controller)
+        {
+            p_Controller.continueButtonPressedEvent -= OnResultsContinueButtonPressed;
+
+            MTCoroutineStarter.Start(p_Controller.DismissViewControllerCoroutine(null, ViewController.AnimationDirection.Horizontal, false));
+        }
 
         public MapDetails SetMap(IDifficultyBeatmap p_Beatmap)
         {

@@ -332,6 +332,7 @@
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\CategorySelectionFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\GuildSelectionFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\LevelSelectionFlowCoordinator.cs" />
+    <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\MapResultsFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\FlowCoordinators\PracticeMenuFlowCoordinator.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\Practice\PracticeManager.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\CategoriesSelectionViewController.cs" />
