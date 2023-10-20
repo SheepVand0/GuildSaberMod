@@ -74,6 +74,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
                     })
                     .Bind(ref m_CountryButton)
             )
+            .ForEachDirect<XUIIconButton>(x =>
+            {
+                x.SetWidth(4);
+                x.SetHeight(4);
+            })
             .SetBackground(true)
             .SetBackgroundColor(new Color(0, 0, 0, 0.7f))
             .BuildUI(Element.LElement.transform);

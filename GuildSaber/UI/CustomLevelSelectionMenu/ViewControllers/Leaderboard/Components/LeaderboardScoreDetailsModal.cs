@@ -84,7 +84,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 70);
             RTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 85);
 
-            GetComponentInChildren<Image>().color = Color.black.ColorWithAlpha(0.95f);
+            GetComponentInChildren<Image>().color = Color.black.ColorWithAlpha(1f);
 
             ModalUtils.OnModalShow(this);
         }

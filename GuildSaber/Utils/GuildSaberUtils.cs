@@ -197,6 +197,7 @@ public static class GuildSaberUtils
         }
         catch (Exception l_E) {
             l_IsError = true;
+            l_NewTexture = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GuildSaberLogo.png");
             if (p_LogOnError) GSLogger.Instance.Error(l_E, nameof(GuildSaberUtils), nameof(GetImage));
         }
 

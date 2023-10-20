@@ -338,6 +338,7 @@
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\CategoriesSelectionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
+    <Compile Include="UI\Defaults\GSTextInput.cs" />
     <Compile Include="UI\Defaults\GSText.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardCell.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\Leaderboard\Components\LeaderboardHeaderPanel.cs" />

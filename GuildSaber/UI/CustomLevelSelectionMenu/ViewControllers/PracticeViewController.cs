@@ -110,14 +110,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         protected async void OnTimeSliderChanged(float p_Value)
         {
-            await Task.Delay(500);
-
-            if (m_LastTimeValue != p_Value)
-            {
-                m_LastTimeValue = p_Value;
-                return;
-            }
-            
 
             m_Time = p_Value;
             m_PreviewAudio.CrossfadeTo(m_Beatmap.level.beatmapLevelData.audioClip, 1, m_Time, 10, null);

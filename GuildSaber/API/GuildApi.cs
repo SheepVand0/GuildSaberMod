@@ -87,13 +87,13 @@ public static class GuildApi
             ApiPlayerData l_DefinedPlayer = default;
             if (GuildSaberModule.GSPlayerId == null)
             {
-                var l_Player = JsonConvert.DeserializeObject<ApiPlayerData>((await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{GuildSaberModule.SsPlayerId}/1")).BodyString);
+                var l_Player = JsonConvert.DeserializeObject<ApiPlayerData>((await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/players/data/by-blid/{GuildSaberModule.SsPlayerId}/1")).BodyString);
                 l_DefinedPlayer = l_Player;
                 GuildSaberModule.GSPlayerId = (int)l_Player.ID;
             }
             else
             {
-                var l_Player = JsonConvert.DeserializeObject<ApiPlayerData>((await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/players/data/by-ssid/{GuildSaberModule.SsPlayerId}/1{(p_UseGuild ? "?guild-id=" + l_SelectedGuildId : string.Empty)}")).BodyString);
+                var l_Player = JsonConvert.DeserializeObject<ApiPlayerData>((await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/players/data/by-blid/{GuildSaberModule.SsPlayerId}/1{(p_UseGuild ? "?guild-id=" + l_SelectedGuildId : string.Empty)}")).BodyString);
                 l_DefinedPlayer = l_Player;
                 
             }
@@ -150,7 +150,7 @@ public static class GuildApi
 
         try
         {
-            string l_Result = await l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-ssid/{p_ID}/full?guild={p_Guild}");
+            string l_Result = await l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-blid/{p_ID}/full?guild={p_Guild}");
             l_ResultPlayer = JsonConvert.DeserializeObject<ApiPlayerData>(l_Result);
             GuildSaberModule.SetState(GuildSaberModule.EModState.Functional);
         }
@@ -299,7 +299,8 @@ public static class GuildApi
             List<PlaylistModel> l_Playlists = new List<PlaylistModel>();
             for (int l_i = 0; l_i < l_Levels.Count; l_i++)
             {
-                string l_QueryString = $"https://api.guildsaber.com/playlists/data/by-id/{l_Levels[l_i].ID}?player-id={GuildSaberModule.GSPlayerId}&{l_CategoryQueryString}";
+                //player-id={GuildSaberModule.GSPlayerId}
+                string l_QueryString = $"https://api.guildsaber.com/playlists/data/by-id/{l_Levels[l_i].ID}?{l_CategoryQueryString}";
                 PlaylistModel l_Playlist = JsonConvert.DeserializeObject<PlaylistModel>(await l_Client.GetStringAsync(l_QueryString));
                 l_Playlist.customData.PlaylistLevel = l_Levels[l_i].LevelNumber;
                 l_Playlists.Add(l_Playlist);

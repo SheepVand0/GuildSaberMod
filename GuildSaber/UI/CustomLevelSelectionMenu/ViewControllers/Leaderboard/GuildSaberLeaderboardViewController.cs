@@ -1,10 +1,12 @@
 ﻿using BeatSaberPlus.SDK.UI;
+using CP_SDK.Unity;
 using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.Logger;
 using GuildSaber.UI.Card;
 using GuildSaber.UI.CustomLevelSelectionMenu.Components;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
+using GuildSaber.UI.Defaults;
 using GuildSaber.Utils;
 using IPA.Utilities;
 using PlaylistManager.HarmonyPatches;
@@ -14,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
 {
@@ -26,12 +29,16 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
         XUIVLayout m_MainLayout;
         XUIVLayout m_ScopeSelectorLayout;
         XUIVLayout m_LeaderboardCellsContainer;
+        XUIHLayout m_ShowLeaderboardButtonContainer;
+        XUIVLayout m_LoadingTextLayout;
 
         LeaderboardHeaderPanel m_HeaderPanel;
 
         XUIText m_LoadingText;
         XUIText m_ErrorText;
         XUIText m_NoScoreText;
+
+        GSSecondaryButton m_ShowLeaderboardButton;
 
         LeaderboardScopeSelector m_ScopeSelector;
 
@@ -47,6 +54,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
 
         protected string m_SelectedPointsType = string.Empty;
         protected ApiMapLeaderboardCollectionStruct m_Leaderboard;
+
+        protected bool m_IsChanging;
 
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
@@ -64,13 +73,15 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
 
         protected override void OnViewCreation()
         {
-            Templates.FullRectLayout(
+            //Templates.FullRectLayout(
+            XUIVLayout.Make(
                 XUIHLayout.Make(
                     m_LeaderboardPanel = LeaderboardPanel.Make()
                 )
                 .SetWidth(100)
                 .SetHeight(20)
                 .Bind(ref m_LeaderboardPanelContainer),
+                XUIVLayout.Make().OnReady(x => x.LElement.minHeight = 5),
                 m_HeaderPanel = (LeaderboardHeaderPanel)LeaderboardHeaderPanel.Make()
                 .SetHeight(LeaderboardHeaderPanel.HEADER_HEIGHT),
                 XUIHLayout.Make(
@@ -95,11 +106,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                         .SetSpacing(0)
                         .SetWidth(80)
                         .SetHeight(10 * LeaderboardCell.CELL_HEIGHT)
-                    //.OnReady(x => x.HOrVLayoutGroup.childControlHeight = false)
                     )
                 )
                 .SetSpacing(0)
-                .SetHeight(15)
+                //.SetHeight(15)
                 .Bind(ref m_MainLayout)
                 .BuildUI(transform);
 
@@ -112,6 +122,15 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
             m_LeaderboardPanel.GetPointsSelector().eOnChange += OnPointsChanged;
 
             Hide();
+        }
+
+        protected override void OnViewDeactivation()
+        {
+            HideScoreSaber();
+            foreach (var l_Item in m_Cells)
+            {
+                l_Item.Element.gameObject.transform.localScale = new Vector3(1, 1, 1);
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -171,9 +190,13 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
         {
             m_ErrorText.SetActive(p_Mode == ELeaderboardMode.Error);
             m_ScopeSelectorLayout.SetActive(p_Mode == ELeaderboardMode.Normal);
-            m_LeaderboardCellsContainer.SetActive(p_Mode == ELeaderboardMode.Normal);
+            m_LeaderboardCellsContainer.SetActive(p_Mode == ELeaderboardMode.Normal || p_Mode == ELeaderboardMode.Loading);
             m_LoadingText.SetActive(p_Mode == ELeaderboardMode.Loading);
             m_NoScoreText.SetActive(p_Mode == ELeaderboardMode.NoScore);
+            if (p_Mode == ELeaderboardMode.Loading)
+            {
+                HideLeaderboardCells();
+            }
 
             m_ScopeSelector.SetActive(p_Mode == ELeaderboardMode.Normal || (p_Mode == ELeaderboardMode.NoScore && m_ScopeSelector.GetSelectedScope().HasFlag(ELeaderboardScope.Global) == false));
         }
@@ -183,7 +206,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
             Hide();
 
             GuildData l_GuildData = GuildApi.GetGuildFromId(p_GuildId);
-            var l_Banner = await GuildSaberUtils.GetImage(l_GuildData.Banner);
+            var l_Banner = await GuildSaberUtils.GetImage(l_GuildData.Logo);
             Texture2D l_Result;
             if (l_Banner.IsError)
             {
@@ -194,7 +217,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                 l_Result = l_Banner.Texture;
             }
 
-            var l_Logo = await GuildSaberUtils.GetImage(l_GuildData.Logo);
+            var l_Logo = await GuildSaberUtils.GetImage(/*l_GuildData.Logo*/GuildSaberModule.BasicPlayerData.Avatar);
             Texture2D l_LogoResult;
             if (l_Logo.IsError)
             {
@@ -218,6 +241,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
             ApiPlayerData l_PlayerData = GuildSaberModule.BasicPlayerData;
             try
             {
+                m_IsChanging = true;
+
                 SetMode(ELeaderboardMode.Loading);
                 ApiMapLeaderboardCollectionStruct l_Leaderboard = await GuildApi.GetLeaderboard(p_GuildID, p_MapHash, p_Beatmap, p_Page, (m_ScopeSelector.GetSelectedScope() == ELeaderboardScope.Around) ? (int)GuildSaberModule.GSPlayerId : 0, (m_ScopeSelector.GetSelectedScope() == ELeaderboardScope.Country) ? l_PlayerData.Country : string.Empty, p_Beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.serializedName);
                 m_Leaderboard = l_Leaderboard;
@@ -229,7 +254,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                 SetMode(ELeaderboardMode.Normal);
                 m_ScopeSelector.SetPage(m_ScopeSelector.GetPage(), (int)l_Leaderboard.Metadata.MaxPage);
 
+                m_IsChanging = false;
+
                 UpdateLeaderboardCells(l_Leaderboard);
+
+                if (!m_IsLeaderboardOnScoreSaber) return;
+
+                var l_LeaderboardViewController = Resources.FindObjectsOfTypeAll<PlatformLeaderboardViewController>().First();
+                l_LeaderboardViewController.SetData(m_SelectedBeatmap);
             }
             catch (Exception l_E)
             {
@@ -252,12 +284,23 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
 
-        public void UpdateLeaderboardCells(ApiMapLeaderboardCollectionStruct p_Leaderboard)
+        public bool IsChanging()
+        => m_IsChanging;
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
+        public void HideLeaderboardCells()
         {
             foreach (var l_Item in m_Cells)
             {
                 l_Item.Hide();
             }
+        }
+
+        public void UpdateLeaderboardCells(ApiMapLeaderboardCollectionStruct p_Leaderboard)
+        {
+            HideLeaderboardCells();
 
             for (int l_i = 0; l_i < p_Leaderboard.Leaderboards.Count(); l_i++)
             {
@@ -267,15 +310,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                         p_Leaderboard.Leaderboards[l_i].PointsData.Where((x) => x.PointsType == GuildApi.PASS_POINTS_TYPE).First());
                 }
 
-                foreach (var l_Index in p_Leaderboard.Leaderboards[l_i].PointsData)
-                {
-                    GSLogger.Instance.Log(l_Index.PointsType, IPA.Logging.Logger.LogLevel.InfoUp);
-                }
-
                 m_Cells[l_i].SetGuildColor(m_GuildColor);
                 var l_PointsType = p_Leaderboard.Leaderboards[l_i].PointsData.Where(x => x.PointsType == m_LeaderboardPanel.GetPointsSelector().GetSelectedValue()).First();
                 m_Cells[l_i].SetPoints(l_PointsType);
-                m_Cells[l_i].SetScore(p_Leaderboard.Leaderboards[l_i], (int)p_Leaderboard.CustomData.MaxScore);
+                m_Cells[l_i].PlayAnimation(l_i, p_Leaderboard.Leaderboards[l_i], (int)p_Leaderboard.CustomData.MaxScore);
             }
 
             m_HeaderPanel.SetLevel(p_Leaderboard.CustomData.LevelValue, CustomLevelSelectionMenuReferences.SelectedCategory.Name);
@@ -300,5 +338,48 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
         {
             ShowModal(GetScoreDetailsModal());
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
+        bool m_IsLeaderboardOnScoreSaber;
+
+        public void OnScoreSaberButton()
+        {
+            if (m_IsLeaderboardOnScoreSaber)
+            {
+                HideScoreSaber();
+            } else
+            {
+                ShowScoreSaber();
+            }
+        }
+
+        public void ShowScoreSaber()
+        {
+            if (m_IsLeaderboardOnScoreSaber) return;
+
+            var l_ScoreSaberButton = LevelSelectionViewController.Instance.GetMapDetails().GetShowScoreSaberButton();
+            l_ScoreSaberButton.SetText("Hide ScoreSaber");
+            l_ScoreSaberButton.SetInteractable(false);
+            var l_LeaderboardViewController = Resources.FindObjectsOfTypeAll<PlatformLeaderboardViewController>().First();
+            l_LeaderboardViewController.SetData(m_SelectedBeatmap);
+            //l_LeaderboardViewController.Refresh(true, true);
+            MTCoroutineStarter.Start(PresentViewControllerCoroutine(l_LeaderboardViewController, () => l_ScoreSaberButton.SetInteractable(true), AnimationDirection.Vertical, false));
+            m_IsLeaderboardOnScoreSaber = true;
+        }
+        
+        public void HideScoreSaber()
+        {
+            if (!m_IsLeaderboardOnScoreSaber) return;
+            var l_ScoreSaberButton = LevelSelectionViewController.Instance.GetMapDetails().GetShowScoreSaberButton();
+            l_ScoreSaberButton.SetText("Show ScoreSaber");
+            l_ScoreSaberButton.SetInteractable(false);
+
+            var l_LeaderboardViewController = Resources.FindObjectsOfTypeAll<PlatformLeaderboardViewController>().First();
+            MTCoroutineStarter.Start(l_LeaderboardViewController.DismissViewControllerCoroutine(() => l_ScoreSaberButton.SetInteractable(true), AnimationDirection.Vertical, false)); ;
+            m_IsLeaderboardOnScoreSaber = false;
+        }
+
     }
 }

@@ -5,6 +5,7 @@ using CP_SDK.Unity;
 using CP_SDK.XUI;
 using GuildSaber.Logger;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.UI.Defaults;
 using GuildSaber.Utils;
@@ -41,6 +42,13 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         internal static PlayerData m_PlayerData;
 
+        protected GSSecondaryButton m_ScoreSaberButton;
+
+        protected IDifficultyBeatmap m_Beatmap = null;
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
         public static MapDetails Make()
         {
             m_PlayerData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().First().playerData;
@@ -53,6 +61,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             p_Ref = this;
             return this;
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
+        public GSSecondaryButton GetShowScoreSaberButton() => m_ScoreSaberButton;
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
         private void OnLayoutReady(CVLayout p_Layout)
         {
@@ -88,46 +104,16 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
             XUIHLayout.Make(
                 m_PracticeButton = (GSSecondaryButton)GSSecondaryButton.Make("Practice", 24, 15).OnClick(OnPracticeClicked),
-                m_PlayButton = (GSSecondaryButton)GSSecondaryButton.Make("Play", 24, 15).OnClick(async () =>
-                {
-                    PlayerData l_PlayerData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().First().playerData;
-                    //await Task.Delay(500);
-                    OverrideEnvironmentSettings l_OverrideEnvironmentSettings = l_PlayerData.overrideEnvironmentSettings;
-
-                    //m_PlayButton.SetInteractable(false);
-
-                    Levels.PlaySong(m_Beatmap.level, 
-                        m_Beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic, 
-                        m_Beatmap.difficulty,
-                        l_OverrideEnvironmentSettings,
-                        l_PlayerData.colorSchemesSettings.GetSelectedColorScheme(), l_PlayerData.gameplayModifiers, l_PlayerData.playerSpecificSettings, 
-                        async (p_SceneSetupData ,p_LevelCompletionResults, p_Beatmap) =>
-                        {
-                            //return;
-                            GSLogger.Instance.Log("Showing results", IPA.Logging.Logger.LogLevel.InfoUp);
-                            var l_ResultsViewController = Resources.FindObjectsOfTypeAll<ResultsViewController>().First();
-                            l_ResultsViewController.Init(p_LevelCompletionResults, 
-                                await p_Beatmap.GetBeatmapDataAsync(p_SceneSetupData.environmentInfo, l_PlayerData.playerSpecificSettings), 
-                                p_Beatmap, CustomLevelSelectionMenuReferences.IsInPractice, false);
-                            MTCoroutineStarter.Start(LevelSelectionViewController.Instance.PresentViewControllerCoroutine(l_ResultsViewController, null, ViewController.AnimationDirection.Vertical, false));
-                            
-                            l_ResultsViewController.continueButtonPressedEvent += OnResultsContinueButtonPressed;
-                            
-                        });
-                })
+                m_PlayButton = (GSSecondaryButton)GSSecondaryButton.Make("Play", 24, 15).OnClick(PlayMap)
             ).BuildUI(Element.transform);
+
+            (m_ScoreSaberButton = GSSecondaryButton.Make("Show ScoreSaber", 50, 5, p_OnClick: GuildSaberLeaderboardViewController.Instance.OnScoreSaberButton)).BuildUI(Element.transform);
 
             SetActive(false);
         }
 
-        protected IDifficultyBeatmap m_Beatmap = null;
-
-        private void OnResultsContinueButtonPressed(ResultsViewController p_Controller)
-        {
-            p_Controller.continueButtonPressedEvent -= OnResultsContinueButtonPressed;
-
-            MTCoroutineStarter.Start(p_Controller.DismissViewControllerCoroutine(null, ViewController.AnimationDirection.Horizontal, false));
-        }
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
         public MapDetails SetMap(IDifficultyBeatmap p_Beatmap)
         {
@@ -151,6 +137,44 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             return this;
         }
 
+        public void PlayMap()
+        {
+            PlayerData l_PlayerData = Resources.FindObjectsOfTypeAll<PlayerDataModel>().First().playerData;
+
+            OverrideEnvironmentSettings l_OverrideEnvironmentSettings = l_PlayerData.overrideEnvironmentSettings;
+
+            Levels.PlaySong(m_Beatmap.level,
+                m_Beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic,
+                m_Beatmap.difficulty,
+                l_OverrideEnvironmentSettings,
+                l_PlayerData.colorSchemesSettings.GetSelectedColorScheme(), l_PlayerData.gameplayModifiers, l_PlayerData.playerSpecificSettings,
+                (p_SceneSetupData, p_LevelCompletionResults, p_Beatmap) =>
+                {
+                    if (CustomLevelSelectionMenuReferences.IsInGuildSaberLevelSelectionMenu == false) return;
+
+                    if (MapResultsFlowCoordinator.Instance == null)
+                        MapResultsFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<MapResultsFlowCoordinator>();
+
+                    MapResultsFlowCoordinator.Instance.ShowWithData(p_SceneSetupData, p_LevelCompletionResults, p_Beatmap, l_PlayerData);
+                });
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
+        internal void OnResultsContinueButtonPressed(ResultsViewController p_Controller)
+        {
+            MapResultsFlowCoordinator.Instance.Dismiss();
+        }
+
+        internal void OnResultsRestartButtonPressed(ResultsViewController p_Controller)
+        {
+            PlayMap();
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
         public void PlaySongPreview()
         {
             m_MapPreviewAudio.FadeOut(0.25f);
@@ -158,10 +182,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             m_MapPreviewAudio.CrossfadeTo(m_Beatmap.level.beatmapLevelData.audioClip, 1, m_Beatmap.level.previewStartTime, m_Beatmap.level.previewDuration, null) ;
         }
 
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
         protected void OnPracticeClicked()
         {
             if (PracticeMenuFlowCoordinator.Instance == null)
                 PracticeMenuFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<PracticeMenuFlowCoordinator>();
+
             PracticeMenuFlowCoordinator.Instance.ShowWithBeatmap(m_Beatmap);
         }
     }

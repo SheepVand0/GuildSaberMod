@@ -38,11 +38,15 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
         {
             GSText.Make(string.Empty)
                 .Bind(ref m_Text)
+                .OnReady(x =>
+                {
+                    x.LElement.minHeight = HEADER_HEIGHT;
+                })
                 .BuildUI(Element.LElement.transform);
             SetWidth(HEADER_WIDTH);
             SetHeight(HEADER_HEIGHT);
+            
             Element.LElement.minHeight = HEADER_HEIGHT;
-            Element.LElement.preferredHeight = HEADER_HEIGHT;
         }
 
         public async void UpdateBackground()
@@ -75,7 +79,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
         public void UpdateText()
         {
-            m_Text.SetFontSize(4);
+            m_Text.SetFontSize(6);
             string l_Text = $"Level {m_Level:0,0} - {m_LevelName} - {m_PointsData.Points:0,00} {m_PointsData.PointsName}";
             m_Text.SetText("<voffset=1em>" + l_Text.ToUpper() + "</voffset>");
         }

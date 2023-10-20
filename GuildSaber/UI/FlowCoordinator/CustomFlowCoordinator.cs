@@ -14,6 +14,8 @@ namespace GuildSaber.UI.FlowCoordinator
 
         protected virtual void OnCreation() { }
 
+        protected virtual bool ShowBackButton { get; } = true;
+
         protected abstract (ViewController?, ViewController?, ViewController?) GetUIImplementation();
 
         public void Awake()
@@ -30,7 +32,7 @@ namespace GuildSaber.UI.FlowCoordinator
                 return;
             SetTitle(Title, (ViewController.AnimationType)1);
             (ViewController?, ViewController?, ViewController?) l_ViewControllers = GetUIImplementation();
-            showBackButton = true;
+            showBackButton = ShowBackButton;
             ProvideInitialViewControllers(l_ViewControllers.Item1, l_ViewControllers.Item2, l_ViewControllers.Item3, null, null);
         }
 

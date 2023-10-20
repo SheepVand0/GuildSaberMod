@@ -39,6 +39,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
                 .Bind(ref m_Dropdown)
                 .BuildUI(Element.LElement.transform);
 
+            var l_DropdownText = Element.gameObject.GetComponentInChildren<TextMeshProUGUI>();
+            GSText.PatchText(l_DropdownText);
             m_Dropdown.OnValueChanged(OnValueSelected);
             var l_Image = m_Dropdown.Element.GetComponentInChildren<Image>();
             l_Image.color = new UnityEngine.Color(0, 0, 0, 0.9f);

@@ -62,6 +62,23 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
 
+        protected override async void OnViewActivation()
+        {
+            await WaitUtils.Wait(() => Instance != null, 1);
+
+            if (!CustomLevelSelectionMenuReferences.IsInGuildSaberLevelSelectionMenu) return;
+
+            var l_ResultsViewController = Resources.FindObjectsOfTypeAll<ResultsViewController>().First();
+            l_ResultsViewController.continueButtonPressedEvent += m_MapDetails.OnResultsContinueButtonPressed;
+            l_ResultsViewController.restartButtonPressedEvent += m_MapDetails.OnResultsRestartButtonPressed;
+            CustomLevelSelectionMenuReferences.IsInGuildSaberLevelSelectionMenu = true;
+        }
+
+        public void OnMenuLeaved()
+        { 
+            CustomLevelSelectionMenuReferences.IsInGuildSaberLevelSelectionMenu = false;
+        }
+
         protected override void OnViewCreation()
         {
             (m_WorkingLayout = Templates.FullRectLayout(
@@ -73,7 +90,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                )
                .SetHeight(10),
                XUIHLayout.Make(
-                   XUITextInput.Make("Search").OnValueChanged((val) =>
+                   GSTextInput.Make("Search").OnValueChanged((val) =>
                    {
                        m_SearchValue = val;
                        UpdateMapList(false, true);
@@ -104,7 +121,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                    XUIVLayout.Make(
                        MapDetails.Make()
                            .Bind(ref m_MapDetails)
-                           .SetWidth(20)
+                           .SetWidth(15)
                    )
                ).SetWidth(150)
            )).BuildUI(transform);
@@ -131,6 +148,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
             Instance = this;
         }
+
+        public MapDetails GetMapDetails()
+        => m_MapDetails;
 
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
@@ -170,12 +190,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
             SetMode(EMode.Loading);
 
-            //GSLogger.Instance.Log(p_GuildId, IPA.Logging.Logger.LogLevel.InfoUp);
-
             GuildData l_Guild = GuildSaberModule.AvailableGuilds.Where((x) => x.ID == p_GuildId).ElementAt(0);
 
-            /*m_WorkingLayout.OnReady(async (x) =>
-            {*/
             m_StatusText.SetText("Loading category file...");
 
             GuildName = l_Guild.Name;
@@ -207,7 +223,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             SetSelectedPlaylist(l_FirstLevel.customData.PlaylistLevel);
 
             GSLogger.Instance.Log("Finished Loading levels", IPA.Logging.Logger.LogLevel.InfoUp);
-            //});
         }
 
         private bool m_LoadingPlaylist = false;
@@ -313,7 +328,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 l_Index.SetActive(false);
         }
 
-        public void UpdateLevelsOnUI()
+        public async void UpdateLevelsOnUI()
         {
             ClearUILevels();
 
@@ -333,14 +348,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
                 if (l_i > UIPlaylists.Count - 1)
                 {
-                    UIPlaylists.Add(PlaylistButton.Make().SetLevel(l_Model.image, l_Songs, l_Model.customData.PlaylistLevel));
+                    UIPlaylists.Add(await PlaylistButton.Make().SetLevel(l_Model.image, l_Songs, l_Model.customData.PlaylistLevel));
                     UIPlaylists[l_i].BuildUI(m_PlaylistsContainer.Element.Container);
                     UIPlaylists[l_i].SetActive(true);
                 }
                 else
                 {
                     UIPlaylists[l_i].SetActive(true);
-                    UIPlaylists[l_i].SetLevel(l_Model.image, l_Songs, l_Model.customData.PlaylistLevel);
+                    await UIPlaylists[l_i].SetLevel(l_Model.image, l_Songs, l_Model.customData.PlaylistLevel);
                 }
             }
 
@@ -400,6 +415,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             foreach (var l_Index in UIMaps)
             {
                 l_Index.Hide();
+                l_Index.SetSelected(false);
             }
         }
 

@@ -3,6 +3,7 @@ using CP_SDK.UI.DefaultComponents;
 using CP_SDK.XUI;
 using GuildSaber.Logger;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.Utils;
 using IPA.Utilities;
 using System;
@@ -27,6 +28,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
         public static event Action<IDifficultyBeatmap> eOnMapSelected;
 
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
         protected MapButton(IDifficultyBeatmap p_Beatmap, Action p_OnClick = null) : base("MapButton", string.Empty, p_OnClick)
         {
             SetWidth(45);
@@ -36,6 +40,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
                 SetBeatmap(p_Beatmap);
             
             OnClick(OnClicked);
+            OnReady(x =>
+            {
+                GSText.PatchText(Element.gameObject.GetComponentInChildren<TextMeshProUGUI>());
+            });
             eOnMapSelected += (x) => m_IsSelected = false;
         }
 
@@ -49,11 +57,17 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             return new MapButton(p_Beatmap);
         }
 
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
         public string GetMapName() => m_Beatmap.level.songName;
 
         public IDifficultyBeatmap GetBeatmap() => m_Beatmap;
 
         public bool IsSelected() => m_IsSelected;
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
         public async Task<Task> SetBeatmap(IDifficultyBeatmap p_Beatmap)
         {
@@ -65,7 +79,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
                 return Task.CompletedTask;
             }
 
-            GSLogger.Instance.Log(p_Beatmap == null, IPA.Logging.Logger.LogLevel.InfoUp);
+            //GSLogger.Instance.Log(p_Beatmap == null, IPA.Logging.Logger.LogLevel.InfoUp);
 
             m_BeatmapCover = await m_Beatmap.level.GetCoverImageAsync(new System.Threading.CancellationToken());
             if (m_BeatmapCover == null)
@@ -79,6 +93,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
             return Task.CompletedTask;
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
 
         public async void UpdateVisuals()
         {
@@ -103,6 +120,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             Element.SetBackgroundColor(new Color(1f, 1f, 1f, 0.5f));
         }
 
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
         private void OnClicked()
         {
             if (m_IsSelected == true)
@@ -113,16 +133,25 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
             m_IsSelected = true;
         }
 
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
         public void Hide()
         {
             SetActive(false);
-            //SetHeight(0);
         }
 
         public void Show()
         {
             SetActive(true);
-            //SetHeight(MAP_BUTTON_HEIGHT);
+        }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
+        public void SetSelected(bool p_IsSelected)
+        {
+            m_IsSelected = p_IsSelected;
         }
     }
 }

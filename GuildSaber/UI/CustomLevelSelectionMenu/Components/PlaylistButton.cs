@@ -32,12 +32,12 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
         protected float m_LevelNumber;
         protected List<PlaylistModelSong> m_Level = new List<PlaylistModelSong>();
 
-        public PlaylistButton SetLevel(string p_Base64, List<PlaylistModelSong> p_Hashes, float p_LevelNumber)
+        public async Task<PlaylistButton> SetLevel(string p_Base64, List<PlaylistModelSong> p_Hashes, float p_LevelNumber)
         {
             m_Level = p_Hashes;
             m_LevelNumber = p_LevelNumber;
-            OnReady(async x =>
-            {
+            /*OnReady(async x =>
+            {*/
                 byte[] l_ImageBytes = new byte[p_Base64.Length];
                 await Task.Run(() =>
                 {
@@ -70,6 +70,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
                             }
                         }
                     });
+
+                l_LevelCover.Apply();
                 }
                 catch (Exception l_E)
                 {
@@ -81,7 +83,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
                 SetBackgroundSprite(l_Sprite);
                 SetWidth(10);
                 SetHeight(10);
-            });
+            //});
             return this;
         }
 

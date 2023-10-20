@@ -1,6 +1,7 @@
 ﻿using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.API;
+using GuildSaber.Logger;
 using GuildSaber.Utils;
 using System;
 using System.Collections.Generic;
@@ -37,21 +38,22 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
                  .SetHeight(18)
                  .BuildUI(Element.LElement.transform);
 
-            XUIVLayout.Make(
+            XUIHLayout.Make(
                 GSText.Make(string.Empty)
                     .Bind(ref m_NameText)
-                    .SetAlign(TMPro.TextAlignmentOptions.CaplineLeft)
+                    .SetFontSize(5)
+                    .SetAlign(TMPro.TextAlignmentOptions.Bottom)
                     .OnReady(x =>
                     {
                         x.LElement.preferredWidth = 40;
-                        x.LElement.preferredHeight = 2;
+                        x.LElement.preferredHeight = 8;
                         x.RTransform.anchorMin = Vector2.zero;
                         x.RTransform.anchorMax = Vector2.one;
                         x.RTransform.sizeDelta = Vector2.zero;
                     }),
-                     m_PointsSelector = LeaderboardPointsSelector.Make()
+                    m_PointsSelector = LeaderboardPointsSelector.Make()
             )
-            .SetBackground(true)
+            .SetSpacing(0.5f)
             .SetHeight(5)
             .OnReady(x =>
             {
@@ -67,8 +69,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
         public async void SetGuild(Texture2D p_Banner, Texture2D p_Logo, int p_GuildId, string p_PlayerName)
         {
-            Texture2D l_Texture = p_Banner;//TextureUtils.MakeCorrespondHeight(p_Texture, new Rect(0, 0, p_Texture.width, p_Texture.height * 0.5f));
-
+            Texture2D l_Texture = p_Banner;
 
             TextureUtils.FixedHeight l_NewHeigth = TextureUtils.GetHeight(100, 20, l_Texture.width, l_Texture.height);
             l_Texture = await TextureUtils.AddOffset(l_Texture, l_NewHeigth.TextureOffset);
@@ -79,7 +80,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
             m_LogoImage.SetSprite(Sprite.Create(await TextureUtils.CreateRoundedTexture(p_Logo, p_Logo.width * 0.05f), new Rect(0, 0, p_Logo.width, p_Logo.height), new Vector2()));
 
-            m_NameText.SetText(p_PlayerName);
+            m_NameText.SetText(GuildSaberUtils.GetPlayerNameToFit(p_PlayerName, 16));
 
             List<RankData> l_RankData = GuildSaberLeaderboardViewController.GuildPlayerData.RankData;
             List<PointsData> l_Points = new List<PointsData>();

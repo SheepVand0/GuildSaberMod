@@ -94,16 +94,14 @@ namespace GuildSaber.Utils
 
         private static Color m_TransparentColor = new Color(0, 0, 0, 0);
 
+
         public static async Task<Texture2D> CreateRoundedTexture(Texture2D p_Origin, float p_Radius, bool p_PushPixels = false)
         {
-            Texture2D l_Texture = p_Origin;
+            Texture2D l_Texture = p_Origin.GetCopy();
 
             
-
             await Task.Run(() =>
             {
-
-
                 for (int l_i = 0; l_i < 4; l_i++)
                 {
                     for (int l_X = 0; l_X < p_Radius; l_X++)

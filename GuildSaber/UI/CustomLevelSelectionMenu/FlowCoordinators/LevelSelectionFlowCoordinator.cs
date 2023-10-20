@@ -22,6 +22,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
         public void ShowWithLevels(int p_GuildId, ApiCategory p_Category)
         {
             m_ViewController.SetLevels(p_GuildId, p_Category);
+            CustomLevelSelectionMenuReferences.IsInGuildSaberLevelSelectionMenu = true;
             Present();
         }
 
@@ -45,6 +46,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
                 LDViewController.Instance = BeatSaberUI.CreateViewController<LDViewController>();
 
             return (m_ViewController, l_GameplaySetupViewController, LDViewController.Instance);
+        }
+
+        protected override void OnHide()
+        {
+            LevelSelectionViewController.Instance.OnMenuLeaved();
         }
     }
 }
