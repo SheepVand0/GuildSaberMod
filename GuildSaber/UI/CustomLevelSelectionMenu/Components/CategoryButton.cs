@@ -3,12 +3,14 @@ using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
@@ -59,6 +61,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
             p_Button.SetBackgroundSprite(Sprite.Create(BorderTexture, new Rect(0, 0, BorderTexture.width, BorderTexture.height), new Vector2()));
             p_Button.SetBackgroundColor(new Color(1, 1, 1, 1));
+            GSText.PatchText(p_Button.gameObject.GetComponentInChildren<TextMeshProUGUI>());
         }
 
         private void ShowCategoryLevels()

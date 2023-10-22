@@ -1,6 +1,7 @@
 ﻿using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.Logger;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using OVR.OpenVR;
 using PlaylistManager.HarmonyPatches;
 using System;
@@ -11,6 +12,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -41,9 +43,7 @@ namespace GuildSaber.UI.Defaults
         {
             SetWidth(m_Width);
             SetHeight(m_Height);
-            //Texture2D l_Tex = new Texture2D(m_Width, m_Height, (UnityEngine.Experimental.Rendering.GraphicsFormat)87, UnityEngine.Experimental.Rendering.TextureCreationFlags.None);
             Texture2D l_Tex = new Texture2D(m_Width * 7, m_Height * 7);
-            //Texture2D l_Tex = await Utils.GuildSaberUtils.GetImage("https://cdn.discordapp.com/attachments/872926978825650239/1091025688238235738/test.png");
 
             for (int l_X = 0; l_X < l_Tex.width; l_X++)
             {
@@ -56,9 +56,7 @@ namespace GuildSaber.UI.Defaults
             Sprite l_Sprite = Sprite.Create(l_NewTex, new Rect(0, 0, l_Tex.width, l_Tex.height), new Vector2(0, 0), 1000, 0, SpriteMeshType.FullRect);
             p_Button.SetBackgroundColor(GetColor());
             p_Button.SetBackgroundSprite(l_Sprite);
-            //XUIImage.Make(l_Sprite).BuildUI(p_Button.transform);
-            //p_Button.SetBackgroundSprite(l_Sprite);
-            //Element.GetComponentInChildren<>
+            GSText.PatchText(p_Button.gameObject.GetComponentInChildren<TextMeshProUGUI>());
         }
     }
 }

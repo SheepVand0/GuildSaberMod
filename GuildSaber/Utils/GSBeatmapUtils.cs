@@ -42,4 +42,18 @@ internal class GSBeatmapUtils
             p_OverrideEnvironmentSettings, p_ColorScheme, p_Modifiers, p_PlayerSpecificSettings, p_PracticeSettings, p_BackButtonText, false, false
             ,null,p_OnMapFinished, null);
     }
+
+
+    public static string DifficultyToSerialized(BeatmapDifficulty p_Difficulty)
+    {
+        return p_Difficulty switch
+        {
+            BeatmapDifficulty.Easy => "Easy",
+            BeatmapDifficulty.Normal => "Normal",
+            BeatmapDifficulty.Hard => "Hard",
+            BeatmapDifficulty.Expert => "Expert",
+            BeatmapDifficulty.ExpertPlus => "Expert+",
+            _ => "?"
+        };
+    }
 }

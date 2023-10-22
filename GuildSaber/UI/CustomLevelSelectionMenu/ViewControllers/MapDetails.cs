@@ -35,6 +35,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         protected GSText m_Modifiers;
         protected GSText m_MapMapper;
         protected XUIImage m_MapCover;
+        protected GSText m_DifficultyLabel;
         protected GSSecondaryButton m_PracticeButton;
         protected GSSecondaryButton m_PlayButton;
 
@@ -75,11 +76,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
             XUIHLayout.Make(
                 XUIVLayout.Make(
-                XUIImage.Make()
-                    //.SetType(UnityEngine.UI.Image.Type.Simple)
-                    .Bind(ref m_MapCover)
+                    XUIImage.Make()
+                        .Bind(ref m_MapCover)
                 ).SetWidth(20)
-                    .SetHeight(20),
+                 .SetHeight(20),
                 XUIVLayout.Make(
                     XUIHLayout.Make(
                             m_MapName = (GSText)GSText.Make(string.Empty)
@@ -103,12 +103,20 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 m_MapPreviewAudio = Resources.FindObjectsOfTypeAll<SongPreviewPlayer>().First();
 
             XUIHLayout.Make(
+                m_DifficultyLabel = GSText.Make("")
+                )
+                .SetBackground(true)
+                .SetActive(false)
+                .BuildUI(Element.transform);
+
+            XUIHLayout.Make(
                 m_PracticeButton = (GSSecondaryButton)GSSecondaryButton.Make("Practice", 24, 15).OnClick(OnPracticeClicked),
                 m_PlayButton = (GSSecondaryButton)GSSecondaryButton.Make("Play", 24, 15).OnClick(PlayMap)
             ).BuildUI(Element.transform);
 
             (m_ScoreSaberButton = GSSecondaryButton.Make("Show ScoreSaber", 50, 5, p_OnClick: GuildSaberLeaderboardViewController.Instance.OnScoreSaberButton)).BuildUI(Element.transform);
 
+            SetSpacing(0);
             SetActive(false);
         }
 
@@ -131,6 +139,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 l_Tex = await TextureUtils.CreateRoundedTexture(l_Tex, l_Tex.width * 0.05f);
 
                 m_MapCover.SetSprite(Sprite.Create(l_Tex, new Rect(0, 0, l_Tex.width, l_Tex.height), new Vector2()));
+
+                var l_CustomBeatmapLevel = (CustomDifficultyBeatmap)p_Beatmap;
+                m_DifficultyLabel.SetText(l_CustomBeatmapLevel.parentDifficultyBeatmapSet.beatmapCharacteristic.serializedName + "\n" + GSBeatmapUtils.DifficultyToSerialized(l_CustomBeatmapLevel.difficulty));
+
                 PlaySongPreview();
                 SetActive(true);
             });

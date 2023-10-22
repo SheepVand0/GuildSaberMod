@@ -10,7 +10,10 @@ using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.Logger;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.Utils;
+using IPA.Utilities;
+using TMPro;
 using UnityEngine;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.Components;
@@ -62,6 +65,9 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
         }
         SetText(m_GuildData.Name);
         SetTooltip(l_Result);
+        var l_ButtonText = p_Button.gameObject.GetComponentInChildren<TextMeshProUGUI>();
+        GSText.PatchText(l_ButtonText);
+        l_ButtonText.fontSize = 4;
     }
 
     public async void SetGuildData(GuildData p_GuildData)
