@@ -18,6 +18,7 @@ using IPA.Utilities;
 using SixLabors.ImageSharp.PixelFormats;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 using Button = UnityEngine.UI.Button;
 using Color = UnityEngine.Color;
@@ -39,7 +40,7 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
     [UIComponent("rightlevelspagebutton")] public Button m_RightLevelsPageButton;
 
     public List<PlayerRankUI> m_Ranks = new List<PlayerRankUI>();
-    public List<PlayerLevelUI> m_Levels = new List<PlayerLevelUI>();
+    public List<CPlayerLevel> m_UILevels = new List<CPlayerLevel>();
     public int m_LevelsSelectedPage = 0;
     public FloatingScreen m_CardScreen;
     public bool m_AllowCustomCardColors;
@@ -157,8 +158,6 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
         m_GuildSelector.Value = l_CurrentGuild.SmallName ?? l_CurrentGuild.Name;
         m_GuildSelector.ApplyValue();
 
-        
-
         GuildSaberModule.CardSelectedGuild = GuildSaberUtils.GetGuildFromId(GSConfig.Instance.SelectedGuild);
 
         ///Settings setup
@@ -182,6 +181,8 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
         ToggleSettingFix.Setup(m_ToggleUseCustomNameColor, l_SettingAction, GSConfig.Instance.UseCustomNameGradientColor, false);
         Utils.ColorSettingsFix.Setup(m_CustomNameColor, l_SettingAction, GSConfig.Instance.CustomNameGradientColor, false);
         Utils.SliderSettingsFix.Setup(m_NameGradientMutiliplier, l_SettingAction, null, GSConfig.Instance.NameGradientColor0Multiplier, true);
+
+        
 
         Refresh();
 
@@ -253,7 +254,7 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
     ///     Set card screen reference
     /// </summary>
     /// <param name="p_CardScreen"></param>
-    public void SetReferences(FloatingScreen p_CardScreen) { m_CardScreen = p_CardScreen; }
+    public void SetCardScreen(FloatingScreen p_CardScreen) { m_CardScreen = p_CardScreen; }
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -307,8 +308,6 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
             ///Reset all
             foreach (PlayerRankUI l_Current in m_Ranks) l_Current.ResetComponent();
 
-            foreach (PlayerLevelUI l_Current in m_Levels) l_Current.ResetComponent();
-
             ///Set rank
             int l_RankDataCount = PlayerCardUI.m_Player.RankData.Count;
             for (int l_i = 0; l_i < l_RankDataCount; l_i++) {
@@ -318,51 +317,38 @@ internal class PlayerCardViewController : ViewController<PlayerCardViewControlle
 
 LevelsManaging:
 
-            ///Set Levels
-            int l_CategoryDataCount = PlayerCardUI.m_Player.CategoryData.Count;
-            if (l_CategoryDataCount - ((m_LevelsSelectedPage + 1) * 4) < 0)
-                l_CategoryDataCount -= (m_LevelsSelectedPage + 1 * 4) - 4;
-            else
-                l_CategoryDataCount = 4;
+///Set Levels
 
-            for (int l_i = 0; l_i < l_CategoryDataCount; l_i++) {
-
-                GSLogger.Instance.Log((int)(l_i / 4) < m_LevelsSelectedPage, IPA.Logging.Logger.LogLevel.InfoUp);
-                if ((int)(l_i / 4) < m_LevelsSelectedPage || l_i > m_LevelsSelectedPage + 3)
+            if (m_UILevels.Count == 0)
+            {
+                for (int l_y = 0; l_y < 4; l_y++)
                 {
-                    try
-                    {
-                        m_Levels[l_i].ResetComponent();
-                    } catch
-                    {
-
-                    }
-                    continue;
-                }
-
-                ApiPlayerCategory l_Cat = PlayerCardUI.m_Player.CategoryData[l_i];
-                int l_FontSize = (int)(2 / (l_CategoryDataCount * 0.11f));
-                if (l_FontSize < 1) l_FontSize = 2;
-                if (l_FontSize >= 5) l_FontSize = 4;
-
-                ///Add to list if there is more categories than objects in Levels
-                if (l_i > m_Levels.Count - 1) {
-                    List<ItemParam> l_Params = new List<ItemParam>
-                    {
-                        new ItemParam("Level", l_Cat.LevelValue?.ToString("0.0")),
-                        new ItemParam("LevelName", l_Cat.CategoryName),
-                        new ItemParam("FontSize", l_FontSize)
-                    };
-                    var l_Temp = CustomUIComponent.CreateItemWithParams<PlayerLevelUI>(m_DetailsLevelsLayout.transform, true, true, l_Params);
-                    m_Levels.Add(l_Temp);
-                }
-                else {
-                    ///Else just set the value
-                    m_Levels[l_i].SetValues(l_Cat.CategoryName, l_Cat.LevelValue?.ToString("0.0"), l_FontSize);
+                    var l_Temp = CPlayerLevel.Make();
+                    l_Temp.BuildUI(m_DetailsLevelsLayout.transform);
+                    m_UILevels.Add(l_Temp);
                 }
             }
 
-            m_RightLevelsPageButton.interactable = (int)(m_Levels.Count / 4) != (m_LevelsSelectedPage);
+            foreach (var l_Current in m_UILevels) l_Current.ResetComponent();
+
+            for (int l_i = 0; l_i < PlayerCardUI.m_Player.CategoryData.Count; l_i++)
+            {
+
+                ApiPlayerCategory l_Cat = PlayerCardUI.m_Player.CategoryData[l_i];
+
+                int l_FontSize = 4;
+
+                GSLogger.Instance.Log(l_Cat.CategoryName, IPA.Logging.Logger.LogLevel.InfoUp);
+
+                if ((int)l_i / 4 == m_LevelsSelectedPage)
+                {
+                    int l_Index = l_i - (m_LevelsSelectedPage * 4);
+                    //GSLogger.Instance.Log(l_Index, IPA.Logging.Logger.LogLevel.InfoUp);
+                    m_UILevels[l_Index].SetValues(l_Cat.CategoryName, (float)l_Cat.LevelValue, l_FontSize);
+                }
+            }
+
+            m_RightLevelsPageButton.interactable = Math.Floor(((float)PlayerCardUI.m_Player.CategoryData.Count() / 4)) != (m_LevelsSelectedPage);
             m_LeftLevelsPageButton.interactable = m_LevelsSelectedPage > 0;
 
             if (p_OnlySetLevels) return;
@@ -384,10 +370,10 @@ LevelsManaging:
     public void UpdateLevelsDetails()
     {
         bool l_ShowDetailsLevels = GSConfig.Instance.ShowDetailsLevels;
-        if (m_Levels.Count == 0) l_ShowDetailsLevels = false;
+        if (PlayerCardUI.m_Player.CategoryData.Count == 0) l_ShowDetailsLevels = false;
         m_DetailsLevelsLayout.gameObject.SetActive(l_ShowDetailsLevels);
         if (m_CardScreen == null) return;
-        float l_LevelsSize = m_Levels.Count;
+        float l_LevelsSize = PlayerCardUI.m_Player.CategoryData.Count;
         if (l_ShowDetailsLevels) {
             //When the details levels is visible
             m_CardScreen.ScreenSize = new Vector2((42 + PlayerCardUI.m_Player.Name.Length * 1.2f + 40) * 0.9f, 40);
@@ -416,7 +402,7 @@ LevelsManaging:
     [UIAction("LevelsPageNext")]
     private void LevelsPageNext()
     {
-        if (m_LevelsSelectedPage == (int)(m_Levels.Count / 4))
+        if (m_LevelsSelectedPage == (int)(PlayerCardUI.m_Player.CategoryData.Count / 4))
             return;
         m_LevelsSelectedPage += 1;
 

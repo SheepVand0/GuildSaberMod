@@ -167,6 +167,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                     if (MapResultsFlowCoordinator.Instance == null)
                         MapResultsFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<MapResultsFlowCoordinator>();
 
+                    if (p_LevelCompletionResults.levelEndAction == LevelCompletionResults.LevelEndAction.Quit)
+                        return;
+
                     MapResultsFlowCoordinator.Instance.ShowWithData(p_SceneSetupData, p_LevelCompletionResults, p_Beatmap, l_PlayerData);
                 });
         }

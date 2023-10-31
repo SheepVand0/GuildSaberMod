@@ -3,20 +3,15 @@ using CP_SDK.Unity;
 using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.Logger;
-using GuildSaber.UI.Card;
 using GuildSaber.UI.CustomLevelSelectionMenu.Components;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.UI.Defaults;
 using GuildSaber.Utils;
-using IPA.Utilities;
-using PlaylistManager.HarmonyPatches;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
 {
@@ -34,7 +29,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
 
         LeaderboardHeaderPanel m_HeaderPanel;
 
-        XUIText m_LoadingText;
+        GSLoadingIndicator m_LoadingText;
         XUIText m_ErrorText;
         XUIText m_NoScoreText;
 
@@ -78,16 +73,19 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                 XUIHLayout.Make(
                     m_LeaderboardPanel = LeaderboardPanel.Make()
                 )
-                .SetWidth(100)
-                .SetHeight(20)
-                .Bind(ref m_LeaderboardPanelContainer),
-                XUIVLayout.Make().OnReady(x => x.LElement.minHeight = 5),
+                    .SetMinWidth(100)
+                    .SetMinHeight(10)
+                    .Bind(ref m_LeaderboardPanelContainer),
+                XUIVSpacer.Make(3),
                 m_HeaderPanel = (LeaderboardHeaderPanel)LeaderboardHeaderPanel.Make()
-                .SetHeight(LeaderboardHeaderPanel.HEADER_HEIGHT),
+                    .SetMinHeight(LeaderboardHeaderPanel.HEADER_HEIGHT),
                 XUIHLayout.Make(
                     XUIText.Make("Error loading leaderboard").SetColor(Color.red).Bind(ref m_ErrorText),
                     XUIText.Make("No score set on this leaderboard").SetColor(Color.yellow).Bind(ref m_NoScoreText),
-                    XUIText.Make("Loading...").Bind(ref m_LoadingText),
+                    (m_LoadingText = GSLoadingIndicator.Make())
+                    .SetWidth(7)
+                    .SetHeight(7),
+                    //XUIText.Make("Loading...").Bind(ref m_LoadingText),
                     XUIVLayout.Make(
                         m_ScopeSelector = LeaderboardScopeSelector.Make()
                         ).Bind(ref m_ScopeSelectorLayout),
@@ -105,11 +103,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                         .Bind(ref m_LeaderboardCellsContainer)
                         .SetSpacing(0)
                         .SetWidth(80)
-                        .SetHeight(10 * LeaderboardCell.CELL_HEIGHT)
-                    )
+                        .SetMinHeight(10 * LeaderboardCell.CELL_HEIGHT)
+                    ),
+               XUIVSpacer.Make(4)
                 )
                 .SetSpacing(0)
-                //.SetHeight(15)
                 .Bind(ref m_MainLayout)
                 .BuildUI(transform);
 
@@ -132,6 +130,12 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                 l_Item.Element.gameObject.transform.localScale = new Vector3(1, 1, 1);
             }
         }
+
+        ////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////
+
+        public Color GetGuildColor()
+        => m_GuildColor;
 
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////

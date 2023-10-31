@@ -1,12 +1,14 @@
 ﻿using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.API;
+using GuildSaber.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components
@@ -41,9 +43,12 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
             var l_DropdownText = Element.gameObject.GetComponentInChildren<TextMeshProUGUI>();
             GSText.PatchText(l_DropdownText);
+            l_DropdownText.fontSize = 4;
             m_Dropdown.OnValueChanged(OnValueSelected);
             var l_Image = m_Dropdown.Element.GetComponentInChildren<Image>();
-            l_Image.color = new UnityEngine.Color(0, 0, 0, 0.9f);
+            l_Image.color = new UnityEngine.Color(0, 0, 0, 0f);
+            m_Dropdown.Element.LElement.minHeight = 6;
+            m_Dropdown.Element.LElement.minWidth = 30;
         }
 
         public void SetPoints(List<PointsData> p_Points)
@@ -82,6 +87,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
         {
             var l_Text = Element.gameObject.GetComponentInChildren<TextMeshProUGUI>();
             l_Text.SetText($"{p_Points.Points} {p_Points.PointsName}");
+            l_Text.colorGradient = GuildSaberUtils.GenerateGradient(GuildSaberLeaderboardViewController.Instance.GetGuildColor().ColorWithAlpha(1), 0.2f);
+            l_Text.enableVertexGradient = true;
         }
 
         public string GetSelectedValue() => m_SelectedPointsType;

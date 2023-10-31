@@ -4,10 +4,13 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.Attributes;
 using BeatSaberMarkupLanguage.FloatingScreen;
 using BeatSaberPlus.SDK.Game;
+using CP_SDK.UI.Components;
+using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.Configuration;
 using GuildSaber.Logger;
 using GuildSaber.Time;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.Utils;
 using HMUI;
 using TMPro;
@@ -17,6 +20,52 @@ using Color = UnityEngine.Color;
 using Object = UnityEngine.Object;
 
 namespace GuildSaber.UI.Card;
+
+public class CPlayerLevel : XUIVLayout
+{
+    protected CPlayerLevel(string p_Name, params IXUIElement[] p_Childs) : base(p_Name, p_Childs)
+    {
+        OnReady(OnCreation);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    public static CPlayerLevel Make()
+    {
+        return new CPlayerLevel("PlayerCardLevel");
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+
+    GSText m_LevelNameText;
+    GSText m_LevelText;
+
+    protected string m_LevelName;
+    protected float m_Level;
+
+    private void OnCreation(CHOrVLayout p_Layout)
+    {
+        p_Layout.CSizeFitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+
+        (m_LevelNameText = GSText.Make("")).BuildUI(Element.transform);
+        (m_LevelText = GSText.Make("")).BuildUI(Element.transform);
+    }
+
+    public void SetValues(string p_LevelName, float p_Level, float p_FontSize)
+    {
+        m_LevelNameText.SetText(p_LevelName);
+        m_LevelText.SetText(p_Level.ToString("0.0"));
+        ForEachDirect<GSText>(x => x.SetFontSize(p_FontSize));
+    }
+
+    public void ResetComponent()
+    {
+        m_LevelNameText.SetText(string.Empty);
+        m_LevelText.SetText(string.Empty);
+    }
+}
 
 public class PlayerLevelUI : CustomUIComponent
 {
@@ -31,7 +80,7 @@ public class PlayerLevelUI : CustomUIComponent
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
     public int FontSize { get; set; }
 
@@ -168,7 +217,7 @@ internal class PlayerCardUI
         m_FloatingScreen.HandleSide = FloatingScreen.Side.Right;
         m_FloatingScreen.HandleReleased += OnCardHandleReleased;
 
-        CardViewController.SetReferences(m_FloatingScreen);
+        CardViewController.SetCardScreen(m_FloatingScreen);
 
         ////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////// Debug with a lot

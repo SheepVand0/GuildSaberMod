@@ -24,6 +24,7 @@ using PlaylistManager.HarmonyPatches;
 using JetBrains.Annotations;
 using GuildSaber.UI.Others;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard;
+using BeatSaberPlus.SDK.Game;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 {
@@ -292,6 +293,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                         {
                             if (l_PlaylistDiff.name.ToLower() == l_Difficulty.difficulty.ToString().ToLower() && l_PlaylistDiff.characteristic == l_Beatmapset.beatmapCharacteristic.serializedName)
                             {
+                                if (Logic.ActiveScene != Logic.ESceneType.Menu)
+                                    await WaitUtils.Wait(() => Logic.ActiveScene == Logic.ESceneType.Menu, 100);
+
                                 Beatmaps.Add(l_Difficulty);
                                 await UpdateMapButtonAtIndex(l_i, l_Difficulty);
                             }
