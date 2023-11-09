@@ -13,7 +13,7 @@ namespace GuildSaber.Harmony
         private static void Postfix(NoteController __instance, in NoteCutInfo noteCutInfo)
         {
 
-            GSLogger.Instance.Log("Notecutted", IPA.Logging.Logger.LogLevel.InfoUp);
+            //GSLogger.Instance.Log("Notecutted", IPA.Logging.Logger.LogLevel.InfoUp);
             float l_X = noteCutInfo.saberDir.x;
             float l_Y = noteCutInfo.saberDir.y;
             float l_Hypotenus = (float)Math.Sqrt(Math.Pow(l_X, 2) + Math.Pow(l_Y, 2));
@@ -21,11 +21,11 @@ namespace GuildSaber.Harmony
                 (0.5*(Math.Pow(l_Y, 2) + Math.Pow(l_Hypotenus, 2) - Math.Pow(l_X, 2))
                 ) / l_Y * l_Hypotenus);
 
-            GSLogger.Instance.Log(l_RotationFromCutDirVec, IPA.Logging.Logger.LogLevel.InfoUp);
-            GSLogger.Instance.Log(__instance.worldRotation.z, IPA.Logging.Logger.LogLevel.InfoUp);
+            //GSLogger.Instance.Log(l_RotationFromCutDirVec, IPA.Logging.Logger.LogLevel.InfoUp);
+            //GSLogger.Instance.Log(__instance.worldRotation.z, IPA.Logging.Logger.LogLevel.InfoUp);
 
-            if (__instance.worldRotation.z - l_RotationFromCutDirVec < __instance.worldRotation.z - 110 / 2 || __instance.worldRotation.z + l_RotationFromCutDirVec > __instance.worldRotation.z + 110 / 2)
-                GSLogger.Instance.Log("Cheese", IPA.Logging.Logger.LogLevel.InfoUp);
+            //if (__instance.worldRotation.z - l_RotationFromCutDirVec < __instance.worldRotation.z - 110 / 2 || __instance.worldRotation.z + l_RotationFromCutDirVec > __instance.worldRotation.z + 110 / 2)
+                //GSLogger.Instance.Log("Cheese", IPA.Logging.Logger.LogLevel.InfoUp);
         }
 
     }

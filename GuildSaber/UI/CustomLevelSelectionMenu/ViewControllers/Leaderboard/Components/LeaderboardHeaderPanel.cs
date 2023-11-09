@@ -51,7 +51,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
         public async void UpdateBackground()
         {
-            Texture2D l_Background = await TextureUtils.Gradient(await TextureUtils.CreateFlatTexture(HEADER_WIDTH * 10, HEADER_HEIGHT * 10, Color.white), Color.black.ColorWithAlpha(0), m_GuildColor.ColorWithAlpha(1) * 0.8f, p_UseAlpha: true);
+            Texture2D l_Background = await TextureUtils.Gradient(await TextureUtils.CreateFlatTexture(HEADER_WIDTH * 10, HEADER_HEIGHT * 10, Color.white), Color.black.ColorWithAlpha(1), m_GuildColor.ColorWithAlpha(1) * 0.8f, p_UseAlpha: true);
             Texture2D l_RoundedBackground = await TextureUtils.CreateRoundedTexture(l_Background, 10);
             SetBackground(true);
             SetBackgroundSprite(Sprite.Create(l_RoundedBackground, new Rect(0, 0, l_RoundedBackground.width, l_RoundedBackground.height), new Vector2()));

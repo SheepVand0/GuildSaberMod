@@ -109,8 +109,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             await WaitUtils.Wait(() => m_Ready == true, 1, p_MaxTryCount: 1000);
 
             var l_Points = p_Score.PointsData.Where(x => x.PointsType == m_SelectedPointsType.PointsType).First();
+            string l_PointsStrPre = string.Empty;
+            
+            if (l_Points.Points == 0)
+                l_PointsStrPre = "0";
+            else
+                l_Points.Points.ToString("0.00");
 
-            string l_PointsStr = $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGB(m_GuildColor)}>{l_Points.Points:0.00} {l_Points.PointsName.ToUpper()}";
+            string l_PointsStr = $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGB(m_GuildColor)}>{l_PointsStrPre} {l_Points.PointsName.ToUpper()}";
 
             if (l_Points.PointsType == GuildApi.PASS_POINTS_TYPE)
             {

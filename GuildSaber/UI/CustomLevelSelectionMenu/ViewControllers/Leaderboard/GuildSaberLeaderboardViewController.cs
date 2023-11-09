@@ -119,6 +119,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
             m_ScopeSelector.eOnScopeChanged += OnScopeChanged;
             m_LeaderboardPanel.GetPointsSelector().eOnChange += OnPointsChanged;
 
+            _rectTransform.rect.Set(0, 0, 100, 150);
+
             Hide();
         }
 
@@ -210,25 +212,25 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
             Hide();
 
             GuildData l_GuildData = GuildApi.GetGuildFromId(p_GuildId);
-            var l_Banner = await GuildSaberUtils.GetImage(l_GuildData.Logo);
-            Texture2D l_Result;
-            if (l_Banner.IsError)
-            {
-                l_Result = CustomLevelSelectionMenuReferences.DefaultLogo;
-            }
-            else
-            {
-                l_Result = l_Banner.Texture;
-            }
-
-            var l_Logo = await GuildSaberUtils.GetImage(/*l_GuildData.Logo*/GuildSaberModule.BasicPlayerData.Avatar);
+            var l_Logo = await GuildSaberUtils.GetImage(l_GuildData.Logo);
             Texture2D l_LogoResult;
             if (l_Logo.IsError)
             {
                 l_LogoResult = CustomLevelSelectionMenuReferences.DefaultLogo;
-            } else
+            }
+            else
             {
                 l_LogoResult = l_Logo.Texture;
+            }
+
+            var l_PlayerImage = await GuildSaberUtils.GetImage(/*l_GuildData.Logo*/GuildSaberModule.BasicPlayerData.Avatar);
+            Texture2D l_PlayerImageResult;
+            if (l_PlayerImage.IsError)
+            {
+                l_PlayerImageResult = CustomLevelSelectionMenuReferences.DefaultLogo;
+            } else
+            {
+                l_PlayerImageResult = l_PlayerImage.Texture;
             }
 
             ApiPlayerData l_PlayerDataForGuild = await GuildApi.GetPlayerData(false, p_GuildId);
@@ -236,7 +238,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
 
             GuildPlayerData = l_PlayerDataForGuild;
 
-            m_LeaderboardPanel.SetGuild(l_Result, l_LogoResult, p_GuildId, GuildSaberModule.BasicPlayerData.Name) ;
+            m_LeaderboardPanel.SetGuild(l_PlayerImageResult, l_LogoResult, p_GuildId, GuildSaberModule.BasicPlayerData.Name) ;
             m_GuildColor = l_GuildData.Color.ToUnityColor();
         }
 

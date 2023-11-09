@@ -16,6 +16,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu
         public static int SelectedGuildId;
         public static bool IsInPractice;
         public static Texture2D DefaultLogo = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GuildSaberLogoOrange.png");
+        public static Texture2D DefaultWhiteLogo = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GsWhiteLogo.png");
         public static ApiCategory SelectedCategory;
         public static bool IsInGuildSaberLevelSelectionMenu;
     }
