@@ -4,6 +4,7 @@ using GuildSaber.API;
 using GuildSaber.Utils;
 using OVR.OpenVR;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +16,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
     {
 
         public const float ANIMATION_DURATION = 0.1f;
+
         public const int CELL_HEIGHT = 5;
+        public const int CELL_WIDTH = 90;
 
         public static Color s_Blue = new Color(0.0f, 0.8f, 1f, 0.8f);
 
@@ -55,14 +58,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             XUIHLayout.Make(
                 XUIHLayout.Make(
                     GSText.Make("1").Bind(ref m_RankText).SetAlign(TMPro.TextAlignmentOptions.CaplineLeft),
-                    GSText.Make("").Bind(ref m_ScoreAccText).SetColor(new Color(1, 1, 1, 0.7f)).SetAlign(TMPro.TextAlignmentOptions.CaplineLeft)
+                    GSText.Make("").Bind(ref m_ScoreAccText).SetColor(new Color(1, 1, 1, 1f)).SetAlign(TMPro.TextAlignmentOptions.CaplineLeft)
                 )
                 .ForEachDirect<XUIText>((x) =>
                 {
                     x.SetFontSize(l_FontSize);
                     x.OnReady((y) =>
                     {
-                        y.SetMargins(-15, 0, -15, 0);
+                        y.SetMargins(-20, 0, -25, 0);
                         y.LElement.minWidth = 20;
                         y.LElement.preferredWidth = 20;
                         y.RTransform.anchorMin = Vector2.zero;
@@ -71,24 +74,22 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
                     });
                 })
             )
-            .SetWidth(80)
+            .SetWidth(CELL_WIDTH)
             .SetHeight(CELL_HEIGHT)
             .BuildUI(Element.LElement.transform);
 
-            SetWidth(80);
+            SetWidth(CELL_WIDTH);
             SetHeight(CELL_HEIGHT);
             Element.LElement.minHeight = CELL_HEIGHT;
             Element.LElement.preferredHeight = CELL_HEIGHT;
 
-            m_CellAnimation = Element.gameObject.AddComponent<FloatAnimation>();
-            m_CellAnimation.Init(0, 1, ANIMATION_DURATION);
-            m_CellAnimation.OnChange += OnAnimation;
-            m_CellAnimation.OnFinished += OnAnimationFinished;
+            //m_CellAnimation = Element.gameObject.AddComponent<FloatAnimation>();
+            //m_CellAnimation.Init(0, 1, ANIMATION_DURATION);
+            //m_CellAnimation.OnChange += OnAnimation;
+            //m_CellAnimation.OnFinished += OnAnimationFinished;
 
-            p_Button.SetBackgroundColor(new Color(1, 1, 1, 0.7f));
-
-            Texture2D l_Background = await TextureUtils.CreateFlatTexture(80 * 40, 2 * 40, Color.black);
-            Texture2D l_BackgroundWithLine = await TextureUtils.AddLine(l_Background, l_Background.width, 1, 0, 0, Color.white.ColorWithAlpha(1));
+            Texture2D l_Background = await TextureUtils.CreateFlatTexture(CELL_WIDTH * 40, 4 * 40, Color.black.ColorWithAlpha(0.6f));
+            Texture2D l_BackgroundWithLine = await TextureUtils.AddLine(l_Background, l_Background.width, 5, 0, 0, Color.white.ColorWithAlpha(1));
 
             SetBackgroundSprite(Sprite.Create(l_BackgroundWithLine, new Rect(0, 0, l_BackgroundWithLine.width, l_BackgroundWithLine.height), new Vector2()));
             
@@ -114,7 +115,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             if (l_Points.Points == 0)
                 l_PointsStrPre = "0";
             else
-                l_Points.Points.ToString("0.00");
+                l_PointsStrPre = l_Points.Points.ToString("0.00");
 
             string l_PointsStr = $"<color=#{UnityEngine.ColorUtility.ToHtmlStringRGB(m_GuildColor)}>{l_PointsStrPre} {l_Points.PointsName.ToUpper()}";
 
@@ -142,7 +143,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             {
                 l_Modifiers = "M";
             }
-            m_ScoreAccText.SetText($"<pos=55%><mspace=0.5em><align=right>{p_Score.BaseScore}<mspace=0em><align=left> <pos=80%><color=#{ColorUtility.ToHtmlStringRGB(m_GuildColor)}>{l_Acc:0.00}% <pos=95%><color=#{ColorUtility.ToHtmlStringRGBA(new Color(1, 1, 1, 0.6f))}>{l_Modifiers}");
+            int l_BaseOffset = 55;
+            m_ScoreAccText.SetText($"<pos={l_BaseOffset}%><mspace=0.5em><align=right><color=#FFFFFF>{p_Score.BaseScore}<mspace=0em><align=left> <pos={l_BaseOffset + 25}%><color=#{ColorUtility.ToHtmlStringRGB(m_GuildColor * 1.1f)}>{l_Acc:0.00}% <pos={l_BaseOffset + 40}%><color=#{ColorUtility.ToHtmlStringRGBA(new Color(1, 1, 1, 0.6f))}>{l_Modifiers}");
         }
 
         ////////////////////////////////////////////////////////////////////////////
@@ -189,7 +191,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
                 SetScore(p_Score, p_MaxScore);
 
-                m_CellAnimation.Play();
+                FastAnimator.Animate(new List<FastAnimator.FloatAnimKey>() { 
+                    new FastAnimator.FloatAnimKey(0, 0),
+                    new FastAnimator.FloatAnimKey(1, ANIMATION_DURATION)
+                }, OnAnimation, OnAnimationFinished);
             });
         }
 
@@ -198,7 +203,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             Element.gameObject.transform.localScale = new Vector3(1, p_Value, 1);
         }
 
-        private void OnAnimationFinished(float p_Val)
+        private void OnAnimationFinished(/*float p_Val*/)
         {
             Element.gameObject.transform.localScale = Vector3.one;
         }

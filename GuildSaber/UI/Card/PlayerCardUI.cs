@@ -51,6 +51,18 @@ public class CPlayerLevel : XUIVLayout
 
         (m_LevelNameText = GSText.Make("")).BuildUI(Element.transform);
         (m_LevelText = GSText.Make("")).BuildUI(Element.transform);
+
+        ForEachDirect<GSText>(x =>
+        {
+            x.Element.LElement.minWidth = 10;
+            x.RTransform.anchorMin = Vector2.zero;
+            x.RTransform.anchorMax = Vector2.one;
+            x.RTransform.sizeDelta = Vector2.zero;
+        });
+
+        SetSpacing(0f);
+        SetHeight(10);
+        SetMinHeight(10);
     }
 
     public void SetValues(string p_LevelName, float p_Level, float p_FontSize)

@@ -17,15 +17,15 @@ namespace GuildSaber.Harmony
             float l_X = noteCutInfo.saberDir.x;
             float l_Y = noteCutInfo.saberDir.y;
             float l_Hypotenus = (float)Math.Sqrt(Math.Pow(l_X, 2) + Math.Pow(l_Y, 2));
-            float l_RotationFromCutDirVec = (float)Math.Acos(
+            float l_RotationFromCutDirVec = 180 * (float)Math.Acos(
                 (0.5*(Math.Pow(l_Y, 2) + Math.Pow(l_Hypotenus, 2) - Math.Pow(l_X, 2))
                 ) / l_Y * l_Hypotenus);
 
             //GSLogger.Instance.Log(l_RotationFromCutDirVec, IPA.Logging.Logger.LogLevel.InfoUp);
             //GSLogger.Instance.Log(__instance.worldRotation.z, IPA.Logging.Logger.LogLevel.InfoUp);
 
-            //if (__instance.worldRotation.z - l_RotationFromCutDirVec < __instance.worldRotation.z - 110 / 2 || __instance.worldRotation.z + l_RotationFromCutDirVec > __instance.worldRotation.z + 110 / 2)
-                //GSLogger.Instance.Log("Cheese", IPA.Logging.Logger.LogLevel.InfoUp);
+            if (__instance.worldRotation.z - l_RotationFromCutDirVec < __instance.worldRotation.z - 110 / 2 || __instance.worldRotation.z + l_RotationFromCutDirVec > __instance.worldRotation.z + 110 / 2)
+                GSLogger.Instance.Log("Cheese", IPA.Logging.Logger.LogLevel.InfoUp);
         }
 
     }

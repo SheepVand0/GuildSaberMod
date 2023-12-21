@@ -88,7 +88,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                     //XUIText.Make("Loading...").Bind(ref m_LoadingText),
                     XUIVLayout.Make(
                         m_ScopeSelector = LeaderboardScopeSelector.Make()
-                        ).Bind(ref m_ScopeSelectorLayout),
+                        )
+                        .Bind(ref m_ScopeSelectorLayout),
                     XUIVLayout.Make(
                         ).OnReady(x =>
                         {
@@ -103,9 +104,10 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
                         .Bind(ref m_LeaderboardCellsContainer)
                         .SetSpacing(0)
                         .SetWidth(80)
-                        .SetMinHeight(10 * LeaderboardCell.CELL_HEIGHT)
+                        .SetMinHeight(10 * LeaderboardCell.CELL_HEIGHT),
+                    XUIHSpacer.Make(15)
                     ),
-               XUIVSpacer.Make(4)
+                XUIVSpacer.Make(12)
                 )
                 .SetSpacing(0)
                 .Bind(ref m_MainLayout)
@@ -117,9 +119,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
             SetMode(ELeaderboardMode.Normal);
             m_ScopeSelector.SetScope(ELeaderboardScope.Global);
             m_ScopeSelector.eOnScopeChanged += OnScopeChanged;
+            m_LeaderboardPanel.SetPointsSelector(m_HeaderPanel.GetPointsSelector());
             m_LeaderboardPanel.GetPointsSelector().eOnChange += OnPointsChanged;
-
-            _rectTransform.rect.Set(0, 0, 100, 150);
 
             Hide();
         }

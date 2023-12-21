@@ -35,8 +35,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
         protected int m_Page;
         protected int m_MaxPage;
 
-        protected XUISecondaryButton m_PageUpButton;
-        protected XUISecondaryButton m_PageDownButton;
+        protected XUIIconButton m_PageUpButton;
+        protected XUIIconButton m_PageDownButton;
 
         protected XUIIconButton m_WorldButton;
         protected XUIIconButton m_MeButton;
@@ -49,10 +49,13 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
         private void OnCreation(CVLayout p_Layout)
         {
+            XUIVSpacer.Make(7)
+                .BuildUI(Element.LElement.transform);
 
-            XUISecondaryButton.Make("^")
+            XUIIconButton.Make()
                 .OnClick(OnPageUpPressed)
-                .Bind(ref m_PageUpButton).BuildUI(Element.LElement.transform);
+                .Bind(ref m_PageUpButton)
+                .BuildUI(Element.LElement.transform);
 
             XUIVLayout.Make(
                 XUIIconButton.Make()
@@ -83,7 +86,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             .SetBackgroundColor(new Color(0, 0, 0, 0.7f))
             .BuildUI(Element.LElement.transform);
 
-            XUISecondaryButton.Make("v")
+            XUIIconButton.Make()
                 .OnClick(OnPageDownPressed)
                 .Bind(ref m_PageDownButton)
                 .BuildUI(Element.LElement.transform);
@@ -91,10 +94,17 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             Texture2D l_GlobalIcon = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GlobalIcon.png");
             Texture2D l_AroundMeIcon = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.AroundMeIcon.png");
             Texture2D l_CountryIcon = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.CountryIcon.png");
+            Texture2D l_DirectionalArrow = CustomLevelSelectionMenuReferences.ArrowImage;
+
 
             m_WorldButton.SetSprite(Sprite.Create(l_GlobalIcon, new Rect(0, 0, l_GlobalIcon.width, l_GlobalIcon.height), new Vector2()));
             m_MeButton.SetSprite(Sprite.Create(l_AroundMeIcon, new Rect(0, 0, l_AroundMeIcon.width, l_AroundMeIcon.height), new Vector2()));
             m_CountryButton.SetSprite(Sprite.Create(l_CountryIcon, new Rect(0, 0, l_CountryIcon.width, l_CountryIcon.height), new Vector2()));
+            m_PageDownButton.SetSprite(Sprite.Create(l_DirectionalArrow, new Rect(0, 0, l_DirectionalArrow.width, l_DirectionalArrow.height), new Vector2()));
+            m_PageUpButton.SetSprite(Sprite.Create(l_DirectionalArrow, new Rect(0, 0, l_DirectionalArrow.width, l_DirectionalArrow.height), new Vector2()));
+            var l_Rotation = m_PageUpButton.Element.transform.localRotation.eulerAngles;
+            l_Rotation.z = 180;
+            m_PageUpButton.Element.transform.localRotation = Quaternion.Euler(l_Rotation);
 
             m_ScopeButtons.Add(ELeaderboardScope.Global, m_WorldButton);
             m_ScopeButtons.Add(ELeaderboardScope.Around, m_MeButton);

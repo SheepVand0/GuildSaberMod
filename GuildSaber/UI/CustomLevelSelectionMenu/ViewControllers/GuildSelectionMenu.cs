@@ -55,7 +55,8 @@ internal class GuildSelectionMenu : HMUI.ViewController
         Templates.FullRectLayout(
             XUIHLayout.Make(
                 XUIVScrollView.Make(
-                    ).Bind(ref m_GuildsScrollView)
+                    )
+                    .Bind(ref m_GuildsScrollView)
                 ).
                 SetHeight(65).
                 SetSpacing(0).
@@ -85,6 +86,7 @@ internal class GuildSelectionMenu : HMUI.ViewController
         foreach (var l_Index in l_Buttons)
         {
             l_Index.BuildUI(m_GuildsScrollView.Element.Container.transform);
+            XUIVSpacer.Make(5).BuildUI(m_GuildsScrollView.Element.Container.transform);
         }
     }
 }

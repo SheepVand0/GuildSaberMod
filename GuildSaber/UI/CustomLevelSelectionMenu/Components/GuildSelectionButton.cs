@@ -10,6 +10,7 @@ using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.Logger;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.Utils;
 using IPA.Utilities;
@@ -26,6 +27,8 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
 
     protected Texture2D GuildTexture = null;
 
+    public const int HEIGHT = 15;
+
     public GuildSelectionButton(GuildData p_GuildData) : base("GuildSelectionButton", string.Empty, null)
     {
         m_GuildData = p_GuildData;
@@ -36,7 +39,7 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
     private async void OnButtonReady(CPrimaryButton p_Button)
     {
         SetWidth(80);
-        SetHeight(20);
+        SetHeight(HEIGHT);
         await UpdateTexture();
 
         if (m_GuildData.Equals(default))
@@ -81,7 +84,7 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
         if (m_GuildData.Equals(default)) return;
         try
         {
-            GuildSaberUtils.ImageResult l_TextureResult = await GuildSaberUtils.GetImage(m_GuildData.Banner);
+            GuildSaberUtils.ImageResult l_TextureResult = await GuildSaberUtils.GetImage(m_GuildData.Logo);
             if (l_TextureResult.IsError || p_WithDefaultLogo) l_TextureResult.Texture = CustomLevelSelectionMenuReferences.DefaultLogo;
 
             Texture2D l_Texture = l_TextureResult.Texture;
@@ -89,7 +92,7 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
             //int l_FixedHeight = l_Texture.width / (80 / 20);
 
             int l_Radius = (int)(l_Texture.width * 0.01f);
-            var l_FixedHeightObject = TextureUtils.GetHeight(80, 20, l_Texture.width, l_Texture.height);
+            var l_FixedHeightObject = TextureUtils.GetHeight(80, HEIGHT, l_Texture.width, l_Texture.height);
             Texture2D l_FixedTexture = await TextureUtils.AddOffset(await TextureUtils.CreateRoundedTexture(l_Texture, l_Radius), l_FixedHeightObject.TextureOffset);
 
             Element.SetBackgroundSprite(
@@ -114,17 +117,16 @@ public class GuildSelectionButton : CP_SDK.XUI.XUIPrimaryButton
 
         try
         {
-            string l_Serialized = await new HttpClient().GetStringAsync($"https://api.guildsaber.com/categories/data/all?guild-id={m_GuildData.ID}");
+            if (LevelsFlowCoordinator.Instance == null)
+                LevelsFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<LevelsFlowCoordinator>();
 
-            List<ApiCategory> l_Categories = Newtonsoft.Json.JsonConvert.DeserializeObject<List<ApiCategory>>(l_Serialized);
 
-            if (CategorySelectionFlowCoordinator.Instance == null)
-                CategorySelectionFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<CategorySelectionFlowCoordinator>();
 
             SelectedGuildTexture = GuildTexture;
-            GSLogger.Instance.Log(m_GuildData.Name, IPA.Logging.Logger.LogLevel.InfoUp);
-            CategorySelectionFlowCoordinator.Instance.ShowWithCategories(m_GuildData.ID, l_Categories);
+            
             CustomLevelSelectionMenuReferences.SelectedGuildId = m_GuildData.ID;
+
+            LevelsFlowCoordinator.Instance.ShowWithLevels(m_GuildData.ID, default);
         } catch
         {
 

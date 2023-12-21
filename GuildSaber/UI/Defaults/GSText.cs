@@ -55,5 +55,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
 
             p_Text.font = TextFont;
         }
+
+        ////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////
+
+        public new GSText SetMargins(float p_Left, float p_Top, float p_Right, float p_Bottom)
+        {
+            base.SetMargins(p_Left, p_Top, p_Right, p_Bottom);
+            return this;
+        }
     }
 }

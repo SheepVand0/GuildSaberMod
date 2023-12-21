@@ -51,7 +51,7 @@ internal class GSConfig : JsonConfig<GSConfig>
 
     internal static class ConfigDefaults
     {
-        internal static readonly Vector3 s_DefaultCardPosition = new Vector3(0.0f, 0.02f, 1.0f);
+        internal static readonly Vector3 s_DefaultCardPosition = new Vector3(0.0f, 0.25f, 1.0f);
         internal static readonly Vector3 s_DefaultCardRotation = new Vector3(90.0f, 0.0f, 0.0f);
         internal static readonly Vector3 s_DefaultInGameCardPosition = new Vector3(1.8f, 1, -1.5f);
         internal static readonly Vector3 s_DefaultInGameCardRotation = new Vector3(20, 135, 0);

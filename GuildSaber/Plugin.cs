@@ -36,8 +36,6 @@ namespace GuildSaber
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += GuildSaberModule.StartupPatches;
         }
 
-
-
         private void ShowSelectionFlow()
         {
             if (SelectionFlowCoordinator == null)

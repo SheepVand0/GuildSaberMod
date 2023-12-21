@@ -225,4 +225,11 @@ public static class GuildSaberUtils
         await WaitUtils.Wait(() => l_Finished, 1);
         return l_Result;
     }
+
+    public static float GetMapNotesPerSecondsAvg(CustomDifficultyBeatmap p_Beatmap)
+    {
+        float l_Result = p_Beatmap.beatmapSaveData.colorNotes.Count / p_Beatmap.level.beatmapLevelData.audioClip.length;
+
+        return l_Result;
+    }
 }

@@ -75,11 +75,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
                 }
                 catch (Exception l_E)
                 {
-                    l_LevelCover = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.GsWhiteLogo.png");
+                    l_LevelCover = CustomLevelSelectionMenuReferences.DefaultWhiteLogo;
                 }
 
-                Texture2D l_Cover = await TextureUtils.CreateRoundedTexture(l_LevelCover, l_LevelCover.width * 0.01f);
-                Sprite l_Sprite = Sprite.Create(l_Cover, new Rect(0, 0, l_Cover.width, l_Cover.height), new Vector2());
+                //Texture2D l_Cover = await TextureUtils.CreateRoundedTexture(l_LevelCover, l_LevelCover.width * 0.01f);
+                Sprite l_Sprite = Sprite.Create(l_LevelCover, new Rect(0, 0, l_LevelCover.width, l_LevelCover.height), new Vector2());
                 SetBackgroundSprite(l_Sprite);
                 SetWidth(10);
                 SetHeight(10);

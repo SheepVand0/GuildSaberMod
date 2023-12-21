@@ -3,6 +3,7 @@ using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.Utils;
 using System;
@@ -33,7 +34,13 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
         {
             m_CurrentCategory = p_Category;
 
-            SetText(Utils.GuildSaberUtils.GetPlayerNameToFit(m_CurrentCategory.Name, 8));
+            if (m_CurrentCategory.Name == null || m_CurrentCategory.Name == string.Empty)
+            {
+                SetText("Default");
+            } else
+            {
+                SetText(Utils.GuildSaberUtils.GetPlayerNameToFit(m_CurrentCategory.Name, 8));
+            }
         }
 
         public static CategoryButton Make(ApiCategory p_Category)
@@ -55,8 +62,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
 
             if (BorderTexture == null)
             {
-                BorderTexture = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.BorderSquare.png");
-                BorderTexture = await TextureUtils.CreateRoundedTexture(BorderTexture, 20);
+                var l_BorderTexture = AssemblyUtils.LoadTextureFromAssembly("GuildSaber.Resources.BorderSquare.png");
+                BorderTexture = await TextureUtils.CreateRoundedTexture(l_BorderTexture, 20);
             }
 
             p_Button.SetBackgroundSprite(Sprite.Create(BorderTexture, new Rect(0, 0, BorderTexture.width, BorderTexture.height), new Vector2()));
@@ -70,7 +77,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.Components
                 LevelsFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<LevelsFlowCoordinator>();
 
             CustomLevelSelectionMenuReferences.SelectedCategory = m_CurrentCategory;
-            LevelsFlowCoordinator.Instance.ShowWithLevels(m_GuildId, m_CurrentCategory);
+            LevelSelectionViewController.Instance.SetLevels(m_GuildId, m_CurrentCategory);
+            CategorySelectionFlowCoordinator.Instance.Dismiss();
         }
     }
 }

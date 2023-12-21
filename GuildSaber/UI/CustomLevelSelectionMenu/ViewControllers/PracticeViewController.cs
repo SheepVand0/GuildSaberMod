@@ -49,6 +49,12 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             //GSLogger.Instance.Log(m_Beatmap.level.beatmapLevelData.audioClip.length, IPA.Logging.Logger.LogLevel.InfoUp);
         }
 
+        protected override void OnViewActivation()
+        {
+            m_TimeSliderValue = 0;
+            m_LastSliderTimeValue = 0;
+        }
+
         protected override void OnViewCreation()
         {
             Templates.FullRectLayout(
@@ -106,16 +112,21 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         private bool m_TimeSliderChanging = false;
 
-        float m_LastTimeValue = 0;
+        float m_LastSliderTimeValue = 0;
+        float m_TimeSliderValue = 0;
 
         protected async void OnTimeSliderChanged(float p_Value)
         {
+            m_TimeSliderValue = p_Value;
+
+            await Task.Delay(200);
+
+            if (m_TimeSliderValue != p_Value)
+                return;
 
             m_Time = p_Value;
             m_PreviewAudio.CrossfadeTo(m_Beatmap.level.beatmapLevelData.audioClip, 1, m_Time, 10, null);
-            /*m_PreviewAudio.Stop();
-            m_PreviewAudio.time = p_Value;
-            m_PreviewAudio.Play();*/
+            
         }
 
         protected void OnSpeedSliderChanged(float p_Value)

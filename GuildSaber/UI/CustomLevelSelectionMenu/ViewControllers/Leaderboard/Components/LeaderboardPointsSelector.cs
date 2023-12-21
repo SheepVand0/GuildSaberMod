@@ -1,6 +1,7 @@
 ﻿using CP_SDK.UI.Components;
 using CP_SDK.XUI;
 using GuildSaber.API;
+using GuildSaber.UI.Defaults;
 using GuildSaber.Utils;
 using System;
 using System.Collections.Generic;
@@ -13,42 +14,30 @@ using UnityEngine.UI;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components
 {
-    internal class LeaderboardPointsSelector : XUIHLayout
+    internal class LeaderboardPointsSelector : GSButtonDropdown
     {
 
         public event Action<PointsData> eOnChange;
 
-        protected LeaderboardPointsSelector(string p_Name, params IXUIElement[] p_Childs) : base(p_Name, p_Childs)
+        protected LeaderboardPointsSelector() : base(new List<string>())
         {
             OnReady(OnCreation);
         }
 
         public static LeaderboardPointsSelector Make()
         {
-            return new LeaderboardPointsSelector("GuildSaberPointsSelector");
+            return new LeaderboardPointsSelector();
         }
-
-        XUIDropdown m_Dropdown;
 
         protected List<PointsData> m_Points;
         protected string m_SelectedPointsType = GuildApi.PASS_POINTS_TYPE;
 
-        private void OnCreation(CHOrVLayout p_Layout)
+        private void OnCreation(CSecondaryButton p_Layout)
         {
-            SetWidth(15);
-            SetHeight(2);
-            XUIDropdown.Make()
-                .Bind(ref m_Dropdown)
-                .BuildUI(Element.LElement.transform);
+            SetWidth(10);
+            SetHeight((LeaderboardHeaderPanel.HEADER_HEIGHT / 2) - 1);
 
-            var l_DropdownText = Element.gameObject.GetComponentInChildren<TextMeshProUGUI>();
-            GSText.PatchText(l_DropdownText);
-            l_DropdownText.fontSize = 4;
-            m_Dropdown.OnValueChanged(OnValueSelected);
-            var l_Image = m_Dropdown.Element.GetComponentInChildren<Image>();
-            l_Image.color = new UnityEngine.Color(0, 0, 0, 0f);
-            m_Dropdown.Element.LElement.minHeight = 6;
-            m_Dropdown.Element.LElement.minWidth = 30;
+            OnValueChanged(OnValueSelected);
         }
 
         public void SetPoints(List<PointsData> p_Points)
@@ -71,16 +60,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Com
             List<string> l_Choices = new List<string>();
             foreach (var l_Item in m_Points)
                 l_Choices.Add(l_Item.PointsName);
-            m_Dropdown.SetOptions(l_Choices);
-            UpdateSelectedText(GetSelectedPoints());
+            SetOptions(l_Choices);
         }
 
-        public void OnValueSelected(int p_Index, string p_Value)
+        public void OnValueSelected(string p_Value, int p_Index)
         {
             PointsData l_Points = m_Points[p_Index];
             m_SelectedPointsType = l_Points.PointsType;
             eOnChange?.Invoke(l_Points);
-            UpdateSelectedText(l_Points);
         }
 
         private void UpdateSelectedText(PointsData p_Points)

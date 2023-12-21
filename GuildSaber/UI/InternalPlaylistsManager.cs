@@ -3,6 +3,7 @@ using GuildSaber.Logger;
 using Newtonsoft.Json;
 using PlaylistManager.HarmonyPatches;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,6 +40,21 @@ namespace GuildSaber.UI
             }
         }
 
+        internal static bool DeletePlaylist(string p_GuildName, string p_CategoryName)
+        {
+            string l_PlaylistFile = $"./GuildSaberPlaylists/{p_GuildName}/{GeneratePlaylistSaveName(p_GuildName, p_CategoryName)}.json";
+            if (!File.Exists(l_PlaylistFile)) return false;
+
+            try
+            {
+                File.Delete(l_PlaylistFile);
+            } catch
+            {
+                return false;
+            }
+            return true;
+        }
+
         internal static bool SavePlaylistsToFile(List<PlaylistModel> p_Playlists, string p_GuildName, string p_CategoryName)
         {
             string l_Serialized = JsonConvert.SerializeObject(p_Playlists);
@@ -48,6 +64,7 @@ namespace GuildSaber.UI
         internal static async Task<List<PlaylistModel>> LoadPlaylists(string p_GuildName, string p_CategoryName)
         {
             List<PlaylistModel> l_Playlists = new List<PlaylistModel>();
+            GSLogger.Instance.Log(GeneratePlaylistSaveName(p_GuildName, p_CategoryName), IPA.Logging.Logger.LogLevel.InfoUp);
             await Task.Run(() =>
             {
                 string l_Link = $"./GuildSaberPlaylists/{p_GuildName}/{GeneratePlaylistSaveName(p_GuildName, p_CategoryName)}.json";
@@ -64,7 +81,12 @@ namespace GuildSaber.UI
 
         internal static string GeneratePlaylistSaveName(string p_GuildName, string p_CategoryName)
         {
-            return $"{p_GuildName.Replace(' ', '_')}_{p_CategoryName.Replace(' ', '_')}";
+            string l_CategoryName = p_CategoryName;
+            if (string.IsNullOrEmpty(l_CategoryName))
+            {
+                l_CategoryName = "Main";
+            }
+            return $"{p_GuildName.Replace(' ', '_')}_{l_CategoryName.Replace(' ', '_')}";
         }
 
     }

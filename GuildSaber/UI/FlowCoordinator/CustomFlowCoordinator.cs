@@ -1,5 +1,6 @@
 using BeatSaberMarkupLanguage;
 using HMUI;
+using System;
 using UnityEngine;
 
 
@@ -15,6 +16,8 @@ namespace GuildSaber.UI.FlowCoordinator
         protected virtual void OnCreation() { }
 
         protected virtual bool ShowBackButton { get; } = true;
+
+        public bool IsPresent { get; private set; } = false;
 
         protected abstract (ViewController?, ViewController?, ViewController?) GetUIImplementation();
 
@@ -45,16 +48,21 @@ namespace GuildSaber.UI.FlowCoordinator
         public void Present()
         {
             m_LastFlowCoordinator = BeatSaberUI.MainFlowCoordinator.YoungestChildFlowCoordinatorOrSelf();
-            m_LastFlowCoordinator.PresentFlowCoordinator(this);
+            m_LastFlowCoordinator.PresentFlowCoordinator(this, () => IsPresent = true);
             OnShow();
         }
 
-        public void Dismiss()
+        public void Dismiss(Action p_FinishedCallback = null)
         {
             if (m_LastFlowCoordinator == null)
                 return;
 
-            m_LastFlowCoordinator.DismissFlowCoordinator(this);
+            m_LastFlowCoordinator.DismissFlowCoordinator(this, () =>
+            {
+                IsPresent = false;
+                if (p_FinishedCallback != null)
+                    p_FinishedCallback.Invoke();
+            });
             m_LastFlowCoordinator = null;
             OnHide();
         }

@@ -278,9 +278,10 @@ public static class GuildApi
         try
         {
             HttpClient l_Client = new HttpClient();
-            string l_CategoryString = (p_CategoryId == -1) ? string.Empty : $"&category-id={p_CategoryId}";
+            string l_CategoryString = (p_CategoryId == -1 || p_CategoryId.Equals(default)) ? string.Empty : $"&category-id={p_CategoryId}";
             string l_Serialized = await l_Client.GetStringAsync($"https://api.guildsaber.com/levels/data/all?guild-id={p_GuildId}{l_CategoryString}");
-            List<ApiRankingLevel> l_Levels = JsonConvert.DeserializeObject<List<ApiRankingLevel>>(l_Serialized);
+            GSLogger.Instance.Log($"https://api.guildsaber.com/levels/data/all?guild-id={p_GuildId}{l_CategoryString}", IPA.Logging.Logger.LogLevel.InfoUp);
+            List <ApiRankingLevel> l_Levels = JsonConvert.DeserializeObject<List<ApiRankingLevel>>(l_Serialized);
             return l_Levels;
         }
         catch (Exception l_E)
@@ -293,14 +294,15 @@ public static class GuildApi
     {
         try
         {
-            string l_CategoryQueryString = p_Category.ID != 0 ? $"category-id={p_Category.ID}" : string.Empty;
+            string l_CategoryQueryString = (p_Category.Equals(default(ApiCategory)) || p_Category.ID == -1) ? string.Empty : $"?category-id={p_Category.ID}";
+
             List<ApiRankingLevel> l_Levels = await GuildApi.GetLevels(p_GuildId, p_Category.ID);
             HttpClient l_Client = new HttpClient();
             List<PlaylistModel> l_Playlists = new List<PlaylistModel>();
             for (int l_i = 0; l_i < l_Levels.Count; l_i++)
             {
                 //player-id={GuildSaberModule.GSPlayerId}
-                string l_QueryString = $"https://api.guildsaber.com/playlists/data/by-id/{l_Levels[l_i].ID}?{l_CategoryQueryString}";
+                string l_QueryString = $"https://api.guildsaber.com/playlists/data/by-id/{l_Levels[l_i].ID}{l_CategoryQueryString}";
                 PlaylistModel l_Playlist = JsonConvert.DeserializeObject<PlaylistModel>(await l_Client.GetStringAsync(l_QueryString));
                 l_Playlist.customData.PlaylistLevel = l_Levels[l_i].LevelNumber;
                 l_Playlists.Add(l_Playlist);

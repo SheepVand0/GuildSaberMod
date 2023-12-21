@@ -338,6 +338,9 @@
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\CategoriesSelectionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
+    <Compile Include="UI\Defaults\GSButtonDropdown.cs" />
+    <Compile Include="UI\Defaults\GSIconButtonWithBackground.cs" />
+    <Compile Include="UI\Defaults\GSVClosable.cs" />
     <Compile Include="UI\Defaults\GSLoadingIndicator.cs" />
     <Compile Include="UI\Defaults\GSTextInput.cs" />
     <Compile Include="UI\Defaults\GSText.cs" />
