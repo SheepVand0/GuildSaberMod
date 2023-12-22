@@ -282,6 +282,7 @@ internal class FastAnimator : MonoBehaviour
         public Action OnFinished;
         public FloatAnimKey NextKey;
         public FloatAnimKey ActualKey;
+        public FloatAnimKey LastKey;
         public float AddDeltaTime;
 
         public FloatAnimData(List<FloatAnimKey> p_Keys, Action<float> p_Callback, Action p_OnFinished)
@@ -292,6 +293,10 @@ internal class FastAnimator : MonoBehaviour
             NextKey = new FloatAnimKey(p_Keys[0].Value, 0);
             ActualKey = NextKey;
             AddDeltaTime = UnityEngine.Time.realtimeSinceStartup;
+            if (p_Keys.Any())
+                LastKey = p_Keys.Last();
+            else
+                LastKey = default;
         }
     }
 
@@ -366,6 +371,8 @@ internal class FastAnimator : MonoBehaviour
             var l_Item = m_FloatAnimations[l_i];
             ParseFloatAnimData(l_Item, l_Item.AddDeltaTime, UnityEngine.Time.realtimeSinceStartup, l_i);
         }
+
+        if (!m_FloatAnimationsToEnd.Any()) return;
 
         foreach (var l_Item in m_FloatAnimationsToEnd)
         {

@@ -106,7 +106,7 @@ namespace GuildSaber.UI.Defaults
             }
             if (IsHorizontal)  l_RotationValue += (m_Side == EButtonSide.Top) ? 90 : -90;
 
-            Button.GetIconButton().Element.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 0));
+            Button.GetIconButton().Element.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, l_RotationValue));
             FastAnimator.Animate(new List<FastAnimator.FloatAnimKey>() {
                 new FastAnimator.FloatAnimKey((p_Show) ? 0 : 1, 0),
                 new FastAnimator.FloatAnimKey(p_Show ? 1 : 0, 0.2f)
