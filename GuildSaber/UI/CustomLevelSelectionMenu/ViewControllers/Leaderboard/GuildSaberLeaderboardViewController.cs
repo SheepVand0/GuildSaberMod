@@ -4,6 +4,7 @@ using CP_SDK.XUI;
 using GuildSaber.API;
 using GuildSaber.Logger;
 using GuildSaber.UI.CustomLevelSelectionMenu.Components;
+using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.UI.Defaults;
 using GuildSaber.Utils;
@@ -366,7 +367,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
         {
             if (m_IsLeaderboardOnScoreSaber) return;
 
-            var l_ScoreSaberButton = LevelSelectionViewController.Instance.GetMapDetails().GetShowScoreSaberButton();
+            var l_ScoreSaberButton = LevelsFlowCoordinator.Instance.GetShowScoreSaberButton();
             l_ScoreSaberButton.SetText("Hide ScoreSaber");
             l_ScoreSaberButton.SetInteractable(false);
             var l_LeaderboardViewController = Resources.FindObjectsOfTypeAll<PlatformLeaderboardViewController>().First();
@@ -379,7 +380,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard
         public void HideScoreSaber()
         {
             if (!m_IsLeaderboardOnScoreSaber) return;
-            var l_ScoreSaberButton = LevelSelectionViewController.Instance.GetMapDetails().GetShowScoreSaberButton();
+            var l_ScoreSaberButton = LevelsFlowCoordinator.Instance.GetShowScoreSaberButton();
             l_ScoreSaberButton.SetText("Show ScoreSaber");
             l_ScoreSaberButton.SetInteractable(false);
 

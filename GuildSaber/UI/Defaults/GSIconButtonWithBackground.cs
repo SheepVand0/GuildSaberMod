@@ -103,6 +103,7 @@ namespace GuildSaber.UI.Defaults
             OnReady(x =>
             {
                 base.SetHeight(p_Height);
+                base.SetMinHeight(p_Height);
                 GetIconButton().SetHeight(p_Height);
                 GetIconButton().SetWidth(p_Height);
             });

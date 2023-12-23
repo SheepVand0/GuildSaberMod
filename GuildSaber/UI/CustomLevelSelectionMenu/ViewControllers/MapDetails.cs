@@ -49,7 +49,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         internal static PlayerData m_PlayerData;
 
-        protected GSSecondaryButton m_ScoreSaberButton;
+        
 
         protected IDifficultyBeatmap m_Beatmap = null;
 
@@ -69,10 +69,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             return this;
         }
 
-        ////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////
-
-        public GSSecondaryButton GetShowScoreSaberButton() => m_ScoreSaberButton;
 
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
@@ -143,8 +139,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             .SetHeight(15)
             .BuildUI(Element.transform);
 
-            (m_ScoreSaberButton = GSSecondaryButton.Make("Show ScoreSaber", 50, 5, p_OnClick: GuildSaberLeaderboardViewController.Instance.OnScoreSaberButton))
-                .BuildUI(Element.transform);
+            
 
             SetSpacing(0);
             SetActive(false);

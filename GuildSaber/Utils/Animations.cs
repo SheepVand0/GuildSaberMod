@@ -351,6 +351,11 @@ internal class FastAnimator : MonoBehaviour
 
     public static void Animate(List<FloatAnimKey> p_Keys, Action<float> p_Callback, Action p_OnFinished = null)
     {
+        if (p_Keys.Count < 2)
+        {
+            throw new Exception("Not enough keys to run an animation, 2 required");
+        }
+
         if (Instance == null)
         {
             Instance = new GameObject("GuildSaberFastAnimator").AddComponent<FastAnimator>();
@@ -388,10 +393,12 @@ internal class FastAnimator : MonoBehaviour
     {
         float l_Time = p_DeltaTime - p_StartTime;
 
-        if (l_Time > p_FloatAnimData.Keys.Last().Time)
+        if (l_Time > p_FloatAnimData.LastKey.Time)
         {
             if (p_FloatAnimData.OnFinished != null)
                 p_FloatAnimData.OnFinished.Invoke();
+
+            p_FloatAnimData.Callback.Invoke(p_FloatAnimData.LastKey.Value);
 
             m_FloatAnimationsToEnd.Add(p_FloatAnimData);
 
@@ -432,8 +439,6 @@ FunctionBody:
 
         float l_Value = CalculateFloatValue(l_ActualKey.Value, l_NextKey.Value, l_ActualKey.Exponent, l_KeyIntervalTime, l_KeyIntervalDuration);
 
-        GSLogger.Instance.Log(l_Value, IPA.Logging.Logger.LogLevel.InfoUp);
-
         p_FloatAnimData.Callback.Invoke(
             l_Value
         );
@@ -441,7 +446,6 @@ FunctionBody:
 
     private float CalculateFloatValue(float p_Start, float p_End, float p_Exponent, float p_Time, float p_Duration)
     {
-        GSLogger.Instance.Log($"Start: {p_Start}, Next Value : {p_End}, Time : {p_Time}, Duration : {p_Duration}", IPA.Logging.Logger.LogLevel.InfoUp);
         return p_Start + ((float)Math.Pow((p_Time / p_Duration), p_Exponent) * (p_End - p_Start));
     }
 

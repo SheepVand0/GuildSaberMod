@@ -8,6 +8,9 @@ using HMUI;
 using UnityEngine;
 using System.Linq;
 using LDViewController = GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.GuildSaberLeaderboardViewController;
+using GuildSaber.Utils;
+using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard;
+using GuildSaber.UI.Defaults;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
 {
@@ -46,6 +49,19 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
                 LDViewController.Instance = BeatSaberUI.CreateViewController<LDViewController>();
 
             return (m_ViewController, l_GameplaySetupViewController, LDViewController.Instance);
+        }
+
+        protected GSSecondaryButton m_ScoreSaberButton;
+
+        public GSSecondaryButton GetShowScoreSaberButton() => m_ScoreSaberButton;
+
+        protected override void OnShow()
+        {
+
+           var l_Object = GameObject.Find("TitleViewController");
+
+            (m_ScoreSaberButton = GSSecondaryButton.Make("Show ScoreSaber", 50, 5, p_OnClick: GuildSaberLeaderboardViewController.Instance.OnScoreSaberButton))
+                .BuildUI(l_Object.transform);
         }
 
         protected override void OnHide()

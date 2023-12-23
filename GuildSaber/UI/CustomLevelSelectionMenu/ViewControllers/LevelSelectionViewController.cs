@@ -35,6 +35,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
     {
         internal static LevelSelectionViewController Instance;
 
+        private const int MAPS_LIST_HEIGHT = 50;
+
         protected GSSecondaryButton m_CategoriesButton;
 
         private XUIVScrollView m_MapList;
@@ -67,6 +69,11 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         protected GSText m_LevelText;
 
+        protected GSVClosable m_CategoriesClosable;
+        protected GSVClosable m_MapsClosable;
+        protected GSVClosable m_PlaylistsClosable;
+        protected GSVClosable m_MapDetailsClosable;
+
         protected string m_SearchValue = string.Empty;
 
         ////////////////////////////////////////////////////////////////////////////
@@ -91,64 +98,78 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
 
             (m_WorkingLayout = Templates.FullRectLayout(
-                GSVClosable.Create(XUIVLayout.Make(
-                    (m_CategoriesButton = GSSecondaryButton.Make("Categories", 40, 5))
-                .OnClick(ShowCategories),
-               XUIHLayout.Make(
-                   GSSecondaryButton.Make("Update file", 15, 5).OnClick(() => {
-                       LevelsFlowCoordinator.Instance.Dismiss(() =>
-                       {
-                           InternalPlaylistsManager.DeletePlaylist(GuildName, CategoryName);
-                           LevelsFlowCoordinator.Instance.ShowWithLevels(GuildId, Category);
-                       });
-                   }),
-                   (m_LevelText = GSText.Make("Level "))
+                (m_LevelText = GSText.Make("Level "))
                     .SetFontSize(6),
-                   XUIText.Make("").Bind(ref m_MissingMapsText),
-                   GSSecondaryButton.Make("Download", 20, 5, p_OnClick: DownloadLevels)
-                   .SetActive(false)
-                   .Bind(ref m_DownloadMapsButton)
-               )
-               .SetHeight(10)
-                    ), 80, 20)
-                .SetWidth(80),
-               XUIHLayout.Make(
-                   GSTextInput.Make("Search").OnValueChanged((val) =>
-                   {
-                       m_SearchValue = val;
-                       UpdateMapList(false, true);
-                   }).Bind(ref m_SearchTextInput),
-                   GSSecondaryButton.Make("x", 5, 5).OnClick(() =>
-                   {
-                       m_SearchValue = string.Empty;
-                       m_SearchTextInput.Element.SetValue(string.Empty);
-                       UpdateMapList(false, true);
-                   })
-                   ),
-               XUIHLayout.Make(
-                   XUIHLayout.Make(
-                       XUIVLayout.Make(
-                           XUIVScrollView.Make()
-                           .Bind(ref m_PlaylistsContainer)
-                       ).SetWidth(20)
-                        .OnReady(x => x.CSizeFitter.horizontalFit = x.CSizeFitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained)
-                        .OnReady(x => x.HOrVLayoutGroup.childForceExpandHeight = true),
-                       XUIVLayout.Make(
-                           XUIVScrollView.Make()
-                           .Bind(ref m_MapList)
-                       ).SetWidth(50)
-                        .OnReady(x => x.CSizeFitter.horizontalFit = x.CSizeFitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained)
-                        .OnReady(x => x.HOrVLayoutGroup.childForceExpandHeight = true)
-                   )
-                   .SetHeight(55),
-                   XUIVLayout.Make(
-                       MapDetails.Make()
-                           .Bind(ref m_MapDetails)
-                           .SetWidth(15)
-                   )
-               ).SetWidth(150)
+                    GSVClosable.Create(80, MAPS_LIST_HEIGHT, XUIVLayout.Make(
+                        (m_CategoriesButton = GSSecondaryButton.Make("Categories", 40, 5))
+                    .OnClick(ShowCategories),
+                    XUIHLayout.Make(
+                       GSSecondaryButton.Make("Update file", 15, 5).OnClick(() => {
+                           LevelsFlowCoordinator.Instance.Dismiss(() =>
+                           {
+                               InternalPlaylistsManager.DeletePlaylist(GuildName, CategoryName);
+                               LevelsFlowCoordinator.Instance.ShowWithLevels(GuildId, Category);
+                           });
+                       }),
+                       XUIText.Make("").Bind(ref m_MissingMapsText),
+                       GSSecondaryButton.Make("Download", 20, 5, p_OnClick: DownloadLevels)
+                       .SetActive(false)
+                       .Bind(ref m_DownloadMapsButton)
+                   ).SetHeight(10)
+                   ), XUIVSpacer.Make(40)
+                )
+                .Bind(ref m_CategoriesClosable),
+                // Maps closable widget
+                GSVClosable.Create(100, MAPS_LIST_HEIGHT,
+                        // Search bar
+                       XUIHLayout.Make(
+                           GSTextInput.Make("Search").OnValueChanged((val) =>
+                           {
+                               m_SearchValue = val;
+                               UpdateMapList(false, true);
+                           }).Bind(ref m_SearchTextInput),
+                           GSSecondaryButton.Make("x", 5, 5).OnClick(() =>
+                           {
+                               m_SearchValue = string.Empty;
+                               m_SearchTextInput.Element.SetValue(string.Empty);
+                               UpdateMapList(false, true);
+                           })
+                       )
+                       .SetMinHeight(5)
+                       .SetHeight(5),
+                       // Playlists and maps list
+                       XUIHLayout.Make(
+                           XUIHLayout.Make(
+                               GSVClosable.Create(20, (int)(MAPS_LIST_HEIGHT - GSVClosable.BUTTON_SIZE),
+                                   XUIVScrollView.Make()
+                                   .Bind(ref m_PlaylistsContainer)
+                               )
+                                .OnContainerReady(x => x.CSizeFitter.horizontalFit = x.CSizeFitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained)
+                                .OnContainerReady(x => x.HOrVLayoutGroup.childForceExpandHeight = true)
+                                .Bind(ref m_PlaylistsClosable)
+                                .SetHorizontal(),
+                               XUIVLayout.Make(
+                                   XUIVScrollView.Make()
+                                   .Bind(ref m_MapList)
+                               ).SetWidth(50)
+                                .OnReady(x => x.CSizeFitter.horizontalFit = x.CSizeFitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained)
+                                .OnReady(x => x.HOrVLayoutGroup.childForceExpandHeight = true)
+                           ),
+                       // Map details widget
+                       GSVClosable.Create(40, MAPS_LIST_HEIGHT,
+                           MapDetails.Make()
+                               .Bind(ref m_MapDetails)
+                               .SetWidth(15)
+                       ).Bind(ref m_MapDetailsClosable)
+                       .SetHorizontal()
+                       .SetButtonVisible(false)
+                   ).SetWidth(150)
+                   // End Closable
+               ).SetSpacing(0)
+                .Bind(ref m_MapsClosable)
+                .SetButtonVisible(false)
            ))
-           .SetSpacing(0.1f)
+           .SetSpacing(-1.2f)
            .BuildUI(transform);
 
             (m_NoLevelsFoundLayout = Templates.FullRectLayout(
@@ -175,7 +196,16 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             l_ResultsViewController.continueButtonPressedEvent += m_MapDetails.OnResultsContinueButtonPressed;
             l_ResultsViewController.restartButtonPressedEvent += m_MapDetails.OnResultsRestartButtonPressed;
 
+            m_CategoriesClosable.LinkClosable(m_MapsClosable);
+            m_MapsClosable.LinkClosable(m_CategoriesClosable);
+
+            m_PlaylistsClosable.LinkClosable(m_MapDetailsClosable);
+            m_MapDetailsClosable.LinkClosable(m_PlaylistsClosable);
+
             Instance = this;
+
+            m_PlaylistsClosable.Show(true);
+            m_CategoriesClosable.Show(true);
         }
 
         public MapDetails GetMapDetails()
@@ -221,16 +251,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             m_LoadingLayout.SetActive(p_Mode == EMode.Loading);
         }
 
-        /*public void ShowStatusText(string p_Text)
-        {
-
-        }
-
-        public void HideStatusText()
-        {
-
-        }
-*/
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
 
@@ -348,6 +368,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 if (l_BeatmapLevel == default(IBeatmapLevel) || l_BeatmapLevel == null)
                 {
                     MapsToDownload.Add(l_Index.hash);
+                    UpdateMapsToDownload();
                     UpdateMapButtonAtIndex(l_i, null);
                     continue;
                 }
@@ -372,8 +393,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                         }
                     }
                 }
-                
-                UpdateMapsToDownload();
 
                 //GSLogger.Instance.Log($"Crashing ? 2", IPA.Logging.Logger.LogLevel.InfoUp);
             }
@@ -439,21 +458,37 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
         ////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////
 
-
+        private bool m_Downloading = false;
 
         public async void DownloadLevels()
         {
+            m_Downloading = true;
+            m_DownloadMapsButton.OnClick(CancelDownload, true);
+            m_DownloadMapsButton.OnClick(DownloadLevels, false);
             m_MissingMapsText.SetText("0%");
-            m_DownloadMapsButton.SetActive(false);
+            m_DownloadMapsButton.SetText("Cancel");
             for (int l_i = 0; l_i < MapsToDownload.Count; l_i++)
             {
                 await BeatSaverApi.DownloadMapByHash(MapsToDownload[l_i].ToLower());
+                if (m_Downloading == false)
+                {
+                    UpdateMapsToDownload();
+                    return;
+                }
                 m_MissingMapsText.SetText($"{(((float)l_i / MapsToDownload.Count) * 100):00}%");
             }
 
             SongCore.Loader.SongsLoadedEvent += OnMapsFinishedToRefresh;
             SongCore.Loader.Instance.RefreshSongs(true);
             MapsToDownload.Clear();
+        }
+
+        public void CancelDownload()
+        {
+            m_Downloading = false;
+            m_DownloadMapsButton.OnClick(CancelDownload, false);
+            m_DownloadMapsButton.OnClick(DownloadLevels, true);
+            m_DownloadMapsButton.SetText("Donwload");
         }
 
         private void OnMapsFinishedToRefresh(SongCore.Loader arg1, System.Collections.Concurrent.ConcurrentDictionary<string, CustomPreviewBeatmapLevel> arg2)
