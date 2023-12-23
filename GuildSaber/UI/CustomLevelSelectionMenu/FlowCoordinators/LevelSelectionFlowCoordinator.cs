@@ -60,13 +60,21 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators
 
            var l_Object = GameObject.Find("TitleViewController");
 
+            if (m_ScoreSaberButton != null) goto FlemmeDeFaireUnElse;
+
             (m_ScoreSaberButton = GSSecondaryButton.Make("Show ScoreSaber", 50, 5, p_OnClick: GuildSaberLeaderboardViewController.Instance.OnScoreSaberButton))
-                .BuildUI(l_Object.transform);
+                .BuildUI(l_Object.transform.GetChild(0));
+
+/*--------*/FlemmeDeFaireUnElse:
+            
+            m_ScoreSaberButton.SetActive(true);
         }
 
         protected override void OnHide()
         {
             LevelSelectionViewController.Instance.OnMenuLeaved();
+
+            m_ScoreSaberButton.SetActive(false);
         }
     }
 }

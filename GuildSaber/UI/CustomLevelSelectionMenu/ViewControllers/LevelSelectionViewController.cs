@@ -169,7 +169,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 .Bind(ref m_MapsClosable)
                 .SetButtonVisible(false)
            ))
-           .SetSpacing(-1.2f)
+           .SetSpacing(-5f)
            .BuildUI(transform);
 
             (m_NoLevelsFoundLayout = Templates.FullRectLayout(
