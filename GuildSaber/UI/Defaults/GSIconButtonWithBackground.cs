@@ -1,32 +1,34 @@
 ﻿using CP_SDK.UI.Components;
 using CP_SDK.XUI;
+using GuildSaber.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
 namespace GuildSaber.UI.Defaults
 {
-    internal class GSIconButtonWithBackground : XUIVLayout
+    internal class GSIconButtonWithBackground : GSSecondaryButton
     {
-        protected GSIconButtonWithBackground(string p_Name, params IXUIElement[] p_Childs) : base(p_Name, p_Childs)
+        protected GSIconButtonWithBackground() : base(string.Empty)
         {
             OnReady(OnButtonCreation);
         }
 
         public static GSIconButtonWithBackground Make()
         {
-            return new GSIconButtonWithBackground("GuildSaberIconButtonWithBackgroundButton");
+            return new GSIconButtonWithBackground();
         }
 
         //////////////////////////////////////////////////////////////////////
         /////////////////////////////////////////////////////////////////////
 
-        private void OnButtonCreation(CHOrVLayout p_Layout)
+        private void OnButtonCreation(CSecondaryButton p_Button)
         {
-            XUIIconButton.Make().Bind(ref Button).BuildUI(p_Layout.transform);
+            XUIIconButton.Make().Bind(ref Button).BuildUI(p_Button.transform);
         }
 
         //////////////////////////////////////////////////////////////////////
@@ -45,8 +47,9 @@ namespace GuildSaber.UI.Defaults
             return this;
         }
 
-        public GSIconButtonWithBackground SetInteractable(bool p_Value)
-        { 
+        public new GSIconButtonWithBackground SetInteractable(bool p_Value)
+        {
+            base.SetInteractable(p_Value);
             OnReady(x =>
             {
                 Button.SetInteractable(p_Value);
@@ -54,8 +57,9 @@ namespace GuildSaber.UI.Defaults
             return this;
         }
 
-        public GSIconButtonWithBackground OnClick(Action p_Value, bool p_Add = true)
+        public new GSIconButtonWithBackground OnClick(Action p_Value, bool p_Add = true)
         {
+            base.OnClick(p_Value, p_Add);
             OnReady(x =>
             {
                 Button.OnClick(p_Value, p_Add);
@@ -75,37 +79,26 @@ namespace GuildSaber.UI.Defaults
             return this;
         }
 
-        public GSIconButtonWithBackground SetBackground(Sprite p_Sprite)
+        public GSIconButtonWithBackground SetWidth(float p_Width, bool p_UpdateIconButton = false)
         {
-            SetBackground(true);
-            SetBackgroundSprite(p_Sprite);
-            return this;
-        }
-
-        public GSIconButtonWithBackground SetBackground(Texture2D p_Texture)
-        {
-            SetBackground(Sprite.Create(p_Texture, new Rect(0, 0, p_Texture.width, p_Texture.height), new Vector2()));
-            return this;
-        }
-
-        public new GSIconButtonWithBackground SetWidth(float p_Width)
-        {
+            base.SetWidth((int)p_Width);
+            if (!p_UpdateIconButton) return this;
             OnReady(x =>
             {
-                base.SetWidth(p_Width);
-
+                GetIconButton().SetWidth(p_Width * 0.5f);
+                GetIconButton().SetHeight(p_Width * 0.5f);
             });
             return this;
         }
 
-        public new GSIconButtonWithBackground SetHeight(float p_Height)
+        public GSIconButtonWithBackground SetHeight(float p_Height, bool p_UpdateIconButton = false)
         {
+            base.SetHeight((int)p_Height);
+            if (!p_UpdateIconButton) return this;
             OnReady(x =>
             {
-                base.SetHeight(p_Height);
-                base.SetMinHeight(p_Height);
-                GetIconButton().SetHeight(p_Height);
-                GetIconButton().SetWidth(p_Height);
+                GetIconButton().SetHeight(p_Height * 0.5f);
+                GetIconButton().SetWidth(p_Height * 0.5f);
             });
             return this;
         }

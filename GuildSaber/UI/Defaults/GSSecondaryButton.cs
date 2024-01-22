@@ -81,5 +81,33 @@ namespace GuildSaber.UI.Defaults
             Sprite l_Sprite = Sprite.Create(l_NewTex, new Rect(0, 0, l_Tex.width, l_Tex.height), new Vector2(0, 0), 1000, 0, SpriteMeshType.FullRect);
             return l_Sprite;
         }
+
+        public GSSecondaryButton SetWidth(int p_Width, bool p_RefreshVisuals = false)
+        {
+            m_Width = p_Width;
+            base.SetWidth(p_Width);
+            if (p_RefreshVisuals)
+            {
+                OnReady(x =>
+                {
+                    _SetupStyle(x);
+                });
+            }
+            return this;
+        }
+
+        public GSSecondaryButton SetHeight(int p_Height, bool p_RefreshVisuals = false)
+        {
+            m_Height = p_Height;
+            base.SetHeight(p_Height);
+            if (p_RefreshVisuals)
+            {
+                OnReady(x =>
+                {
+                    _SetupStyle(x);
+                });
+            }
+            return this;
+        }
     }
 }

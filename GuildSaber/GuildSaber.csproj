@@ -100,6 +100,11 @@
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\GameplayCore.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="GuildSaber.Models">
+      <HintPath>$(BeatSaberDir)\Libs\GuildSaber.Models.dll</HintPath>
+      <Private>False</Private>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
     <Reference Include="HitScoreVisualizer, Version=3.3.3.0, Culture=neutral, processorArchitecture=MSIL">
       <Private>False</Private>
       <HintPath>$(BeatSaberDir)\Plugins\HitScoreVisualizer.dll</HintPath>
@@ -339,6 +344,7 @@
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildDescriptionViewController.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\ViewControllers\GuildSelectionMenu.cs" />
     <Compile Include="UI\Defaults\GSButtonDropdown.cs" />
+    <Compile Include="UI\Defaults\GSHorizontalList.cs" />
     <Compile Include="UI\Defaults\GSIconButtonWithBackground.cs" />
     <Compile Include="UI\Defaults\GSVClosable.cs" />
     <Compile Include="UI\Defaults\GSLoadingIndicator.cs" />

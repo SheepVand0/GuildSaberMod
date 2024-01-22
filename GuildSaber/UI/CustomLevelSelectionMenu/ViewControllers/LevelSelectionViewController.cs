@@ -28,6 +28,7 @@ using BeatSaberPlus.SDK.Game;
 using GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using BeatSaberMarkupLanguage;
+using TMPro;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 {
@@ -67,7 +68,8 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         protected XUITextInput m_SearchTextInput;
 
-        protected GSText m_LevelText;
+        protected TextMeshProUGUI GetTitleText() 
+            => GameObject.Find("TitleViewController").transform.Find("TitleViewController").GetComponent<TextMeshProUGUI>();
 
         protected GSVClosable m_CategoriesClosable;
         protected GSVClosable m_MapsClosable;
@@ -96,31 +98,34 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             if (CategorySelectionFlowCoordinator.Instance == null)
                 CategorySelectionFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<CategorySelectionFlowCoordinator>();
 
+            ////////////////////////////////////////////
 
             (m_WorkingLayout = Templates.FullRectLayout(
-                (m_LevelText = GSText.Make("Level "))
-                    .SetFontSize(6),
-                    GSVClosable.Create(80, MAPS_LIST_HEIGHT, XUIVLayout.Make(
+                    GSVClosable.Create(80, MAPS_LIST_HEIGHT, GSVClosable.EDirection.Vertical, XUIVLayout.Make(
                         (m_CategoriesButton = GSSecondaryButton.Make("Categories", 40, 5))
-                    .OnClick(ShowCategories),
-                    XUIHLayout.Make(
-                       GSSecondaryButton.Make("Update file", 15, 5).OnClick(() => {
-                           LevelsFlowCoordinator.Instance.Dismiss(() =>
-                           {
-                               InternalPlaylistsManager.DeletePlaylist(GuildName, CategoryName);
-                               LevelsFlowCoordinator.Instance.ShowWithLevels(GuildId, Category);
-                           });
-                       }),
-                       XUIText.Make("").Bind(ref m_MissingMapsText),
-                       GSSecondaryButton.Make("Download", 20, 5, p_OnClick: DownloadLevels)
-                       .SetActive(false)
-                       .Bind(ref m_DownloadMapsButton)
-                   ).SetHeight(10)
-                   ), XUIVSpacer.Make(40)
+                        .OnClick(ShowCategories),
+                        ////////////////////////////////////////////
+                        XUIHLayout.Make(
+                           GSSecondaryButton.Make("Update file", 15, 5).OnClick(() => {
+                               LevelsFlowCoordinator.Instance.Dismiss(() =>
+                               {
+                                   InternalPlaylistsManager.DeletePlaylist(GuildName, CategoryName);
+                                   LevelsFlowCoordinator.Instance.ShowWithLevels(GuildId, Category);
+                               });
+                           }),
+                           XUIText.Make("").Bind(ref m_MissingMapsText),
+                           GSSecondaryButton.Make("Download", 20, 5, p_OnClick: DownloadLevels)
+                           .SetActive(false)
+                           .Bind(ref m_DownloadMapsButton)
+                       ).SetHeight(10)
+                   ),
+                   ////////////////////////////////////////////
+                   XUIVSpacer.Make(MAPS_LIST_HEIGHT - 10 - 5)
                 )
                 .Bind(ref m_CategoriesClosable),
+                ////////////////////////////////////////////
                 // Maps closable widget
-                GSVClosable.Create(100, MAPS_LIST_HEIGHT,
+                GSVClosable.Create(100, MAPS_LIST_HEIGHT, GSVClosable.EDirection.Vertical,
                         // Search bar
                        XUIHLayout.Make(
                            GSTextInput.Make("Search").OnValueChanged((val) =>
@@ -137,17 +142,18 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                        )
                        .SetMinHeight(5)
                        .SetHeight(5),
+                       ////////////////////////////////////////////
                        // Playlists and maps list
                        XUIHLayout.Make(
                            XUIHLayout.Make(
-                               GSVClosable.Create(20, (int)(MAPS_LIST_HEIGHT - GSVClosable.BUTTON_SIZE),
+                               GSVClosable.Create(20, (int)(MAPS_LIST_HEIGHT - GSVClosable.BUTTON_SIZE), 
+                               GSVClosable.EDirection.Horizontal,
                                    XUIVScrollView.Make()
                                    .Bind(ref m_PlaylistsContainer)
                                )
-                                .OnContainerReady(x => x.CSizeFitter.horizontalFit = x.CSizeFitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained)
-                                .OnContainerReady(x => x.HOrVLayoutGroup.childForceExpandHeight = true)
-                                .Bind(ref m_PlaylistsClosable)
-                                .SetHorizontal(),
+                                .OnHorizontalContainerReady(x => x.CSizeFitter.horizontalFit = x.CSizeFitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained)
+                                .OnHorizontalContainerReady(x => x.HOrVLayoutGroup.childForceExpandHeight = true)
+                                .Bind(ref m_PlaylistsClosable),
                                XUIVLayout.Make(
                                    XUIVScrollView.Make()
                                    .Bind(ref m_MapList)
@@ -155,13 +161,13 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                                 .OnReady(x => x.CSizeFitter.horizontalFit = x.CSizeFitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.Unconstrained)
                                 .OnReady(x => x.HOrVLayoutGroup.childForceExpandHeight = true)
                            ),
+                       ////////////////////////////////////////////
                        // Map details widget
-                       GSVClosable.Create(40, MAPS_LIST_HEIGHT,
+                       GSVClosable.Create(40, MAPS_LIST_HEIGHT, GSVClosable.EDirection.Horizontal,
                            MapDetails.Make()
                                .Bind(ref m_MapDetails)
                                .SetWidth(15)
                        ).Bind(ref m_MapDetailsClosable)
-                       .SetHorizontal()
                        .SetButtonVisible(false)
                    ).SetWidth(150)
                    // End Closable
@@ -169,7 +175,9 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 .Bind(ref m_MapsClosable)
                 .SetButtonVisible(false)
            ))
-           .SetSpacing(-5f)
+           .SetSpacing(-2)
+           .SetHeight(1)
+           .OnReady(x => x.CSizeFitter.verticalFit = UnityEngine.UI.ContentSizeFitter.FitMode.PreferredSize)
            .BuildUI(transform);
 
             (m_NoLevelsFoundLayout = Templates.FullRectLayout(
@@ -329,7 +337,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             }
 
             m_SelectedLevel = p_Level;
-            m_LevelText.SetText($"Level {p_Level}");
+            GetTitleText().SetText($"Level {p_Level}");
 
             Beatmaps.Clear();
             MapsToDownload.Clear();
@@ -590,7 +598,14 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
 
         public void SetSelectedMap(IDifficultyBeatmap p_Beatmap)
         {
-            m_MapDetails.SetMap(p_Beatmap, GSBeatmapUtils.DifficultyBeatmapToHash(p_Beatmap));
+            try
+            {
+                m_MapDetails.SetMap(p_Beatmap, GSBeatmapUtils.DifficultyBeatmapToHash(p_Beatmap));
+                LevelsFlowCoordinator.Instance.GetShowScoreSaberButton().SetActive(true);
+            } catch (Exception ex)
+            {
+                GSLogger.Instance.Error(ex, nameof(LevelSelectionViewController), nameof(SetSelectedMap));
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////////
