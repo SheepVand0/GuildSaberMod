@@ -321,12 +321,15 @@
     <Compile Include="Harmony\SecretPatches.cs" />
     <Compile Include="Installers\MenuInstaller.cs" />
     <Compile Include="Logger\GSLogger.cs" />
+    <Compile Include="Other\OtherController.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Configuration\GSConfig.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Time\OptimizedDateTime.cs" />
     <Compile Include="Time\TimeManager.cs" />
     <Compile Include="UI\BeatSaberPlus\Settings.cs" />
+    <Compile Include="UI\Beta\GuildSaberBetaFlowCoordinator.cs" />
+    <Compile Include="UI\Beta\TestListButton.cs" />
     <Compile Include="UI\Card\PlayerCardViewController.cs" />
     <Compile Include="UI\Card\PlayerCardUI.cs" />
     <Compile Include="UI\CustomLevelSelectionMenu\Components\CategoryButton.cs" />
@@ -364,6 +367,7 @@
     <Compile Include="UI\Defaults\GSSlider.cs" />
     <Compile Include="UI\Defaults\GSTransparentButton.cs" />
     <Compile Include="UI\FlowCoordinator\CustomFlowCoordinator.cs" />
+    <Compile Include="UI\Beta\GuildSaberBetaViewController.cs" />
     <Compile Include="UI\InternalPlaylistsManager.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomLevelStatsView.cs" />
     <Compile Include="UI\Leaderboard\Components\CustomText.cs" />
@@ -450,7 +454,9 @@
     <EmbeddedResource Include="Resources\BSCCIconOrange.png" />
     <EmbeddedResource Include="Resources\CSIcon.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Other\UI\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>

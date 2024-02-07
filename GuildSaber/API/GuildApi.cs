@@ -150,7 +150,7 @@ public static class GuildApi
 
         try
         {
-            string l_Result = await l_Client.GetStringAsync($"https://api.guildsaber.com/player/data/by-blid/{p_ID}/full?guild={p_Guild}");
+            string l_Result = (await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/player/data/by-blid/{p_ID}/full?guild={p_Guild}")).BodyString;
             l_ResultPlayer = JsonConvert.DeserializeObject<ApiPlayerData>(l_Result);
             GuildSaberModule.SetState(GuildSaberModule.EModState.Functional);
         }
@@ -180,8 +180,7 @@ public static class GuildApi
     {
         try
         {
-            using var l_Client = new HttpClient();
-            string l_SerializedCat = await l_Client.GetStringAsync(new Uri($"https://api.guildsaber.com/categories/data/all?guild-id={p_GuildID}"));
+            string l_SerializedCat = (await GuildSaberUtils.GetStringAsync($"https://api.guildsaber.com/categories/data/all?guild-id={p_GuildID}")).BodyString;
             List<ApiCategory> l_Cats = JsonConvert.DeserializeObject<List<ApiCategory>>(l_SerializedCat);
             GuildSaberModule.SetState(GuildSaberModule.EModState.Functional);
             return l_Cats;

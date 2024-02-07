@@ -1,7 +1,7 @@
 ﻿using BeatSaberMarkupLanguage;
 using CP_SDK.Config;
 using GuildSaber.Configuration;
-using GuildSaber.UI.GuildSaber;
+using GuildSaber.UI;
 using GuildSaber.UI.Settings;
 using HMUI;
 using UnityEngine;

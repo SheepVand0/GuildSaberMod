@@ -8,11 +8,14 @@ using BeatSaberMarkupLanguage;
 using BeatSaberMarkupLanguage.MenuButtons;
 using GuildSaber.Logger;
 using GuildSaber.UI;
+using GuildSaber.UI.Beta;
 using GuildSaber.UI.CustomLevelSelectionMenu.FlowCoordinators;
 using GuildSaber.UI.Defaults;
 using GuildSaber.UI.FlowCoordinator;
+using GuildSaber.Utils;
 using IPA;
 using System;
+using System.Linq;
 using UnityEngine;
 
 
@@ -28,12 +31,27 @@ namespace GuildSaber
         private static Plugin Instance { get; set; }
 
         [IPA.Init]
-        public void Init(IPA.Logging.Logger p_Logger)
+        public async void Init(IPA.Logging.Logger p_Logger)
         {
             Plugin.Instance = this;
             GSLogger gsLogger = new GSLogger(p_Logger);
             GuildSaberModule.HarmonyInstance.PatchAll();
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += GuildSaberModule.StartupPatches;
+
+            string l_Response = (await GuildSaberUtils.GetStringAsync("https://api-dev.guildsaber.com/global-settings")).BodyString;
+            GSLogger.Instance.Log(l_Response, IPA.Logging.Logger.LogLevel.InfoUp);
+
+
+            if (Environment.GetCommandLineArgs().Contains("guildsaber_beta"))
+                MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber shit", () =>
+                {
+                    if (GuildSaberBetaFlowCoordinator.Instance == null)
+                    {
+                        GuildSaberBetaFlowCoordinator.Instance = BeatSaberUI.CreateFlowCoordinator<GuildSaberBetaFlowCoordinator>();
+                    }
+
+                    GuildSaberBetaFlowCoordinator.Instance.Present();
+                }));
         }
 
         private void ShowSelectionFlow()

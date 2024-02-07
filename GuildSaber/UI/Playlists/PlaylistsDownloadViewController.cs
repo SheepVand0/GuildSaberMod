@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 
 #nullable enable
-namespace GuildSaber.UI.GuildSaber
+namespace GuildSaber.UI
 {
     public class PlaylistViewController : ViewController<PlaylistViewController>
     {

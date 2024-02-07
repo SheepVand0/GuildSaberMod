@@ -20,7 +20,7 @@ using Color = UnityEngine.Color;
 
 
 #nullable enable
-namespace GuildSaber.UI.GuildSaber
+namespace GuildSaber.UI
 {
     public class CategoryUI
     {

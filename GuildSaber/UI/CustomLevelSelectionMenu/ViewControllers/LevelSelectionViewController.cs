@@ -191,7 +191,6 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
                 XUIText.Make("").Bind(ref m_StatusText)
              )).BuildUI(transform);
 
-            //m_PlaylistsContainer.Element.SetContentSize(10);
             m_PlaylistsContainer.Element.LElement.minWidth = 2f;
             m_PlaylistsContainer.Element.LElement.preferredWidth = 2f;
             m_PlaylistsContainer.Element.LElement.flexibleWidth = 2f;
@@ -337,7 +336,7 @@ namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers
             }
 
             m_SelectedLevel = p_Level;
-            GetTitleText().SetText($"Level {p_Level}");
+            //GetTitleText().SetText($"Level {p_Level}");
 
             Beatmaps.Clear();
             MapsToDownload.Clear();
