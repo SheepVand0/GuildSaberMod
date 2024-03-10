@@ -9,7 +9,6 @@ using GuildSaber.Configuration;
 using GuildSaber.UI.BeatSaberPlusSettings;
 using GuildSaber.UI.Card;
 using GuildSaber.UI.FlowCoordinator;
-using GuildSaber.UI.Leaderboard;
 using GuildSaber.UI.Others;
 using GuildSaber.Utils;
 using IPA.Loader;
@@ -78,7 +77,6 @@ namespace GuildSaber
         private async void EnableLeader()
         {
             Task task = await WaitUtils.Wait(() => GameObject.Find("LeaderboardNavigationButtonsPanel") != null, 100);
-            GuildSaberCustomLeaderboard.Instance.Initialize();
         }
 
         private static bool m_PatchedPlayingButtonsPanel = false;
@@ -140,15 +138,11 @@ namespace GuildSaber
 
             if (PlayerCardUI.m_Instance != null && ModState == EModState.Functional)
                 PlayerCardUI.SetCardActive(GSConfig.Instance.CardEnabled);
-
-            Events.m_EventsEnabled = true;
         }
 
         protected override void OnDisable()
         {
-            Events.m_EventsEnabled = false;
             PlayerCardUI.DestroyCard();
-            GuildSaberCustomLeaderboard.Instance.Dispose();
             GuildSaberModule.HarmonyInstance.UnpatchSelf();
         }
 

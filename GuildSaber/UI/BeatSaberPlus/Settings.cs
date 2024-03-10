@@ -2,7 +2,6 @@
 using CP_SDK.XUI;
 using GuildSaber.Configuration;
 using GuildSaber.UI.Card;
-using GuildSaber.UI.Leaderboard;
 using UnityEngine;
 
 namespace GuildSaber.UI.BeatSaberPlusSettings;
@@ -10,11 +9,6 @@ namespace GuildSaber.UI.BeatSaberPlusSettings;
 internal class Settings : ViewController<Settings>
 {
     private XUIToggle m_BoolCardEnabled = null;
-
-    ////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    private XUIToggle m_BoolLeaderboardEnabled = null;
 
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -31,34 +25,16 @@ internal class Settings : ViewController<Settings>
                 .SetValue(GSConfig.Instance.CardEnabled)
                 .Bind(ref m_BoolCardEnabled),
 
-            XUIText.Make("Enable Leaderboard:")
-                .SetColor(Color.yellow)
-                .SetAlign(TMPro.TextAlignmentOptions.Center),
-            XUIToggle.Make()
-                .SetValue(GSConfig.Instance.LeaderboardEnabled)
-                .Bind(ref m_BoolLeaderboardEnabled),
-
             XUIVSpacer.Make(35f)
         ).BuildUI(transform);
 
         m_BoolCardEnabled.OnValueChanged(OnBoolCardChanged);
-        m_BoolLeaderboardEnabled.OnValueChanged(OnBoolLeaderboardChanged);
     }
 
     private void OnBoolCardChanged(bool p_Value)
     {
         GSConfig.Instance.CardEnabled = m_BoolCardEnabled.Element.GetValue();
-        if (PlayerCardUI.m_Instance != null && Events.m_EventsEnabled) PlayerCardUI.SetCardActive(GSConfig.Instance.CardEnabled);
-        GSConfig.Instance.Save();
-    }
-
-    private void OnBoolLeaderboardChanged(bool p_Value)
-    {
-        GSConfig.Instance.LeaderboardEnabled = m_BoolLeaderboardEnabled.Element.GetValue();
-        if (GSConfig.Instance.LeaderboardEnabled)
-            GuildSaberCustomLeaderboard.Instance.Initialize();
-        else
-            GuildSaberCustomLeaderboard.Instance.Dispose();
+        if (PlayerCardUI.m_Instance != null) PlayerCardUI.SetCardActive(GSConfig.Instance.CardEnabled);
         GSConfig.Instance.Save();
     }
 }

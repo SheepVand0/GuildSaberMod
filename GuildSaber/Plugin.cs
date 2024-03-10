@@ -31,16 +31,12 @@ namespace GuildSaber
         private static Plugin Instance { get; set; }
 
         [IPA.Init]
-        public async void Init(IPA.Logging.Logger p_Logger)
+        public void Init(IPA.Logging.Logger p_Logger)
         {
             Plugin.Instance = this;
             GSLogger gsLogger = new GSLogger(p_Logger);
             GuildSaberModule.HarmonyInstance.PatchAll();
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += GuildSaberModule.StartupPatches;
-
-            string l_Response = (await GuildSaberUtils.GetStringAsync("https://api-dev.guildsaber.com/global-settings")).BodyString;
-            GSLogger.Instance.Log(l_Response, IPA.Logging.Logger.LogLevel.InfoUp);
-
 
             if (Environment.GetCommandLineArgs().Contains("guildsaber_beta"))
                 MenuButtons.instance.RegisterButton(new MenuButton("GuildSaber shit", () =>

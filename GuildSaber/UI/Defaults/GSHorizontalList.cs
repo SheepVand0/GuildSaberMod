@@ -37,6 +37,7 @@ namespace GuildSaber.UI.Defaults
         protected Func<Transform, t_UiElemType> m_UiElemCreateMethod;
         protected List<t_DataType> m_Elements = new List<t_DataType>();
         protected List<t_UiElemType> m_VisualElements = new List<t_UiElemType>();
+        protected List<XUIHSpacer> m_EmptyElementSpacer = new List<XUIHSpacer>();
 
         protected int m_DisplayedElementsCount = 5;
         protected int m_Page = 0;
@@ -57,21 +58,23 @@ namespace GuildSaber.UI.Defaults
             var l_ArrowTexture = CustomLevelSelectionMenuReferences.ArrowImage;
             Sprite l_ArrowSprite = Sprite.Create(l_ArrowTexture, new Rect(0, 0, l_ArrowTexture.width, l_ArrowTexture.height), Vector2.zero);
 
-            XUIIconButton.Make()
+            (m_LeftPageButton = XUIIconButton.Make()
                 .SetSprite(l_ArrowSprite)
-                .SetHeight(m_Height)
-                .SetWidth(m_Height)
+                .SetHeight(m_Height / 2)
+                .SetWidth(m_Height / 2)
+                .OnClick(GoLeft))
                 .BuildUI(Element.transform);
-            XUIHLayout.Make(
-                
-            )
+             XUIHLayout.Make()
                 .SetWidth(m_Width)
                 .SetHeight(m_Height)
-                .Bind(ref m_ElementsContainer);            
-            XUIIconButton.Make()
+                .Bind(ref m_ElementsContainer)
+                .BuildUI(Element.transform);
+            (m_RightPageButton = XUIIconButton.Make()
                 .SetSprite(l_ArrowSprite)
-                .SetHeight(m_Height)
-                .SetWidth(m_Height)
+                .SetHeight(m_Height / 2)
+                .SetWidth(m_Height / 2)
+                .OnClick(GoRight)
+                )
                 .BuildUI(Element.transform);
 
             UpdateElements();
@@ -93,7 +96,6 @@ namespace GuildSaber.UI.Defaults
 
             m_Page += 1;
             UpdateElements();
-
         }
 
         //////////////////////////////////////////////////////
@@ -112,16 +114,34 @@ namespace GuildSaber.UI.Defaults
 
         protected void UpdateElements()
         {
+            foreach (var l_Item in m_VisualElements)
+            {
+                m_SetActiveFunction.Invoke(l_Item, false);
+            }
+
+            foreach (var l_Item in m_EmptyElementSpacer)
+            {
+                l_Item.SetActive(true);
+            }
+
             for (int l_i = (m_Page * m_DisplayedElementsCount); l_i < m_Elements.Count();l_i++)
             {
-                if (l_i - m_Page > m_DisplayedElementsCount) break;
+                if (l_i - (m_Page * m_DisplayedElementsCount) >= m_DisplayedElementsCount) break;
 
                 var l_Item = m_Elements[l_i];
                 int l_VisualElementIndex = l_i - (m_Page * m_DisplayedElementsCount);
                 if (l_VisualElementIndex > m_VisualElements.Count() - 1)
+                {
                     m_VisualElements.Add(m_UiElemCreateMethod.Invoke(m_ElementsContainer.Element.transform));
+                    var l_Spacer = XUIHSpacer.Make(m_Height);
+                    l_Spacer.BuildUI(m_ElementsContainer.Element.transform);
+                    l_Spacer.SetActive(false);
+                    m_EmptyElementSpacer.Add(l_Spacer);
+                }
 
-                m_OnNeedToUpdateCell.Invoke(m_Elements[l_i], m_VisualElements[l_i - (m_Page * m_DisplayedElementsCount)]);
+                m_SetActiveFunction.Invoke(m_VisualElements[l_VisualElementIndex], true);
+                m_EmptyElementSpacer[l_VisualElementIndex].SetActive(false);
+                m_OnNeedToUpdateCell.Invoke(m_Elements[l_i], m_VisualElements[l_VisualElementIndex]);
             }
         }
     }

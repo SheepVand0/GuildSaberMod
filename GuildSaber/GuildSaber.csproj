@@ -312,14 +312,12 @@
     <Compile Include="API\PlaylistModel.cs" />
     <Compile Include="AssetBundles\AssetBundleLoader.cs" />
     <Compile Include="Bot\BotManager.cs" />
-    <Compile Include="Events.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="GuildSaber.cs" />
     <Compile Include="Harmony\CustomLevelSelectionMenu\OnMapStarted.cs" />
     <Compile Include="Harmony\OnNoteCutPatch.cs" />
     <Compile Include="Harmony\Patches.cs" />
     <Compile Include="Harmony\SecretPatches.cs" />
-    <Compile Include="Installers\MenuInstaller.cs" />
     <Compile Include="Logger\GSLogger.cs" />
     <Compile Include="Other\OtherController.cs" />
     <Compile Include="Plugin.cs" />
@@ -369,21 +367,7 @@
     <Compile Include="UI\FlowCoordinator\CustomFlowCoordinator.cs" />
     <Compile Include="UI\Beta\GuildSaberBetaViewController.cs" />
     <Compile Include="UI\InternalPlaylistsManager.cs" />
-    <Compile Include="UI\Leaderboard\Components\CustomLevelStatsView.cs" />
-    <Compile Include="UI\Leaderboard\Components\CustomText.cs" />
-    <Compile Include="UI\Leaderboard\Components\LeaderboardScoreList.cs" />
-    <Compile Include="UI\Leaderboard\Components\PointsType.cs" />
-    <Compile Include="UI\Leaderboard\Components\ScopeSelector.cs" />
-    <Compile Include="UI\Leaderboard\Components\ScoreCellInfoModal.cs" />
-    <Compile Include="UI\Leaderboard\Components\SubComponents\LeaderboardScoreCell.cs" />
-    <Compile Include="UI\Leaderboard\Components\UpdateView.cs" />
     <Compile Include="UI\CustomUIComponent.cs" />
-    <Compile Include="UI\Leaderboard\Components\PlayerAvatar.cs" />
-    <Compile Include="UI\Leaderboard\GuildSaberCustomLeaderboard.cs" />
-    <Compile Include="UI\Leaderboard\GuildSaberLeaderboardPanel.cs" />
-    <Compile Include="UI\Leaderboard\GuildSaberLeaderboardView.cs" />
-    <Compile Include="UI\Leaderboard\Managers\LeaderboardHeaderManager.cs" />
-    <Compile Include="UI\Leaderboard\Managers\LeaderboardStatsViewManager.cs" />
     <Compile Include="UI\Others\EmptyViewController.cs" />
     <Compile Include="UI\Playlists\CategoryUI.cs" />
     <Compile Include="UI\Settings\LeftModViewController.cs" />
@@ -415,17 +399,9 @@
     <EmbeddedResource Include="UI\GuildSaber\View\LeftModViewController.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardPanel.bsml" />
     <EmbeddedResource Include="UI\GuildSaber\View\LeaderboardView.bsml" />
-    <EmbeddedResource Include="UI\Leaderboard\Components\Views\PlayerAvatar.bsml" />
-    <EmbeddedResource Include="UI\Leaderboard\Components\Views\PointsType.bsml" />
-    <EmbeddedResource Include="UI\Leaderboard\Components\Views\CustomText.bsml" />
     <EmbeddedResource Include="UI\Card\View\PlayerLevelUI.bsml" />
     <EmbeddedResource Include="UI\Card\View\PlayerRankUI.bsml" />
-    <EmbeddedResource Include="UI\Leaderboard\Components\Views\ScopeSelector.bsml" />
-    <EmbeddedResource Include="UI\Leaderboard\Components\Views\UpdateView.bsml" />
     <EmbeddedResource Include="UI\BeatSaberPlus\View\Settings.bsml" />
-    <EmbeddedResource Include="UI\Leaderboard\Components\Views\CustomLevelStatsView.bsml" />
-    <EmbeddedResource Include="UI\Leaderboard\Components\Views\ScoreCellInfoModal.bsml" />
-    <EmbeddedResource Include="UI\Leaderboard\Components\Views\LeaderboardScoreList.bsml" />
     <EmbeddedResource Include="Resources\Teko-Medium.ttf" />
   </ItemGroup>
   <ItemGroup>

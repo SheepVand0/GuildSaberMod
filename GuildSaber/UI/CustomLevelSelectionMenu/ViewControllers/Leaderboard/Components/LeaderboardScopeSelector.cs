@@ -13,6 +13,13 @@ using UnityEngine;
 
 namespace GuildSaber.UI.CustomLevelSelectionMenu.ViewControllers.Leaderboard.Components
 {
+    internal enum ELeaderboardScope
+    {
+        Global,
+        Around,
+        Country
+    }
+
     internal class LeaderboardScopeSelector : XUIVLayout
     {
         private static readonly Color m_Blue = new Color(0f, 0.7f, 1f, 0.8f);

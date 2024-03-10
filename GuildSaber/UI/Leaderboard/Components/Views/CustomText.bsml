@@ -1,3 +1,0 @@
-﻿<horizontal id='Horizontal' ignore-layout='true' anchor-pos-x='~AnchorPosX' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='https://monkeymanboy.github.io/BSML-Docs/ https://raw.githubusercontent.com/monkeymanboy/BSML-Docs/gh-pages/BSMLSchema.xsd'>
-	<text id='Text' text='' overflow-mode='Overflow' word-wrapping='false' align='Left' rich-text='true'></text>
-</horizontal>
