@@ -1,5 +1,7 @@
 # GuildSaberProfile
 
+# Remaking the mod from scratch so see ya in a moment
+
 Work from 1.18 to 1.23+(On both steam and oculus, PC Version only)
 This mod allows you to display a Profile Card in game, which makes you able to see your guilds stats,
 features :
